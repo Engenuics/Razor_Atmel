@@ -1,2 +1,2 @@
-# mpgl1
-An IAR project comprising of the Source Code for the MPGL2 Razor Development Board.
+#Razor_Atmel
+An IAR project comprising of the source code for the Engenucis Razor Atmel development boards.
