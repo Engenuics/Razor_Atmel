@@ -1,0 +1,8 @@
+*.pbi
+*.cout
+firmware_mpgl2/iar_7_20_1/Debug/Obj/mpgl2-efmw-01.pbd.browse
+*.pbd
+*.browse
+*.i
+Debug/
+*.TMP

@@ -22,8 +22,8 @@ ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
 /**********************************************************************************************************************
 Runtime switches
 ***********************************************************************************************************************/
-//#define MPGL1             1         /* Use to activate MPG Level 1 specific code */
-#define MPGL2             1         /* Use to activate MPG Level 2 (all versions) specific code */
+#define MPGL1             1         /* Use to activate MPG Level 1 specific code */
+//#define MPGL2             1         /* Use to activate MPG Level 2 (all versions) specific code */
 //#define MPGL2_R01          1         /* Use with MPGL2-EHDW-01 revision board */
 
 #define DEBUG_MODE        1         /* Define to enable certain debugging code */
@@ -71,7 +71,7 @@ Includes
 #include "sdcard.h"
 
 //#include "mpgl1_audio_test.h"
-//#include "mpgl1_board_test.h"
+#include "mpgl1_board_test.h"
 #endif /* MPGL1 */
 
 #ifdef MPGL2
