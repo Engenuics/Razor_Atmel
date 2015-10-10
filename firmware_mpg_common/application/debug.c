@@ -14,7 +14,7 @@ This application requires a UART resource for input/output data.
 The terminal program used to interface to the debugger should be set to:
 - no local echo
 - send "CR" for new line
-- 38400-8-N-1
+- 115200-8-N-1
 
 ***********************************************************************************************************************/
 
@@ -77,7 +77,7 @@ DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugC
 
 static bool Debug_bLedTestActive = TRUE;
 
-static u8 Debug_au8StartupMsg[] = "\n\n\r*** MPG LEVEL 1 SAM3U2 DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
+static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 ASCII LCD DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
 #endif /* MPGL1 */
 
 #ifdef MPGL2
@@ -92,7 +92,7 @@ DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugC
                                                      };
 
 static bool Debug_bLedTestActive = TRUE;
-static u8 Debug_au8StartupMsg[] = "\n\n\r*** MPG LEVEL 2 SAM3U2 DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
+static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 DOT MATRIX DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
 #endif /* MPGL2 */
 
 
@@ -242,11 +242,11 @@ void SystemStatusReport(void)
   bool bNoFailedTasks = TRUE;
 
 #ifdef MPGL1
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "SD", "BOARDTEST"};
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "SD"};
 #endif /* MPGL1 */
 
 #ifdef MPGL2
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "CAPTOUCH", "BOARDTEST"};
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "CAPTOUCH"};
 #endif /* MPGL2 */
 
   /* Announce init complete then report any tasks that failed init */

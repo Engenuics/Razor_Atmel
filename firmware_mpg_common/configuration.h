@@ -27,8 +27,7 @@ Runtime switches
 //#define MPGL2_R01          1         /* Use with MPGL2-EHDW-01 revision board */
 
 #define DEBUG_MODE        1         /* Define to enable certain debugging code */
-//#define STARTUP_SOUND     1         /* Define to include buzzer sound on startup */
-#define LCD_STARTUP_ANIMATION  1   /* Define to show logo animation on startup */
+#define STARTUP_SOUND     1         /* Define to include buzzer sound on startup */
 
 //#define USE_SIMPLE_USART0 1  /* Define to use USART0 as a very simple byte-wise UART for debug purposes */
 
@@ -41,6 +40,7 @@ typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
 /**********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
+/* Common header files */
 #include <stdlib.h>
 #include <string.h>
 #include "AT91SAM3U4.h"
@@ -51,11 +51,27 @@ Includes
 #include "typedefs.h"
 #include "utilities.h"
 
+/* Common driver header files */
+#include "antmessage.h"
+#include "antdefines.h"
+#include "ant_api.h"
+#include "ant.h"
+#include "buttons.h"
+#include "leds.h" 
+#include "messaging.h"
+
+#include "sam3u_i2c.h"
+#include "sam3u_ssp.h"
+#include "sam3u_uart.h"
+
 /* MPGL1-specific header files */
 #ifdef MPGL1
-#include "mpgl1-ehdw-02.h"
+#include "mpgl1-ehdw-03.h"
+#include "lcd_nhd-c0220biz.h"
+#include "sdcard.h"
 
-#include "mpgl1_boardtest.h"
+//#include "mpgl1_audio_test.h"
+//#include "mpgl1_board_test.h"
 #endif /* MPGL1 */
 
 #ifdef MPGL2
@@ -70,51 +86,47 @@ Includes
 #include "lcd_bitmaps.h"
 #include "lcd_NHD-C12864LZ.h"
 
-#include "mpgl2_board_test.h"
+//#include "mpgl2_board_test.h"
+//#include "pong_atmel.h"
+
 #endif /* MPGL2 */
 
-/* Driver header files */
-#include "messaging.h"
-#include "antdefines.h"
-#include "antmessage.h"
-#include "ant_api.h"
-#include "ant.h"
-#include "buttons.h"
-#include "leds.h" 
-#include "sam3u_ssp.h"
-#include "sam3u_uart.h"
-//#include "sam3u_i2c.h"
-
-/* Application header files */
+/* Common application header files */
 #include "debug.h"
+#include "music.h"
+#include "user_app.h"
+
 
 
 /**********************************************************************************************************************
 !!!!! External peripheral assignments
 ***********************************************************************************************************************/
 /* G_u32ApplicationFlags */
+/* The order of these flags corresponds to the order of applications in SystemStatusReport() (debug.c) */
 #define _APPLICATION_FLAGS_LED          0x00000001        /* LedStateMachine */
 #define _APPLICATION_FLAGS_BUTTON       0x00000002        /* ButtonStateMachine */
 #define _APPLICATION_FLAGS_DEBUG        0x00000004        /* DebugStateMachine */
 #define _APPLICATION_FLAGS_LCD          0x00000008        /* LcdStateMachine */
 #define _APPLICATION_FLAGS_ANT          0x00000010        /* AntStateMachine */
-#define _APPLICATION_FLAGS_BOARDTEST    0x00000020        /* BoardTest Task */
 
 #ifdef MPGL1
 /* MPGL1 specific application flags */
-#define _APPLICATION_FLAGS_SDCARD       0x00000040        /* SdCardStateMachine */
+#define _APPLICATION_FLAGS_SDCARD       0x00000020        /* SdCardStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)7             /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)6            /* Total number of applications */
 #endif /* MPGL1 specific application flags */
 
 #ifdef MPGL2
 /* MPGL2 specific application flags */
-#define _APPLICATION_FLAGS_CAPTOUCH     0x00000040        /* CapTouchStateMachine */
+#define _APPLICATION_FLAGS_CAPTOUCH     0x00000020        /* CapTouchStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)7             /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)6             /* Total number of applications */
 #endif /* MPGL2 specific application flags */
 
 
+/**********************************************************************************************************************
+!!!!! External device peripheral assignments
+***********************************************************************************************************************/
 /* %UART% Configuration */
 /* Blade UART Peripheral Allocation (UART) */
 #define BLADE_UART                  UART
@@ -140,10 +152,28 @@ Includes
 #define DEBUG_UART_PERIPHERAL       AT91C_ID_US0
 
 
+#ifdef MPGL1
+/* %SSP% Configuration */
+/* SD SPI Peripheral Allocation (USART1) */
+#define SD_SSP                      USART1
+#define SD_BASE_PORT                AT91C_BASE_PIOA
+#define SD_CS_PIN                   PA_08_SD_CS_MCDA3
+#define USART1_US_CR_INIT           SD_US_CR_INIT
+#define USART1_US_MR_INIT           SD_US_MR_INIT
+#define USART1_US_IER_INIT          SD_US_IER_INIT
+#define USART1_US_IDR_INIT          SD_US_IDR_INIT
+#define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
+
+#define SSP1_IRQHandler             USART1_IrqHandler
+#endif /* MPGL1 */
+
+
 #ifdef MPGL2
 /* %SSP% Configuration */
 /* LCD SPI Peripheral Allocation (USART1) */
 #define LCD_SPI                     USART1
+#define LCD_BASE_PORT               AT91C_BASE_PIOB
+#define LCD_CS_PIN                  PB_12_LCD_CS
 #define USART1_US_CR_INIT           LCD_US_CR_INIT
 #define USART1_US_MR_INIT           LCD_US_MR_INIT
 #define USART1_US_IER_INIT          LCD_US_IER_INIT
@@ -247,7 +277,6 @@ MPGL1 has two buzzers, MPGL2 only has one */
 ------------------------------------------------------------------------------------------------------------------------
 Board-specific ANT definitions are kept here
 */
-//#define ANT_SSP_FLAGS          (AT91C_BASE_PIOB->PIO_PDSR & PB_22_ANT_USPI2_CS) 
 #define ANT_SSP_FLAGS           G_u32Ssp2ApplicationFlags 
 
 #define ANT_MRDY_READ_REG      (AT91C_BASE_PIOB->PIO_ODSR & PB_23_ANT_MRDY) 
@@ -917,6 +946,328 @@ exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
 or 2MHz, so no issues.
 */
 #define ANT_US_BRGR_INIT (u32)0x00000000  
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+SD USART Setup in SSP mode
+
+SPI mode to communicate with an SPI SD card. 
+*/
+/* USART Control Register - Page 734 */
+#define SD_US_CR_INIT (u32)0x00000060
+/*
+    31 - 20 [0] Reserved
+
+    19 [0] RTSDIS/RCS no release/force RTS to 1
+    18 [0] RTSEN/FCS no drive/force RTS to 0
+    17 [0] DTRDIS no drive DTR to 1
+    16 [0] DTREN no drive DTR to 0
+
+    15 [0] RETTO no restart timeout
+    14 [0] RSTNACK N/A
+    13 [0] RSTIT N/A
+    12 [0] SENDA N/A
+
+    11 [0] STTTO no start time-out
+    10 [0] STPBRK no stop break
+    09 [0] STTBRK no transmit break
+    08 [0] RSTSTA status bits not reset
+
+    07 [0] TXDIS transmitter not disabled
+    06 [1] TXEN transmitter enabled
+    05 [1] RXDIS receiver disabled
+    04 [0] RXEN receiver not enabled
+
+    03 [0] RSTTX not reset
+    02 [0] RSTRX not reset
+    01 [0] Reserved
+    00 [0] "
+*/
+
+/* USART Mode Register - page 737 */
+#define SD_US_MR_INIT (u32)0x004518CE
+/*
+    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
+    30 [0] MODSYNC Manchester start bit N/A
+    29 [0] MAN Machester encoding disabled
+    28 [0] FILTER no filter on Rx line
+
+    27 [0] Reserved
+    26 [0] MAX_ITERATION (ISO7816 mode only)
+    25 [0] "
+    24 [0] "
+
+    23 [0] INVDATA data is not inverted
+    22 [1] VAR_SYNC sync field is updated on char to US_THR
+    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
+    20 [0] INACK transmission starts as oons as byte is written to US_THR
+
+    19 [0] OVER 16x oversampling
+    18 [1] CLKO USART drives the SCK pin
+    17 [0] MODE9 CHRL defines char length
+    16 [1] CPOL clock is high when inactive
+
+    15 [0] CHMODE normal mode
+    14 [0] "
+    13 [0] NBSTOP N/A
+    12 [1] "
+
+    11 [1] PAR no parity
+    10 [0] "
+    09 [0] "
+    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
+
+    07 [1] CHRL 8 bits
+    06 [1] "
+    05 [0] USCLKS MCK
+    04 [0] "
+
+    03 [1] USART_MODE SPI Master
+    02 [1] "
+    01 [1] "
+    00 [0] "
+*/
+
+
+/* USART Interrupt Enable Register - Page 741 */
+#define SD_US_IER_INIT (u32)0x00000000
+/*
+    31 [0] Reserved
+    30 [0] "
+    29 [0] "
+    28 [0] "
+
+    27 [0] "
+    26 [0] "
+    25 [0] "
+    24 [0] MANE Manchester Error interrupt not enabled
+
+    23 [0] Reserved
+    22 [0] "
+    21 [0] "
+    20 [0] "
+
+    19 [0] CTSIC Clear to Send Change interrupt not enabled
+    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
+    17 [0] DSRIC Data Set Ready Change interrupt not enabled
+    16 [0] RIIC Ring Inidicator Change interrupt not enabled
+
+    15 [0] Reserved
+    14 [0] "
+    13 [0] NACK Non Ack interrupt not enabled
+    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
+
+    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
+    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
+    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
+    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
+
+    07 [0] PARE Parity Error interrupt not enabled
+    06 [0] FRAME Framing Error interrupt not enabled
+    05 [0] OVRE Overrun Error interrupt not enabled
+    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
+
+    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
+    02 [0] RXBRK Break Received interrupt not enabled
+    01 [0] TXRDY Transmitter Ready interrupt not enabled
+    00 [0] RXRDY Receiver Ready interrupt not enabled
+*/
+
+/* USART Interrupt Disable Register - Page 743 */
+#define SD_US_IDR_INIT (u32)~LCD_US_IER_INIT
+
+/* USART Baud Rate Generator Register - Page 752
+BAUD = MCK / CD 
+=> CD = MCK / BAUD
+BAUD desired = 1 Mbps
+=> CD = 48
+*/
+#define SD_US_BRGR_INIT (u32)0x00000030  /* VERIFY SPI CLOCK! */
+/*
+    31-20 [0] Reserved
+
+    19 [0] Reserved
+    18 [0] FP baud disabled
+    17 [0] "
+    16 [0] "
+
+    15 [0] CD = 48 = 0x30
+    14 [0] "
+    13 [0] "
+    12 [0] "
+
+    11 [0] "
+    10 [0] "
+    09 [0] "
+    08 [0] "
+
+    07 [0] "
+    06 [0] "
+    05 [1] "
+    04 [1] "
+
+    03 [0] "
+    02 [0] "
+    01 [0] "
+    00 [0] "
+*/
+
+
+/*--------------------------------------------------------------------------------------------------------------------
+Two Wire Interface setup
+
+I²C Master mode for ASCII LCD communication
+*/
+
+/*-------------------- TWI0 ---------------------*/
+/*Control Register*/
+#define TWI0_CR_INIT (u32)0x00000024
+/*
+    31-8 [0] Reserved
+
+    07 [0] SWRST - Software reset
+    06 [0] QUICK - SMBUS Quick Command
+    05 [1] SVDIS - Slave mode disable - disabled
+    04 [0] SVEN - Slave mode enable
+
+    03 [0] MSDIS - Master mode disable
+    02 [1] MSEN - Master mode enable
+    01 [0] STOP - Stop a transfer
+    00 [0] START - Start a transfer
+*/
+
+/*Master Mode Register*/
+#define TWI0_MMR_INIT (u32)0x00000000
+/*
+    31-24 [0] Reserved
+    
+    23 [0] Reserved
+    22 [0] DADR - device slave address - start with zero
+    21 [0] "
+    20 [0] "
+
+    19 [0] "
+    18 [0] "
+    17 [0] "
+    16 [0] "
+
+    15 [0] Reserved
+    14 [0] "
+    13 [0] "
+    12 [0] MREAD - Master Read Direction - 0 -> Write, 1 -> Read
+
+    11 [0] Reserved
+    10 [0] "
+    09 [0] IADRSZ - Internal device address - 0 = no internal device address
+    08 [0] "
+
+    07-0 [0] Reserved
+*/
+
+/* Clock Wave Generator Register */
+/* 
+    Calculation:
+        T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
+        T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
+
+        T_MCK - period of master clock = 1/(48 MHz)
+        T_low/T_high - period of the low and high signals
+        
+        CKDIV = 2, CHDIV and CLDIV = 59
+        T_low/T_high = 2.5 microseconds
+
+        Data frequency - 
+        f = ((T_low + T_high)^-1)
+        f = 200000 Hz 0r 200 kHz
+
+    Additional Rates:
+        50 kHz - 0x00027777
+       100 kHz - 0x00023B3B
+       200 kHz - 0x00021D1D
+       400 kHz - 0x00030707  *Maximum rate*
+*/
+#define TWI0_CWGR_INIT (u32)0x00021D1D
+/*
+    31-20 [0] Reserved
+    
+    19 [0] Reserved
+    18 [0] CKDIV
+    17 [1] "
+    16 [0] "
+
+    15 [0] CHDIV
+    14 [0] "
+    13 [0] "
+    12 [1] "
+
+    11 [1] "
+    10 [1] "
+    09 [0] "
+    08 [1] "
+
+    07 [0] CLDIV - Clock Low Divider
+    06 [0] "
+    05 [0] "
+    04 [1] "
+
+    03 [1] "
+    02 [1] "
+    01 [0] "
+    00 [1] "
+*/
+
+/*Interrupt Enable Register*/
+#define TWI0_IER_INIT (u32)0x00000142
+/*
+    31-16 [0] Reserved
+
+    15 [0] TXBUFE - Transmit Buffer Empty
+    14 [0] RXBUFF - Receive Buffer Full
+    13 [0] ENDTX - End of Transmit Buffer
+    12 [0] ENDRX - End of Receive Buffer
+
+    11 [0] EOSACC - End of Slave Address
+    10 [0] SCL_WS - Clock Wait State
+    09 [0] ARBLST - Arbitration Lost
+    08 [1] NACK - Not Acknowledge
+
+    07 [0] Reserved
+    06 [1] OVRE - Overrun Error
+    05 [0] GACC - General Call Access
+    04 [0] SVACC - Slave Access
+
+    03 [0] Reserved
+    02 [0] TXRDY - Transmit Holding Register Ready
+    01 [1] RXRDY - Receive Holding Register Ready
+    00 [0] TXCOMP - Transmission Completed
+*/
+
+/*Interrupt Disable Register*/
+#define TWI0_IDR_INIT (u32)0x0000FE35
+/*
+    31-16 [0] Reserved
+
+    15 [1] TXBUFE - Transmit Buffer Empty
+    14 [1] RXBUFF - Receive Buffer Full
+    13 [1] ENDTX - End of Transmit Buffer
+    12 [1] ENDRX - End of Receive Buffer
+
+    11 [1] EOSACC - End of Slave Address
+    10 [1] SCL_WS - Clock Wait State
+    09 [1] ARBLST - Arbitration Lost
+    08 [0] NACK - Not Acknowledge
+
+    07 [0] Reserved
+    06 [0] OVRE - Overrun Error
+    05 [1] GACC - General Call Access
+    04 [1] SVACC - Slave Access
+
+    03 [0] Reserved
+    02 [1] TXRDY - Transmit Holding Register Ready
+    01 [0] RXRDY - Receive Holding Register Ready
+    00 [1] TXCOMP - Transmission Completed
+*/
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

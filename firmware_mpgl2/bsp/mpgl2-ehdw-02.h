@@ -693,7 +693,7 @@ Configures the pin as an output or input.
     24 [1] PB_24_ANT_SRDY output enabled
 
     23 [1] PB_23_ANT_MRDY output enabled
-    22 [0] PB_22_ANT_USPI2_CS
+    22 [0] PB_22_ANT_USPI2_CS input
     21 [0] PB_21_ANT_RESET output NOT enabled yet
     20 [1] PB_20_LED0_RED output enabled
 
@@ -2063,8 +2063,6 @@ We don't want to lock access to the GPIO registers anyway, so we won't use this 
 /***********************************************************************************************************************
 $$$$$ PWM setup values
 ***********************************************************************************************************************/
-#define BUZZER0      AT91C_PWMC_CHID0
-
 #define PWM_CLK_INIT (u32)0x00010001
 /*
     31 [0] Reserved

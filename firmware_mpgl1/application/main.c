@@ -13,8 +13,7 @@ All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
 volatile u32 G_u32SystemFlags = 0;                     /* Global system flags */
-volatile u32 G_u32ApplicationFlags = 0;                /* Global applications flags: set when application is successfully initialized. Bit defs in configuration.h */
-
+volatile u32 G_u32ApplicationFlags = 0;                /* Global applications flags: set when application is successfully initialized */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* External global variables defined in other files (must indicate which file they are defined in) */
@@ -38,7 +37,6 @@ contraints but must complete execution regardless of success or failure of start
 2. Super loop which runs infinitely giving processor time to each application.  The total loop time should not exceed
 1ms of execution time counting all application execution.  SystemSleep() will execute to complete the remaining time in
 the 1ms period.
-
 ***********************************************************************************************************************/
 
 void main(void)
@@ -48,8 +46,8 @@ void main(void)
 
   /* Low level initialization */
   WatchDogSetup(); /* During development, set to not reset processor if timeout */
-  ClockSetup();
   GpioSetup();
+  ClockSetup();
   InterruptSetup();
   SysTickSetup();
 
@@ -62,62 +60,21 @@ void main(void)
 
   SspInitialize();
   TWIInitialize();
-  
+
   LcdInitialize();
   LedInitialize();
   ButtonInitialize();
-   
-  CapTouchInitialize();
   AntInitialize();
-  
+  SdCardInitialize();
+
   /* Application initialization */
-  //PongInitialize();
-  //BoardTestInitialize();
-  UserAppInitialize();
+//  BoardTestInitialize();
+//  AudioTestInitialize();
+    UserAppInitialize();
   
   /* Exit initialization */
   SystemStatusReport();
   G_u32SystemFlags &= ~_SYSTEM_INITIALIZING;
-  
-#if 0  /* LED Color Testing */
-  LedPWM(BLUE0, LED_PWM_100);
-  LedPWM(RED0, LED_PWM_100);
-  LedPWM(GREEN0, LED_PWM_100);
-  
-  LedPWM(BLUE1, LED_PWM_100);
-  LedPWM(RED1, LED_PWM_100);
-  LedPWM(GREEN1, LED_PWM_100);
-
-  LedPWM(BLUE2, LED_PWM_100);
-  LedPWM(RED2, LED_PWM_100);
-  LedPWM(GREEN2, LED_PWM_100);
-
-  LedPWM(BLUE3, LED_PWM_80);
-  LedPWM(RED3, LED_PWM_100);
-  LedPWM(GREEN3, LED_PWM_100);
-#endif
-
-#if 0  /* LED Color Testing / screen display hold */
-  LedOff(BLUE0);
-  LedOff(RED0);
-  LedOn(GREEN0);
-  
-  LedOn(BLUE1);
-  LedOn(RED1);
-  LedOff(GREEN1);
-
-  LedOff(BLUE2);
-  LedOn(RED2);
-  LedOff(GREEN2);
-
-  LedOn(BLUE3);
-  LedOff(RED3);
-  LedOff(GREEN3);
-  //LedUpdate();
-
-  while(1);
-#endif
-
   
   /* Super loop */  
   while(1)
@@ -130,17 +87,17 @@ void main(void)
     UartRunActiveState();
     SspRunActiveState();
     TWIRunActiveState();
-    CapTouchRunActiveState(); /* This function violates 1ms loop timing every 25ms */ 
     MessagingRunActiveState();
     DebugRunActiveState();
     LcdRunActiveState();
     AntRunActiveState();
+    SdCardRunActiveState();
 
     /* Applications */
-    //PongRunActiveState();
     //BoardTestRunActiveState();
+    //AudioTestRunActiveState();
     UserAppRunActiveState();
-        
+    
     /* System sleep*/
     HEARTBEAT_OFF();
     SystemSleep();

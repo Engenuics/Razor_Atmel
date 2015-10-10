@@ -1,8 +1,8 @@
 /***********************************************************************************************************************
-File: mpgl2-ehdw-01.c                                                                
+File: mpgl2-ehdw-02.c                                                                
 
 Description:
-This file provides core and GPIO functions for the mpgl2-ehdw-01 board.
+This file provides core and GPIO functions for the mpgl2-ehdw-02 board.
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -289,14 +289,6 @@ void PWMSetupAudio(void)
   AT91C_BASE_PWMC_CH0->PWMC_CDTYR    = PWM_CDTY0_INIT; /* Set 50% duty */
   AT91C_BASE_PWMC_CH0->PWMC_CDTYUPDR = PWM_CDTY0_INIT; /* Latch CDTY values */
 
-#ifdef MPGL1  
-  AT91C_BASE_PWMC_CH1->PWMC_CMR = PWM_CMR1_INIT;
-  AT91C_BASE_PWMC_CH1->PWMC_CPRDR    = PWM_CPRD1_INIT; /* Set current frequency  */
-  AT91C_BASE_PWMC_CH1->PWMC_CPRDUPDR = PWM_CPRD1_INIT; /* Latch CPRD values */
-  AT91C_BASE_PWMC_CH1->PWMC_CDTYR    = PWM_CDTY1_INIT; /* Set 50% duty */
-  AT91C_BASE_PWMC_CH1->PWMC_CDTYUPDR = PWM_CDTY1_INIT; /* Latch CDTY values */
-#endif /* MPGL1 */
-  
 } /* end PWMSetupAudio() */
 
 
@@ -309,7 +301,7 @@ Note, we don't care if we interrupt the current cycle, so the direct registers
 are used rather than the double-buffered values.
 
 Requires:
-  - u32Channel_ is the channel of interest - either BUZZER0 or BUZZER1 (MPGL1 only)
+  - u32Channel_ is the channel of interest - either BUZZER1 or BUZZER2 (MPGL1 only)
   - u16Frequency_ is in Hertz and should be in the range 100 - 20,000 since
     that is the audible range.  Higher and lower frequencies are allowed, though.
   - The PWM peripheral is correctly configured for the current processor clock speed.
@@ -326,7 +318,7 @@ void PWMAudioSetFrequency(u32 u32Channel_, u16 u16Frequency_)
   
   u32ChannelPeriod = CPRE_CLCK / u16Frequency_;
   
-  if(u32Channel_ == BUZZER0)
+  if(u32Channel_ == BUZZER1)
   {
     /* Set different registers depending on if PWM is already running */
     if (AT91C_BASE_PWMC->PWMC_SR & AT91C_PWMC_CHID0)
@@ -342,26 +334,7 @@ void PWMAudioSetFrequency(u32 u32Channel_, u16 u16Frequency_)
       AT91C_BASE_PWMC_CH0->PWMC_CDTYR = u32ChannelPeriod >> 1;
     }
   }
-  
-#ifdef MPGL1 
-  else if(u32Channel_ == BUZZER1)
-  {
-    /* Set different registers depending on if PWM is already running */
-    if (AT91C_BASE_PWMC->PWMC_SR & AT91C_PWMC_CHID1)
-    {
-      /* Beeper is already running, so use update registers */
-      AT91C_BASE_PWMC_CH1->PWMC_CPRDUPDR = u32ChannelPeriod;   
-      AT91C_BASE_PWMC_CH1->PWMC_CDTYUPDR = u32ChannelPeriod >> 1; 
-    }
-    else
-    {
-      /* Beeper is off, so use direct registers */
-      AT91C_BASE_PWMC_CH1->PWMC_CPRDR = u32ChannelPeriod;
-      AT91C_BASE_PWMC_CH1->PWMC_CDTYR = u32ChannelPeriod >> 1;
-    }
-  }
-#endif  
-  
+    
 } /* end PWMAudioSetFrequency() */
 
 
@@ -373,15 +346,18 @@ Enables a PWM channel.
 
 Requires:
   - All peripheral values should be configured
-  - u32Channel_ is AT91C_PWMC_CHID0 or AT91C_PWMC_CHID1
+  - u32Channel_ is BUZZER1
 
 Promises:
   - PWM for the selected channel is enabled
 */
 void PWMAudioOn(u32 u32Channel_)
 {
-  /* Enable the channel */
-  AT91C_BASE_PWMC->PWMC_ENA = u32Channel_;  
+  if(u32Channel_ == BUZZER1)
+  {
+    /* Enable the channel */
+    AT91C_BASE_PWMC->PWMC_ENA = u32Channel_;  
+  }
 
 } /* end PWMAudioOn() */
 
@@ -393,7 +369,7 @@ Description:
 Disables a PWM channel.
 
 Requires:
-  - u32Channel_ is AT91C_PWMC_CHID0 or AT91C_PWMC_CHID1
+  - u32Channel_ is BUZZER1
 
 Promises:
   - PWM for the selected channel is disabled

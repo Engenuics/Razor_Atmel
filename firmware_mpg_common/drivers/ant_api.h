@@ -21,7 +21,7 @@ Constants
 /**********************************************************************************************************************
 Type definitions
 **********************************************************************************************************************/
-typedef enum {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPEN, ANT_CLOSED} AntChannelStatusType;
+typedef enum {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED} AntChannelStatusType;
 typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
 
 typedef struct
@@ -48,7 +48,7 @@ master or if ANT misses a message that it was expecting based on the established
 of a paired channel (EVENT_RX_FAIL event is generated).  This should be communicated 
 in case a missed message is important to any application using ANT.  
 
-MSG_NAME  MSG_ID     D0       D1       D2      D3      D4      D5      D6
+MSG_NAME  MSG_ID     D_0      D_1      D_2     D_3     D_4     D_5     D_6
 ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
                     CODE                              MSG #   MSG #   MSG #
                                                       HIGH    MID     LOW

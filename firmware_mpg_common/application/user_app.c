@@ -1,23 +1,22 @@
 /**********************************************************************************************************************
-File: template.c                                                                
+File: user_app.c                                                                
 
 ----------------------------------------------------------------------------------------------------------------------
-To start a new task using this template:
- 1. Copy both template.c and template.h to the Application directory
+To start a new task using this user_app as a template:
+ 1. Copy both user_app.c and user_app.h to the Application directory
  2. Rename the files yournewtaskname.c and yournewtaskname.h
  3. Add yournewtaskname.c and yournewtaskname.h to the Application Include and Source groups in the IAR project
- 4. Use ctrl-h (make sure "Match Case" is checked) to find and replace all instances of "template" with "yournewtaskname"
- 5. Use ctrl-h to find and replace all instances of "Template" with "YourNewTaskName"
- 6. Use ctrl-h to find and replace all instances of "TEMPLATE" with "YOUR_NEW_TASK_NAME"
+ 4. Use ctrl-h (make sure "Match Case" is checked) to find and replace all instances of "user_app" with "yournewtaskname"
+ 5. Use ctrl-h to find and replace all instances of "UserApp" with "YourNewTaskName"
+ 6. Use ctrl-h to find and replace all instances of "USER_APP" with "YOUR_NEW_TASK_NAME"
  7. Add a call to YourNewTaskNameInitialize() in the init section of main
  8. Add a call to YourNewTaskNameRunActiveState() in the Super Loop section of main
- 9. Add a text description to aau8AppShortNames in SystemStatusReport for your task
-10. Update yournewtaskname.h per the instructions at the top of yournewtaskname.h
-11. Delete this text (between the dashed lines) and update the Description below to describe your task
+ 9. Update yournewtaskname.h per the instructions at the top of yournewtaskname.h
+10. Delete this text (between the dashed lines) and update the Description below to describe your task
 ----------------------------------------------------------------------------------------------------------------------
 
 Description:
-This is a template .c file new source code 
+This is a user_app.c file template 
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
@@ -26,10 +25,10 @@ Public functions:
 
 
 Protected System functions:
-void TemplateInitialize(void)
+void UserAppInitialize(void)
 Runs required initialzation for the task.  Should only be called once in main init section.
 
-void TemplateRunActiveState(void)
+void UserAppRunActiveState(void)
 Runs current task state.  Should only be called once in main loop.
 
 
@@ -42,7 +41,7 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32TemplateFlags;                       /* Global state flags */
+volatile u32 G_u32UserAppFlags;                       /* Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -53,16 +52,13 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
-extern const u8 G_au8MessageOK[];                      /* From utilities.c */
-extern const u8 G_au8MessageFAIL[];                    /* From utilities.c */
-
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Template_" and be declared as static.
+Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Template_pfnStateMachine;           /* The state machine function pointer */
-static u32 Template_u32Timeout;                        /* Timeout counter used across states */
+static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
+static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
 
 
 /**********************************************************************************************************************
@@ -79,7 +75,7 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------------------------------------------
-Function: TemplateInitialize
+Function: UserAppInitialize
 
 Description:
 Initializes the State Machine and its variables.
@@ -90,32 +86,25 @@ Requires:
 Promises:
   - 
 */
-void TemplateInitialize(void)
+void UserAppInitialize(void)
 {
-  u8 au8TemplateStartupMsg[] = "Template task initialization ";
 
-  /* If good initialization, set flag and set state to Idle */
-  DebugPrintf(au8TemplateStartupMsg);
+  /* If good initialization, set state to Idle */
   if( 1 /* Add condition for good init */)
   {
-    G_u32ApplicationFlags |= _APPLICATION_FLAGS_TEMPLATE;
-    DebugPrintf(G_au8MessageOK);
-    Template_pfnStateMachine = TemplateSM_Idle;
+    UserApp_StateMachine = UserAppSM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    DebugPrintf(G_au8MessageFAIL);
-    Template_pfnStateMachine = TemplateSM_FailedInit;
+    UserApp_StateMachine = UserAppSM_FailedInit;
   }
 
-  DebugPrintf();
-  
-} /* end TemplateInitialize() */
+} /* end UserAppInitialize() */
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-Function TemplateRunActiveState()
+Function UserAppRunActiveState()
 
 Description:
 Selects and runs one iteration of the current state in the state machine.
@@ -128,11 +117,11 @@ Requires:
 Promises:
   - Calls the function to pointed by the state machine function pointer
 */
-void TemplateRunActiveState(void)
+void UserAppRunActiveState(void)
 {
-  Template_pfnStateMachine();
+  UserApp_StateMachine();
 
-} /* end TemplateRunActiveState */
+} /* end UserAppRunActiveState */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -146,27 +135,27 @@ State Machine Function Definitions
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a message to be queued */
-static void TemplateSM_Idle(void)
+static void UserAppSM_Idle(void)
 {
     
-} /* end TemplateSM_Idle() */
+} /* end UserAppSM_Idle() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-static void TemplateSM_Error(void)          
+static void UserAppSM_Error(void)          
 {
-  Template_pfnStateMachine = TemplateSM_Idle;
+  UserApp_StateMachine = UserAppSM_Idle;
   
-} /* end TemplateSM_Error() */
+} /* end UserAppSM_Error() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* State to sit in if init failed */
-static void TemplateSM_FailedInit(void)          
+static void UserAppSM_FailedInit(void)          
 {
     
-} /* end TemplateSM_FailedInit() */
+} /* end UserAppSM_FailedInit() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

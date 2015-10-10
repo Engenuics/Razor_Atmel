@@ -25,7 +25,7 @@ TypeViolation=1
 UnspecRange=1
 ActionState=1
 [DebugChecksum]
-Checksum=1582870416
+Checksum=352684921
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -57,8 +57,13 @@ Fmt9={W}2:G_u32ApplicationFlags	4	0
 Fmt10={W}2:G_u32Ssp2ApplicationFlags	4	0
 Fmt11={W}2:UART_u32Int0Count	3	0
 Fmt12={W}2:UART_u8ActiveUarts	3	0
-Fmt13={W}3:Lcd_u8CurrentPage	3	0
-Fmt14={W}3:Lcd_u8PagesToUpdate	3	0
+Fmt13={W}3:Ant_u32OutgoingMessageCount	3	0
+Fmt14={W}3:Ant_u8AntNewRxMessages	3	0
+Fmt15={W}3:G_u32ApplicationFlags	4	0
+Fmt16={W}3:G_u32Ssp2ApplicationFlags	4	0
+Fmt17={W}3:Lcd_u8CurrentPage	3	0
+Fmt18={W}3:Lcd_u8PagesToUpdate	3	0
+Fmt19={W}4:G_u32AntApiCurrentDataTimeStamp	3	0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -77,8 +82,8 @@ Exclusions=
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\interrupts.c}.124.3" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_ssp.c}.770.7" 0 0 1 "" 0 "" 0
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\interrupts.c}.124.3" 0 0 1 "" 0 "" 0
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c}.1421.9" 0 0 1 "" 0 "" 0
 Count=2
 [Aliases]
 Count=0

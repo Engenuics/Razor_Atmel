@@ -19,7 +19,7 @@ File: debug.h
 #ifdef MPGL1 /* MPGL1-specific G_u32DebugFlags flags */
 #endif /* MPGL1 */
 
-#ifdef MPGL2 /* MPGL1-specific G_u32DebugFlags flags */
+#ifdef MPGL2 /* MPGL2-specific G_u32DebugFlags flags */
 #define _DEBUG_CAPTOUCH_VALUES_ENABLE  (u32)0x00010000      /* Flag if debug should print Captouch values */
 #endif /* MPGL2 */
 

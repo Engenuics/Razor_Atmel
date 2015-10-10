@@ -6,7 +6,7 @@ Provides a driver to use a USART peripheral in SPI/SSP mode to send and receive 
 Note that Master SPI devices keep !CS as a GPIO so it can be managed manually to more easily work with 
 the multitude of variants in slave device !CS requirements.
 
-This driver should work for SPI slaves with or without flow control, though you made need to make adjustments
+This driver should work for SPI slaves with or without flow control, though you may need to make adjustments
 to how data is timed.  A slave with flow control requires callback functions to manage flow control lines.
 
 If LSB first transmission is required, we can't use the DMA if we let the SSP task manage the bit flipping.
@@ -154,7 +154,7 @@ Description:
 Requests access to an SSP resource.  If the resource is available, the transmit and receive parameters are set up
 and the peripheral is made ready to use in the application. The peripheral will be configured in different ways
 for different SSP modes.  The following modes are supported:
-SPI_MASTER: transmit and receive using peripheral DMA controller.
+SPI_MASTER: transmit and receive using peripheral DMA controller; transmit occurs through the Message API
 SPI_SLAVE: transmit through Message Task; receive set up per-byte using current and next DMA pointers and managed into circular buffer.
 SPI_SLAVE_FLOW_CONTROL:
 
@@ -676,22 +676,25 @@ void SspGenericHandler(void)
 {
   u32 u32Byte;
   u32 u32Timeout;
+  u32 u32Current_CSR;
+  
+  /* Get a copy of CSR because reading it changes it */
+  u32Current_CSR = SSP_psCurrentISR->pBaseAddress->US_CSR;
 
-  /* Check for CS change state interrupt - only enabled on Slave SPI SSP peripherals */
+  /* Check for CS change state interrupt - only enabled on Slave SSP peripherals */
   if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_CTSIC) && 
-      (SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_CTSIC) )
+      (u32Current_CSR & AT91C_US_CTSIC) )
   {
     /* Is the CS pin asserted now? */
     if( (SSP_psCurrentISR->pCsGpioAddress->PIO_PDSR & SSP_psCurrentISR->u32CsPin) == 0)
     {
-      /* Flag that CS is asserted so it can't be DEASSERTED */
+      /* Flag that CS is asserted */
       *SSP_pu32SspApplicationFlagsISR |= _SSP_CS_ASSERTED;
-      *SSP_pu32SspApplicationFlagsISR &= ~(_SSP_CS_DEASSERTED | _SSP_TX_COMPLETE | _SSP_RX_COMPLETE);
+      *SSP_pu32SspApplicationFlagsISR &= ~(_SSP_TX_COMPLETE | _SSP_RX_COMPLETE);
     }
     else
     {
-      /* Flag that CS is deasserted so it can't be asserted */
-      *SSP_pu32SspApplicationFlagsISR |= _SSP_CS_DEASSERTED;
+      /* Flag that CS is deasserted */
       *SSP_pu32SspApplicationFlagsISR &= ~_SSP_CS_ASSERTED;
      
       /* Make sure RCR is 1 for next transmission on Slave - no flow control devices only */
@@ -704,9 +707,12 @@ void SspGenericHandler(void)
 
   /*** SSP ISR transmit handling for flow-control devices that do not use DMA ***/
   if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_TXEMPTY) && 
-      (SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_TXEMPTY) )
+      (u32Current_CSR & AT91C_US_TXEMPTY) )
   {
+    /* Decrement counter and read the dummy byte so the SSP peripheral doesn't oveerrun */
     SSP_psCurrentISR->u32CurrentTxBytesRemaining--;
+    u32Byte = SSP_psCurrentISR->pBaseAddress->US_RHR;
+    
     if(SSP_psCurrentISR->u32CurrentTxBytesRemaining != 0)
     {
       /* Advance the pointer (non-circular buffer), load the next byte and use the callback */
@@ -732,22 +738,10 @@ void SspGenericHandler(void)
       UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
       DeQueueMessage(&SSP_psCurrentISR->psTransmitBuffer);
  
-      /* Make sure the dummy byte has arrived */
-      while( !(SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_RXRDY) );
-
-      /* Re-enable Rx interrupt after a dummy read to clear the flag */    
-      u32Byte = SSP_psCurrentISR->pBaseAddress->US_RHR;
+      /* Re-enable Rx interrupt and clean-up the operation */    
       SSP_psCurrentISR->pBaseAddress->US_IER = AT91C_US_RXRDY;
-     
       *SSP_pu32SspApplicationFlagsISR |= _SSP_TX_COMPLETE; 
       SSP_psCurrentISR->fnSlaveTxFlowCallback();
-      
-      /* !!!!! The read is done after the callback to maximize the time for the dummy byte to
-      clock in.  This is rather specific to the ANT implementation where we know the last callback
-      does not result in an additional byte being sent.  In a more generic system, the following
-      two lines may need to come before the callback (and in this system we could spend some 
-      more time profiling the timing of the above code to see if the dummy read would occur in time. */
- 
     }
   } /* end AT91C_US_TXEMPTY */
   
@@ -769,7 +763,7 @@ void SspGenericHandler(void)
     {
       SSP_u32AntCounter++;
     }
-    
+    /* Send the byte to the Rx buffer; since we only do one byte at a time in this mode, then _SSP_RX_COMPLETE */
     **(SSP_psCurrentISR->ppu8RxNextByte) = (u8)u32Byte;
     *SSP_pu32SspApplicationFlagsISR |= _SSP_RX_COMPLETE;
 
@@ -782,7 +776,7 @@ void SspGenericHandler(void)
     
   /* ENDRX Interrupt when all requested bytes have been received */
   if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_ENDRX) && 
-      (SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_ENDRX) )
+      (u32Current_CSR & AT91C_US_ENDRX) )
   {
     /* Master mode and Slave mode operate differently */
     if(SSP_psCurrentISR->SpiMode == SPI_MASTER)
@@ -821,7 +815,7 @@ void SspGenericHandler(void)
 
   /* ENDTX Interrupt when all requested transmit bytes have been sent (if enabled) */
   if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_ENDTX) && 
-      (SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_ENDTX) )
+      (u32Current_CSR & AT91C_US_ENDTX) )
   {
     /* Update this message token status and then DeQueue it */
     UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
@@ -909,7 +903,7 @@ void SspSM_Idle(void)
       if(SSP_psCurrentSsp->SpiMode == SPI_SLAVE_FLOW_CONTROL)
       {
         /* At this point, CS is asserted and the master is waiting for flow control.
-        Load the first byte into US_THR, enable the interrupt, and use the FC callback. */
+        Load in the message parameters. */
         SSP_psCurrentSsp->u32CurrentTxBytesRemaining = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
         SSP_psCurrentSsp->pu8CurrentTxData = SSP_psCurrentSsp->psTransmitBuffer->pu8Message;
 
@@ -920,10 +914,12 @@ void SspSM_Idle(void)
           u32Byte = __RBIT(u32Byte)>>24;
         }
         
-        /* Reset the peripheral status first (clears UNRE, for example) */
-        SSP_psCurrentSsp->pBaseAddress->US_CR = AT91C_US_RSTSTA;
+        /* Reset the transmitter since we have not been managing dummy bytes and it tends to be
+        in the middle of a transmission or something that causes the wrong byte to get sent (at least on startup). */
+        SSP_psCurrentSsp->pBaseAddress->US_CR = (AT91C_US_RSTTX);
+        SSP_psCurrentSsp->pBaseAddress->US_CR = (AT91C_US_TXEN);
         SSP_psCurrentSsp->pBaseAddress->US_THR = (u8)u32Byte;
-        SSP_psCurrentISR->pBaseAddress->US_IDR = AT91C_US_RXRDY;
+        SSP_psCurrentSsp->pBaseAddress->US_IDR = AT91C_US_RXRDY;
         SSP_psCurrentSsp->pBaseAddress->US_IER = AT91C_US_TXEMPTY;
         SSP_psCurrentSsp->fnSlaveTxFlowCallback();
       }
@@ -931,7 +927,7 @@ void SspSM_Idle(void)
       else
       {
         /* Load the PDC counter and pointer registers */
-        SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; /* CHECK */
+        SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
         SSP_psCurrentSsp->pBaseAddress->US_TCR = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
    
         /* When TCR is loaded, the ENDTX flag is cleared so it is safe to enable the interrupt */

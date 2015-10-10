@@ -38,7 +38,7 @@ if(AntOpenChannel())
 }
 
 bool AntCloseChannel(void)
-Queues a request to open the configured channel.
+Queues a request to close the configured channel.
 Returns TRUE if message is successfully queued.  Application should monitor AntRadioStatus()
 for channel status.
 if(AntCloseChannel())
@@ -60,10 +60,10 @@ Query the ANT radio channel status.
 
 
 ***ANT DATA FUNCTIONS***
-bool AntSendBroadcastMessage(u8 *pu8Data_)
+bool AntQueueBroadcastMessage(u8 *pu8Data_)
 Queue a broadcast data message.
 
-bool AntSendAcknowledgedMessage(u8 *pu8Data_)
+bool AntQueueAcknowledgedMessage(u8 *pu8Data_)
 Queue an acknowledged data message.
 
 bool AntReadData(void)
@@ -82,6 +82,7 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_<type>AntApi"
 ***********************************************************************************************************************/
 u32 G_u32AntApiCurrentDataTimeStamp = 0;                                /* Current G_u32SystemTime1s */
+
 AntApplicationMessageType G_eAntApiCurrentMessageClass = ANT_EMPTY;  /* Type of data */
 u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];               /* Array for message data */
 
@@ -226,6 +227,7 @@ bool AntOpenChannel(void)
 
   /* Update the checksum value and queue the open channel message */
   au8AntOpenChannel[3] = AntCalculateTxChecksum(au8AntOpenChannel);
+  G_u32AntFlags |= _ANT_FLAGS_CHANNEL_OPEN_PENDING;
  
   return( AntQueueOutgoingMessage(au8AntOpenChannel) );
   
@@ -254,7 +256,8 @@ bool AntCloseChannel(void)
 
   /* Update the checksum value and queue the close channel message*/
   au8AntCloseChannel[3] = AntCalculateTxChecksum(au8AntCloseChannel);
-
+  G_u32AntFlags |= _ANT_FLAGS_CHANNEL_CLOSE_PENDING;
+  
   return( AntQueueOutgoingMessage(au8AntCloseChannel) );
 
 } /* end AntCloseChannel() */
@@ -278,7 +281,7 @@ bool AntUnassignChannel(void)
 
   /* Update checksum and queue the unassign channel message */
   au8AntUnassignChannel[3] = AntCalculateTxChecksum(au8AntUnassignChannel);
-
+  G_u32AntFlags &= ~_ANT_FLAGS_CHANNEL_CONFIGURED;
   return( AntQueueOutgoingMessage(au8AntUnassignChannel) );
 
 } /* end AntUnassignChannel() */
@@ -294,23 +297,31 @@ Requires:
   - G_u32AntFlags are up to date
 
 Promises:
-  - Returns one of {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPEN, ANT_CLOSED}
+  - Returns one of {ANT_UNCONFIGURED, ANT_CLOSING, ANT_OPEN, ANT_CLOSED}
 
 */
 AntChannelStatusType AntRadioStatus(void)
 {
-  if( !(G_u32AntFlags & _ANT_FLAGS_CHANNEL_CONFIGURED) )
+  if(G_u32AntFlags & _ANT_FLAGS_CHANNEL_CONFIGURED)
   {
-    return ANT_UNCONFIGURED;
-  }
-  else if(G_u32AntFlags & _ANT_FLAGS_CHANNEL_OPEN)
-  {
-    return ANT_OPEN;
+    if(G_u32AntFlags & _ANT_FLAGS_CHANNEL_CLOSE_PENDING)
+    {
+      return ANT_CLOSING;
+    }
+    else if(G_u32AntFlags & _ANT_FLAGS_CHANNEL_OPEN)
+    {
+      return ANT_OPEN;
+    }
+    else
+    {
+      return ANT_CLOSED;
+    }
   }
   else
   {
-    return ANT_CLOSED;
+    return ANT_UNCONFIGURED;
   }
+  
   
 } /* end AntRadioStatus () */
 
@@ -331,13 +342,13 @@ Promises:
 */
 bool AntQueueBroadcastMessage(u8 *pu8Data_)
 {
-  static u8 au8AntBroadcastDataMessage[] = {MESG_DATA_SIZE, MESG_BROADCAST_DATA_ID, CH, D0, D1, D2, D3, D4, D5, D6, D7, CS};
+  static u8 au8AntBroadcastDataMessage[] = {MESG_DATA_SIZE, MESG_BROADCAST_DATA_ID, CH, D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, CS};
 
   /* Update the dynamic message data */
   au8AntBroadcastDataMessage[2] = G_stAntSetupData.AntChannel;
   for(u8 i = 0; i < ANT_DATA_BYTES; i++)
   {
-    au8AntBroadcastDataMessage[2 + i] = *(pu8Data_ + i);
+    au8AntBroadcastDataMessage[3 + i] = *(pu8Data_ + i);
   }
  
   au8AntBroadcastDataMessage[11] = AntCalculateTxChecksum(au8AntBroadcastDataMessage);
@@ -360,20 +371,19 @@ Promises:
 */
 bool AntQueueAcknowledgedMessage(u8 *pu8Data_)
 {
-  static u8 au8AntAckDataMessage[] = {MESG_DATA_SIZE, MESG_ACKNOWLEDGED_DATA_ID, CH, D0, D1, D2, D3, D4, D5, D6, D7, CS};
+  static u8 au8AntAckDataMessage[] = {MESG_DATA_SIZE, MESG_ACKNOWLEDGED_DATA_ID, CH, D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, CS};
 
   /* Update the dynamic message data */
   au8AntAckDataMessage[2] = G_stAntSetupData.AntChannel;
   for(u8 i = 0; i < ANT_DATA_BYTES; i++)
   {
-    au8AntAckDataMessage[2 + i] = *(pu8Data_ + i);
+    au8AntAckDataMessage[3 + i] = *(pu8Data_ + i);
   }
  
   au8AntAckDataMessage[11] = AntCalculateTxChecksum(au8AntAckDataMessage);
   return( AntQueueOutgoingMessage(au8AntAckDataMessage) );
  
 } /* end AntQueueAcknowledgedMessage */
-
 
 /*-----------------------------------------------------------------------------/
 Function: AntReadData

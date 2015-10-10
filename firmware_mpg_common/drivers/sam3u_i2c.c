@@ -3,7 +3,9 @@ File: sam3u_TWI.c
 
 Description: 
 Provides a driver to use TWI0 peripheral to send and receive data using interrupts.
-Currently Set at - 200kHz Master Mode
+Currently Set at - 200kHz Master Mode.
+This is a simpler version of a serial system driver that does not use resource control
+through Request() and Release() calls
 
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -124,18 +126,19 @@ bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_)
     
     return TRUE;
   }
-}
+
+} /* end TWI0ReadByte() */
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 Function: TWI0ReadData
 
 Description:
 Queues a TWI Read Message into TWI_MessageBuffer, will be processed after all msgs queued before it
-  - Multibyte read
 
 Requires:
   - Initialization of the task
-  - Requires that pu8RxBuffer has the space to save the data
+  - Requires pu8RxBuffer has the space to save the data
 
 Promises:
   - Queues a multi byte command into the command array
@@ -467,6 +470,7 @@ static void TWIManualMode(void)
       
 } /* end TWIManualMode() */
 
+
 /*----------------------------------------------------------------------------------------------------------------------
 Function: TWI0_IrqHandler
 
@@ -586,7 +590,8 @@ void TWISM_Idle(void)
     }
   }
 } /* end TWISM_Idle() */
-        
+     
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Transmit in progress until current bytes have reached 0.  On exit, the transmit message must be dequeued.
 */

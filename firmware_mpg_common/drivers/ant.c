@@ -32,10 +32,8 @@ All Global variable names shall start with "G_<type>Ant"
 ***********************************************************************************************************************/
 
 /* New variables */
-u32 G_u32AntFlags;                            /* Flag bits for ANT-related information */
-
-AntSetupDataType G_stAntSetupData;            /* ANT channel configuration data */
-
+u32 G_u32AntFlags;                                    /* Flag bits for ANT-related information */
+AntSetupDataType G_stAntSetupData;                    /* ANT channel configuration data */
 AntApplicationMsgListType *G_sAntApplicationMsgList;  /* Public linked list of messages from ANT to the application */
 
 u8 G_au8AntMessageOk[]   = "OK\n\r";
@@ -68,11 +66,12 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "Ant_<type>Name" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type Ant_pfnStateMachine;                 /* The ANT state machine function pointer */
-static u32 Ant_u32RxTimeoutCounter;                     /* Dedicated timer for receiving bytes */
-static u32 Ant_u32TxTimeoutCounter;                     /* Dedicated timer for transmitting bytes */
+static u32 Ant_u32RxTimer;                              /* Dedicated timer for receiving bytes */
+static u32 Ant_u32TxTimer;                              /* Dedicated timer for transmitting bytes */
 
 static u32 Ant_u32TxByteCounter = 0;                    /* Counter counts callbacks on sent bytes */
 static u32 Ant_u32RxByteCounter = 0;                    /* Counter counts callbacks on received bytes */
+static u32 Ant_u32RxTimeoutCounter = 0;                 /* Increments any time an ANT reception times out */
 static u32 Ant_u32UnexpectedByteCounter = 0;            /* Increments any time a byte is received that was not expected value */
 static u32 Ant_u32CurrentTxMessageToken = 0;            /* Token for message currently being sent to ANT */
 
@@ -87,7 +86,9 @@ static u8 *Ant_pu8AntRxBufferCurrentChar;               /* Pointer to the curren
 static u8 *Ant_pu8AntRxBufferUnreadMsg;                 /* Pointer to unread chars in the AntRxBuffer */
 static u8 Ant_u8AntNewRxMessages;                       /* Counter for number of new messages in AntRxBuffer */
 
+static u32 Ant_u32ApplicationMessageCount = 0;          /* Counts messages queued on G_sAntApplicationMsgList */
 static AntOutgoingMessageListType *Ant_psDataOutgoingMsgList; /* Linked list of outgoing ANT-formatted messages */
+static u32 Ant_u32OutgoingMessageCount = 0;             /* Counts messages queued on Ant_psDataOutgoingMsgList */
 
 static u8 Ant_u8SlaveMissedMessageHigh = 0;             /* Counter for missed messages if device is a slave */
 static u8 Ant_u8SlaveMissedMessageMid = 0;              /* Counter for missed messages if device is a slave */
@@ -99,7 +100,6 @@ static u32 Ant_DebugRxMessageCounter = 0;
 static u32 Ant_DebugTotalRxMessages = 0;
 static u32 Ant_DebugProcessRxMessages = 0;
 static u32 Ant_DebugQueuedDataMessages = 0;
-static u32 Ant_DebugUnexpectedRxByte = 0;
 
 
 /***********************************************************************************************************************
@@ -162,16 +162,41 @@ static void AntSyncSerialInitialize(void)
   {
     /* Receive and process the restart message */
     AntRxMessage();
-    G_u32AntFlags &= ~_ANT_FLAGS_RX_IN_PROGRESS;
     AntProcessMessage();   
-    
-    /* Send out version request message and expect response */
+
+  /* Send out version request message and expect response */
     au8ANTGetVersion[4] = AntCalculateTxChecksum(&au8ANTGetVersion[0]);
     AntTxMessage(&au8ANTGetVersion[0]);    
     AntExpectResponse(MESG_VERSION_ID, ANT_MSG_TIMEOUT_MS);
   }
  
 } /* end AntSyncSerialInitialize */
+
+
+/*-----------------------------------------------------------------------------
+Function: AntSrdyPulse
+
+Description:
+Pulses Srdy with added delays on the front and middle. 
+
+Requires:
+  - 
+
+Promises:
+  - A delay controlled by ANT_SRDY_DELAY is passed
+  - SRDY is asserted
+  - A delay of ANT_SRDY_PERIOD is passed
+  - SRDY is deasserted
+*/
+static void AntSrdyPulse(void)
+{
+  for(u32 i = 0; i < ANT_SRDY_DELAY; i++);
+  SYNC_SRDY_ASSERT();
+  
+  for(u32 i = 0; i < ANT_SRDY_PERIOD; i++);
+  SYNC_SRDY_DEASSERT();
+
+} /* end AntSrdyPulse() */
 
 
 /*-----------------------------------------------------------------------------
@@ -200,7 +225,9 @@ static void AntRxMessage(void)
   u8 u8Length;
   u32 u32CurrentRxByteCount;
   u8 au8RxTimeoutMsg[] = "AntRx: timeout\n\r";
- 
+  u8 au8RxFailMsg[] = "AntRx: message failed\n\r";
+  bool bReceptionError = FALSE;
+  
   /* Ensure we have CS flag */
   if( !( IS_SEN_ASSERTED() ) )
   {
@@ -208,9 +235,8 @@ static void AntRxMessage(void)
   }
   
   /* Initialize the receive timer and get a snapshot of current byte count */
-  //u32CurrentRxByteCount = 0;
   u32CurrentRxByteCount = Ant_u32RxByteCounter;
-  Ant_u32RxTimeoutCounter = 0;
+  Ant_u32RxTimer = 0;
   
   /* If the Global _ANT_FLAGS_TX_INTERRUPTED flag has been set, then we have already read the TX_SYNC byte */
   if(G_u32AntFlags & _ANT_FLAGS_TX_INTERRUPTED)
@@ -226,35 +252,30 @@ static void AntRxMessage(void)
   else
   {
     /* Do short delay then cycle SRDY to get the first byte */
-    for(u32 i = 0; i < ANT_SRDY_DELAY; i++);
-    SYNC_SRDY_ASSERT();
-    SYNC_SRDY_DEASSERT();    
+    AntSrdyPulse();
 
-    /* Begin the receive cycle that is monitored by a timeout of about 500us - this should be plenty of time
+    /* Begin the receive cycle that takes place using interrupts and callbacks and is monitored by a timeout of about 500us - this should be plenty of time
     to receive even the longest ANT message but still only half the allowed 1ms loop time for the system. */
     
     /* Read the first byte when it comes in */
     while( !(ANT_SSP_FLAGS & _SSP_RX_COMPLETE) &&
-           (Ant_u32RxTimeoutCounter < ANT_ACTIVITY_TIME_COUNT) )
+           (Ant_u32RxTimer < ANT_ACTIVITY_TIME_COUNT) )
     {
-      Ant_u32RxTimeoutCounter++;
+      Ant_u32RxTimer++;
     }
   }
   
-  if( Ant_u32RxTimeoutCounter > ANT_ACTIVITY_TIME_COUNT) 
+  if( Ant_u32RxTimer > ANT_ACTIVITY_TIME_COUNT) 
   {
     AntAbortMessage();
     DebugPrintf(au8RxTimeoutMsg);
-    ANT_SSP_FLAGS &= ~_SSP_CS_ASSERTED;
     return;
   }
 
   /* _SSP_RX_COMPLETE flag will be set and the Rx callback will have run.  
-  The callback does NOT toggle SRDY yet because the CS_ASSERTED flag will 
-  still be set indicating that this is the first byte. 
-  CS_ASSERTED and _SSP_RX_COMPLETE should still
+  The callback does NOT toggle SRDY yet.  _SSP_RX_COMPLETE should still
   be set from AntTxMessage if that's what got us here. */
-  ANT_SSP_FLAGS &= ~(_SSP_RX_COMPLETE | _SSP_CS_ASSERTED);
+  ANT_SSP_FLAGS &= ~_SSP_RX_COMPLETE;
    
   /* One way or the other, we now have a potential SYNC byte at Ant_pu8AntRxBufferCurrentChar.  
   Proceed to test it and receive the rest of the message */
@@ -263,34 +284,34 @@ static void AntRxMessage(void)
     /* Flag that a reception is in progress */
     G_u32AntFlags |= _ANT_FLAGS_RX_IN_PROGRESS;
     
-    /* Cycle SRDY to get the next byte (length) */
-    for(u32 i = 0; i < ANT_SRDY_DELAY; i++);
-    SYNC_SRDY_ASSERT();
-    SYNC_SRDY_DEASSERT();   
+    /* Delay and then cycle SRDY to get the next byte (length) */
+    AntSrdyPulse();
     
     /* The SSP interrupts and Rx callback handle the rest of the reception until a full message is received. 
-    We know it is received when SSP_CS_DEASSERTED is flagged. */
-    while( !(ANT_SSP_FLAGS & _SSP_CS_DEASSERTED) &&
-           (Ant_u32RxTimeoutCounter < ANT_ACTIVITY_TIME_COUNT) )
+    We know it is received when SEN is deasserted. */
+    while( IS_SEN_ASSERTED() && (Ant_u32RxTimer < ANT_ACTIVITY_TIME_COUNT) )
     {
-      Ant_u32RxTimeoutCounter++;
+      Ant_u32RxTimer++;
     }
-   
+  
+    /* One way or another, this Rx is done! */
+    G_u32AntFlags &= ~_ANT_FLAGS_RX_IN_PROGRESS;
+    ANT_SSP_FLAGS &= ~_SSP_RX_COMPLETE;
+
     /* Check that the above loop ended as expected and didn't time out */
-    if(ANT_SSP_FLAGS & _SSP_CS_DEASSERTED)
+    if(Ant_u32RxTimer < ANT_ACTIVITY_TIME_COUNT)
     {  
-      /* Clear flags */
-      ANT_SSP_FLAGS &= ~(_SSP_RX_COMPLETE | _SSP_CS_DEASSERTED);
-      
       /* Update counter to see how many bytes we should have */
       u32CurrentRxByteCount = Ant_u32RxByteCounter - u32CurrentRxByteCount;
     
       /* RxBufferCurrentChar is still pointing to the SYNC byte. Validate what should be a complete message now. */
       u8Checksum = *Ant_pu8AntRxBufferCurrentChar;
       AdvanceAntRxBufferCurrentChar();
+      
+      /* Read the length byte and add two to count the length byte and message ID but not checksum as length will be our checksum counter */
       u8Length = *Ant_pu8AntRxBufferCurrentChar + 2;  
       
-      /* Optional check */
+      /* Optional check (u8Length does not include the SYNC byte or Checksum byte so add 2) */
       if(u32CurrentRxByteCount != (u8Length + 2) )
       {
         /* Could throw out the message right away - this could save some potential weird memory accesses
@@ -298,7 +319,7 @@ static void AntRxMessage(void)
         G_u32AntFlags |= _ANT_FLAGS_LENGTH_MISMATCH;
       }
  
-      /* Validate the remaining bytes based on the u8Length*/
+      /* Validate the remaining bytes based on u8Length*/
       do
       {
         u8Checksum ^= *Ant_pu8AntRxBufferCurrentChar;                     
@@ -318,16 +339,43 @@ static void AntRxMessage(void)
         AdvanceAntRxBufferUnreadMsgPointer();
       }
     } 
+    else
+    {
+      Ant_u32RxTimeoutCounter++;
+      bReceptionError = TRUE;
+    }
   } /* end if(*Ant_pu8AntRxBufferCurrentChar == MESG_TX_SYNC) */
   else
   {
     /* Otherwise we have received an unexpected byte -- flag it, clear Ssp flags and abandon the byte */
     Ant_u32UnexpectedByteCounter++;
-    ANT_SSP_FLAGS = 0;
+    bReceptionError = TRUE;
   }
 
-  /* In all cases, finish by advancing the current byte pointer */
-  AdvanceAntRxBufferCurrentChar();
+  /* If a reception error has occured, */
+  if(bReceptionError)
+  {
+    /* Toggle SRDY until CS deasserts and throw out the message */
+    DebugPrintf(au8RxFailMsg);
+    while( IS_SEN_ASSERTED()  && (Ant_u32RxTimer < ANT_ACTIVITY_TIME_COUNT) )
+    {
+      Ant_u32RxTimer++;
+      AntSrdyPulse();
+    }
+   
+    /* Since we have flow control, we can safely assume that no other messages
+    have come in and Ant_pu8AntRxBufferNextChar is pointing to where the next 
+    valid message WILL come in - so push all the pointers there. */
+    Ant_pu8AntRxBufferCurrentChar = Ant_pu8AntRxBufferNextChar;
+    Ant_pu8AntRxBufferUnreadMsg = Ant_pu8AntRxBufferNextChar;
+    ANT_SSP_FLAGS &= ~(_SSP_TX_COMPLETE | _SSP_RX_COMPLETE);
+
+  }
+  else
+  {
+    /* In all other cases, finish by advancing the current byte pointer */
+    AdvanceAntRxBufferCurrentChar();
+  }
   
 } /* end AntRxMessage() */
 
@@ -482,6 +530,8 @@ void AntInitialize(void)
       DebugPrintf(G_au8AntMessageOk);
       DebugPrintf(Ant_u8AntVersion);
       DebugLineFeed();
+      
+      G_u32AntFlags &= ~_ANT_FLAGS_RESTART;
       Ant_pfnStateMachine = AntSM_Idle;
     }
     else
@@ -577,53 +627,49 @@ bool AntTxMessage(u8 *pu8AntTxMessage_)
   }
   
   /* Initialize the timeout timer and notify ANT that the Host wishes to send a message */
-  Ant_u32RxTimeoutCounter = 0;
+  Ant_u32RxTimer = 0;
   SYNC_MRDY_ASSERT();                          
 
   /* Wait for SEN to be asserted indicating ANT is ready for a message */
-  while ( !IS_SEN_ASSERTED() &&
-          (Ant_u32RxTimeoutCounter < ANT_ACTIVITY_TIME_COUNT) )
+  while ( !IS_SEN_ASSERTED() && (Ant_u32RxTimer < ANT_ACTIVITY_TIME_COUNT) )
   {
-    Ant_u32RxTimeoutCounter++;
+    Ant_u32RxTimer++;
   }
   
   /* If we timed out, then clear MRDY and exit */
-  if(Ant_u32RxTimeoutCounter > ANT_ACTIVITY_TIME_COUNT)
+  if(Ant_u32RxTimer > ANT_ACTIVITY_TIME_COUNT)
   {
-   SYNC_MRDY_DEASSERT();                          
-   DebugPrintf(au8TxTimeoutMsg);
-   return(FALSE);
+    SYNC_MRDY_DEASSERT();                          
+    DebugPrintf(au8TxTimeoutMsg);
+    return(FALSE);
   }
   
   /* Else we have SEN flag; queue to read 1 byte after a short delay before toggling SRDY */
-  for(u32 i = 0; i < ANT_SRDY_DELAY; i++);
-  SYNC_SRDY_ASSERT();
-  SYNC_SRDY_DEASSERT();    
+  AntSrdyPulse();
 
   /* Wait for the first byte to come in via the ISR / Rx Callback*/
-  while( !(ANT_SSP_FLAGS & _SSP_RX_COMPLETE) &&
-         (Ant_u32RxTimeoutCounter < ANT_ACTIVITY_TIME_COUNT) )
+  while( !(ANT_SSP_FLAGS & _SSP_RX_COMPLETE) && (Ant_u32RxTimer < ANT_ACTIVITY_TIME_COUNT) )
   {
-    Ant_u32RxTimeoutCounter++;
+    Ant_u32RxTimer++;
   }
 
+  /* Ok to deassert MRDY now */
   SYNC_MRDY_DEASSERT();                     
 
   /* If we timed out now, then clear MRDY and exit.  Because CS is still asserted, the task
   will attempt to read a message but fail and eventually abort. */
-  if(Ant_u32RxTimeoutCounter > ANT_ACTIVITY_TIME_COUNT)
+  if(Ant_u32RxTimer > ANT_ACTIVITY_TIME_COUNT)
   {
    DebugPrintf(au8TxTimeoutMsg);
    return(FALSE);
   }
           
   /* When the byte comes in, the SSP module will set the _SSP_RX_COMPLETE flag and also call the 
-  Rx callback.  The callback does NOT toggle SRDY at this time because the CS_ASSERTED flag will 
-  still be set indicating that this is the first byte.  We must look at this byte to determine if
-  ANT initiated this particular communication and is telling us that a message is coming in, or if 
-  we initiated the communication and ANT is allowing us to transmit. */
+  Rx callback but does not toggle SRDY at this time.  We must look at this byte to determine if ANT 
+  initiated this particular communication and is telling us that a message is coming in, or if we 
+  initiated the communication and ANT is allowing us to transmit. */
 
-  /* Read the byte - don't advance the pointer */
+  /* Read the byte - don't advance the pointer yet */
   u8Byte = *Ant_pu8AntRxBufferCurrentChar;                       
 
   /* If the byte is TX_SYNC, then ANT wants to send a message which must be done first */
@@ -637,8 +683,8 @@ bool AntTxMessage(u8 *pu8AntTxMessage_)
   AdvanceAntRxBufferCurrentChar();
   AdvanceAntRxBufferUnreadMsgPointer();
 
-  /* Clear the two status flags and process the byte */
-  ANT_SSP_FLAGS &= ~(_SSP_RX_COMPLETE | _SSP_CS_ASSERTED);
+  /* Clear the status flag and process the byte */
+  ANT_SSP_FLAGS &= ~_SSP_RX_COMPLETE; /* !!!!! Odd for this to be here, but maybe it needs to be */
   
   /* If the byte is RX_SYNC, then proceed to send the message */
   if (u8Byte == MESG_RX_SYNC)                     
@@ -703,7 +749,7 @@ u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_)
 
   /* Wait for current message to send */
   u32StartTime = G_u32SystemTime1ms;
-  while( QueryMessageStatus(Ant_u32CurrentTxMessageToken) != COMPLETE && !bTimeout )
+  while( IS_SEN_ASSERTED() && !bTimeout )
   {
     bTimeout = IsTimeUp(&u32StartTime, ANT_MSG_TIMEOUT_MS);
   }
@@ -752,8 +798,6 @@ u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_)
     /* !!!! What clean-up should be done here?  Reset ANT and restart init? */
   }
 
-  /* Update Rx flag regardless and return */
-  G_u32AntFlags &= ~_ANT_FLAGS_RX_IN_PROGRESS;
   return(u8ReturnValue);
 
 } /* end AntExpectResponse */
@@ -779,12 +823,8 @@ Promises:
 void AntTxFlowControlCallback(void)
 {
   /* Count the byte and toggle flow control lines */
-  Ant_u32TxByteCounter++;
-
-  /* Provide a short delay before toggling SRDY */
-  for(u32 i = 0; i < ANT_SRDY_DELAY; i++);
-  SYNC_SRDY_ASSERT();
-  SYNC_SRDY_DEASSERT();
+  Ant_u32TxByteCounter++; 
+  AntSrdyPulse();
 
 } /* end AntTxFlowControlCallback() */
 
@@ -797,6 +837,9 @@ Callback function to toggle flow control during reception.  The peripheral task
 receiving the message must invoke this function after each byte.  
 
 Note: Since this function is called from an ISR, it should execute as quickly as possible. 
+Unfortunately, AntSrdyPulse() takes some time but the duty cycle of this interrupt
+is low enough that we can survive (this interrupt priority could be dropped below everything
+else to mitigate any issues).
 
 Requires:
   - ISRs are off already since this is totally not re-entrant
@@ -806,21 +849,13 @@ Requires:
 
 Promises:
   - Ant_pu8AntRxBufferNextChar is advanced safely so it is ready to receive the next byte
-  - SRDY is toggled if _SSP_CS_ASSERTED is clear
   - Ant_u32RxByteCounter incremented
+  - SRDY is toggled if _ANT_FLAGS_RX_IN_PROGRESS is set
 */
 void AntRxFlowControlCallback(void)
 {
-  /* Check if we are receiving or transmitting: only want to capture received
-  bytes when we are receiving (don't care about dummy bytes) */
-#if 0
-  if( G_u32AntFlags & _ANT_FLAGS_TX_IN_PROGRESS )
-  {
-    Ant_DebugUnexpectedRxByte++;
-  }
-#endif
-  
-  /* Count the byte and safely advance the receive buffer pointer */
+  /* Count the byte and safely advance the receive buffer pointer; this is called from the
+  RX ISR, so it won't be interrupted and break Ant_pu8AntRxBufferNextChar */
   Ant_u32RxByteCounter++;
   Ant_pu8AntRxBufferNextChar++;
   if(Ant_pu8AntRxBufferNextChar == &Ant_au8AntRxBuffer[ANT_RX_BUFFER_SIZE])
@@ -828,22 +863,10 @@ void AntRxFlowControlCallback(void)
     Ant_pu8AntRxBufferNextChar = &Ant_au8AntRxBuffer[0];
   }
   
-#if 0
-  else
+  /* Only toggle SRDY if a reception is flagged in progress */
+  if( G_u32AntFlags & _ANT_FLAGS_RX_IN_PROGRESS )
   {
-    /* Should not be logging a byte if not receiving */
-    Ant_DebugUnexpectedRxByte++;
-  }
-#endif
-  
-  /* Provide a short delay before toggling SRDY */
-  for(u32 i = 0; i < ANT_SRDY_DELAY; i++);
-  
-  /* Toggle the flow control lines if _SSP_CS_ASSERTED is clear */
-  if( !(ANT_SSP_FLAGS & _SSP_CS_ASSERTED) )
-  {
-    SYNC_SRDY_ASSERT();
-    SYNC_SRDY_DEASSERT();
+    AntSrdyPulse();
   }
   
 } /* end AntRxFlowControlCallback() */
@@ -898,7 +921,7 @@ Promises:
 bool AntQueueOutgoingMessage(u8 *pu8Message_)
 {
   u8 u8Length;
-  u8 u8MessageCount;
+  u8 u8MessageCount = 0;
   AntOutgoingMessageListType *psNewDataMessage;
   AntOutgoingMessageListType *psListParser;
   u8 au8AddMessageFailMsg[] = "\n\rNo space in AntQueueOutgoingMessage\n\r";
@@ -927,25 +950,25 @@ bool AntQueueOutgoingMessage(u8 *pu8Message_)
   if(Ant_psDataOutgoingMsgList == NULL)
   {
     Ant_psDataOutgoingMsgList = psNewDataMessage;
+    Ant_u32OutgoingMessageCount++;
   }
 
   /* Otherwise traverse the list to find the end where the new message will be inserted */
   else
   {
     psListParser = Ant_psDataOutgoingMsgList;
-    u8MessageCount = 1;
-    while( (psListParser->psNextMessage != NULL) && 
-           (u8MessageCount < ANT_OUTGOING_MESSAGE_BUFFER_SIZE) )
+    while(psListParser->psNextMessage != NULL)  
     {
       psListParser = psListParser->psNextMessage;
       u8MessageCount++;
     }
     
-    /* Handle a full list */
-    if(u8MessageCount != ANT_OUTGOING_MESSAGE_BUFFER_SIZE)
+    /* Check for a full list */
+    if(u8MessageCount < ANT_OUTGOING_MESSAGE_BUFFER_SIZE)
     {
       /* Insert the new message at the end of the list */
       psListParser->psNextMessage = psNewDataMessage;
+      Ant_u32OutgoingMessageCount++;
     }
     else
     {
@@ -982,6 +1005,7 @@ void AntDeQueueApplicationMessage(void)
 
     /* The doomed message is properly disconnected, so kill it */
     free(psMessageToKill);
+    Ant_u32ApplicationMessageCount--;
   }
   
 } /* end AntDeQueueApplicationMessage() */
@@ -1030,12 +1054,13 @@ static u8 AntProcessMessage(void)
     return(1);
   }
   
-  for(u8 i = 0; i < (u8)(u8MessageLength + MESG_FRAME_SIZE - MESG_SYNC_SIZE); i++)
+  /* Copy the message so it can be indexed easily */ 
+  for(u8 i = 0; i < (u8MessageLength + MESG_FRAME_SIZE - MESG_SYNC_SIZE); i++)
   {
     au8MessageCopy[i] = *Ant_pu8AntRxBufferUnreadMsg;
     AdvanceAntRxBufferUnreadMsgPointer();
   }
-  /* Ant_pu8AntRxBufferUnreadMsg is now pointing at the next unread message */
+  /* Note: Ant_pu8AntRxBufferUnreadMsg is now pointing at the next unread message */
   
   /* Decide what to do based on the Message ID */
   switch( au8MessageCopy[BUFFER_INDEX_MESG_ID] )
@@ -1051,10 +1076,12 @@ static u8 AntProcessMessage(void)
           case MESG_OPEN_CHANNEL_ID:
             DebugPrintf(G_au8AntMessageOpen);
             G_u32AntFlags |= _ANT_FLAGS_CHANNEL_OPEN;
+            G_u32AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN_PENDING;
             break;
 
           case MESG_CLOSE_CHANNEL_ID:
             DebugPrintf(G_au8AntMessageClose);
+            G_u32AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
             break;
 
           case MESG_ASSIGN_CHANNEL_ID:
@@ -1063,6 +1090,7 @@ static u8 AntProcessMessage(void)
 
           case MESG_UNASSIGN_CHANNEL_ID:
             DebugPrintf(G_au8AntMessageUnassign);
+            G_u32AntFlags &= ~(ANT_CONFIGURED | _ANT_FLAGS_CHANNEL_OPEN_PENDING | _ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
             break;
  
           default:
@@ -1146,8 +1174,10 @@ static u8 AntProcessMessage(void)
           /* All other messages are unexpected for now */
           default:
             G_u32AntFlags |= _ANT_FLAGS_UNEXPECTED_EVENT;
+            break;
         } /* end Ant_pu8AntRxBufferUnreadMsg[EVENT_CODE_INDEX] */
       } /* end else RF event */
+      
       break; 
     } /* end case MESG_RESPONSE_EVENT_ID */
 
@@ -1174,6 +1204,7 @@ static u8 AntProcessMessage(void)
       {
         AntTick(RESPONSE_NO_ERROR);
       }
+      
       break;
     } /* end case MESG_BROADCAST_DATA_ID */
     
@@ -1191,6 +1222,7 @@ static u8 AntProcessMessage(void)
       
       /* If we get a version message, we know that ANT comms is good */
       G_u32ApplicationFlags |= _APPLICATION_FLAGS_ANT;
+      
       break;
     } /* end case MESG_VERSION_ID */
 
@@ -1202,6 +1234,7 @@ static u8 AntProcessMessage(void)
     
     default:
       G_u32AntFlags |= _ANT_FLAGS_UNEXPECTED_MSG;
+      break;
   } /* end switch( Ant_pu8AntRxBufferUnreadMsg[MESG_ID_OFFSET] ) */
            
   return(0);
@@ -1235,7 +1268,7 @@ static void AntTick(u8 u8Code_)
   au8Message[ANT_TICK_MSG_MISSED_MID_BYTE_INDEX]  = Ant_u8SlaveMissedMessageMid;
   au8Message[ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX]  = Ant_u8SlaveMissedMessageLow;
 
-  AntQueueApplicationMessage(ANT_TICK, &au8Message[BUFFER_INDEX_MESG_DATA]);
+  AntQueueApplicationMessage(ANT_TICK, &au8Message[ANT_TICK_MSG_ID_INDEX]);
 
 } /* end AntTick() */
 
@@ -1255,15 +1288,14 @@ Requires:
 Promises:
   - A new list item in the target linked list is created and inserted at the end
     of the list.
-  - If the list size goes over the maximum, then the first item in the list is deleted.
   - Returns TRUE if the entry is added successfully.
-  - Returns FALSE on error.
+  - Returns FALSE if the malloc fails or the list is full.
 */
 static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, u8 *pu8DataSource_)
 {
   AntApplicationMsgListType *psNewMessage;
   AntApplicationMsgListType *psListParser;
-  u8 u8MessageCount;
+  u8 u8MessageCount = 0;
   u8 au8AddMessageFailMsg[] = "\n\rNo space in AntQueueApplicationMessage\n\r";
   
   /* Allocate space for the new message - always do maximum message size */
@@ -1288,26 +1320,27 @@ static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, 
   if(G_sAntApplicationMsgList == NULL)
   {
     G_sAntApplicationMsgList = psNewMessage;
+    Ant_u32ApplicationMessageCount++;
   }
 
   /* Otherwise traverse the list to find the end where the new message will be inserted */
   else
   {
     psListParser = G_sAntApplicationMsgList;
-    u8MessageCount = 1;
-    while( (psListParser->psNextMessage != NULL) && 
-           (u8MessageCount < ANT_APPLICATION_MESSAGE_BUFFER_SIZE) )
+    while(psListParser->psNextMessage != NULL) 
     {
       psListParser = psListParser->psNextMessage;
       u8MessageCount++;
     }
     
-    /* Handle a full list */
+    /* Check for full list */
     if(u8MessageCount < ANT_APPLICATION_MESSAGE_BUFFER_SIZE)
     {
       /* Insert the new message at the end of the list */
       psListParser->psNextMessage = psNewMessage;
+      Ant_u32ApplicationMessageCount++;
     }
+    /* Handle a full list */
     else
     {
       DebugPrintf(au8AddMessageFailMsg);
@@ -1362,22 +1395,22 @@ void AntSM_Idle(void)
 {
   u32 u32MsgBitMask = 0x01;
   u8 u8MsgIndex = 0;
+  static u8 au8AntFlagAlert[] = "ANT flags:\n\r"; 
   
   /* Error messages: must match order of G_u32AntFlags Error / event flags */
   static u8 au8AntFlagMessages[][20] = 
-  {/*012345678901234567\n\r*/
-    "ANT flags:\n\r ",
-    "Length mismatch\n\r",
-    "Command error\n\r",
-    "Unexpected event\n\r",
-    "Unexpected message\n\r"
+  {/* "012345678901234567\n\r" */
+      "Length mismatch\n\r",
+      "Command error\n\r",
+      "Unexpected event\n\r",
+      "Unexpected message\n\r"
   };
   
   /* Check flags */
   if(G_u32AntFlags & ANT_ERROR_FLAGS_MASK)
   {
     /* At least one flag is set, so print header and parse out */
-    DebugPrintf(au8AntFlagMessages[u8MsgIndex]);
+    DebugPrintf(au8AntFlagAlert);
     u8MsgIndex++;
     for(u8 i = 0; i < ANT_ERROR_FLAGS_COUNT; i++)
     {
@@ -1390,6 +1423,9 @@ void AntSM_Idle(void)
       }
       u32MsgBitMask <<= 1;
     }
+    
+    /* Clear all the error flags now that they have been reported */
+    G_u32AntFlags &= ~ANT_ERROR_FLAGS_MASK;
   }
   
   /* Process messages received from ANT */
@@ -1408,7 +1444,7 @@ void AntSM_Idle(void)
     /* Give the message to AntTx which will set Ant_u32CurrentTxMessageToken */
     if(AntTxMessage(Ant_psDataOutgoingMsgList->au8MessageData))
     {
-      Ant_u32TxTimeoutCounter = G_u32SystemTime1ms;
+      Ant_u32TxTimer = G_u32SystemTime1ms;
       Ant_pfnStateMachine = AntSM_TransmitMessage;
     }
     else
@@ -1429,10 +1465,8 @@ updates should they be required.
 void AntSM_ReceiveMessage(void)
 {
   Ant_DebugRxMessageCounter++;
-
   AntRxMessage();
   
-  G_u32AntFlags &= ~_ANT_FLAGS_RX_IN_PROGRESS;
   Ant_pfnStateMachine = AntSM_Idle;
 
 } /* end AntSM_ReceiveMessage() */
@@ -1452,9 +1486,6 @@ void AntSM_TransmitMessage(void)
   switch(eCurrentMsgStatus)
   {
     case TIMEOUT:
-      /* !!!! Consider re-initializing ANT here */
-      DebugPrintf(au8TxTimeoutMsg);
-      
       /* Fall through */
       
     case COMPLETE:
@@ -1463,6 +1494,23 @@ void AntSM_TransmitMessage(void)
       Ant_u32CurrentTxMessageToken = 0;
       G_u32AntFlags &= ~_ANT_FLAGS_TX_IN_PROGRESS;
 
+      /* Wait for SEN to deassert so we know ANT is totally ready for the text
+      transaction.  This takes about 170us, so block in this state until that's over */
+      while ( IS_SEN_ASSERTED() && (Ant_u32TxTimer < ANT_ACTIVITY_TIME_COUNT) )
+      {
+        Ant_u32TxTimer++;
+      }
+
+      /* If we timed out, then ANT is stuck so print error and unstick ANT */
+      if(Ant_u32RxTimer > ANT_ACTIVITY_TIME_COUNT)
+      {
+        DebugPrintf(au8TxTimeoutMsg);
+        while( IS_SEN_ASSERTED() )
+        {
+          AntSrdyPulse();
+        }
+      }
+      
       Ant_pfnStateMachine = AntSM_Idle;
       break;
       

@@ -326,9 +326,9 @@ void LedInitialize(void)
   u32 u32Timer;
 //  u8* pu8Parser;
 
-  u32 u32Buzzer0Frequency = 4000;
-  u32 u32Buzzer1Frequency = 500;
-  u32 cu32StepSize  = (u32Buzzer0Frequency - u32Buzzer1Frequency) / 20;
+  u32 u32Buzzer1Frequency = 4000;
+  u32 u32Buzzer2Frequency = 500;
+  u32 u32StepSize = (u32Buzzer1Frequency - u32Buzzer2Frequency) / 20;
 
   static u8 au8LedStartupMsg[] = "LED functions ready\n\r";
 
@@ -356,10 +356,12 @@ void LedInitialize(void)
   {
 #if STARTUP_SOUND
     /* Configure Buzzers to provide some audio during start up */
-    PWMAudioSetFrequency(AT91C_PWMC_CHID0, u32Buzzer0Frequency);
-    PWMAudioOn(AT91C_PWMC_CHID0);
-    PWMAudioSetFrequency(AT91C_PWMC_CHID1, u32Buzzer1Frequency);
-    PWMAudioOn(AT91C_PWMC_CHID1);
+    PWMAudioSetFrequency(BUZZER1, u32Buzzer1Frequency);
+    PWMAudioOn(BUZZER1);
+#ifdef  MPGL1
+    PWMAudioSetFrequency(BUZZER2, u32Buzzer2Frequency);
+    PWMAudioOn(BUZZER2);
+#endif /* MPGL1 */
 #endif /* STARTUP_SOUND */
     
     /* Spend 40ms in each level of intensity */
@@ -382,8 +384,8 @@ void LedInitialize(void)
     }
     
     /* Set the buzzer frequency for the next iteration */
-    u32Buzzer0Frequency -= cu32StepSize;
-    u32Buzzer1Frequency += cu32StepSize;
+    u32Buzzer1Frequency -= u32StepSize;
+    u32Buzzer2Frequency += u32StepSize;
   }
 
   /* Final update to set last state, hold for a short period */

@@ -49,7 +49,6 @@ typedef struct
   MessageType* psTransmitBuffer;      /* Pointer to the transmit message struct linked list */
   u32 u32CurrentTxBytesRemaining;     /* Counter for bytes remaining in current transfer */
   u8* pu8CurrentTxData;               /* Pointer to current location in the Tx buffer */
-//  u16 u16Pad;
 } SspPeripheralType;
 
 /* u32PrivateFlags */
@@ -62,24 +61,23 @@ typedef struct
 Constants / Definitions
 **********************************************************************************************************************/
 /* G_u32SspxApplicationFlags */
-#define _SSP_CS_ASSERTED              (u32)0x00000001    /* Set when CS changes from deasserted to asserted; to be cleared by application */
-#define _SSP_CS_DEASSERTED            (u32)0x00000002    /* Set when CS changes from asserted to deasserted; to be cleared by application  */
-#define _SSP_TX_COMPLETE              (u32)0x00000004    /* Set when expected bytes have been transmitted by DMA; cleared automatically when new message begins or can be cleared by application */
-#define _SSP_RX_COMPLETE              (u32)0x00000008    /* Set when expected bytes have been received by DMA; cleared automatically on CS or can be cleared by application */
-#define _SSP_RX_OVERFLOW              (u32)0x00000010    /* Set when receiver overflows; cleared by application */
+#define _SSP_CS_ASSERTED              (u32)0x00000001    /* INTERRUPT CONTROLLED ONLY: mirrors the CS line status to the application */
+#define _SSP_TX_COMPLETE              (u32)0x00000002    /* Set when expected bytes have been transmitted; cleared automatically when new message begins or can be cleared by application */
+#define _SSP_RX_COMPLETE              (u32)0x00000004    /* Set when expected bytes have been received; cleared automatically on CS or can be cleared by application */
+#define _SSP_RX_OVERFLOW              (u32)0x00000008    /* Set if receiver overflows; cleared by application */
 /* end G_u32SspxApplicationFlags */
 
 /* SSP_u32Flags (local SSP application flags) */
-#define _SSP_MANUAL_MODE               (u32)0x00000001   /* Set to push a cycle during initialization mode */
+#define _SSP_MANUAL_MODE              (u32)0x00000001   /* Set to push a cycle during initialization mode */
 
-#define _SSP_ERROR_INVALID_SSP         (u32)0x01000000   /* Set if a function case switches to default */
+#define _SSP_ERROR_INVALID_SSP        (u32)0x01000000   /* Set if a function case switches to default */
 
-#define SSP_ERROR_FLAG_MASK            (u32)0xFF000000   /* AND to SSP_u32Flags to get just error flags */
+#define SSP_ERROR_FLAG_MASK           (u32)0xFF000000   /* AND to SSP_u32Flags to get just error flags */
 /* end of SSP_u32Flags flags */
 
-#define SSP_DUMMY_BYTE                 (u8)0xFF          /* Byte to send for dummy */
+#define SSP_DUMMY_BYTE                (u8)0xFF          /* Byte to send for dummy */
 
-#define SSP_TXEMPTY_TIMEOUT            (u32)100           /* Instruction cycles of a while loop that waits for a register to clear */
+#define SSP_TXEMPTY_TIMEOUT           (u32)100           /* Instruction cycles of a while loop that waits for a register to clear */
 
 
 /**********************************************************************************************************************

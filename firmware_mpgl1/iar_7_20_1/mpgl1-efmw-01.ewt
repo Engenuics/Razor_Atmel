@@ -181,7 +181,7 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\configuration.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\bsp\mpgl2-ehdw-02.h</name>
+        <name>$PROJ_DIR$\..\bsp\mpgl1-ehdw-03.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\typedefs.h</name>
@@ -193,10 +193,7 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\board_cstartup_iar.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\bsp\mpgl2-ehdw-02.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\firmware_mpg_common\sam3u2-flash.icf</name>
+        <name>$PROJ_DIR$\..\bsp\mpgl1-ehdw-03.c</name>
       </file>
     </group>
   </group>
@@ -229,19 +226,13 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\buttons.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\drivers\captouch.h</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\exceptions.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\interrupts.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\drivers\lcd_bitmaps.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\drivers\lcd_NHD-C12864LZ.h</name>
+        <name>$PROJ_DIR$\..\drivers\lcd_nhd-c0220biz.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\leds.h</name>
@@ -259,6 +250,9 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_uart.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\drivers\sdcard.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\utilities.h</name>
       </file>
     </group>
@@ -274,19 +268,13 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\buttons.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\drivers\captouch.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\exceptions.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\interrupts.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\drivers\lcd_bitmaps.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\drivers\lcd_NHD-C12864LZ.c</name>
+        <name>$PROJ_DIR$\..\drivers\lcd_nhd-c0220biz.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\leds.c</name>
@@ -304,28 +292,10 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_uart.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\drivers\sdcard.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\utilities.c</name>
-      </file>
-    </group>
-  </group>
-  <group>
-    <name>_Libraries</name>
-    <group>
-      <name>bin</name>
-      <file>
-        <name>$PROJ_DIR$\..\libraries\captouch\bin\libsam3u-32qt-k-8rs-iar.a</name>
-      </file>
-    </group>
-    <group>
-      <name>Include</name>
-      <file>
-        <name>$PROJ_DIR$\..\libraries\captouch\libqtouch.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\libraries\captouch\include\touch_api.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\libraries\captouch\include\touch_qt_config.h</name>
       </file>
     </group>
   </group>
