@@ -2070,6 +2070,9 @@
         <name>$PROJ_DIR$\..\application\main.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\application\mpgl2_board_test.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\music.h</name>
       </file>
       <file>
@@ -2083,6 +2086,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\application\main.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\application\mpgl2_board_test.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c</name>
