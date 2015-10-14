@@ -17465,7 +17465,7 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
-    
+  
 } /* end UserAppSM_Idle() */
 
 

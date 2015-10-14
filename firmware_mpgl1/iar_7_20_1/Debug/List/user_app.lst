@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        14/Oct/2015  14:35:22
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        14/Oct/2015  15:52:08
 # Copyright 1999-2014 IAR Systems AB.
 #
 #    Cpu mode     =  thumb
@@ -206,7 +206,7 @@ D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\application\user_app.c
    \                                 In section .text, align 4, keep-with-next
     138          static void UserAppSM_Idle(void)
     139          {
-    140              
+    140            
     141          } /* end UserAppSM_Idle() */
    \                     UserAppSM_Idle: (+1)
    \   00000000   0x4770             BX       LR               ;; return
