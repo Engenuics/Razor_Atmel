@@ -162,14 +162,19 @@ u32 QueueMessage(MessageType** eTargetTxBuffer_, u32 u32MessageSize_, u8* pu8Mes
   MessageType *psListParser;
   u32 u32BytesRemaining = u32MessageSize_;
   u32 u32CurrentMessageSize = 0;
-  
+
+#ifndef SIMULATOR_MODE
   /* Check for available space in the message pool */
   if(Msg_u8QueuedMessageCount == TX_QUEUE_SIZE)
   {
     G_u32MessagingFlags |= _MESSAGING_TX_QUEUE_FULL;
     return(0);
   }
-
+#else
+  /* To do: Wrap around to the front of the list and free the first message so this acts like a circular buffer */
+  
+#endif /* SIMULATOR_MODE */
+  
   /* Space available, so proceed with allocation.  Though only one message is queued at a time, we
   use a while loop to handle messages that are too big and must be split into different slots.  The slots
   are always sequential and the message processor will send the bytes continuously across slots */

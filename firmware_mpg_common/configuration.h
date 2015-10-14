@@ -22,10 +22,11 @@ ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
 /**********************************************************************************************************************
 Runtime switches
 ***********************************************************************************************************************/
-//#define MPGL1             1         /* Use to activate MPG Level 1 specific code */
-#define MPGL2             1         /* Use to activate MPG Level 2 (all versions) specific code */
+#define MPGL1             1         /* Use to activate MPG Level 1 specific code */
+//#define MPGL2             1         /* Use to activate MPG Level 2 (all versions) specific code */
 //#define MPGL2_R01          1         /* Use with MPGL2-EHDW-01 revision board */
 
+#define SIMULATOR_MODE    1         /* Define to enable code to run in IAR simulator */
 #define DEBUG_MODE        1         /* Define to enable certain debugging code */
 #define STARTUP_SOUND     1         /* Define to include buzzer sound on startup */
 

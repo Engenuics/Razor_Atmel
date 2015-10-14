@@ -71,6 +71,7 @@ Promises:
 */
 bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
 {
+#ifndef SIMULATOR_MODE
   u32 u32TimeElapsed;
   
   /* Check to see if the timer in question has rolled */
@@ -92,7 +93,11 @@ bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
   {
     return(TRUE);
   }
-
+#else
+  return(TRUE);
+  
+#endif /* SIMULATOR_MODE */
+  
 } /* end IsTimeUp() */
 
 

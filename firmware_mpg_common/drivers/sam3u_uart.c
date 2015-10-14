@@ -496,66 +496,6 @@ Promises:
 void UartInitialize(void)
 {
   UART_u32Flags = 0;
-
-#ifdef USE_SIMPLE_USART0
-  /* Setup USART0 for use as a basic debug port */
-  
-  /* Initialize pointers and clear the receive buffer */
-  UART_pu8U0RxBufferNextChar   = &UART_au8U0RxBuffer[0];
-  UART_pu8U0RxBufferUnreadChar = &UART_au8U0RxBuffer[0];
-  for(u16 i = 0; i < U0RX_BUFFER_SIZE; i++)
-  {
-    UART_au8U0RxBuffer[i] = 0;
-  }
-
-  UART_pu8U0TxBufferNextChar   = &UART_au8U0TxBuffer[0];
-  UART_pu8U0TxBufferUnsentChar = &UART_au8U0TxBuffer[0];
-  for(u16 i = 0; i < U0TX_BUFFER_SIZE; i++)
-  {
-    UART_au8U0TxBuffer[i] = 0;
-  }
-  
-  /* Activate the US0 clock and set peripheral configuration registers */
-  AT91C_BASE_PMC->PMC_PCER |= (1 << AT91C_ID_US0);
-  
-  AT91C_BASE_US0->US_CR   = USART0_US_CR_INIT;
-  AT91C_BASE_US0->US_MR   = USART0_US_MR_INIT;
-  AT91C_BASE_US0->US_IER  = USART0_US_IER_INIT;
-  AT91C_BASE_US0->US_IDR  = USART0_US_IDR_INIT;
-  AT91C_BASE_US0->US_BRGR = USART0_US_BRGR_INIT;
-
-  /* Enable U0 interrupts */
-  NVIC_ClearPendingIRQ(IRQn_US0);
-  NVIC_EnableIRQ(IRQn_US0);
-
-  /* Print the startup message */
-  UART_u32Timer = G_u32SystemTime1ms;
-  pu8Parser = &au8Uart0StartupMsg[0];
-  while(*pu8Parser != NULL)
-  {
-    /* Attempt to queue the character */
-    if( Uart_putc(*pu8Parser) )
-    {
-      /* Advance only if character has been sent */
-      pu8Parser++;
-    }
-       
-    /* Watch for timeout */
-    if( IsTimeUp(&UART_u32Timer, UART_INIT_MSG_TIMEOUT) )
-    {
-      break;
-    }
-  }
-
-#if 0
-  DebugPrintf(au8Uart0StartupMsg);
-  while(UART_pu8U0TxBufferUnsentChar != UART_pu8U0TxBufferNextChar)
-  {
-    UartManualMode();
-  }
-#endif
-  
-#endif /* USE_SIMPLE_USART0 */
   
   /* Setup generic UARTs */
   
@@ -593,8 +533,6 @@ void UartInitialize(void)
   UART_Peripheral2.u8PeripheralId  = AT91C_ID_US2;
   
   UART_psCurrentUart               = &UART_Peripheral;
-//  UART_u32CurrentTxBytesRemaining  = 0;
-//  UART_pu8CurrentTxData            = NULL;
 
   /* Set application pointer */
   Uart_pfnStateMachine = UartSM_Idle;
@@ -628,92 +566,6 @@ void UartRunActiveState(void)
 /* Private functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-#if 0
-/*----------------------------------------------------------------------------------------------------------------------
-Function: UartFillTxBuffer
-
-Description:
-Fills the UART peripheral buffer with bytes from the current messsage that is sending.  
-This function can be called from the UART ISR!
-Note: if the implemented processor does not have a FIFO, this function can still be used but will only ever
-add one byte to the transmitter.
-
-Requires:
-  - The TxBuffer is empty
-  - psUartPeripheral_ points to the UART peripheral being used.  
-  - UART_pu8CurrentTxData points to the next byte in the message to be sent
-  - UART_u32CurrentTxBytesRemaining has an accurate count of the bytes remaining in the message data to be sent
-  - Transmit interrupts are off
-
-Promises:
-  - Data from *UART_pu8CurrentTxData is added to the UART peripheral Tx FIFO until the FIFO is full or there
-    is no more data to send.
-*/
-static void UartFillTxBuffer(UartPeripheralType* psUartPeripheral_)
-{
-  u8 u8ByteCount = UART_TX_FIFO_SIZE;
-  
-  /* Use the active global variables to fill up the transmit FIFO */
-  while( (u8ByteCount != 0) && (UART_u32CurrentTxBytesRemaining != 0) )
-  {
-    psUartPeripheral_->pBaseAddress->US_THR = *UART_pu8CurrentTxData;
-    UART_pu8CurrentTxData++;
-    UART_u32CurrentTxBytesRemaining--;
-    u8ByteCount--;
-  }
-    
-  /* If there are no remaining bytes to load to the TX FIFO, disable the UART transmit 
-  FIFO empty interrupt */
-  if(UART_u32CurrentTxBytesRemaining == 0)
-  {
-    psUartPeripheral_->pBaseAddress->US_IDR = AT91C_US_TXEMPTY;
-  }
-  /* Otherwise make sure transmit interrupts are enabled */
-  else
-  {
-    psUartPeripheral_->pBaseAddress->US_IER = AT91C_US_TXEMPTY;
-  }
-  
-} /* end UartFillTxBuffer() */
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-Function: UartReadRxBuffer
-
-Description:
-Reads all bytes from the UART peripheral Rx FIFO and places them in the application receive buffer.  
-This function is only called from the UART ISR so interrupts will be off.
-
-Requires:
-  - UART_pu8CurrentTxData points to the next byte in the message to be sent
-  - UART_u32CurrentTxBytesRemaining has an accurate count of the bytes remaining in the message data to be sent
-  - Transmit interrupts are off
-
-Promises:
-  - All bytes currently in the UART Rx FIFO are read out to the application receive circular buffer.
-*/
-static void UartReadRxBuffer(UartPeripheralType* psTargetUart_) 
-{
-  u8 u8Test;
-  
-  /* Read all the bytes in the Rx FIFO */
-  while(psTargetUart_->pBaseAddress->US_CSR & AT91C_US_RXRDY)
-  {
-    u8Test = psTargetUart_->pBaseAddress->US_RHR;
-    **(psTargetUart_->pu8RxNextByte) = u8Test; 
-
-    /* Safely advance the pointer in the circular buffer */
-    (*psTargetUart_->pu8RxNextByte)++;
-    if( *psTargetUart_->pu8RxNextByte >= ( psTargetUart_->pu8RxBuffer + psTargetUart_->u16RxBufferSize ) )
-    {
-      *psTargetUart_->pu8RxNextByte = psTargetUart_->pu8RxBuffer; 
-    }
-    /* Always zero the current char in the buffer */
-    **(psTargetUart_->pu8RxNextByte) = 0;
-  }
-      
-} /* end UartReadRxBuffer() */
-#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 Function: UartManualMode
@@ -730,6 +582,7 @@ Promises:
 */
 static void UartManualMode(void)
 {
+#ifndef SIMULATOR_MODE
   UART_u32Flags |=_UART_MANUAL_MODE;
   UART_psCurrentUart = &UART_Peripheral;
   
@@ -739,7 +592,8 @@ static void UartManualMode(void)
     UART_u32Timer  = G_u32SystemTime1ms;
     IsTimeUp(&UART_u32Timer, 1);
   }
-      
+#endif /* SIMULATOR_MODE */
+  
 } /* end UartManualMode() */
 
 

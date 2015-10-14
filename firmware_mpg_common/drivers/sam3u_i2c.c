@@ -459,6 +459,7 @@ Promises:
 */
 static void TWIManualMode(void)
 {
+#ifndef SIMULATOR_MODE
   TWI_u32Flags |=_TWI_INIT_MODE;
   TWI_u32Timer  = G_u32SystemTime1ms;
   
@@ -467,6 +468,7 @@ static void TWIManualMode(void)
     TWI_StateMachine();
     IsTimeUp(&TWI_u32Timer, 1);
   }
+#endif /* SIMULATOR_MODE */
       
 } /* end TWIManualMode() */
 

@@ -61,11 +61,14 @@ void main(void)
   SspInitialize();
   TWIInitialize();
 
-  LcdInitialize();
   LedInitialize();
   ButtonInitialize();
+
+#ifndef SIMULATOR_MODE
+  LcdInitialize();
   AntInitialize();
   SdCardInitialize();
+#endif /* SIMULATOR_MODE */
 
   /* Application initialization */
 //  BoardTestInitialize();
@@ -89,9 +92,12 @@ void main(void)
     TWIRunActiveState();
     MessagingRunActiveState();
     DebugRunActiveState();
+    
+#ifndef SIMULATOR_MODE
     LcdRunActiveState();
     AntRunActiveState();
     SdCardRunActiveState();
+#endif /* SIMULATOR_MODE */
 
     /* Applications */
     //BoardTestRunActiveState();

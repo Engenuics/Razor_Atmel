@@ -554,6 +554,7 @@ Promises:
 */
 void SspManualMode(void)
 {
+#ifndef SIMULATOR_MODE
   /* Set up for manual mode */
   SSP_u32Flags |= _SSP_MANUAL_MODE;
   SSP_psCurrentSsp = &SSP_Peripheral0;
@@ -566,6 +567,7 @@ void SspManualMode(void)
     SSP_u32Timer = G_u32SystemTime1ms;
     IsTimeUp(&SSP_u32Timer, 1);
   }
+#endif /* SIMULATOR_MODE */
       
 } /* end SspManualMode() */
 

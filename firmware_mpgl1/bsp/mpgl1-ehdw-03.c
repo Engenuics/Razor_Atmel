@@ -58,6 +58,7 @@ Promises:
 */
 void ClockSetup(void)
 {
+#ifndef SIMULATOR_MODE
   /* Activate the peripheral clocks needed for the system */
   AT91C_BASE_PMC->PMC_PCER = PMC_PCER_INIT;
 
@@ -89,6 +90,8 @@ void ClockSetup(void)
   /* Initialize UTMI for USB usage */
   AT91C_BASE_CKGR->CKGR_UCKR |= (AT91C_CKGR_UPLLCOUNT & (3 << 20)) | AT91C_CKGR_UPLLEN;
   while ( !(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCKU) );
+#endif  
+  
   
 } /* end ClockSetup */
 
@@ -136,6 +139,7 @@ Promises:
 */
 void SystemSleep(void)
 {    
+#ifndef SIMULATOR_MODE
    static u32 u32PreviousSystemTick = 0;
    static u8 au8TickWarningMessage[] = "\n\r*** 1ms timing violation: ";   
    
@@ -167,9 +171,15 @@ void SystemSleep(void)
    {
      __WFI();
    }
-
+   
   /* Clear the sleep mode status flags */
   //AT91C_SC->PCON &= SLEEP_MODE_STATUS_CLEAR;
+
+#else
+   /* Manually kill about a ms of time (12000 cycles with 7 instruction loop)*/
+   for(u32 i = 0; i < 1700; i++);
+   
+#endif /* SIMULATOR_MODE */
   
 } /* end SystemSleep(void) */
 

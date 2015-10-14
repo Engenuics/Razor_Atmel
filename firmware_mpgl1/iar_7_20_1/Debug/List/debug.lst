@@ -1,0 +1,2427 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        14/Oct/2015  14:35:19
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\application\debug.c
+#    Command line =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\application\debug.c
+#        --preprocess=cl
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
+#        -lC
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
+#        -o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h" -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\bsp\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\drivers\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\cmsis\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\drivers\
+#        -On --use_c++_inline -I "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\CMSIS\Include\"
+#    List file    =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\debug.lst
+#    Object file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\debug.o
+#
+###############################################################################
+
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\application\debug.c
+      1          /***********************************************************************************************************************
+      2          File: debug.c                                                                
+      3          
+      4          Description:
+      5          Debugging functions and state machine.  Since the system is small, debugger commands
+      6          will be strictly numerical, though each command will have a string name that can
+      7          be requested by the user.  The debugger will print a list of these commands if 
+      8          requested using en+c00.  Commands range from 01 to 99 (must include the leading 0
+      9          for single-digit commands) and all commands must have the prefix en+c. 
+     10          The current command list can be quickly checked in debug_x.h (where x is application-specific)
+     11          
+     12          This application requires a UART resource for input/output data.
+     13          
+     14          The terminal program used to interface to the debugger should be set to:
+     15          - no local echo
+     16          - send "CR" for new line
+     17          - 115200-8-N-1
+     18          
+     19          ***********************************************************************************************************************/
+     20          
+     21          #include "configuration.h"
+     22          
+     23          /***********************************************************************************************************************
+     24          Global variable definitions with scope across entire project.
+     25          All Global variable names shall start with "G_"
+     26          ***********************************************************************************************************************/
+     27          /* New variables */
+
+   \                                 In section .bss, align 4
+     28          u32 G_u32DebugFlags;                                     /* Debug flag register */
+   \                     G_u32DebugFlags:
+   \   00000000                      DS8 4
+     29          
+     30          
+     31          /*--------------------------------------------------------------------------------------------------------------------*/
+     32          /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
+     33          extern volatile u32 G_u32SystemFlags;                    /* From main.c */
+     34          extern volatile u32 G_u32ApplicationFlags;               /* From main.c */
+     35          
+     36          extern volatile u32 G_u32SystemTime1ms;                  /* From board-specific source file */
+     37          extern volatile u32 G_u32SystemTime1s;                   /* From board-specific source file */
+     38          
+     39          extern u8 G_au8MessageOK[];                              /* From utilities.c */
+     40          extern u8 G_au8MessageFAIL[];                            /* From utilities.c */
+     41          extern u8 G_au8MessageON[];                              /* From utilities.c */
+     42          extern u8 G_au8MessageOFF[];                             /* From utilities.c */
+     43          
+     44          
+     45          /***********************************************************************************************************************
+     46          Global variable definitions with scope limited to this local application.
+     47          Variable names shall start with "Debug_" and be declared as static.
+     48          ***********************************************************************************************************************/
+
+   \                                 In section .bss, align 4
+     49          static fnCode_type Debug_pfnStateMachine;                /* The Debug state machine function pointer */
+   \                     Debug_pfnStateMachine:
+   \   00000000                      DS8 4
+     50          
+
+   \                                 In section .bss, align 4
+     51          static UartPeripheralType* Debug_Uart;                   /* Pointer to debug UART peripheral object */
+   \                     Debug_Uart:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+     52          static u32 Debug_u32CurrentMessageToken;                 /* Token for current message */
+   \                     Debug_u32CurrentMessageToken:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 1
+     53          static u8 Debug_u8ErrorCode;                             /* Error code */
+   \                     Debug_u8ErrorCode:
+   \   00000000                      DS8 1
+     54          
+
+   \                                 In section .bss, align 4
+     55          static u8 Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE];       /* Space for incoming characters of debug commands */
+   \                     Debug_au8RxBuffer:
+   \   00000000                      DS8 128
+
+   \                                 In section .bss, align 4
+     56          static u8 *Debug_pu8RxBufferNextChar;                    /* Pointer to next spot in the Rxbuffer */
+   \                     Debug_pu8RxBufferNextChar:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+     57          static u8 *Debug_pu8RxBufferParser;                      /* Pointer to loop through the Rx buffer */
+   \                     Debug_pu8RxBufferParser:
+   \   00000000                      DS8 4
+     58          
+
+   \                                 In section .bss, align 4
+     59          static u8 Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]; /* Space to store chars as they build up to the next command */ 
+   \                     Debug_au8CommandBuffer:
+   \   00000000                      DS8 64
+
+   \                                 In section .bss, align 4
+     60          static u8 *Debug_pu8CmdBufferNextChar;                   /* Pointer to incoming char location in the command buffer */
+   \                     Debug_pu8CmdBufferNextChar:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 2
+     61          static u16 Debug_u16CommandSize;                         /* Number of characters in the command buffer */
+   \                     Debug_u16CommandSize:
+   \   00000000                      DS8 2
+     62          
+
+   \                                 In section .bss, align 1
+     63          static u8 Debug_u8Command;                               /* A validated command number */
+   \                     Debug_u8Command:
+   \   00000000                      DS8 1
+     64          
+     65          /* Add commands by updating debug.h in the Command-Specific Definitions section, then update this list
+     66          with the function name to call for the corresponding command: */
+     67          #ifdef MPGL1
+
+   \                                 In section .data, align 4
+     68          DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugCommandPrepareList},
+   \                     Debug_au8Commands:
+   \   00000000   0x........         DC32 ?_0, DebugCommandPrepareList, ?_1, DebugCommandLedTestToggle, ?_2
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000014   0x........         DC32 DebugCommandSysTimeToggle, ?_3, DebugCommandDummy, ?_4
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000024   0x........         DC32 DebugCommandDummy, ?_5, DebugCommandDummy, ?_6, DebugCommandDummy
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \              0x........   
+   \   00000038   0x........         DC32 ?_7, DebugCommandDummy
+   \              0x........   
+     69                                                                 {DEBUG_CMD_NAME01, DebugCommandLedTestToggle},
+     70                                                                 {DEBUG_CMD_NAME02, DebugCommandSysTimeToggle},
+     71                                                                 {DEBUG_CMD_NAME03, DebugCommandDummy},
+     72                                                                 {DEBUG_CMD_NAME04, DebugCommandDummy},
+     73                                                                 {DEBUG_CMD_NAME05, DebugCommandDummy},
+     74                                                                 {DEBUG_CMD_NAME06, DebugCommandDummy},
+     75                                                                 {DEBUG_CMD_NAME07, DebugCommandDummy} 
+     76                                                               };
+     77          
+
+   \                                 In section .data, align 1
+     78          static bool Debug_bLedTestActive = TRUE;
+   \                     Debug_bLedTestActive:
+   \   00000000   0x01               DC8 1
+     79          
+
+   \                                 In section .data, align 4
+     80          static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 ASCII LCD DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
+   \                     Debug_au8StartupMsg:
+   \   00000000   0x0A 0x0A          DC8 0AH, 0AH, 0DH, 2AH, 2AH, 2AH, 20H, 52H
+   \              0x0D 0x2A    
+   \              0x2A 0x2A    
+   \              0x20 0x52    
+   \   00000008   0x41 0x5A          DC8 41H, 5AH, 4FH, 52H, 20H, 53H, 41H, 4DH
+   \              0x4F 0x52    
+   \              0x20 0x53    
+   \              0x41 0x4D    
+   \   00000010   0x33 0x55          DC8 33H, 55H, 32H, 20H, 41H, 53H, 43H, 49H
+   \              0x32 0x20    
+   \              0x41 0x53    
+   \              0x43 0x49    
+   \   00000018   0x49 0x20          DC8 49H, 20H, 4CH, 43H, 44H, 20H, 44H, 45H
+   \              0x4C 0x43    
+   \              0x44 0x20    
+   \              0x44 0x45    
+   \   00000020   0x56 0x45          DC8 56H, 45H, 4CH, 4FH, 50H, 4DH, 45H, 4EH
+   \              0x4C 0x4F    
+   \              0x50 0x4D    
+   \              0x45 0x4E    
+   \   00000028   0x54 0x20          DC8 54H, 20H, 42H, 4FH, 41H, 52H, 44H, 20H
+   \              0x42 0x4F    
+   \              0x41 0x52    
+   \              0x44 0x20    
+   \   00000030   0x2A 0x2A          DC8 2AH, 2AH, 2AH, 0AH, 0DH, 44H, 65H, 62H
+   \              0x2A 0x0A    
+   \              0x0D 0x44    
+   \              0x65 0x62    
+   \   00000038   0x75 0x67          DC8 75H, 67H, 20H, 72H, 65H, 61H, 64H, 79H
+   \              0x20 0x72    
+   \              0x65 0x61    
+   \              0x64 0x79    
+   \   00000040   0x0A 0x0D          DC8 0AH, 0DH, 0
+   \              0x00         
+   \   00000043   0x00               DC8 0
+     81          #endif /* MPGL1 */
+     82          
+     83          #ifdef MPGL2
+     84          DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugCommandPrepareList},
+     85                                                                 {DEBUG_CMD_NAME01, DebugCommandLedTestToggle},
+     86                                                                 {DEBUG_CMD_NAME02, DebugCommandSysTimeToggle},
+     87                                                                 {DEBUG_CMD_NAME03, DebugCommandCaptouchValuesToggle},
+     88                                                                 {DEBUG_CMD_NAME04, DebugCommandDummy},
+     89                                                                 {DEBUG_CMD_NAME05, DebugCommandDummy},
+     90                                                                 {DEBUG_CMD_NAME06, DebugCommandDummy},
+     91                                                                 {DEBUG_CMD_NAME07, DebugCommandDummy} 
+     92                                                               };
+     93          
+     94          static bool Debug_bLedTestActive = TRUE;
+     95          static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 DOT MATRIX DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
+     96          #endif /* MPGL2 */
+     97          
+     98          
+     99          /***********************************************************************************************************************
+    100          * Function Definitions
+    101          ***********************************************************************************************************************/
+    102          
+    103          /*--------------------------------------------------------------------------------------------------------------------*/
+    104          /* Public Functions */
+    105          /*--------------------------------------------------------------------------------------------------------------------*/
+    106          
+    107          /*----------------------------------------------------------------------------------------------------------------------
+    108          Function: DebugPrintf
+    109          
+    110          Description:
+    111          Sends a text string to the debug UART.
+    112          
+    113          Requires:
+    114            - u8String_ is a NULL-terminated C-string
+    115            - The debug UART resource has been setup for the debug application.
+    116          
+    117          Promises:
+    118            - The string is queued to the debug UART.
+    119            - The message token is returned
+    120          */
+
+   \                                 In section .text, align 2, keep-with-next
+    121          u32 DebugPrintf(u8* u8String_)
+    122          {
+   \                     DebugPrintf: (+1)
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+    123            u8* pu8Parser = u8String_;
+   \   00000004   0x0025             MOVS     R5,R4
+    124            u32 u32Size = 0;
+   \   00000006   0x2600             MOVS     R6,#+0
+    125            
+    126            while(*pu8Parser != NULL)
+   \                     ??DebugPrintf_0: (+1)
+   \   00000008   0x7828             LDRB     R0,[R5, #+0]
+   \   0000000A   0x2800             CMP      R0,#+0
+   \   0000000C   0xD002             BEQ.N    ??DebugPrintf_1
+    127            {
+    128              u32Size++;
+   \   0000000E   0x1C76             ADDS     R6,R6,#+1
+    129              pu8Parser++;
+   \   00000010   0x1C6D             ADDS     R5,R5,#+1
+   \   00000012   0xE7F9             B.N      ??DebugPrintf_0
+    130            }
+    131            return( UartWriteData(Debug_Uart, u32Size, u8String_) );
+   \                     ??DebugPrintf_1: (+1)
+   \   00000014   0x0022             MOVS     R2,R4
+   \   00000016   0x0031             MOVS     R1,R6
+   \   00000018   0x.... 0x....      LDR.W    R0,??DataTable14
+   \   0000001C   0x6800             LDR      R0,[R0, #+0]
+   \   0000001E   0x.... 0x....      BL       UartWriteData
+   \   00000022   0xBD70             POP      {R4-R6,PC}       ;; return
+    132           
+    133          } /* end DebugPrintf() */
+    134          
+    135          
+    136          /*----------------------------------------------------------------------------------------------------------------------
+    137          Function: DebugLineFeed
+    138          
+    139          Description:
+    140          Queues a <CR><LF> sequence to the debug UART.
+    141          
+    142          Requires:
+    143            -
+    144          
+    145          Promises:
+    146            - <CR><LF> sequence to the debug UART
+    147          */
+
+   \                                 In section .text, align 2, keep-with-next
+    148          void DebugLineFeed(void)
+    149          {
+   \                     DebugLineFeed: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    150            u8 au8Linefeed[] = {ASCII_LINEFEED, ASCII_CARRIAGE_RETURN};
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable14_1
+   \   00000006   0x8800             LDRH     R0,[R0, #+0]
+   \   00000008   0xF8AD 0x0000      STRH     R0,[SP, #+0]
+    151            
+    152            UartWriteData(Debug_Uart, sizeof(au8Linefeed), &au8Linefeed[0]);
+   \   0000000C   0xAA00             ADD      R2,SP,#+0
+   \   0000000E   0x2102             MOVS     R1,#+2
+   \   00000010   0x.... 0x....      LDR.W    R0,??DataTable14
+   \   00000014   0x6800             LDR      R0,[R0, #+0]
+   \   00000016   0x.... 0x....      BL       UartWriteData
+    153          
+    154          } /* end DebugLineFeed() */
+   \   0000001A   0xBD01             POP      {R0,PC}          ;; return
+    155          
+    156          
+    157          /*-----------------------------------------------------------------------------/
+    158          Function: DebugPrintNumber
+    159          
+    160          Description:
+    161          Formats a long into an ASCII string and queues to print
+    162          
+    163          Requires:
+    164            - Enough space is available on the heap to temporarily store the number array
+    165          
+    166          Promises:
+    167            - The number is converted to an array of ascii without leading zeros and sent to UART
+    168          */
+
+   \                                 In section .text, align 2, keep-with-next
+    169          void DebugPrintNumber(u32 u32Number_)
+    170          {
+   \                     DebugPrintNumber: (+1)
+   \   00000000   0xE92D 0x43FE      PUSH     {R1-R9,LR}
+   \   00000004   0x0004             MOVS     R4,R0
+    171            bool bFoundDigit = FALSE;
+   \   00000006   0x2500             MOVS     R5,#+0
+    172            u8 au8AsciiNumber[10];
+    173            u8 u8CharCount = 0;
+   \   00000008   0x2600             MOVS     R6,#+0
+    174            u32 u32Temp, u32Divider = 1000000000;
+   \   0000000A   0x.... 0x....      LDR.W    R8,??DataTable14_2  ;; 0x3b9aca00
+    175            u8 *pu8Data;
+    176          
+    177            /* Parse out all the digits, start counting after leading zeros */
+    178            for(u8 index = 0; index < 10; index++)
+   \   0000000E   0x2000             MOVS     R0,#+0
+   \                     ??DebugPrintNumber_0: (+1)
+   \   00000010   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000012   0x280A             CMP      R0,#+10
+   \   00000014   0xDA19             BGE.N    ??DebugPrintNumber_1
+    179            {
+    180              au8AsciiNumber[index] = (u32Number_ / u32Divider) + 0x30;
+   \   00000016   0xFBB4 0xF1F8      UDIV     R1,R4,R8
+   \   0000001A   0x3130             ADDS     R1,R1,#+48
+   \   0000001C   0xAA00             ADD      R2,SP,#+0
+   \   0000001E   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000020   0x5481             STRB     R1,[R0, R2]
+    181              if(au8AsciiNumber[index] != '0')
+   \   00000022   0xA900             ADD      R1,SP,#+0
+   \   00000024   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000026   0x5C41             LDRB     R1,[R0, R1]
+   \   00000028   0x2930             CMP      R1,#+48
+   \   0000002A   0xD001             BEQ.N    ??DebugPrintNumber_2
+    182              {
+    183                bFoundDigit = TRUE;
+   \   0000002C   0x2101             MOVS     R1,#+1
+   \   0000002E   0x000D             MOVS     R5,R1
+    184              }
+    185              if(bFoundDigit)
+   \                     ??DebugPrintNumber_2: (+1)
+   \   00000030   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   00000032   0x2D00             CMP      R5,#+0
+   \   00000034   0xD000             BEQ.N    ??DebugPrintNumber_3
+    186              {
+    187                u8CharCount++;
+   \   00000036   0x1C76             ADDS     R6,R6,#+1
+    188              }
+    189              u32Number_ %= u32Divider;
+   \                     ??DebugPrintNumber_3: (+1)
+   \   00000038   0xFBB4 0xF1F8      UDIV     R1,R4,R8
+   \   0000003C   0xFB08 0x4411      MLS      R4,R8,R1,R4
+    190              u32Divider /= 10;
+   \   00000040   0x210A             MOVS     R1,#+10
+   \   00000042   0xFBB8 0xF8F1      UDIV     R8,R8,R1
+    191            }
+   \   00000046   0x1C40             ADDS     R0,R0,#+1
+   \   00000048   0xE7E2             B.N      ??DebugPrintNumber_0
+    192            
+    193            /* Handle special case where u32Number == 0 */
+    194            if(!bFoundDigit)
+   \                     ??DebugPrintNumber_1: (+1)
+   \   0000004A   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   0000004C   0x2D00             CMP      R5,#+0
+   \   0000004E   0xD101             BNE.N    ??DebugPrintNumber_4
+    195            {
+    196              u8CharCount = 1;
+   \   00000050   0x2001             MOVS     R0,#+1
+   \   00000052   0x0006             MOVS     R6,R0
+    197            }
+    198            
+    199            /* Allocate memory for the right number and copy the array */
+    200            pu8Data = malloc(u8CharCount);
+   \                     ??DebugPrintNumber_4: (+1)
+   \   00000054   0xB2F6             UXTB     R6,R6            ;; ZeroExt  R6,R6,#+24,#+24
+   \   00000056   0x0030             MOVS     R0,R6
+   \   00000058   0x.... 0x....      BL       malloc
+   \   0000005C   0x4681             MOV      R9,R0
+    201            if (pu8Data == NULL)
+   \   0000005E   0xF1B9 0x0F00      CMP      R9,#+0
+   \   00000062   0xD108             BNE.N    ??DebugPrintNumber_5
+    202            {
+    203              Debug_u8ErrorCode = DEBUG_ERROR_MALLOC;
+   \   00000064   0x2002             MOVS     R0,#+2
+   \   00000066   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   0000006A   0x7008             STRB     R0,[R1, #+0]
+    204              Debug_pfnStateMachine = DebugSM_Error;
+   \   0000006C   0x.... 0x....      ADR.W    R0,DebugSM_Error
+   \   00000070   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000074   0x6008             STR      R0,[R1, #+0]
+    205            }
+    206            
+    207            u32Temp = 9;
+   \                     ??DebugPrintNumber_5: (+1)
+   \   00000076   0x2009             MOVS     R0,#+9
+   \   00000078   0x0007             MOVS     R7,R0
+    208            for(u8 index = u8CharCount; index != 0; index--)
+   \   0000007A   0x0030             MOVS     R0,R6
+   \                     ??DebugPrintNumber_6: (+1)
+   \   0000007C   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   0000007E   0x2800             CMP      R0,#+0
+   \   00000080   0xD009             BEQ.N    ??DebugPrintNumber_7
+    209            {
+    210              pu8Data[index - 1] = au8AsciiNumber[u32Temp--];
+   \   00000082   0xA900             ADD      R1,SP,#+0
+   \   00000084   0x5C79             LDRB     R1,[R7, R1]
+   \   00000086   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000088   0xEB10 0x0209      ADDS     R2,R0,R9
+   \   0000008C   0xF802 0x1C01      STRB     R1,[R2, #-1]
+   \   00000090   0x1E7F             SUBS     R7,R7,#+1
+    211            }
+   \   00000092   0x1E40             SUBS     R0,R0,#+1
+   \   00000094   0xE7F2             B.N      ??DebugPrintNumber_6
+    212              
+    213            /* Print the ascii string and free the memory */
+    214            UartWriteData(Debug_Uart, u8CharCount, pu8Data);
+   \                     ??DebugPrintNumber_7: (+1)
+   \   00000096   0x464A             MOV      R2,R9
+   \   00000098   0xB2F6             UXTB     R6,R6            ;; ZeroExt  R6,R6,#+24,#+24
+   \   0000009A   0x0031             MOVS     R1,R6
+   \   0000009C   0x.... 0x....      LDR.W    R0,??DataTable14
+   \   000000A0   0x6800             LDR      R0,[R0, #+0]
+   \   000000A2   0x.... 0x....      BL       UartWriteData
+    215            free(pu8Data);
+   \   000000A6   0x4648             MOV      R0,R9
+   \   000000A8   0x.... 0x....      BL       free
+    216            
+    217          } /* end DebugDebugPrintNumber() */
+   \   000000AC   0xE8BD 0x83F7      POP      {R0-R2,R4-R9,PC}  ;; return
+    218          
+    219          
+    220          /*----------------------------------------------------------------------------------------------------------------------
+    221          Function: SystemStatusReport
+    222          
+    223          Description:
+    224          Reports if system is good or not.
+    225          
+    226          Requires:
+    227            - G_u32SystemFlags up to date with system status
+    228            - New tasks should be added to the check list below including in the message string for the task name
+    229            - The system is in initialization state so MsgSenderForceSend() is used
+    230              to output each meassage after it is queued.
+    231          
+    232          Promises:
+    233            - Prints out messages for any system tests that failed
+    234            - Prints out overall good message if all tests passed
+    235          */
+
+   \                                 In section .text, align 2, keep-with-next
+    236          void SystemStatusReport(void)
+    237          {
+   \                     SystemStatusReport: (+1)
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0xB0A4             SUB      SP,SP,#+144
+    238          
+    239            u8 au8SystemPassed[] = "NONE";
+   \   00000004   0xA800             ADD      R0,SP,#+0
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000000A   0x2205             MOVS     R2,#+5
+   \   0000000C   0x.... 0x....      BL       __aeabi_memcpy
+    240            u8 au8SystemReady[] = "\n\rInitialization complete. Type en+c00 for debug menu.  Failed tasks:\n\r";
+   \   00000010   0xA811             ADD      R0,SP,#+68
+   \   00000012   0x.... 0x....      LDR.W    R1,??DataTable14_6
+   \   00000016   0x2248             MOVS     R2,#+72
+   \   00000018   0x.... 0x....      BL       __aeabi_memcpy4
+    241            u32 u32TaskFlagMaskBit = (u32)0x01;
+   \   0000001C   0x2401             MOVS     R4,#+1
+    242            bool bNoFailedTasks = TRUE;
+   \   0000001E   0x2501             MOVS     R5,#+1
+    243          
+    244          #ifdef MPGL1
+    245            u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "SD"};
+   \   00000020   0xA802             ADD      R0,SP,#+8
+   \   00000022   0x.... 0x....      LDR.W    R1,??DataTable14_7
+   \   00000026   0x223C             MOVS     R2,#+60
+   \   00000028   0x.... 0x....      BL       __aeabi_memcpy4
+    246          #endif /* MPGL1 */
+    247          
+    248          #ifdef MPGL2
+    249            u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "CAPTOUCH"};
+    250          #endif /* MPGL2 */
+    251          
+    252            /* Announce init complete then report any tasks that failed init */
+    253            DebugPrintf(au8SystemReady);
+   \   0000002C   0xA811             ADD      R0,SP,#+68
+   \   0000002E   0x.... 0x....      BL       DebugPrintf
+    254              
+    255            for(u8 i = 0; i < NUMBER_APPLICATIONS; i++)
+   \   00000032   0x2600             MOVS     R6,#+0
+   \                     ??SystemStatusReport_0: (+1)
+   \   00000034   0xB2F6             UXTB     R6,R6            ;; ZeroExt  R6,R6,#+24,#+24
+   \   00000036   0x2E06             CMP      R6,#+6
+   \   00000038   0xDA12             BGE.N    ??SystemStatusReport_1
+    256            {
+    257              if( !(u32TaskFlagMaskBit & G_u32ApplicationFlags) )
+   \   0000003A   0x.... 0x....      LDR.W    R0,??DataTable14_8
+   \   0000003E   0x6800             LDR      R0,[R0, #+0]
+   \   00000040   0x4204             TST      R4,R0
+   \   00000042   0xD10A             BNE.N    ??SystemStatusReport_2
+    258              {
+    259                bNoFailedTasks = FALSE;
+   \   00000044   0x2000             MOVS     R0,#+0
+   \   00000046   0x0005             MOVS     R5,R0
+    260                DebugPrintf(&aau8AppShortNames[i][0]);
+   \   00000048   0xA802             ADD      R0,SP,#+8
+   \   0000004A   0xB2F6             UXTB     R6,R6            ;; ZeroExt  R6,R6,#+24,#+24
+   \   0000004C   0x210A             MOVS     R1,#+10
+   \   0000004E   0xFB01 0x0006      MLA      R0,R1,R6,R0
+   \   00000052   0x.... 0x....      BL       DebugPrintf
+    261                DebugLineFeed();
+   \   00000056   0x.... 0x....      BL       DebugLineFeed
+    262              }
+    263              
+    264              u32TaskFlagMaskBit <<= 1;
+   \                     ??SystemStatusReport_2: (+1)
+   \   0000005A   0x0064             LSLS     R4,R4,#+1
+    265            }     
+   \   0000005C   0x1C76             ADDS     R6,R6,#+1
+   \   0000005E   0xE7E9             B.N      ??SystemStatusReport_0
+    266                  
+    267            if( bNoFailedTasks)
+   \                     ??SystemStatusReport_1: (+1)
+   \   00000060   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   00000062   0x2D00             CMP      R5,#+0
+   \   00000064   0xD002             BEQ.N    ??SystemStatusReport_3
+    268            {
+    269              DebugPrintf(au8SystemPassed);
+   \   00000066   0xA800             ADD      R0,SP,#+0
+   \   00000068   0x.... 0x....      BL       DebugPrintf
+    270            }
+    271            
+    272            DebugLineFeed();
+   \                     ??SystemStatusReport_3: (+1)
+   \   0000006C   0x.... 0x....      BL       DebugLineFeed
+    273            
+    274          } /* end SystemStatusReport() */
+   \   00000070   0xB024             ADD      SP,SP,#+144
+   \   00000072   0xBD70             POP      {R4-R6,PC}       ;; return
+    275          
+    276          
+    277          /*--------------------------------------------------------------------------------------------------------------------*/
+    278          /* Protected Functions */
+    279          /*--------------------------------------------------------------------------------------------------------------------*/
+    280          
+    281          /*----------------------------------------------------------------------------------------------------------------------
+    282          Function: DebugInitialize
+    283          
+    284          Description:
+    285          Sets up the debug command list and activates the debug functionality.
+    286          
+    287          Requires:
+    288            - The debug application is not yet running
+    289            - The UART resource requested should be free
+    290          
+    291          Promises:
+    292            - UART resource Debug_au8RxBuffer initialized to all 0
+    293            - Buffer pointers Debug_pu8CmdBufferCurrentChar and Debug_pu8RxBufferParser set to the start of the buffer
+    294            - Debug_pfnStateMachine set to Idle
+    295          */
+
+   \                                 In section .text, align 2, keep-with-next
+    296          void DebugInitialize(void)
+    297          {
+   \                     DebugInitialize: (+1)
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB085             SUB      SP,SP,#+20
+    298            UartConfigurationType sUartConfig;  
+    299          
+    300            /* Clear the receive buffer */
+    301            for (u16 i = 0; i < DEBUG_RX_BUFFER_SIZE; i++)
+   \   00000004   0x2000             MOVS     R0,#+0
+   \                     ??DebugInitialize_0: (+1)
+   \   00000006   0xB280             UXTH     R0,R0            ;; ZeroExt  R0,R0,#+16,#+16
+   \   00000008   0x2880             CMP      R0,#+128
+   \   0000000A   0xD206             BCS.N    ??DebugInitialize_1
+    302            {
+    303              Debug_au8RxBuffer[i] = 0;
+   \   0000000C   0x2100             MOVS     R1,#+0
+   \   0000000E   0x.... 0x....      LDR.W    R2,??DataTable14_9
+   \   00000012   0xB280             UXTH     R0,R0            ;; ZeroExt  R0,R0,#+16,#+16
+   \   00000014   0x5481             STRB     R1,[R0, R2]
+    304            }
+   \   00000016   0x1C40             ADDS     R0,R0,#+1
+   \   00000018   0xE7F5             B.N      ??DebugInitialize_0
+    305          
+    306            /* Initailze startup values and the command array */
+    307            Debug_pu8RxBufferParser    = &Debug_au8RxBuffer[0];
+   \                     ??DebugInitialize_1: (+1)
+   \   0000001A   0x.... 0x....      LDR.W    R0,??DataTable14_9
+   \   0000001E   0x.... 0x....      LDR.W    R1,??DataTable14_10
+   \   00000022   0x6008             STR      R0,[R1, #+0]
+    308            Debug_pu8RxBufferNextChar  = &Debug_au8RxBuffer[0]; 
+   \   00000024   0x.... 0x....      LDR.W    R0,??DataTable14_9
+   \   00000028   0x.... 0x....      LDR.W    R1,??DataTable14_11
+   \   0000002C   0x6008             STR      R0,[R1, #+0]
+    309            Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0]; 
+   \   0000002E   0x.... 0x....      LDR.W    R0,??DataTable14_12
+   \   00000032   0x.... 0x....      LDR.W    R1,??DataTable14_13
+   \   00000036   0x6008             STR      R0,[R1, #+0]
+    310          
+    311            /* Request the UART resource to be used for the Debug application */
+    312            sUartConfig.UartPeripheral     = DEBUG_UART;
+   \   00000038   0x2002             MOVS     R0,#+2
+   \   0000003A   0xF88D 0x0000      STRB     R0,[SP, #+0]
+    313            sUartConfig.pu8RxBufferAddress = &Debug_au8RxBuffer[0];
+   \   0000003E   0x.... 0x....      LDR.W    R0,??DataTable14_9
+   \   00000042   0x9001             STR      R0,[SP, #+4]
+    314            sUartConfig.pu8RxNextByte      = &Debug_pu8RxBufferNextChar;
+   \   00000044   0x.... 0x....      LDR.W    R0,??DataTable14_11
+   \   00000048   0x9002             STR      R0,[SP, #+8]
+    315            sUartConfig.u16RxBufferSize    = DEBUG_RX_BUFFER_SIZE;
+   \   0000004A   0x2080             MOVS     R0,#+128
+   \   0000004C   0xF8AD 0x0002      STRH     R0,[SP, #+2]
+    316            sUartConfig.fnRxCallback       = DebugRxCallback;
+   \   00000050   0x.... 0x....      ADR.W    R0,DebugRxCallback
+   \   00000054   0x9003             STR      R0,[SP, #+12]
+    317            
+    318            Debug_Uart = UartRequest(&sUartConfig);
+   \   00000056   0xA800             ADD      R0,SP,#+0
+   \   00000058   0x.... 0x....      BL       UartRequest
+   \   0000005C   0x.... 0x....      LDR.W    R1,??DataTable14
+   \   00000060   0x6008             STR      R0,[R1, #+0]
+    319            
+    320            /* Go to error state if the UartRequest failed */
+    321            if(Debug_Uart == NULL)
+   \   00000062   0x.... 0x....      LDR.W    R0,??DataTable14
+   \   00000066   0x6800             LDR      R0,[R0, #+0]
+   \   00000068   0x2800             CMP      R0,#+0
+   \   0000006A   0xD105             BNE.N    ??DebugInitialize_2
+    322            {
+    323              Debug_pfnStateMachine = DebugSM_Error;
+   \   0000006C   0x.... 0x....      ADR.W    R0,DebugSM_Error
+   \   00000070   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000074   0x6008             STR      R0,[R1, #+0]
+   \   00000076   0xE010             B.N      ??DebugInitialize_3
+    324          
+    325            }
+    326            /* Otherwise send the first message, set "good" flag and head to Idle */
+    327            else
+    328            {
+    329              DebugPrintf(Debug_au8StartupMsg);   
+   \                     ??DebugInitialize_2: (+1)
+   \   00000078   0x.... 0x....      LDR.W    R0,??DataTable14_14
+   \   0000007C   0x.... 0x....      BL       DebugPrintf
+    330              G_u32ApplicationFlags |= _APPLICATION_FLAGS_DEBUG;
+   \   00000080   0x.... 0x....      LDR.W    R0,??DataTable14_8
+   \   00000084   0x6800             LDR      R0,[R0, #+0]
+   \   00000086   0xF050 0x0004      ORRS     R0,R0,#0x4
+   \   0000008A   0x.... 0x....      LDR.W    R1,??DataTable14_8
+   \   0000008E   0x6008             STR      R0,[R1, #+0]
+    331              Debug_pfnStateMachine = DebugSM_Idle;
+   \   00000090   0x.... 0x....      ADR.W    R0,DebugSM_Idle
+   \   00000094   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000098   0x6008             STR      R0,[R1, #+0]
+    332            }
+    333            
+    334          } /* end  DebugInitialize() */
+   \                     ??DebugInitialize_3: (+1)
+   \   0000009A   0xB005             ADD      SP,SP,#+20
+   \   0000009C   0xBD00             POP      {PC}             ;; return
+    335          
+    336          
+    337          /*----------------------------------------------------------------------------------------------------------------------
+    338          Function DebugRunActiveState()
+    339          
+    340          Description:
+    341          Selects and runs one iteration of the current state in the state machine.
+    342          All state machines have a TOTAL of 1ms to execute, so on average n state machines
+    343          may take 1ms / n to execute.
+    344          
+    345          Requires:
+    346            - State machine function pointer points at current state
+    347          
+    348          Promises:
+    349            - Calls the function to pointed by the state machine function pointer
+    350          */
+
+   \                                 In section .text, align 2, keep-with-next
+    351          void DebugRunActiveState(void)
+    352          {
+   \                     DebugRunActiveState: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    353            Debug_pfnStateMachine();
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0x4780             BLX      R0
+    354          
+    355          } /* end DebugRunActiveState */
+   \   0000000A   0xBD01             POP      {R0,PC}          ;; return
+    356          
+    357          
+    358          /*----------------------------------------------------------------------------------------------------------------------
+    359          Function DebugRxCallback()
+    360          
+    361          Description:
+    362          Call back function used when character received.
+    363          
+    364          Requires:
+    365            - None
+    366          
+    367          Promises:
+    368            - Safely advances Debug_pu8RxBufferNextChar.
+    369          */
+
+   \                                 In section .text, align 4, keep-with-next
+    370          void DebugRxCallback(void)
+    371          {
+    372            /* Safely advance the NextChar pointer */
+    373            Debug_pu8RxBufferNextChar++;
+   \                     DebugRxCallback: (+1)
+   \   00000000   0x.... 0x....      LDR.W    R0,??DataTable14_11
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0x1C40             ADDS     R0,R0,#+1
+   \   00000008   0x.... 0x....      LDR.W    R1,??DataTable14_11
+   \   0000000C   0x6008             STR      R0,[R1, #+0]
+    374            if(Debug_pu8RxBufferNextChar == &Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE])
+   \   0000000E   0x.... 0x....      LDR.W    R0,??DataTable14_11
+   \   00000012   0x6800             LDR      R0,[R0, #+0]
+   \   00000014   0x.... 0x....      LDR.W    R1,??DataTable14_15
+   \   00000018   0x4288             CMP      R0,R1
+   \   0000001A   0xD104             BNE.N    ??DebugRxCallback_0
+    375            {
+    376              Debug_pu8RxBufferNextChar = &Debug_au8RxBuffer[0];
+   \   0000001C   0x.... 0x....      LDR.W    R0,??DataTable14_9
+   \   00000020   0x.... 0x....      LDR.W    R1,??DataTable14_11
+   \   00000024   0x6008             STR      R0,[R1, #+0]
+    377            }
+    378            
+    379          } /* end DebugRxCallback() */
+   \                     ??DebugRxCallback_0: (+1)
+   \   00000026   0x4770             BX       LR               ;; return
+    380          
+    381          
+    382          /*--------------------------------------------------------------------------------------------------------------------*/
+    383          /* Private Functions */
+    384          /*--------------------------------------------------------------------------------------------------------------------*/
+    385          
+    386          /*----------------------------------------------------------------------------------------------------------------------
+    387          Function DebugCommandPrepareList
+    388          
+    389          Description:
+    390          Queues the entire list of debug commands available in the system so they will
+    391          be sent out the debug UART for the user to view.
+    392          
+    393          Requires:
+    394            - Message Sender application is running
+    395          
+    396          Promises:
+    397            - Command numbers and names of all installed commands are queued to messagesender.
+    398          */
+
+   \                                 In section .text, align 2, keep-with-next
+    399          static void DebugCommandPrepareList(void)
+    400          {
+   \                     DebugCommandPrepareList: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0xB092             SUB      SP,SP,#+72
+    401            u8 au8ListHeading[] = "\n\n\rAvailable commands:\n\r";
+   \   00000004   0xA80A             ADD      R0,SP,#+40
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable14_16
+   \   0000000A   0x2219             MOVS     R2,#+25
+   \   0000000C   0x.... 0x....      BL       __aeabi_memcpy
+    402            u8 au8CommandLine[DEBUG_CMD_PREFIX_LENGTH + DEBUG_CMD_NAME_LENGTH + DEBUG_CMD_POSTFIX_LENGTH];
+    403            
+    404            /* Write static characters to command list line */
+    405            au8CommandLine[2] = ':';
+   \   00000010   0x203A             MOVS     R0,#+58
+   \   00000012   0xF88D 0x0002      STRB     R0,[SP, #+2]
+    406            au8CommandLine[3] = ' ';
+   \   00000016   0x2020             MOVS     R0,#+32
+   \   00000018   0xF88D 0x0003      STRB     R0,[SP, #+3]
+    407            au8CommandLine[DEBUG_CMD_PREFIX_LENGTH + DEBUG_CMD_NAME_LENGTH] = '\n';
+   \   0000001C   0x200A             MOVS     R0,#+10
+   \   0000001E   0xF88D 0x0024      STRB     R0,[SP, #+36]
+    408            au8CommandLine[DEBUG_CMD_PREFIX_LENGTH + DEBUG_CMD_NAME_LENGTH + 1] = '\r';
+   \   00000022   0x200D             MOVS     R0,#+13
+   \   00000024   0xF88D 0x0025      STRB     R0,[SP, #+37]
+    409          
+    410            /* Prepare a nicely formatted list of commands */
+    411            DebugPrintf(au8ListHeading);
+   \   00000028   0xA80A             ADD      R0,SP,#+40
+   \   0000002A   0x.... 0x....      BL       DebugPrintf
+    412            
+    413            /* Loop through the array of commands parsing out the command number
+    414            and printing it along with the command name. */  
+    415            for(u8 i = 0; i < DEBUG_COMMANDS; i++)
+   \   0000002E   0x2400             MOVS     R4,#+0
+   \                     ??DebugCommandPrepareList_0: (+1)
+   \   00000030   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000032   0x2C08             CMP      R4,#+8
+   \   00000034   0xDA2C             BGE.N    ??DebugCommandPrepareList_1
+    416            {
+    417              /* Get the command number in ASCII */
+    418              if(i >= 10)
+   \   00000036   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000038   0x2C0A             CMP      R4,#+10
+   \   0000003A   0xDB07             BLT.N    ??DebugCommandPrepareList_2
+    419              {
+    420                au8CommandLine[0] = (i / 10) + 0x30;
+   \   0000003C   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   0000003E   0x200A             MOVS     R0,#+10
+   \   00000040   0xFB94 0xF0F0      SDIV     R0,R4,R0
+   \   00000044   0x3030             ADDS     R0,R0,#+48
+   \   00000046   0xF88D 0x0000      STRB     R0,[SP, #+0]
+   \   0000004A   0xE002             B.N      ??DebugCommandPrepareList_3
+    421              }
+    422              else
+    423              {
+    424                au8CommandLine[0] = 0x30;
+   \                     ??DebugCommandPrepareList_2: (+1)
+   \   0000004C   0x2030             MOVS     R0,#+48
+   \   0000004E   0xF88D 0x0000      STRB     R0,[SP, #+0]
+    425              }
+    426              
+    427              au8CommandLine[1] = (i % 10) + 0x30;
+   \                     ??DebugCommandPrepareList_3: (+1)
+   \   00000052   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000054   0x200A             MOVS     R0,#+10
+   \   00000056   0xFB94 0xF1F0      SDIV     R1,R4,R0
+   \   0000005A   0xFB00 0x4011      MLS      R0,R0,R1,R4
+   \   0000005E   0x3030             ADDS     R0,R0,#+48
+   \   00000060   0xF88D 0x0001      STRB     R0,[SP, #+1]
+    428              
+    429              /* Read the command name */
+    430              for(u8 j = 0; j < DEBUG_CMD_NAME_LENGTH; j++)
+   \   00000064   0x2000             MOVS     R0,#+0
+   \                     ??DebugCommandPrepareList_4: (+1)
+   \   00000066   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000068   0x2820             CMP      R0,#+32
+   \   0000006A   0xDA0C             BGE.N    ??DebugCommandPrepareList_5
+    431              {
+    432                au8CommandLine[DEBUG_CMD_PREFIX_LENGTH + j] = Debug_au8Commands[i].pu8CommandName[j];
+   \   0000006C   0x.... 0x....      LDR.W    R1,??DataTable14_17
+   \   00000070   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000072   0xF851 0x1034      LDR      R1,[R1, R4, LSL #+3]
+   \   00000076   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000078   0x5C41             LDRB     R1,[R0, R1]
+   \   0000007A   0xAA00             ADD      R2,SP,#+0
+   \   0000007C   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   0000007E   0x1882             ADDS     R2,R0,R2
+   \   00000080   0x7111             STRB     R1,[R2, #+4]
+    433              }
+   \   00000082   0x1C40             ADDS     R0,R0,#+1
+   \   00000084   0xE7EF             B.N      ??DebugCommandPrepareList_4
+    434              
+    435              /* Queue the command name to the UART */
+    436              DebugPrintf(au8CommandLine);
+   \                     ??DebugCommandPrepareList_5: (+1)
+   \   00000086   0xA800             ADD      R0,SP,#+0
+   \   00000088   0x.... 0x....      BL       DebugPrintf
+    437            }
+   \   0000008C   0x1C64             ADDS     R4,R4,#+1
+   \   0000008E   0xE7CF             B.N      ??DebugCommandPrepareList_0
+    438          
+    439            DebugLineFeed();
+   \                     ??DebugCommandPrepareList_1: (+1)
+   \   00000090   0x.... 0x....      BL       DebugLineFeed
+    440            
+    441          } /* end DebugCommand0PrepareList() */
+   \   00000094   0xB012             ADD      SP,SP,#+72
+   \   00000096   0xBD10             POP      {R4,PC}          ;; return
+    442          
+    443          
+    444          
+    445          /*----------------------------------------------------------------------------------------------------------------------
+    446          Function: DebugCommandDummy
+    447          
+    448          Description:
+    449          A command place-holder.
+    450          */
+
+   \                                 In section .text, align 2, keep-with-next
+    451          static void DebugCommandDummy(void)
+    452          {
+   \                     DebugCommandDummy: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0xB084             SUB      SP,SP,#+16
+    453            u8 au8DummyCommand[] = "\n\rDummy!\n\n\r";
+   \   00000004   0xA800             ADD      R0,SP,#+0
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable14_18
+   \   0000000A   0xC91C             LDM      R1!,{R2-R4}
+   \   0000000C   0xC01C             STM      R0!,{R2-R4}
+   \   0000000E   0x390C             SUBS     R1,R1,#+12
+   \   00000010   0x380C             SUBS     R0,R0,#+12
+    454            
+    455            DebugPrintf(au8DummyCommand);
+   \   00000012   0xA800             ADD      R0,SP,#+0
+   \   00000014   0x.... 0x....      BL       DebugPrintf
+    456            
+    457          } /* end DebugCommandDummy() */
+   \   00000018   0xBD1F             POP      {R0-R4,PC}       ;; return
+    458          
+    459          
+    460          /*----------------------------------------------------------------------------------------------------------------------
+    461          Function: DebugCommandLedTestToggle
+    462          
+    463          Description:
+    464          Toggles the active state of the LED test which allows typed characters corresponding to LED colors
+    465          to toggle those LEDs on or off.
+    466          */
+
+   \                                 In section .text, align 2, keep-with-next
+    467          static void DebugCommandLedTestToggle(void)
+    468          {
+   \                     DebugCommandLedTestToggle: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0xB084             SUB      SP,SP,#+16
+    469            u8 au8LedTestMessage[] = "\n\rLed Test ";
+   \   00000004   0xA800             ADD      R0,SP,#+0
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable14_19
+   \   0000000A   0xC91C             LDM      R1!,{R2-R4}
+   \   0000000C   0xC01C             STM      R0!,{R2-R4}
+   \   0000000E   0x390C             SUBS     R1,R1,#+12
+   \   00000010   0x380C             SUBS     R0,R0,#+12
+    470            
+    471            /* Print message and toggle the flag */
+    472            DebugPrintf(au8LedTestMessage);
+   \   00000012   0xA800             ADD      R0,SP,#+0
+   \   00000014   0x.... 0x....      BL       DebugPrintf
+    473            if(G_u32DebugFlags & _DEBUG_LED_TEST_ENABLE)
+   \   00000018   0x.... 0x....      LDR.W    R0,??DataTable14_20
+   \   0000001C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000001E   0x07C0             LSLS     R0,R0,#+31
+   \   00000020   0xD50A             BPL.N    ??DebugCommandLedTestToggle_0
+    474            {
+    475              G_u32DebugFlags &= ~_DEBUG_LED_TEST_ENABLE;
+   \   00000022   0x.... 0x....      LDR.W    R0,??DataTable14_20
+   \   00000026   0x6800             LDR      R0,[R0, #+0]
+   \   00000028   0x0840             LSRS     R0,R0,#+1
+   \   0000002A   0x0040             LSLS     R0,R0,#+1
+   \   0000002C   0x....             LDR.N    R1,??DataTable14_20
+   \   0000002E   0x6008             STR      R0,[R1, #+0]
+    476              DebugPrintf(G_au8MessageOFF);
+   \   00000030   0x....             LDR.N    R0,??DataTable14_21
+   \   00000032   0x.... 0x....      BL       DebugPrintf
+   \   00000036   0xE008             B.N      ??DebugCommandLedTestToggle_1
+    477            }
+    478            else
+    479            {
+    480              G_u32DebugFlags |= _DEBUG_LED_TEST_ENABLE;
+   \                     ??DebugCommandLedTestToggle_0: (+1)
+   \   00000038   0x....             LDR.N    R0,??DataTable14_20
+   \   0000003A   0x6800             LDR      R0,[R0, #+0]
+   \   0000003C   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   00000040   0x....             LDR.N    R1,??DataTable14_20
+   \   00000042   0x6008             STR      R0,[R1, #+0]
+    481              DebugPrintf(G_au8MessageON);
+   \   00000044   0x....             LDR.N    R0,??DataTable14_22
+   \   00000046   0x.... 0x....      BL       DebugPrintf
+    482            }
+    483            
+    484          } /* end DebugCommandLedTestToggle() */
+   \                     ??DebugCommandLedTestToggle_1: (+1)
+   \   0000004A   0xBD1F             POP      {R0-R4,PC}       ;; return
+    485          
+    486          
+    487          /*----------------------------------------------------------------------------------------------------------------------
+    488          Function: DebugLedTestCharacter
+    489          
+    490          Description:
+    491          Checks the character and toggles associated LED if applicable.
+    492          This implementation is specific to the target hardware.
+    493          
+    494          Requires:
+    495            - u8Char_ is the character to check
+    496          
+    497          Promises:
+    498            - If u8Char_ is a valid toggling character, the corresponding LED will be toggled.
+    499          */
+
+   \                                 In section .text, align 2, keep-with-next
+    500          static void DebugLedTestCharacter(u8 u8Char_)
+    501          {
+   \                     DebugLedTestCharacter: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+    502            /* Check the char to see if an LED should be toggled */  
+    503          #ifdef MPGL1
+    504            if(u8Char_ == 'W')
+   \   00000004   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000006   0x2C57             CMP      R4,#+87
+   \   00000008   0xD102             BNE.N    ??DebugLedTestCharacter_0
+    505            {
+    506              LedToggle(WHITE);
+   \   0000000A   0x2000             MOVS     R0,#+0
+   \   0000000C   0x.... 0x....      BL       LedToggle
+    507            }  
+    508          
+    509            if(u8Char_ == 'P')
+   \                     ??DebugLedTestCharacter_0: (+1)
+   \   00000010   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000012   0x2C50             CMP      R4,#+80
+   \   00000014   0xD102             BNE.N    ??DebugLedTestCharacter_1
+    510            {
+    511              LedToggle(PURPLE);
+   \   00000016   0x2001             MOVS     R0,#+1
+   \   00000018   0x.... 0x....      BL       LedToggle
+    512            } 
+    513          
+    514            if(u8Char_ == 'B')
+   \                     ??DebugLedTestCharacter_1: (+1)
+   \   0000001C   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   0000001E   0x2C42             CMP      R4,#+66
+   \   00000020   0xD102             BNE.N    ??DebugLedTestCharacter_2
+    515            {
+    516              LedToggle(BLUE);
+   \   00000022   0x2002             MOVS     R0,#+2
+   \   00000024   0x.... 0x....      BL       LedToggle
+    517            } 
+    518          
+    519            if(u8Char_ == 'C')
+   \                     ??DebugLedTestCharacter_2: (+1)
+   \   00000028   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   0000002A   0x2C43             CMP      R4,#+67
+   \   0000002C   0xD102             BNE.N    ??DebugLedTestCharacter_3
+    520            {
+    521              LedToggle(CYAN);
+   \   0000002E   0x2003             MOVS     R0,#+3
+   \   00000030   0x.... 0x....      BL       LedToggle
+    522            } 
+    523          
+    524            if(u8Char_ == 'G')
+   \                     ??DebugLedTestCharacter_3: (+1)
+   \   00000034   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000036   0x2C47             CMP      R4,#+71
+   \   00000038   0xD102             BNE.N    ??DebugLedTestCharacter_4
+    525            {
+    526              LedToggle(GREEN);
+   \   0000003A   0x2004             MOVS     R0,#+4
+   \   0000003C   0x.... 0x....      BL       LedToggle
+    527            } 
+    528          
+    529            if(u8Char_ == 'Y')
+   \                     ??DebugLedTestCharacter_4: (+1)
+   \   00000040   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000042   0x2C59             CMP      R4,#+89
+   \   00000044   0xD102             BNE.N    ??DebugLedTestCharacter_5
+    530            {
+    531              LedToggle(YELLOW);
+   \   00000046   0x2005             MOVS     R0,#+5
+   \   00000048   0x.... 0x....      BL       LedToggle
+    532            } 
+    533          
+    534            if(u8Char_ == 'O')
+   \                     ??DebugLedTestCharacter_5: (+1)
+   \   0000004C   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   0000004E   0x2C4F             CMP      R4,#+79
+   \   00000050   0xD102             BNE.N    ??DebugLedTestCharacter_6
+    535            {
+    536              LedToggle(ORANGE);
+   \   00000052   0x2006             MOVS     R0,#+6
+   \   00000054   0x.... 0x....      BL       LedToggle
+    537            } 
+    538          
+    539            if(u8Char_ == 'R')
+   \                     ??DebugLedTestCharacter_6: (+1)
+   \   00000058   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   0000005A   0x2C52             CMP      R4,#+82
+   \   0000005C   0xD102             BNE.N    ??DebugLedTestCharacter_7
+    540            {
+    541              LedToggle(RED);
+   \   0000005E   0x2007             MOVS     R0,#+7
+   \   00000060   0x.... 0x....      BL       LedToggle
+    542            } 
+    543          
+    544          #endif /* MPGL1 */
+    545            
+    546          #ifdef MPGL2
+    547            
+    548          #ifdef MPGL2_R01
+    549            if(u8Char_ == 'B')
+    550            {
+    551              LedToggle(BLUE);
+    552            } 
+    553          
+    554            if(u8Char_ == 'G')
+    555            {
+    556              LedToggle(GREEN);
+    557            } 
+    558          
+    559            if(u8Char_ == 'Y')
+    560            {
+    561              LedToggle(YELLOW);
+    562            } 
+    563          
+    564            if(u8Char_ == 'R')
+    565            {
+    566              LedToggle(RED);
+    567            } 
+    568            
+    569          #else
+    570          
+    571            if(u8Char_ == 'B')
+    572            {
+    573              LedToggle(BLUE0);
+    574              LedToggle(BLUE1);
+    575              LedToggle(BLUE2);
+    576              LedToggle(BLUE3);
+    577            }  
+    578          
+    579            if(u8Char_ == 'R')
+    580            {
+    581              LedToggle(RED0);
+    582              LedToggle(RED1);
+    583              LedToggle(RED2);
+    584              LedToggle(RED3);
+    585            }  
+    586            
+    587            if(u8Char_ == 'G')
+    588            {
+    589              LedToggle(GREEN0);
+    590              LedToggle(GREEN1);
+    591              LedToggle(GREEN2);
+    592              LedToggle(GREEN3);
+    593            }  
+    594           
+    595          #endif /* MPGL2_R01 */
+    596          #endif /* MPGL2 */
+    597            
+    598          } /* end DebugCommandLedTestToggle() */
+   \                     ??DebugLedTestCharacter_7: (+1)
+   \   00000064   0xBD10             POP      {R4,PC}          ;; return
+    599          
+    600          
+    601          /*----------------------------------------------------------------------------------------------------------------------
+    602          Function: DebugCommandSysTimeToggle
+    603          
+    604          Description:
+    605          Toggles the active state of the LED test which allows typed characters corresponding to LED colors
+    606          to toggle those LEDs on or off.
+    607          */
+
+   \                                 In section .text, align 2, keep-with-next
+    608          static void DebugCommandSysTimeToggle(void)
+    609          {
+   \                     DebugCommandSysTimeToggle: (+1)
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB089             SUB      SP,SP,#+36
+    610            u8 au8SysTimeTestMessage[] = "\n\rSystem time violation reporting ";
+   \   00000004   0xA800             ADD      R0,SP,#+0
+   \   00000006   0x....             LDR.N    R1,??DataTable14_23
+   \   00000008   0x2223             MOVS     R2,#+35
+   \   0000000A   0x.... 0x....      BL       __aeabi_memcpy
+    611            
+    612            /* Print message and toggle the flag */
+    613            DebugPrintf(au8SysTimeTestMessage);
+   \   0000000E   0xA800             ADD      R0,SP,#+0
+   \   00000010   0x.... 0x....      BL       DebugPrintf
+    614            if(G_u32DebugFlags & _DEBUG_TIME_WARNING_ENABLE)
+   \   00000014   0x....             LDR.N    R0,??DataTable14_20
+   \   00000016   0x7800             LDRB     R0,[R0, #+0]
+   \   00000018   0x07C0             LSLS     R0,R0,#+31
+   \   0000001A   0xD509             BPL.N    ??DebugCommandSysTimeToggle_0
+    615            {
+    616              G_u32DebugFlags &= ~_DEBUG_TIME_WARNING_ENABLE;
+   \   0000001C   0x....             LDR.N    R0,??DataTable14_20
+   \   0000001E   0x6800             LDR      R0,[R0, #+0]
+   \   00000020   0x0840             LSRS     R0,R0,#+1
+   \   00000022   0x0040             LSLS     R0,R0,#+1
+   \   00000024   0x....             LDR.N    R1,??DataTable14_20
+   \   00000026   0x6008             STR      R0,[R1, #+0]
+    617              DebugPrintf(G_au8MessageOFF);
+   \   00000028   0x....             LDR.N    R0,??DataTable14_21
+   \   0000002A   0x.... 0x....      BL       DebugPrintf
+   \   0000002E   0xE008             B.N      ??DebugCommandSysTimeToggle_1
+    618            }
+    619            else
+    620            {
+    621              G_u32DebugFlags |= _DEBUG_TIME_WARNING_ENABLE;
+   \                     ??DebugCommandSysTimeToggle_0: (+1)
+   \   00000030   0x....             LDR.N    R0,??DataTable14_20
+   \   00000032   0x6800             LDR      R0,[R0, #+0]
+   \   00000034   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   00000038   0x....             LDR.N    R1,??DataTable14_20
+   \   0000003A   0x6008             STR      R0,[R1, #+0]
+    622              DebugPrintf(G_au8MessageON);
+   \   0000003C   0x....             LDR.N    R0,??DataTable14_22
+   \   0000003E   0x.... 0x....      BL       DebugPrintf
+    623            }
+    624            
+    625          } /* end DebugCommandSysTimeToggle() */
+   \                     ??DebugCommandSysTimeToggle_1: (+1)
+   \   00000042   0xB009             ADD      SP,SP,#+36
+   \   00000044   0xBD00             POP      {PC}             ;; return
+    626          
+    627          #ifdef MPGL2 /* MPGL2 only tests */
+    628          
+    629          
+    630          /*----------------------------------------------------------------------------------------------------------------------
+    631          Function: DebugCommandCaptouchValuesToggle
+    632          
+    633          Description:
+    634          Toggles printing the current Captouch horizontal and vertical values.
+    635          */
+    636          static void DebugCommandCaptouchValuesToggle(void)
+    637          {
+    638            u8 au8CaptouchDisplayMessage[] = "\n\rDisplay Captouch values ";
+    639            
+    640            /* Print message and toggle the flag */
+    641            DebugPrintf(au8CaptouchDisplayMessage);
+    642            if(G_u32DebugFlags & _DEBUG_CAPTOUCH_VALUES_ENABLE)
+    643            {
+    644              G_u32DebugFlags &= ~_DEBUG_CAPTOUCH_VALUES_ENABLE;
+    645              DebugPrintf(G_au8MessageOFF);
+    646            }
+    647            else
+    648            {
+    649              G_u32DebugFlags |= _DEBUG_CAPTOUCH_VALUES_ENABLE;
+    650              DebugPrintf(G_au8MessageON);
+    651            }
+    652            
+    653          } /* end DebugCommandCaptouchValuesToggle() */
+    654          #endif /* MPGL2 only tests */
+    655          
+    656          
+    657          /***********************************************************************************************************************
+    658          State Machine Function Declarations
+    659          
+    660          The debugger state machine monitors the receive buffer to grab characters as they come in
+    661          from the interrupt-driven receiver and store them in the debug command buffer.  Nothing happens 
+    662          until the user sends a CR indicating they think they've entered a valid command.  The command is
+    663          checked and reacted to accordingly.
+    664          ***********************************************************************************************************************/
+    665          
+    666          /*----------------------------------------------------------------------------------------------------------------------
+    667          Waits for a byte to appear in the Rx buffer.  The BufferParser is always moved
+    668          through all new characters placing them into the command buffer until it hits a CR or there are no new
+    669          characters to read. If there is no CR in this iteration, nothing else occurs.
+    670          
+    671          Backspace: Echo the backspace and a space character to clear the character on screen; move Debug_pu8BufferCurrentChar back.
+    672          CR: Advance states to process the command.
+    673          Any other character: Echo it to the UART Tx and place a copy in Debug_au8CommandBuffer.
+    674          */
+
+   \                                 In section .text, align 4, keep-with-next
+    675          void DebugSM_Idle(void)               
+    676          {
+   \                     DebugSM_Idle: (+1)
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+    677            bool bCommandFound = FALSE;
+   \   00000002   0x2400             MOVS     R4,#+0
+    678            u8 u8CurrentByte;
+    679            static u8 au8BackspaceSequence[] = {ASCII_BACKSPACE, ' ', ASCII_BACKSPACE};
+    680            static u8 au8CommandOverflow[] = "\r\n*** Command too long ***\r\n\n";
+    681            
+    682            /* Parse any new characters that have come in until no more chars or a command is found */
+    683            while( (Debug_pu8RxBufferParser != Debug_pu8RxBufferNextChar) && (bCommandFound == FALSE) )
+   \                     ??DebugSM_Idle_0: (+1)
+   \   00000004   0x....             LDR.N    R0,??DataTable14_10
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0x....             LDR.N    R1,??DataTable14_11
+   \   0000000A   0x6809             LDR      R1,[R1, #+0]
+   \   0000000C   0x4288             CMP      R0,R1
+   \   0000000E   0xD062             BEQ.N    ??DebugSM_Idle_1
+   \   00000010   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000012   0x2C00             CMP      R4,#+0
+   \   00000014   0xD15F             BNE.N    ??DebugSM_Idle_1
+    684            {
+    685              /* Grab a copy of the current byte and echo it back */
+    686              u8CurrentByte = *Debug_pu8RxBufferParser;
+   \   00000016   0x....             LDR.N    R0,??DataTable14_10
+   \   00000018   0x6800             LDR      R0,[R0, #+0]
+   \   0000001A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000001C   0x0005             MOVS     R5,R0
+    687              
+    688              /* If the LED test is active, toggle LEDs based on characters */
+    689              if(Debug_bLedTestActive == TRUE)
+   \   0000001E   0x....             LDR.N    R0,??DataTable14_24
+   \   00000020   0x7800             LDRB     R0,[R0, #+0]
+   \   00000022   0x2801             CMP      R0,#+1
+   \   00000024   0xD103             BNE.N    ??DebugSM_Idle_2
+    690              {
+    691                DebugLedTestCharacter(u8CurrentByte);
+   \   00000026   0x0028             MOVS     R0,R5
+   \   00000028   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   0000002A   0x.... 0x....      BL       DebugLedTestCharacter
+    692              }
+    693              
+    694              /* Process the character */
+    695              switch (u8CurrentByte)
+   \                     ??DebugSM_Idle_2: (+1)
+   \   0000002E   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   00000030   0x0028             MOVS     R0,R5
+   \   00000032   0x2808             CMP      R0,#+8
+   \   00000034   0xD002             BEQ.N    ??DebugSM_Idle_3
+   \   00000036   0x280D             CMP      R0,#+13
+   \   00000038   0xD013             BEQ.N    ??DebugSM_Idle_4
+   \   0000003A   0xE018             B.N      ??DebugSM_Idle_5
+    696              {
+    697                /* Backspace: update command buffer pointer and send sequence to delete the char on the terminal */
+    698                case(ASCII_BACKSPACE): 
+    699                {
+    700                  if(Debug_pu8CmdBufferNextChar != &Debug_au8CommandBuffer[0])
+   \                     ??DebugSM_Idle_3: (+1)
+   \   0000003C   0x....             LDR.N    R0,??DataTable14_13
+   \   0000003E   0x6800             LDR      R0,[R0, #+0]
+   \   00000040   0x....             LDR.N    R1,??DataTable14_12
+   \   00000042   0x4288             CMP      R0,R1
+   \   00000044   0xD009             BEQ.N    ??DebugSM_Idle_6
+    701                  {
+    702                    Debug_pu8CmdBufferNextChar--;
+   \   00000046   0x....             LDR.N    R0,??DataTable14_13
+   \   00000048   0x6800             LDR      R0,[R0, #+0]
+   \   0000004A   0x1E40             SUBS     R0,R0,#+1
+   \   0000004C   0x....             LDR.N    R1,??DataTable14_13
+   \   0000004E   0x6008             STR      R0,[R1, #+0]
+    703                    Debug_u16CommandSize--;
+   \   00000050   0x....             LDR.N    R0,??DataTable14_25
+   \   00000052   0x8800             LDRH     R0,[R0, #+0]
+   \   00000054   0x1E40             SUBS     R0,R0,#+1
+   \   00000056   0x....             LDR.N    R1,??DataTable14_25
+   \   00000058   0x8008             STRH     R0,[R1, #+0]
+    704                  }
+    705                  
+    706                  DebugPrintf(au8BackspaceSequence);
+   \                     ??DebugSM_Idle_6: (+1)
+   \   0000005A   0x....             LDR.N    R0,??DataTable14_26
+   \   0000005C   0x.... 0x....      BL       DebugPrintf
+    707                  break;
+   \   00000060   0xE02B             B.N      ??DebugSM_Idle_7
+    708                }
+    709          
+    710                /* Carriage return: change states to process new command and fall through to echo character */
+    711                case(ASCII_CARRIAGE_RETURN): 
+    712                {
+    713                  bCommandFound = TRUE;
+   \                     ??DebugSM_Idle_4: (+1)
+   \   00000062   0x2001             MOVS     R0,#+1
+   \   00000064   0x0004             MOVS     R4,R0
+    714                  
+    715                  Debug_pfnStateMachine = DebugSM_CheckCmd;
+   \   00000066   0x.... 0x....      ADR.W    R0,DebugSM_CheckCmd
+   \   0000006A   0x....             LDR.N    R1,??DataTable14_4
+   \   0000006C   0x6008             STR      R0,[R1, #+0]
+    716                  
+    717                  /* Fall through to default */        
+    718                }
+    719                  
+    720                /* Add to command buffer and echo */
+    721                default: 
+    722                {
+    723                  /* Echo the character and place it in the command buffer */
+    724                  UartWriteByte(Debug_Uart, u8CurrentByte);
+   \                     ??DebugSM_Idle_5: (+1)
+   \   0000006E   0x0029             MOVS     R1,R5
+   \   00000070   0xB2C9             UXTB     R1,R1            ;; ZeroExt  R1,R1,#+24,#+24
+   \   00000072   0x....             LDR.N    R0,??DataTable14
+   \   00000074   0x6800             LDR      R0,[R0, #+0]
+   \   00000076   0x.... 0x....      BL       UartWriteByte
+    725                  *Debug_pu8CmdBufferNextChar = u8CurrentByte;
+   \   0000007A   0x....             LDR.N    R0,??DataTable14_13
+   \   0000007C   0x6800             LDR      R0,[R0, #+0]
+   \   0000007E   0x7005             STRB     R5,[R0, #+0]
+    726                  Debug_pu8CmdBufferNextChar++;
+   \   00000080   0x....             LDR.N    R0,??DataTable14_13
+   \   00000082   0x6800             LDR      R0,[R0, #+0]
+   \   00000084   0x1C40             ADDS     R0,R0,#+1
+   \   00000086   0x....             LDR.N    R1,??DataTable14_13
+   \   00000088   0x6008             STR      R0,[R1, #+0]
+    727                  Debug_u16CommandSize++;
+   \   0000008A   0x....             LDR.N    R0,??DataTable14_25
+   \   0000008C   0x8800             LDRH     R0,[R0, #+0]
+   \   0000008E   0x1C40             ADDS     R0,R0,#+1
+   \   00000090   0x....             LDR.N    R1,??DataTable14_25
+   \   00000092   0x8008             STRH     R0,[R1, #+0]
+    728          
+    729                  /* If the command buffer is now full but the last character was not ASCII_CARRIAGE_RETURN, throw out the whole
+    730                  buffer and report an error message */
+    731                  if( (Debug_pu8CmdBufferNextChar >= &Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]) &&
+    732                      (u8CurrentByte != ASCII_CARRIAGE_RETURN) )
+   \   00000094   0x....             LDR.N    R0,??DataTable14_13
+   \   00000096   0x6800             LDR      R0,[R0, #+0]
+   \   00000098   0x....             LDR.N    R1,??DataTable14_27
+   \   0000009A   0x4288             CMP      R0,R1
+   \   0000009C   0xD30D             BCC.N    ??DebugSM_Idle_8
+   \   0000009E   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   000000A0   0x2D0D             CMP      R5,#+13
+   \   000000A2   0xD00A             BEQ.N    ??DebugSM_Idle_8
+    733                  {
+    734                    Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
+   \   000000A4   0x....             LDR.N    R0,??DataTable14_12
+   \   000000A6   0x....             LDR.N    R1,??DataTable14_13
+   \   000000A8   0x6008             STR      R0,[R1, #+0]
+    735                    Debug_u16CommandSize = 0;
+   \   000000AA   0x2000             MOVS     R0,#+0
+   \   000000AC   0x....             LDR.N    R1,??DataTable14_25
+   \   000000AE   0x8008             STRH     R0,[R1, #+0]
+    736          
+    737                    Debug_u32CurrentMessageToken = DebugPrintf(au8CommandOverflow);
+   \   000000B0   0x....             LDR.N    R0,??DataTable14_28
+   \   000000B2   0x.... 0x....      BL       DebugPrintf
+   \   000000B6   0x....             LDR.N    R1,??DataTable14_29
+   \   000000B8   0x6008             STR      R0,[R1, #+0]
+    738                  }
+    739                  break;
+    740                }
+    741          
+    742              } /* end switch (u8RxChar) */
+    743                
+    744              /* In all cases, advance the RxBufferParser pointer safely */
+    745              Debug_pu8RxBufferParser++;
+   \                     ??DebugSM_Idle_8: (+1)
+   \                     ??DebugSM_Idle_7: (+1)
+   \   000000BA   0x....             LDR.N    R0,??DataTable14_10
+   \   000000BC   0x6800             LDR      R0,[R0, #+0]
+   \   000000BE   0x1C40             ADDS     R0,R0,#+1
+   \   000000C0   0x....             LDR.N    R1,??DataTable14_10
+   \   000000C2   0x6008             STR      R0,[R1, #+0]
+    746              if(Debug_pu8RxBufferParser >= &Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE])
+   \   000000C4   0x....             LDR.N    R0,??DataTable14_10
+   \   000000C6   0x6800             LDR      R0,[R0, #+0]
+   \   000000C8   0x....             LDR.N    R1,??DataTable14_15
+   \   000000CA   0x4288             CMP      R0,R1
+   \   000000CC   0xD39A             BCC.N    ??DebugSM_Idle_0
+    747              {
+    748                Debug_pu8RxBufferParser = &Debug_au8RxBuffer[0];
+   \   000000CE   0x....             LDR.N    R0,??DataTable14_9
+   \   000000D0   0x....             LDR.N    R1,??DataTable14_10
+   \   000000D2   0x6008             STR      R0,[R1, #+0]
+   \   000000D4   0xE796             B.N      ??DebugSM_Idle_0
+    749              }
+    750              
+    751            } /* end while */
+    752            
+    753            /* Clear out any completed messages */
+    754            if(Debug_u32CurrentMessageToken != 0)
+   \                     ??DebugSM_Idle_1: (+1)
+   \   000000D6   0x....             LDR.N    R0,??DataTable14_29
+   \   000000D8   0x6800             LDR      R0,[R0, #+0]
+   \   000000DA   0x2800             CMP      R0,#+0
+   \   000000DC   0xD003             BEQ.N    ??DebugSM_Idle_9
+    755            {
+    756              QueryMessageStatus(Debug_u32CurrentMessageToken);
+   \   000000DE   0x....             LDR.N    R0,??DataTable14_29
+   \   000000E0   0x6800             LDR      R0,[R0, #+0]
+   \   000000E2   0x.... 0x....      BL       QueryMessageStatus
+    757            }
+    758              
+    759          } /* end DebugSM_Idle() */
+   \                     ??DebugSM_Idle_9: (+1)
+   \   000000E6   0xBD31             POP      {R0,R4,R5,PC}    ;; return
+
+   \                                 In section .data, align 4
+   \                     ??au8BackspaceSequence:
+   \   00000000   0x08 0x20          DC8 8, 32, 8, 0
+   \              0x08 0x00    
+
+   \                                 In section .data, align 4
+   \                     ??au8CommandOverflow:
+   \   00000000   0x0D 0x0A          DC8 "\015\012*** Command too long ***\015\012\012"
+   \              0x2A 0x2A    
+   \              0x2A 0x20    
+   \              0x43 0x6F    
+   \              0x6D 0x6D    
+   \              0x61 0x6E    
+   \              0x64 0x20    
+   \              0x74 0x6F    
+   \              0x6F 0x20    
+   \              0x6C 0x6F    
+   \              0x6E 0x67    
+   \              0x20 0x2A    
+   \              0x2A 0x2A    
+   \              0x0D 0x0A    
+   \              0x0A 0x00    
+   \   0000001E   0x00 0x00          DC8 0, 0
+    760          
+    761          
+    762          /*----------------------------------------------------------------------------------------------------------------------
+    763          At the start of this state, the command buffer has a candidate command terminated in CR.
+    764          There is a strict rule that commands are of the form
+    765          en+cxx where xx is any number from 0 to DEBUG_COMMANDS, so parsing can be done based
+    766          on that rule.  All other strings are invalid.  Debug interrupts remain off
+    767          until the command is processed.
+    768          */
+
+   \                                 In section .text, align 4, keep-with-next
+    769          void DebugSM_CheckCmd(void)        
+    770          {
+   \                     DebugSM_CheckCmd: (+1)
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+    771            static u8 au8CommandHeader[] = "en+c";
+    772            static u8 au8InvalidCommand[] = "\nInvalid command\n\n\r"; 
+    773            bool bGoodCommand = TRUE;
+   \   00000002   0x2401             MOVS     R4,#+1
+    774            u8 u8Index;
+    775            s8 s8Temp;
+    776            
+    777            /* Verify that the command starts with en+c */
+    778            u8Index = 0;
+   \   00000004   0x2000             MOVS     R0,#+0
+   \   00000006   0x0005             MOVS     R5,R0
+    779            do
+    780            {
+    781              if(Debug_au8CommandBuffer[u8Index] != au8CommandHeader[u8Index])
+   \                     ??DebugSM_CheckCmd_0: (+1)
+   \   00000008   0x....             LDR.N    R0,??DataTable14_12
+   \   0000000A   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   0000000C   0x5C28             LDRB     R0,[R5, R0]
+   \   0000000E   0x....             LDR.N    R1,??DataTable14_30
+   \   00000010   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   00000012   0x5C69             LDRB     R1,[R5, R1]
+   \   00000014   0x4288             CMP      R0,R1
+   \   00000016   0xD001             BEQ.N    ??DebugSM_CheckCmd_1
+    782              {
+    783                bGoodCommand = FALSE;
+   \   00000018   0x2000             MOVS     R0,#+0
+   \   0000001A   0x0004             MOVS     R4,R0
+    784              }
+    785          
+    786              u8Index++;
+   \                     ??DebugSM_CheckCmd_1: (+1)
+   \   0000001C   0x1C6D             ADDS     R5,R5,#+1
+    787            } while ( bGoodCommand && (u8Index < 4) );
+   \   0000001E   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000020   0x2C00             CMP      R4,#+0
+   \   00000022   0xD002             BEQ.N    ??DebugSM_CheckCmd_2
+   \   00000024   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   00000026   0x2D04             CMP      R5,#+4
+   \   00000028   0xDBEE             BLT.N    ??DebugSM_CheckCmd_0
+    788            
+    789            /* On good header, read the command number */
+    790            if(bGoodCommand)
+   \                     ??DebugSM_CheckCmd_2: (+1)
+   \   0000002A   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   0000002C   0x2C00             CMP      R4,#+0
+   \   0000002E   0xD02E             BEQ.N    ??DebugSM_CheckCmd_3
+    791            {
+    792              /* Make an assumption */
+    793              bGoodCommand = FALSE;
+   \   00000030   0x2000             MOVS     R0,#+0
+   \   00000032   0x0004             MOVS     R4,R0
+    794          
+    795              /* Verify the next char is a digit */
+    796              s8Temp = Debug_au8CommandBuffer[u8Index++] - 0x30;
+   \   00000034   0x....             LDR.N    R0,??DataTable14_12
+   \   00000036   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   00000038   0x5628             LDRSB    R0,[R5, R0]
+   \   0000003A   0x3830             SUBS     R0,R0,#+48
+   \   0000003C   0x0006             MOVS     R6,R0
+   \   0000003E   0x1C6D             ADDS     R5,R5,#+1
+    797            
+    798              if( (s8Temp >= 0) && (s8Temp <= 9) )
+   \   00000040   0xB276             SXTB     R6,R6            ;; SignExt  R6,R6,#+24,#+24
+   \   00000042   0x2E00             CMP      R6,#+0
+   \   00000044   0xD423             BMI.N    ??DebugSM_CheckCmd_3
+   \   00000046   0xB276             SXTB     R6,R6            ;; SignExt  R6,R6,#+24,#+24
+   \   00000048   0x2E0A             CMP      R6,#+10
+   \   0000004A   0xDA20             BGE.N    ??DebugSM_CheckCmd_3
+    799              {
+    800                Debug_u8Command = s8Temp * 10;
+   \   0000004C   0x200A             MOVS     R0,#+10
+   \   0000004E   0xFB00 0xF006      MUL      R0,R0,R6
+   \   00000052   0x....             LDR.N    R1,??DataTable14_31
+   \   00000054   0x7008             STRB     R0,[R1, #+0]
+    801            
+    802                /* Verify the next char is a digit */
+    803                s8Temp = Debug_au8CommandBuffer[u8Index++] - 0x30;
+   \   00000056   0x....             LDR.N    R0,??DataTable14_12
+   \   00000058   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   0000005A   0x5628             LDRSB    R0,[R5, R0]
+   \   0000005C   0x3830             SUBS     R0,R0,#+48
+   \   0000005E   0x0006             MOVS     R6,R0
+   \   00000060   0x1C6D             ADDS     R5,R5,#+1
+    804                if( (s8Temp >= 0) && (s8Temp <= 9) )
+   \   00000062   0xB276             SXTB     R6,R6            ;; SignExt  R6,R6,#+24,#+24
+   \   00000064   0x2E00             CMP      R6,#+0
+   \   00000066   0xD412             BMI.N    ??DebugSM_CheckCmd_3
+   \   00000068   0xB276             SXTB     R6,R6            ;; SignExt  R6,R6,#+24,#+24
+   \   0000006A   0x2E0A             CMP      R6,#+10
+   \   0000006C   0xDA0F             BGE.N    ??DebugSM_CheckCmd_3
+    805                {
+    806                  Debug_u8Command += s8Temp;
+   \   0000006E   0x....             LDR.N    R0,??DataTable14_31
+   \   00000070   0x7800             LDRB     R0,[R0, #+0]
+   \   00000072   0x1830             ADDS     R0,R6,R0
+   \   00000074   0x....             LDR.N    R1,??DataTable14_31
+   \   00000076   0x7008             STRB     R0,[R1, #+0]
+    807                  
+    808                  /* Check that the command number is within the range of commands available and the last char is CR */
+    809                  if( (Debug_u8Command < DEBUG_COMMANDS) && (Debug_au8CommandBuffer[u8Index] == ASCII_CARRIAGE_RETURN) )
+   \   00000078   0x....             LDR.N    R0,??DataTable14_31
+   \   0000007A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000007C   0x2808             CMP      R0,#+8
+   \   0000007E   0xDA06             BGE.N    ??DebugSM_CheckCmd_3
+   \   00000080   0x....             LDR.N    R0,??DataTable14_12
+   \   00000082   0xB2ED             UXTB     R5,R5            ;; ZeroExt  R5,R5,#+24,#+24
+   \   00000084   0x5C28             LDRB     R0,[R5, R0]
+   \   00000086   0x280D             CMP      R0,#+13
+   \   00000088   0xD101             BNE.N    ??DebugSM_CheckCmd_3
+    810                  {
+    811                    bGoodCommand = TRUE;
+   \   0000008A   0x2001             MOVS     R0,#+1
+   \   0000008C   0x0004             MOVS     R4,R0
+    812                  }
+    813                }
+    814              }
+    815            }
+    816                     
+    817            /* If still good command */
+    818            if( bGoodCommand )
+   \                     ??DebugSM_CheckCmd_3: (+1)
+   \   0000008E   0xB2E4             UXTB     R4,R4            ;; ZeroExt  R4,R4,#+24,#+24
+   \   00000090   0x2C00             CMP      R4,#+0
+   \   00000092   0xD004             BEQ.N    ??DebugSM_CheckCmd_4
+    819            {
+    820              Debug_pfnStateMachine = DebugSM_ProcessCmd;
+   \   00000094   0x.... 0x....      ADR.W    R0,DebugSM_ProcessCmd
+   \   00000098   0x....             LDR.N    R1,??DataTable14_4
+   \   0000009A   0x6008             STR      R0,[R1, #+0]
+   \   0000009C   0xE005             B.N      ??DebugSM_CheckCmd_5
+    821            }
+    822            /* Otherwise print an error message and return to Idle */
+    823            else
+    824            { 
+    825              DebugPrintf(au8InvalidCommand);
+   \                     ??DebugSM_CheckCmd_4: (+1)
+   \   0000009E   0x....             LDR.N    R0,??DataTable14_32
+   \   000000A0   0x.... 0x....      BL       DebugPrintf
+    826              Debug_pfnStateMachine = DebugSM_Idle;
+   \   000000A4   0x....             LDR.N    R0,??DataTable14_33
+   \   000000A6   0x....             LDR.N    R1,??DataTable14_4
+   \   000000A8   0x6008             STR      R0,[R1, #+0]
+    827            }
+    828          
+    829            /* Reset the command buffer */
+    830            Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
+   \                     ??DebugSM_CheckCmd_5: (+1)
+   \   000000AA   0x....             LDR.N    R0,??DataTable14_12
+   \   000000AC   0x....             LDR.N    R1,??DataTable14_13
+   \   000000AE   0x6008             STR      R0,[R1, #+0]
+    831          
+    832          } /* end DebugSM_CheckCmd() */
+   \   000000B0   0xBD70             POP      {R4-R6,PC}       ;; return
+
+   \                                 In section .data, align 4
+   \                     ??au8CommandHeader:
+   \   00000000   0x65 0x6E          DC8 "en+c"
+   \              0x2B 0x63    
+   \              0x00         
+   \   00000005   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .data, align 4
+   \                     ??au8InvalidCommand:
+   \   00000000   0x0A 0x49          DC8 "\012Invalid command\012\012\015"
+   \              0x6E 0x76    
+   \              0x61 0x6C    
+   \              0x69 0x64    
+   \              0x20 0x63    
+   \              0x6F 0x6D    
+   \              0x6D 0x61    
+   \              0x6E 0x64    
+   \              0x0A 0x0A    
+   \              0x0D 0x00    
+    833          
+    834          
+    835          /*----------------------------------------------------------------------------------------------------------------------
+    836          Carry out the debug instruction. 
+    837          */
+
+   \                                 In section .text, align 4, keep-with-next
+    838          void DebugSM_ProcessCmd(void)         
+    839          {
+   \                     DebugSM_ProcessCmd: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    840            /* Setup for return to Idle state */
+    841            Debug_pfnStateMachine = DebugSM_Idle;
+   \   00000002   0x....             LDR.N    R0,??DataTable14_33
+   \   00000004   0x....             LDR.N    R1,??DataTable14_4
+   \   00000006   0x6008             STR      R0,[R1, #+0]
+    842          
+    843            /* Call the command function in the function array (may change next state ) */
+    844            Debug_au8Commands[Debug_u8Command].DebugFunction();
+   \   00000008   0x....             LDR.N    R0,??DataTable14_17
+   \   0000000A   0x....             LDR.N    R1,??DataTable14_31
+   \   0000000C   0x7809             LDRB     R1,[R1, #+0]
+   \   0000000E   0xEB10 0x00C1      ADDS     R0,R0,R1, LSL #+3
+   \   00000012   0x6840             LDR      R0,[R0, #+4]
+   \   00000014   0x4780             BLX      R0
+    845            
+    846          } /* end DebugSM_ProcessCmd() */
+   \   00000016   0xBD01             POP      {R0,PC}          ;; return
+    847          
+    848          
+    849          /*----------------------------------------------------------------------------------------------------------------------
+    850          Error state 
+    851          Attempt to print an error message (even though if the Debug UART has failed, then it obviously cannot print
+    852          a message to tell you that!)
+    853          */
+
+   \                                 In section .text, align 4, keep-with-next
+    854          void DebugSM_Error(void)         
+    855          {
+   \                     DebugSM_Error: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    856            static u8 au8DebugErrorMsg[] = "\n\nDebug task error: ";
+    857            
+    858            /* Flag an error and report it (if possible) */
+    859            G_u32DebugFlags |= _DEBUG_FLAG_ERROR;
+   \   00000002   0x....             LDR.N    R0,??DataTable14_20
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0xF050 0x4000      ORRS     R0,R0,#0x80000000
+   \   0000000A   0x....             LDR.N    R1,??DataTable14_20
+   \   0000000C   0x6008             STR      R0,[R1, #+0]
+    860            DebugPrintf(au8DebugErrorMsg);
+   \   0000000E   0x....             LDR.N    R0,??DataTable14_34
+   \   00000010   0x.... 0x....      BL       DebugPrintf
+    861            DebugPrintNumber( (u32)(Debug_u8ErrorCode) );
+   \   00000014   0x....             LDR.N    R0,??DataTable14_3
+   \   00000016   0x7800             LDRB     R0,[R0, #+0]
+   \   00000018   0x.... 0x....      BL       DebugPrintNumber
+    862            DebugLineFeed();
+   \   0000001C   0x.... 0x....      BL       DebugLineFeed
+    863            
+    864            /* Return to Idle state */
+    865            Debug_u16CommandSize = 0;
+   \   00000020   0x2000             MOVS     R0,#+0
+   \   00000022   0x....             LDR.N    R1,??DataTable14_25
+   \   00000024   0x8008             STRH     R0,[R1, #+0]
+    866            Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
+   \   00000026   0x....             LDR.N    R0,??DataTable14_12
+   \   00000028   0x....             LDR.N    R1,??DataTable14_13
+   \   0000002A   0x6008             STR      R0,[R1, #+0]
+    867            Debug_pfnStateMachine = DebugSM_Idle;
+   \   0000002C   0x....             LDR.N    R0,??DataTable14_33
+   \   0000002E   0x....             LDR.N    R1,??DataTable14_4
+   \   00000030   0x6008             STR      R0,[R1, #+0]
+    868          
+    869          } /* end DebugSM_Error() */
+   \   00000032   0xBD01             POP      {R0,PC}          ;; return
+
+   \                                 In section .data, align 4
+   \                     ??au8DebugErrorMsg:
+   \   00000000   0x0A 0x0A          DC8 "\012\012Debug task error: "
+   \              0x44 0x65    
+   \              0x62 0x75    
+   \              0x67 0x20    
+   \              0x74 0x61    
+   \              0x73 0x6B    
+   \              0x20 0x65    
+   \              0x72 0x72    
+   \              0x6F 0x72    
+   \              0x3A 0x20    
+   \              0x00         
+   \   00000015   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14:
+   \   00000000   0x........         DC32     Debug_Uart
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_1:
+   \   00000000   0x........         DC32     ?_8
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_2:
+   \   00000000   0x3B9ACA00         DC32     0x3b9aca00
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_3:
+   \   00000000   0x........         DC32     Debug_u8ErrorCode
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_4:
+   \   00000000   0x........         DC32     Debug_pfnStateMachine
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_5:
+   \   00000000   0x........         DC32     ?_9
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_6:
+   \   00000000   0x........         DC32     ?_10
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_7:
+   \   00000000   0x........         DC32     ?_11
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_8:
+   \   00000000   0x........         DC32     G_u32ApplicationFlags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_9:
+   \   00000000   0x........         DC32     Debug_au8RxBuffer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_10:
+   \   00000000   0x........         DC32     Debug_pu8RxBufferParser
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_11:
+   \   00000000   0x........         DC32     Debug_pu8RxBufferNextChar
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_12:
+   \   00000000   0x........         DC32     Debug_au8CommandBuffer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_13:
+   \   00000000   0x........         DC32     Debug_pu8CmdBufferNextChar
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_14:
+   \   00000000   0x........         DC32     Debug_au8StartupMsg
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_15:
+   \   00000000   0x........         DC32     Debug_au8RxBuffer+0x80
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_16:
+   \   00000000   0x........         DC32     ?_12
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_17:
+   \   00000000   0x........         DC32     Debug_au8Commands
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_18:
+   \   00000000   0x........         DC32     ?_13
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_19:
+   \   00000000   0x........         DC32     ?_14
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_20:
+   \   00000000   0x........         DC32     G_u32DebugFlags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_21:
+   \   00000000   0x........         DC32     G_au8MessageOFF
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_22:
+   \   00000000   0x........         DC32     G_au8MessageON
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_23:
+   \   00000000   0x........         DC32     ?_15
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_24:
+   \   00000000   0x........         DC32     Debug_bLedTestActive
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_25:
+   \   00000000   0x........         DC32     Debug_u16CommandSize
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_26:
+   \   00000000   0x........         DC32     ??au8BackspaceSequence
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_27:
+   \   00000000   0x........         DC32     Debug_au8CommandBuffer+0x40
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_28:
+   \   00000000   0x........         DC32     ??au8CommandOverflow
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_29:
+   \   00000000   0x........         DC32     Debug_u32CurrentMessageToken
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_30:
+   \   00000000   0x........         DC32     ??au8CommandHeader
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_31:
+   \   00000000   0x........         DC32     Debug_u8Command
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_32:
+   \   00000000   0x........         DC32     ??au8InvalidCommand
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_33:
+   \   00000000   0x........         DC32     DebugSM_Idle
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_34:
+   \   00000000   0x........         DC32     ??au8DebugErrorMsg
+
+   \                                 In section .rodata, align 4
+   \                     ?_0:
+   \   00000000   0x53 0x68          DC8 "Show debug command list         "
+   \              0x6F 0x77    
+   \              0x20 0x64    
+   \              0x65 0x62    
+   \              0x75 0x67    
+   \              0x20 0x63    
+   \              0x6F 0x6D    
+   \              0x6D 0x61    
+   \              0x6E 0x64    
+   \              0x20 0x6C    
+   \              0x69 0x73    
+   \              0x74 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_1:
+   \   00000000   0x54 0x6F          DC8 "Toggle LED test                 "
+   \              0x67 0x67    
+   \              0x6C 0x65    
+   \              0x20 0x4C    
+   \              0x45 0x44    
+   \              0x20 0x74    
+   \              0x65 0x73    
+   \              0x74 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_2:
+   \   00000000   0x54 0x6F          DC8 "Toggle system timing warning    "
+   \              0x67 0x67    
+   \              0x6C 0x65    
+   \              0x20 0x73    
+   \              0x79 0x73    
+   \              0x74 0x65    
+   \              0x6D 0x20    
+   \              0x74 0x69    
+   \              0x6D 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x77    
+   \              0x61 0x72    
+   \              0x6E 0x69    
+   \              0x6E 0x67    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_3:
+   \   00000000   0x44 0x75          DC8 "Dummy3                          "
+   \              0x6D 0x6D    
+   \              0x79 0x33    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_4:
+   \   00000000   0x44 0x75          DC8 "Dummy4                          "
+   \              0x6D 0x6D    
+   \              0x79 0x34    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_5:
+   \   00000000   0x44 0x75          DC8 "Dummy5                          "
+   \              0x6D 0x6D    
+   \              0x79 0x35    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_6:
+   \   00000000   0x44 0x75          DC8 "Dummy6                          "
+   \              0x6D 0x6D    
+   \              0x79 0x36    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_7:
+   \   00000000   0x44 0x75          DC8 "Dummy7                          "
+   \              0x6D 0x6D    
+   \              0x79 0x37    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x20 0x20    
+   \              0x00         
+   \   00000021   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 2
+   \                     ?_8:
+   \   00000000   0x0A 0x0D          DC8 10, 13
+
+   \                                 In section .rodata, align 4
+   \                     ?_9:
+   \   00000000   0x4E 0x4F          DC8 "NONE"
+   \              0x4E 0x45    
+   \              0x00         
+   \   00000005   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_10:
+   \   00000000   0x0A 0x0D          DC8 0AH, 0DH, 49H, 6EH, 69H, 74H, 69H, 61H
+   \              0x49 0x6E    
+   \              0x69 0x74    
+   \              0x69 0x61    
+   \   00000008   0x6C 0x69          DC8 6CH, 69H, 7AH, 61H, 74H, 69H, 6FH, 6EH
+   \              0x7A 0x61    
+   \              0x74 0x69    
+   \              0x6F 0x6E    
+   \   00000010   0x20 0x63          DC8 20H, 63H, 6FH, 6DH, 70H, 6CH, 65H, 74H
+   \              0x6F 0x6D    
+   \              0x70 0x6C    
+   \              0x65 0x74    
+   \   00000018   0x65 0x2E          DC8 65H, 2EH, 20H, 54H, 79H, 70H, 65H, 20H
+   \              0x20 0x54    
+   \              0x79 0x70    
+   \              0x65 0x20    
+   \   00000020   0x65 0x6E          DC8 65H, 6EH, 2BH, 63H, 30H, 30H, 20H, 66H
+   \              0x2B 0x63    
+   \              0x30 0x30    
+   \              0x20 0x66    
+   \   00000028   0x6F 0x72          DC8 6FH, 72H, 20H, 64H, 65H, 62H, 75H, 67H
+   \              0x20 0x64    
+   \              0x65 0x62    
+   \              0x75 0x67    
+   \   00000030   0x20 0x6D          DC8 20H, 6DH, 65H, 6EH, 75H, 2EH, 20H, 20H
+   \              0x65 0x6E    
+   \              0x75 0x2E    
+   \              0x20 0x20    
+   \   00000038   0x46 0x61          DC8 46H, 61H, 69H, 6CH, 65H, 64H, 20H, 74H
+   \              0x69 0x6C    
+   \              0x65 0x64    
+   \              0x20 0x74    
+   \   00000040   0x61 0x73          DC8 61H, 73H, 6BH, 73H, 3AH, 0AH, 0DH, 0
+   \              0x6B 0x73    
+   \              0x3A 0x0A    
+   \              0x0D 0x00    
+
+   \                                 In section .rodata, align 4
+   \                     ?_11:
+   \   00000000   0x4C 0x45          DC8 "LED"
+   \              0x44 0x00    
+   \   00000004   0x00 0x00          DC8 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   0000000A   0x42 0x55          DC8 "BUTTON"
+   \              0x54 0x54    
+   \              0x4F 0x4E    
+   \              0x00         
+   \   00000011   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+   \   00000014   0x44 0x45          DC8 "DEBUG"
+   \              0x42 0x55    
+   \              0x47 0x00    
+   \   0000001A   0x00 0x00          DC8 0, 0, 0, 0
+   \              0x00 0x00    
+   \   0000001E   0x4C 0x43          DC8 "LCD"
+   \              0x44 0x00    
+   \   00000022   0x00 0x00          DC8 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000028   0x41 0x4E          DC8 "ANT"
+   \              0x54 0x00    
+   \   0000002C   0x00 0x00          DC8 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000032   0x53 0x44          DC8 "SD"
+   \              0x00         
+   \   00000035   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_12:
+   \   00000000   0x0A 0x0A          DC8 "\012\012\015Available commands:\012\015"
+   \              0x0D 0x41    
+   \              0x76 0x61    
+   \              0x69 0x6C    
+   \              0x61 0x62    
+   \              0x6C 0x65    
+   \              0x20 0x63    
+   \              0x6F 0x6D    
+   \              0x6D 0x61    
+   \              0x6E 0x64    
+   \              0x73 0x3A    
+   \              0x0A 0x0D    
+   \              0x00         
+   \   00000019   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+
+   \                                 In section .rodata, align 4
+   \                     ?_13:
+   \   00000000   0x0A 0x0D          DC8 "\012\015Dummy!\012\012\015"
+   \              0x44 0x75    
+   \              0x6D 0x6D    
+   \              0x79 0x21    
+   \              0x0A 0x0A    
+   \              0x0D 0x00    
+
+   \                                 In section .rodata, align 4
+   \                     ?_14:
+   \   00000000   0x0A 0x0D          DC8 "\012\015Led Test "
+   \              0x4C 0x65    
+   \              0x64 0x20    
+   \              0x54 0x65    
+   \              0x73 0x74    
+   \              0x20 0x00    
+
+   \                                 In section .rodata, align 4
+   \                     ?_15:
+   \   00000000   0x0A 0x0D          DC8 "\012\015System time violation reporting "
+   \              0x53 0x79    
+   \              0x73 0x74    
+   \              0x65 0x6D    
+   \              0x20 0x74    
+   \              0x69 0x6D    
+   \              0x65 0x20    
+   \              0x76 0x69    
+   \              0x6F 0x6C    
+   \              0x61 0x74    
+   \              0x69 0x6F    
+   \              0x6E 0x20    
+   \              0x72 0x65    
+   \              0x70 0x6F    
+   \              0x72 0x74    
+   \              0x69 0x6E    
+   \              0x67 0x20    
+   \              0x00         
+   \   00000023   0x00               DC8 0
+    870                       
+    871          
+    872                    
+    873                       
+    874          /*--------------------------------------------------------------------------------------------------------------------*/
+    875          /* End of File                                                                                                        */
+    876          /*--------------------------------------------------------------------------------------------------------------------*/
+    877          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      24   DebugCommandDummy
+        24   -> DebugPrintf
+      24   DebugCommandLedTestToggle
+        24   -> DebugPrintf
+      80   DebugCommandPrepareList
+        80   -> DebugLineFeed
+        80   -> DebugPrintf
+        80   -> __aeabi_memcpy
+      40   DebugCommandSysTimeToggle
+        40   -> DebugPrintf
+        40   -> __aeabi_memcpy
+      24   DebugInitialize
+        24   -> DebugPrintf
+        24   -> UartRequest
+       8   DebugLedTestCharacter
+         8   -> LedToggle
+       8   DebugLineFeed
+         8   -> UartWriteData
+      40   DebugPrintNumber
+        40   -> UartWriteData
+        40   -> free
+        40   -> malloc
+      16   DebugPrintf
+        16   -> UartWriteData
+       8   DebugRunActiveState
+         8   -- Indirect call
+       0   DebugRxCallback
+      16   DebugSM_CheckCmd
+        16   -> DebugPrintf
+       8   DebugSM_Error
+         8   -> DebugLineFeed
+         8   -> DebugPrintNumber
+         8   -> DebugPrintf
+      16   DebugSM_Idle
+        16   -> DebugLedTestCharacter
+        16   -> DebugPrintf
+        16   -> QueryMessageStatus
+        16   -> UartWriteByte
+       8   DebugSM_ProcessCmd
+         8   -- Indirect call
+     160   SystemStatusReport
+       160   -> DebugLineFeed
+       160   -> DebugPrintf
+       160   -> __aeabi_memcpy
+       160   -> __aeabi_memcpy4
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable14
+       4  ??DataTable14_1
+       4  ??DataTable14_10
+       4  ??DataTable14_11
+       4  ??DataTable14_12
+       4  ??DataTable14_13
+       4  ??DataTable14_14
+       4  ??DataTable14_15
+       4  ??DataTable14_16
+       4  ??DataTable14_17
+       4  ??DataTable14_18
+       4  ??DataTable14_19
+       4  ??DataTable14_2
+       4  ??DataTable14_20
+       4  ??DataTable14_21
+       4  ??DataTable14_22
+       4  ??DataTable14_23
+       4  ??DataTable14_24
+       4  ??DataTable14_25
+       4  ??DataTable14_26
+       4  ??DataTable14_27
+       4  ??DataTable14_28
+       4  ??DataTable14_29
+       4  ??DataTable14_3
+       4  ??DataTable14_30
+       4  ??DataTable14_31
+       4  ??DataTable14_32
+       4  ??DataTable14_33
+       4  ??DataTable14_34
+       4  ??DataTable14_4
+       4  ??DataTable14_5
+       4  ??DataTable14_6
+       4  ??DataTable14_7
+       4  ??DataTable14_8
+       4  ??DataTable14_9
+      36  ?_0
+      36  ?_1
+      72  ?_10
+      60  ?_11
+      28  ?_12
+      12  ?_13
+      12  ?_14
+      36  ?_15
+      36  ?_2
+      36  ?_3
+      36  ?_4
+      36  ?_5
+      36  ?_6
+      36  ?_7
+       2  ?_8
+       8  ?_9
+      26  DebugCommandDummy
+      76  DebugCommandLedTestToggle
+     152  DebugCommandPrepareList
+      70  DebugCommandSysTimeToggle
+     158  DebugInitialize
+     102  DebugLedTestCharacter
+      28  DebugLineFeed
+     176  DebugPrintNumber
+      36  DebugPrintf
+      12  DebugRunActiveState
+      40  DebugRxCallback
+     178  DebugSM_CheckCmd
+      52  DebugSM_Error
+     232  DebugSM_Idle
+      24  DebugSM_ProcessCmd
+       4  Debug_Uart
+      64  Debug_au8CommandBuffer
+      64  Debug_au8Commands
+     128  Debug_au8RxBuffer
+      68  Debug_au8StartupMsg
+       1  Debug_bLedTestActive
+       4  Debug_pfnStateMachine
+       4  Debug_pu8CmdBufferNextChar
+       4  Debug_pu8RxBufferNextChar
+       4  Debug_pu8RxBufferParser
+       2  Debug_u16CommandSize
+       4  Debug_u32CurrentMessageToken
+       1  Debug_u8Command
+       1  Debug_u8ErrorCode
+       4  G_u32DebugFlags
+     116  SystemStatusReport
+       4  au8BackspaceSequence
+       8  au8CommandHeader
+      32  au8CommandOverflow
+      24  au8DebugErrorMsg
+      20  au8InvalidCommand
+
+ 
+   224 bytes in section .bss
+   221 bytes in section .data
+   518 bytes in section .rodata
+ 1 618 bytes in section .text
+ 
+ 1 618 bytes of CODE  memory
+   518 bytes of CONST memory
+   445 bytes of DATA  memory
+
+Errors: none
+Warnings: none
