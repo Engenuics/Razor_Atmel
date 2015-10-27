@@ -6621,9 +6621,10 @@ static inline uint32_t ITM_SendChar (uint32_t ch)
 #line 39 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
 /*******************************************************************************
-* File: typedefs.h                                                               
-* Description:
-* Type definitions for use with the system.
+File: typedefs.h                                                               
+
+Description:
+Type definitions for use with the system.
 *******************************************************************************/
 
 
@@ -6671,7 +6672,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 
-#line 84 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
+#line 85 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
 
 
 
@@ -6701,11 +6702,16 @@ Header file for main.c.
 /***********************************************************************************************************************
 * Constant Definitions
 ***********************************************************************************************************************/
-/* G_u32ApplicationFlags definitions are in configuration.h */
 
-/* G_u32SystemFlags */
+
+/***********************************************************************************************************************
+* Type Definitions
+***********************************************************************************************************************/
+
+
 
 #line 42 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+//#include "main_solution.h"
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.h"
 /***********************************************************************************************************************
 File: utilities.h                                                                
@@ -6779,7 +6785,7 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#line 43 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 44 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 
 
 /**********************************************************************************************************************

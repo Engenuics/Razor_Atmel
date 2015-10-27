@@ -1,4 +1,5 @@
-Debug/
-*.dep
+./Debug/
+././Debug/
+Debug
 *.TMP
-*.dep
+*.out

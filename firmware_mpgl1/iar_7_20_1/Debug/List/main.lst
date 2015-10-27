@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        26/Oct/2015  21:01:48
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        27/Oct/2015  16:33:35
 # Copyright 1999-2014 IAR Systems AB.
 #
 #    Cpu mode     =  thumb
@@ -57,51 +57,39 @@ D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\application\main.c
      12          All Global variable names shall start with "G_"
      13          ***********************************************************************************************************************/
      14          /* New variables */
-
-   \                                 In section .bss, align 4
-     15          volatile u32 G_u32SystemFlags = 0;                     /* Global system flags */
-   \                     G_u32SystemFlags:
-   \   00000000                      DS8 4
-
-   \                                 In section .bss, align 4
-     16          volatile u32 G_u32ApplicationFlags = 0;                /* Global applications flags: set when application is successfully initialized */
-   \                     G_u32ApplicationFlags:
-   \   00000000                      DS8 4
-     17          
-     18          /*--------------------------------------------------------------------------------------------------------------------*/
-     19          /* External global variables defined in other files (must indicate which file they are defined in) */
-     20          extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
-     21          extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
-     22          
-     23          
-     24          /***********************************************************************************************************************
-     25          Global variable definitions with scope limited to this local application.
-     26          Variable names shall start with "Main_" and be declared as static.
-     27          ***********************************************************************************************************************/
-     28          
+     15          
+     16          /*--------------------------------------------------------------------------------------------------------------------*/
+     17          /* External global variables defined in other files (must indicate which file they are defined in) */
+     18          
+     19          
+     20          /***********************************************************************************************************************
+     21          Global variable definitions with scope limited to this local application.
+     22          Variable names shall start with "Main_" and be declared as static.
+     23          ***********************************************************************************************************************/
+     24          
+     25          
+     26          /***********************************************************************************************************************
+     27          Main Program
+     28          ***********************************************************************************************************************/
      29          
-     30          /***********************************************************************************************************************
-     31          Main Program
-     32          ***********************************************************************************************************************/
-     33          
 
    \                                 In section .text, align 2, keep-with-next
-     34          void main(void)
-     35          {
-     36            while(1)
+     30          void main(void)
+     31          {
+     32            while(1)
    \                     main: (+1)
    \                     ??main_0: (+1)
    \   00000000   0xE7FE             B.N      ??main_0
-     37            {
-     38              
-     39            } /* end while(1) main super loop */
-     40            
-     41          } /* end main() */
-     42          
-     43          
-     44          /*--------------------------------------------------------------------------------------------------------------------*/
-     45          /* End of File */
-     46          /*--------------------------------------------------------------------------------------------------------------------*/
+     33            {
+     34              
+     35            } /* end while(1) main loop */
+     36            
+     37          } /* end main() */
+     38          
+     39          
+     40          /*--------------------------------------------------------------------------------------------------------------------*/
+     41          /* End of File */
+     42          /*--------------------------------------------------------------------------------------------------------------------*/
 
    Maximum stack usage in bytes:
 
@@ -114,16 +102,12 @@ D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\application\main.c
 
    Bytes  Function/Label
    -----  --------------
-       4  G_u32ApplicationFlags
-       4  G_u32SystemFlags
        2  main
 
  
- 8 bytes in section .bss
  2 bytes in section .text
  
  2 bytes of CODE memory
- 8 bytes of DATA memory
 
 Errors: none
 Warnings: none

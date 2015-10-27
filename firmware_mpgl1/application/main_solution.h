@@ -20,11 +20,21 @@ Header file for main.c.
 /***********************************************************************************************************************
 * Constant Definitions
 ***********************************************************************************************************************/
+#define MAX_DRINKS          (u8)10      /* Maximum number of drinks a server can hold */
 
 
 /***********************************************************************************************************************
 * Type Definitions
 ***********************************************************************************************************************/
+typedef enum {EMPTY, BEER, SHOOTER, WINE, HIBALL} DrinkType;
+
+typedef struct
+{
+  u8 u8ServerNumber;                    /* Unique token for this message */
+  DrinkType asServingTray[MAX_DRINKS];  /* Data payload array */
+  void* psNextServer;                   /* Pointer to next ServerType*/
+} ServerType;
+
 
 
 

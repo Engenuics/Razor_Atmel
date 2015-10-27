@@ -1,7 +1,8 @@
 /*******************************************************************************
-* File: typedefs.h                                                               
-* Description:
-* Type definitions for use with the system.
+File: typedefs.h                                                               
+
+Description:
+Type definitions for use with the system.
 *******************************************************************************/
 
 #ifndef __TYPEDEFS_H
