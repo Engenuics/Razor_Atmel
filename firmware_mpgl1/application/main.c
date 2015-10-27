@@ -29,85 +29,12 @@ Variable names shall start with "Main_" and be declared as static.
 
 /***********************************************************************************************************************
 Main Program
-Main has two sections:
-
-1. Initialization which is run once on power-up or reset.  All drivers and applications are setup here without timing
-contraints but must complete execution regardless of success or failure of starting the application. 
-
-2. Super loop which runs infinitely giving processor time to each application.  The total loop time should not exceed
-1ms of execution time counting all application execution.  SystemSleep() will execute to complete the remaining time in
-the 1ms period.
 ***********************************************************************************************************************/
 
 void main(void)
 {
-  G_u32SystemFlags |= _SYSTEM_INITIALIZING;
-  // Check for watch dog restarts
-
-  /* Low level initialization */
-  WatchDogSetup(); /* During development, set to not reset processor if timeout */
-  GpioSetup();
-  ClockSetup();
-  InterruptSetup();
-  SysTickSetup();
-
-  /* Driver initialization */
-  MessagingInitialize();
-  UartInitialize();
-  DebugInitialize();
-
-  /* Debug messages through DebugPrintf() are available from here */
-
-  SspInitialize();
-  TWIInitialize();
-
-  LedInitialize();
-  ButtonInitialize();
-
-#ifndef SIMULATOR_MODE
-  LcdInitialize();
-  AntInitialize();
-  SdCardInitialize();
-#endif /* SIMULATOR_MODE */
-
-  /* Application initialization */
-//  BoardTestInitialize();
-//  AudioTestInitialize();
-    UserAppInitialize();
-  
-  /* Exit initialization */
-  SystemStatusReport();
-  G_u32SystemFlags &= ~_SYSTEM_INITIALIZING;
-  
-  /* Super loop */  
   while(1)
   {
-    WATCHDOG_BONE();
-    
-    /* Drivers */
-    LedUpdate();
-    ButtonRunActiveState();
-    UartRunActiveState();
-    SspRunActiveState();
-    TWIRunActiveState();
-    MessagingRunActiveState();
-    DebugRunActiveState();
-    
-#ifndef SIMULATOR_MODE
-    LcdRunActiveState();
-    AntRunActiveState();
-    SdCardRunActiveState();
-#endif /* SIMULATOR_MODE */
-
-    /* Applications */
-    //BoardTestRunActiveState();
-    //AudioTestRunActiveState();
-    UserAppRunActiveState();
-    
-    /* System sleep*/
-    HEARTBEAT_OFF();
-    SystemSleep();
-    HEARTBEAT_ON();
     
   } /* end while(1) main super loop */
   

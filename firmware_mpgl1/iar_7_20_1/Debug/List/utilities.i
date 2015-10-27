@@ -1,4 +1,4 @@
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
 /***********************************************************************************************************************
 File: utilities.c                                                                
 
@@ -20,7 +20,7 @@ if( !IsTimeUp(&u32ApplicationTimer, 1000)
 
 ***********************************************************************************************************************/
 
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 /**********************************************************************************************************************
 File: configuration.h      
 
@@ -34,9 +34,6 @@ Bookmarks:
 @@@@@ GPIO board-specific parameters
 ##### Communication peripheral board-specific parameters
 
-DEBUG UART IS 115200-8-N-1
-ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
-
 ***********************************************************************************************************************/
 
 
@@ -46,26 +43,17 @@ ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
 Runtime switches
 ***********************************************************************************************************************/
 
-//#define MPGL2             1         /* Use to activate MPG Level 2 (all versions) specific code */
-//#define MPGL2_R01          1         /* Use with MPGL2-EHDW-01 revision board */
-
-
-
-
-
-//#define USE_SIMPLE_USART0 1  /* Define to use USART0 as a very simple byte-wise UART for debug purposes */
-
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
-typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
+
 
 
 /**********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
 /* Common header files */
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 /* stdlib.h standard header */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -76,7 +64,7 @@ Includes
   #pragma system_include
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -122,7 +110,7 @@ Includes
 
 
 
-#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
 
 
@@ -136,7 +124,7 @@ Includes
    NWx = no_write(x), i.e. it doesn't write through pointer parameter x.
 */
 
-#line 99 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 99 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
 
 
@@ -146,8 +134,8 @@ Includes
 
 
 
-#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 /* yvals.h internal configuration header file. */
 /* Copyright 2001-2010 IAR Systems AB. */
 
@@ -158,7 +146,7 @@ Includes
   #pragma system_include
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -204,9 +192,9 @@ Includes
 
 
 
-#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* Convenience macros */
 
@@ -246,16 +234,16 @@ Includes
 
 
   /* Default turned on when compiling C++, EC++, or C99. */
-#line 59 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 59 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
 
 
-#line 70 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 70 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* Configuration */
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 /***************************************************
  *
  * DLib_Defaults.h is the library configuration manager.
@@ -293,7 +281,7 @@ Includes
 
 
 /* Include the main configuration header file. */
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\INC\\c\\DLib_Config_Normal.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\INC\\c\\DLib_Config_Normal.h"
 /* Customer-specific DLib configuration. */
 /* Copyright (C) 2003 IAR Systems.  All rights reserved. */
 
@@ -306,12 +294,12 @@ Includes
 
 /* No changes to the defaults. */
 
-#line 40 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 40 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
   /* _DLIB_CONFIG_FILE_STRING is the quoted variant of above */
-#line 47 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 47 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 /* Include the product specific header file. */
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
 
 
 
@@ -349,7 +337,7 @@ Includes
 
 
 /* Enable system locking  */
-#line 45 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
+#line 45 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
 
 /* Enable AEABI support */
 
@@ -376,7 +364,7 @@ Includes
 
 
 /* Configure generic ELF init routines. */
-#line 89 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
+#line 89 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
 
 
 
@@ -384,7 +372,7 @@ Includes
 
 
 
-#line 51 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 51 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -678,7 +666,7 @@ Includes
  * Default is to support long long formatting.
  */
 
-#line 351 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 351 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -887,7 +875,7 @@ Includes
  * Default is to support long long formatting in scanf.
  */
 
-#line 566 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 566 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -1127,7 +1115,7 @@ Includes
 
 
 
-#line 812 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 812 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 /*
@@ -1135,13 +1123,13 @@ Includes
  * ARM AEABI. A target, except ARM, may deviate from it.
  */
 
-#line 826 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 826 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
   /* Possible AEABI deviations */
-#line 836 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 836 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
-#line 844 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 844 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
   /*
    * The "difunc" table contains information about C++ objects that
    * should be dynamically initialized, where each entry in the table
@@ -1186,7 +1174,7 @@ Includes
  * Rtti support.
  */
 
-#line 899 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 899 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 /*
  * Use the "pointers to short" or "pointers to long" implementation of 
@@ -1225,7 +1213,7 @@ Includes
  */
 
   /* size_t/ptrdiff_t must be a 4 bytes unsigned integer. */
-#line 943 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 943 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -1273,7 +1261,7 @@ Includes
  * Set this to __weak, if supported.
  *
  */
-#line 997 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 997 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 /*
@@ -1287,7 +1275,7 @@ Includes
 
 
 
-#line 73 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 73 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1321,7 +1309,7 @@ Includes
  * _LONG_DOUBLE_IS_DOUBLE signals that all internal long double routines
  *                        aren't needed.
  */
-#line 147 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 147 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1337,7 +1325,7 @@ Includes
 
 /* Has support for secure functions (printf_s, scanf_s, etc) */
 /* Will not compile if enabled */
-#line 170 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 170 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 /* Has support for complex C types */
 
@@ -1359,7 +1347,7 @@ Includes
 
 
 /* True C++ language setup */
-#line 233 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 233 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1372,7 +1360,7 @@ Includes
 
 
                 /* NAMESPACE CONTROL */
-#line 292 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 292 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1382,7 +1370,7 @@ Includes
 
 
 
-#line 308 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 308 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1391,7 +1379,7 @@ Includes
 
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 /* xencoding_limits.h internal header file */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
@@ -1402,7 +1390,7 @@ Includes
   #pragma system_include
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -1448,30 +1436,30 @@ Includes
 
 
 
-#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 /* yvals.h internal configuration header file. */
 /* Copyright 2001-2010 IAR Systems AB. */
 
-#line 707 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 707 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 13 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 13 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 
                                 /* Multibyte encoding length. */
 
 
-#line 24 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 24 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 
 
 
 
-#line 42 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 42 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 
                                 /* Utility macro */
 
@@ -1488,17 +1476,17 @@ V5.04:0576 */
 
 
 
-#line 317 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 317 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
                 /* FLOATING-POINT PROPERTIES */
 
                 /* float properties */
-#line 335 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 335 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* double properties */
-#line 360 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 360 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* long double properties */
                 /* (must be same as double) */
@@ -1506,7 +1494,7 @@ V5.04:0576 */
 
 
 
-#line 382 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 382 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
                 /* INTEGER PROPERTIES */
@@ -1524,7 +1512,7 @@ V5.04:0576 */
   typedef long long _Longlong;
   typedef unsigned long long _ULonglong;
   #pragma language=restore
-#line 405 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 405 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1535,9 +1523,9 @@ V5.04:0576 */
   typedef unsigned short int _Wintt;
 
 
-#line 424 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 424 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
-#line 432 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 432 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* POINTER PROPERTIES */
 
@@ -1549,7 +1537,7 @@ typedef unsigned int     _Sizet;
 
 
                 /* stdarg PROPERTIES */
-#line 454 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 454 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
   typedef _VA_LIST __Va_list;
 
 
@@ -1563,7 +1551,7 @@ __intrinsic __nounwind void __iar_Atexit(void (*)(void));
     unsigned int _Wchar;
     unsigned int _State;
   } _Mbstatet;
-#line 477 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 477 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1592,7 +1580,7 @@ typedef struct
 
                 /* THREAD AND LOCALE CONTROL */
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 /***************************************************
  *
  * DLib_Threads.h is the library threads manager.
@@ -1712,7 +1700,7 @@ typedef struct
 
 
 
-#line 157 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 157 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   /* Thread support, library supports threaded variables in a user specified
      memory area, locks on heap and on FILE */
@@ -1726,13 +1714,13 @@ typedef struct
   
 
 
-#line 176 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 176 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
 
 
 
 
-#line 187 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 187 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
 
 
@@ -1781,7 +1769,7 @@ typedef struct
 
 
 
-#line 242 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 242 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   /* The thread-local variable access function */
   void  *__iar_dlib_perthread_access(void  *);
@@ -1857,7 +1845,7 @@ typedef struct
   __intrinsic __nounwind void __iar_clearlocks(void);
 
 
-#line 323 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 323 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   
 
@@ -1867,7 +1855,7 @@ typedef struct
 
   
 
-#line 341 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 341 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   typedef unsigned _Once_t;
 
@@ -1887,12 +1875,12 @@ typedef struct
 
 
 
-#line 506 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 506 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
-#line 516 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 516 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* THREAD-LOCAL STORAGE */
-#line 524 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 524 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
                 /* MULTITHREAD PROPERTIES */
@@ -1919,12 +1907,12 @@ typedef struct
   _Pragma("object_attribute = __weak") __intrinsic __nounwind void __iar_Unlockdynamicfilelock(__iar_Rmtx *);
   
   
-#line 564 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 564 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* LOCK MACROS */
-#line 572 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 572 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
-#line 690 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 690 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* MISCELLANEOUS MACROS AND FUNCTIONS*/
 
@@ -1932,7 +1920,7 @@ typedef struct
 
 
 
-#line 705 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 705 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1940,8 +1928,8 @@ typedef struct
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 13 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 13 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 /* ysizet.h internal header file. */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
@@ -1952,7 +1940,7 @@ V5.04:0576 */
   #pragma system_include
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -1998,9 +1986,9 @@ V5.04:0576 */
 
 
 
-#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 
 
 
@@ -2026,7 +2014,7 @@ typedef unsigned int __data_size_t;
 
 
 
-#line 14 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 14 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 /* Module consistency. */
@@ -2039,7 +2027,7 @@ typedef unsigned int __data_size_t;
 extern int __aeabi_MB_CUR_MAX(void);
 
 
-#line 34 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 34 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
@@ -2146,7 +2134,7 @@ _Pragma("function_effects = no_read(1)")    __intrinsic __nounwind int wctomb(ch
 
 
 
-#line 188 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 188 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
@@ -2221,14 +2209,14 @@ _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind dou
   
 
 
-#line 276 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 276 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
   
   typedef void _Atexfun(void);
   
-#line 304 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 304 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
                 /* INLINES, FOR C and C++ */
@@ -2357,19 +2345,19 @@ _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind dou
 
 
 
-#line 465 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 465 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
 
-#line 494 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 494 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 46 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 34 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 /* string.h standard header */
 /* Copyright 2009-2010 IAR Systems AB. */
 
@@ -2379,7 +2367,7 @@ V5.04:0576 */
   #pragma system_include
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -2425,14 +2413,14 @@ V5.04:0576 */
 
 
 
-#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 11 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 11 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 /* ysizet.h internal header file. */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
-#line 30 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 30 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 
 
 
@@ -2440,9 +2428,9 @@ V5.04:0576 */
 
 
 
-#line 13 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 13 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
 /**************************************************
  *
  * ARM-specific configuration for string.h in DLib.
@@ -2483,7 +2471,7 @@ V5.04:0576 */
 
 
 
-#line 47 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
+#line 47 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
 
 
 
@@ -2521,7 +2509,7 @@ V5.04:0576 */
 
 
 
-#line 16 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 16 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
 
 
@@ -2570,7 +2558,7 @@ _Pragma("function_effects = no_write(2)")        __intrinsic __nounwind size_t  
 
 
 
-#line 81 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 81 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
   _Pragma("function_effects = no_state, no_errno, no_write(1)")    __intrinsic __nounwind void *memchr(const void *_S, int _C, size_t _N);
   _Pragma("function_effects = no_state, no_errno, no_write(1)")    __intrinsic __nounwind char *strchr(const char *_S, int _C);
   _Pragma("function_effects = no_state, no_errno, no_write(1,2)") __intrinsic __nounwind char *strpbrk(const char *_S, const char *_P);
@@ -2594,7 +2582,7 @@ _Pragma("function_effects = no_state, no_errno, no_write(1,2)") __intrinsic __no
 
 
                 /* inlines and overloads, for C and C++ */
-#line 168 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 168 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
                 /* Then the overloads for C. */
     #pragma inline
     void *memchr(const void *_S, int _C, size_t _N)
@@ -2633,21 +2621,21 @@ _Pragma("function_effects = no_state, no_errno, no_write(1,2)") __intrinsic __no
     return (__iar_Strerror(_Err, 0));
   }
 
-#line 451 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 451 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
 
 
 
 
 
-#line 479 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 479 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 47 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 35 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 //  ----------------------------------------------------------------------------
 //          ATMEL Microcontroller Software Support  -  ROUSSET  -
 //  ----------------------------------------------------------------------------
@@ -3105,7 +3093,7 @@ typedef struct _AT91S_HSMC4_CS {
 	AT91_REG	 HSMC4_TIMINGS; 	// Timmings Register
 	AT91_REG	 HSMC4_MODE; 	// Mode Register
 } AT91S_HSMC4_CS, *AT91PS_HSMC4_CS;
-#line 466 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 466 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_SETUP : (HSMC4_CS Offset: 0x0) HSMC4 SETUP -------- 
 
 
@@ -3120,9 +3108,9 @@ typedef struct _AT91S_HSMC4_CS {
 
 
 // -------- HSMC4_TIMINGS : (HSMC4_CS Offset: 0xc) HSMC4 TIMINGS -------- 
-#line 488 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 488 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_MODE : (HSMC4_CS Offset: 0x10) HSMC4 MODE -------- 
-#line 510 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 510 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR AHB Static Memory Controller 4 Interface
@@ -3171,33 +3159,33 @@ typedef struct _AT91S_HSMC4 {
 	AT91_REG	 HSMC4_VER; 	// HSMC4 Version Register
 	AT91_REG	 HSMC4_DUMMY; 	// This rtegister was created only ti have AHB constants
 } AT91S_HSMC4, *AT91PS_HSMC4;
-#line 600 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 600 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_CFG : (HSMC4 Offset: 0x0) Configuration Register -------- 
-#line 620 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 620 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_CTRL : (HSMC4 Offset: 0x4) Control Register -------- 
-#line 635 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 635 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_SR : (HSMC4 Offset: 0x8) HSMC4 Status Register -------- 
-#line 665 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 665 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_IER : (HSMC4 Offset: 0xc) HSMC4 Interrupt Enable Register -------- 
 // -------- HSMC4_IDR : (HSMC4 Offset: 0x10) HSMC4 Interrupt Disable Register -------- 
 // -------- HSMC4_IMR : (HSMC4 Offset: 0x14) HSMC4 Interrupt Mask Register -------- 
 // -------- HSMC4_ADDR : (HSMC4 Offset: 0x18) Address Cycle Zero Register -------- 
 
 // -------- HSMC4_BANK : (HSMC4 Offset: 0x1c) Bank Register -------- 
-#line 680 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 680 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCCR : (HSMC4 Offset: 0x20) ECC Control Register -------- 
 
 // -------- HSMC4_ECCCMD : (HSMC4 Offset: 0x24) ECC mode register -------- 
-#line 692 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 692 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCSR1 : (HSMC4 Offset: 0x28) ECC Status Register 1 -------- 
-#line 717 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 717 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCPR0 : (HSMC4 Offset: 0x2c) HSMC4 ECC parity Register 0 -------- 
 
 
 
 // -------- HSMC4_ECCPR1 : (HSMC4 Offset: 0x30) HSMC4 ECC parity Register 1 -------- 
 // -------- HSMC4_ECCSR2 : (HSMC4 Offset: 0x34) ECC Status Register 2 -------- 
-#line 747 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 747 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCPR2 : (HSMC4 Offset: 0x38) HSMC4 ECC parity Register 2 -------- 
 // -------- HSMC4_ECCPR3 : (HSMC4 Offset: 0x3c) HSMC4 ECC parity Register 3 -------- 
 // -------- HSMC4_ECCPR4 : (HSMC4 Offset: 0x40) HSMC4 ECC parity Register 4 -------- 
@@ -3223,10 +3211,10 @@ typedef struct _AT91S_HSMC4 {
 
 
 // -------- HSMC4_WPSR : (HSMC4 Offset: 0x1e8) HSMC4 WPSR Register -------- 
-#line 778 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 778 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_VER : (HSMC4 Offset: 0x1fc) HSMC4 VERSION Register -------- 
 // -------- HSMC4_DUMMY : (HSMC4 Offset: 0x200) HSMC4 DUMMY REGISTER -------- 
-#line 802 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 802 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR AHB Matrix2 Interface
@@ -3276,9 +3264,9 @@ typedef struct _AT91S_HMATRIX2 {
 	AT91_REG	 HMATRIX2_FEATURES; 	// HMATRIX2 FEATURES REGISTER 
 	AT91_REG	 HMATRIX2_VER; 	// HMATRIX2 VERSION REGISTER 
 } AT91S_HMATRIX2, *AT91PS_HMATRIX2;
-#line 893 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 893 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MATRIX_MCFG0 : (HMATRIX2 Offset: 0x0) Master Configuration Register ARM bus I and D -------- 
-#line 903 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 903 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MATRIX_MCFG1 : (HMATRIX2 Offset: 0x4) Master Configuration Register ARM bus S -------- 
 // -------- MATRIX_MCFG2 : (HMATRIX2 Offset: 0x8) Master Configuration Register -------- 
 // -------- MATRIX_MCFG3 : (HMATRIX2 Offset: 0xc) Master Configuration Register -------- 
@@ -3287,7 +3275,7 @@ typedef struct _AT91S_HMATRIX2 {
 // -------- MATRIX_MCFG6 : (HMATRIX2 Offset: 0x18) Master Configuration Register -------- 
 // -------- MATRIX_MCFG7 : (HMATRIX2 Offset: 0x1c) Master Configuration Register -------- 
 // -------- MATRIX_SCFG0 : (HMATRIX2 Offset: 0x40) Slave Configuration Register 0 -------- 
-#line 918 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 918 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MATRIX_SCFG1 : (HMATRIX2 Offset: 0x44) Slave Configuration Register 1 -------- 
 
 
@@ -3406,9 +3394,9 @@ typedef struct _AT91S_NVIC {
 	AT91_REG	 NVIC_CID2; 	// Component identification register b23:16
 	AT91_REG	 NVIC_CID3; 	// Component identification register b31:24
 } AT91S_NVIC, *AT91PS_NVIC;
-#line 1092 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1092 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_ICTR : (NVIC Offset: 0x4) Interrupt Controller Type Register -------- 
-#line 1110 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1110 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_STICKCSR : (NVIC Offset: 0x10) SysTick Control and Status Register -------- 
 
 
@@ -3434,20 +3422,20 @@ typedef struct _AT91S_NVIC {
 
 
 // -------- NVIC_ICSR : (NVIC Offset: 0xd04) Interrupt Control State Register -------- 
-#line 1145 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1145 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_VTOFFR : (NVIC Offset: 0xd08) Vector Table Offset Register -------- 
 
 
 
 
 // -------- NVIC_AIRCR : (NVIC Offset: 0xd0c) Application Interrupt and Reset Control Register -------- 
-#line 1162 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1162 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_SCR : (NVIC Offset: 0xd10) System Control Register -------- 
 
 
 
 // -------- NVIC_CCR : (NVIC Offset: 0xd14) Configuration Control Register -------- 
-#line 1173 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1173 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_HAND4PR : (NVIC Offset: 0xd18) System Handlers 4-7 Priority Register -------- 
 
 
@@ -3464,13 +3452,13 @@ typedef struct _AT91S_NVIC {
 
 
 // -------- NVIC_HANDCSR : (NVIC Offset: 0xd24) System Handler Control and State Register -------- 
-#line 1203 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1203 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_CFSR : (NVIC Offset: 0xd28) Configurable Fault Status Registers -------- 
 
 
 
 // -------- NVIC_BFAR : (NVIC Offset: 0xd38) Bus Fault Address Register -------- 
-#line 1214 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1214 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_PFR0 : (NVIC Offset: 0xd40) Processor Feature register0 (ID_PFR0) -------- 
 
 
@@ -3499,7 +3487,7 @@ typedef struct _AT91S_MPU {
 	AT91_REG	 MPU_REG_BASE_ADDR3; 	// MPU Region Base Address Register alias 3
 	AT91_REG	 MPU_ATTR_SIZE3; 	// MPU  Attribute and Size Register alias 3
 } AT91S_MPU, *AT91PS_MPU;
-#line 1256 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1256 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MPU_TYPE : (MPU Offset: 0x0)  -------- 
 
 
@@ -3515,7 +3503,7 @@ typedef struct _AT91S_MPU {
 
 
 // -------- MPU_ATTR_SIZE : (MPU Offset: 0x10)  -------- 
-#line 1280 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1280 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR CORTEX_M3 Registers
@@ -3531,7 +3519,7 @@ typedef struct _AT91S_CM3 {
 	AT91_REG	 CM3_SHPR[3]; 	// System Handler Priority Register
 	AT91_REG	 CM3_SHCSR; 	// System Handler Control and State Register
 } AT91S_CM3, *AT91PS_CM3;
-#line 1306 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1306 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- CM3_CPUID : (CM3 Offset: 0x0)  -------- 
 // -------- CM3_AIRCR : (CM3 Offset: 0xc)  -------- 
 
@@ -3558,7 +3546,7 @@ typedef struct _AT91S_PDC {
 	AT91_REG	 PDC_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 PDC_PTSR; 	// PDC Transfer Status Register
 } AT91S_PDC, *AT91PS_PDC;
-#line 1345 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1345 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PDC_PTCR : (PDC Offset: 0x20) PDC Transfer Control Register -------- 
 
 
@@ -3602,13 +3590,13 @@ typedef struct _AT91S_DBGU {
 	AT91_REG	 DBGU_CIDR; 	// Chip ID Register
 	AT91_REG	 DBGU_EXID; 	// Chip ID Extension Register
 } AT91S_DBGU, *AT91PS_DBGU;
-#line 1408 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1408 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_CR : (DBGU Offset: 0x0) Debug Unit Control Register -------- 
-#line 1416 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1416 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_MR : (DBGU Offset: 0x4) Debug Unit Mode Register -------- 
-#line 1428 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1428 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_IER : (DBGU Offset: 0x8) Debug Unit Interrupt Enable Register -------- 
-#line 1441 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1441 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_IDR : (DBGU Offset: 0xc) Debug Unit Interrupt Disable Register -------- 
 // -------- DBGU_IMR : (DBGU Offset: 0x10) Debug Unit Interrupt Mask Register -------- 
 // -------- DBGU_CSR : (DBGU Offset: 0x14) Debug Unit Channel Status Register -------- 
@@ -3686,7 +3674,7 @@ typedef struct _AT91S_PIO {
 	AT91_REG	 PIO_KKPR; 	// Keypad Controller Key Press Register
 	AT91_REG	 PIO_KKRR; 	// Keypad Controller Key Release Register
 } AT91S_PIO, *AT91PS_PIO;
-#line 1572 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1572 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PIO_KER : (PIO Offset: 0x120) Keypad Controller Enable Register -------- 
 
 // -------- PIO_KRCR : (PIO Offset: 0x124) Keypad Controller Row Column Register -------- 
@@ -3703,7 +3691,7 @@ typedef struct _AT91S_PIO {
 
 
 // -------- PIO_KKPR : (PIO Offset: 0x140) Keypad Controller Key Press Register -------- 
-#line 1596 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1596 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PIO_KKRR : (PIO Offset: 0x144) Keypad Controller Key Release Register -------- 
 
 // *****************************************************************************
@@ -3740,7 +3728,7 @@ typedef struct _AT91S_PMC {
 	AT91_REG	 PMC_FEATURES; 	// PMC FEATURES REGISTER 
 	AT91_REG	 PMC_VER; 	// APMC VERSION REGISTER
 } AT91S_PMC, *AT91PS_PMC;
-#line 1659 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1659 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_SCER : (PMC Offset: 0x0) System Clock Enable Register -------- 
 
 
@@ -3749,19 +3737,19 @@ typedef struct _AT91S_PMC {
 // -------- PMC_SCDR : (PMC Offset: 0x4) System Clock Disable Register -------- 
 // -------- PMC_SCSR : (PMC Offset: 0x8) System Clock Status Register -------- 
 // -------- CKGR_UCKR : (PMC Offset: 0x1c) UTMI Clock Configuration Register -------- 
-#line 1675 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1675 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- CKGR_MOR : (PMC Offset: 0x20) Main Oscillator Register -------- 
-#line 1685 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1685 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- CKGR_MCFR : (PMC Offset: 0x24) Main Clock Frequency Register -------- 
 
 
 // -------- CKGR_PLLAR : (PMC Offset: 0x28) PLL A Register -------- 
-#line 1700 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1700 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_MCKR : (PMC Offset: 0x30) Master Clock Register -------- 
-#line 1716 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1716 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_PCKR : (PMC Offset: 0x40) Programmable Clock Register -------- 
 // -------- PMC_IER : (PMC Offset: 0x60) PMC Interrupt Enable Register -------- 
-#line 1728 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1728 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_IDR : (PMC Offset: 0x64) PMC Interrupt Disable Register -------- 
 // -------- PMC_SR : (PMC Offset: 0x68) PMC Status Register -------- 
 
@@ -3808,7 +3796,7 @@ typedef struct _AT91S_RSTC {
 	AT91_REG	 Reserved0[60]; 	// 
 	AT91_REG	 RSTC_VER; 	// Version Register
 } AT91S_RSTC, *AT91PS_RSTC;
-#line 1781 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1781 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RSTC_RCR : (RSTC Offset: 0x0) Reset Control Register -------- 
 
 
@@ -3816,7 +3804,7 @@ typedef struct _AT91S_RSTC {
 
 
 // -------- RSTC_RSR : (RSTC Offset: 0x4) Reset Status Register -------- 
-#line 1797 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1797 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RSTC_RMR : (RSTC Offset: 0x8) Reset Mode Register -------- 
 
 
@@ -3834,19 +3822,19 @@ typedef struct _AT91S_SUPC {
   AT91_REG SUPC_WUIR; // Supply Controller Wake Up Inputs Register
   AT91_REG SUPC_SR;   // Supply Controller Status Register
 } AT91S_SUPC, *AT91PS_SUPC;
-#line 1822 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1822 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_CR : (SUPC Offset: 0x00) Supply Controller Control Register --------
-#line 1830 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1830 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_SMMR : (SUPC Offset: 0x04) Supply Controller Supply Monitor Mode Register --------
-#line 1860 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1860 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_MR : (SUPC Offset: 0x08) Supply Controller Mode Register --------
-#line 1874 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1874 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_WUMR : (SUPC Offset: 0x0C) Supply Controller Wake Up Mode Register --------
-#line 1901 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1901 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_WUIR : (SUPC Offset: 0x10) Supply Controller Wake Up Inputs Register --------
-#line 1998 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1998 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_SR : (SUPC Offset: 0x14) Supply Controller Status Register --------
-#line 2074 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2074 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR Real Time Timer Controller Interface
@@ -3858,7 +3846,7 @@ typedef struct _AT91S_RTTC {
 	AT91_REG	 RTTC_RTVR; 	// Real-time Value Register
 	AT91_REG	 RTTC_RTSR; 	// Real-time Status Register
 } AT91S_RTTC, *AT91PS_RTTC;
-#line 2092 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2092 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RTTC_RTMR : (RTTC Offset: 0x0) Real-time Mode Register -------- 
 
 
@@ -3881,12 +3869,12 @@ typedef struct _AT91S_WDTC {
 	AT91_REG	 WDTC_WDMR; 	// Watchdog Mode Register
 	AT91_REG	 WDTC_WDSR; 	// Watchdog Status Register
 } AT91S_WDTC, *AT91PS_WDTC;
-#line 2120 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2120 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- WDTC_WDCR : (WDTC Offset: 0x0) Periodic Interval Image Register -------- 
 
 
 // -------- WDTC_WDMR : (WDTC Offset: 0x4) Watchdog Mode Register -------- 
-#line 2132 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2132 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- WDTC_WDSR : (WDTC Offset: 0x8) Watchdog Status Register -------- 
 
 
@@ -3909,9 +3897,9 @@ typedef struct _AT91S_RTC {
 	AT91_REG	 RTC_IMR; 	// Interrupt Mask Register
 	AT91_REG	 RTC_VER; 	// Valid Entry Register
 } AT91S_RTC, *AT91PS_RTC;
-#line 2169 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2169 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RTC_CR : (RTC Offset: 0x0) RTC Control Register -------- 
-#line 2181 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2181 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RTC_MR : (RTC Offset: 0x4) RTC Mode Register -------- 
 
 // -------- RTC_TIMR : (RTC Offset: 0x8) RTC Time Register -------- 
@@ -3992,18 +3980,18 @@ typedef struct _AT91S_ADC {
 	AT91_REG	 ADC_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 ADC_PTSR; 	// PDC Transfer Status Register
 } AT91S_ADC, *AT91PS_ADC;
-#line 2289 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2289 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC_CR : (ADC Offset: 0x0) ADC Control Register -------- 
 
 
 // -------- ADC_MR : (ADC Offset: 0x4) ADC Mode Register -------- 
-#line 2313 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2313 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- 	ADC_CHER : (ADC Offset: 0x10) ADC Channel Enable Register -------- 
-#line 2322 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2322 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- 	ADC_CHDR : (ADC Offset: 0x14) ADC Channel Disable Register -------- 
 // -------- 	ADC_CHSR : (ADC Offset: 0x18) ADC Channel Status Register -------- 
 // -------- ADC_SR : (ADC Offset: 0x1c) ADC Status Register -------- 
-#line 2345 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2345 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC_LCDR : (ADC Offset: 0x20) ADC Last Converted Data Register -------- 
 
 // -------- ADC_IER : (ADC Offset: 0x24) ADC Interrupt Enable Register -------- 
@@ -4019,7 +4007,7 @@ typedef struct _AT91S_ADC {
 // -------- ADC_CDR6 : (ADC Offset: 0x48) ADC Channel Data Register 6 -------- 
 // -------- ADC_CDR7 : (ADC Offset: 0x4c) ADC Channel Data Register 7 -------- 
 // -------- ADC_ACR : (ADC Offset: 0x64) ADC Analog Controler Register -------- 
-#line 2368 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2368 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC_EMR : (ADC Offset: 0x68) ADC Extended Mode Register -------- 
 
 
@@ -4048,31 +4036,31 @@ typedef struct _AT91S_ADC12B {
   AT91_REG ADC12B_ACR;    // Analog Control Register
   AT91_REG ADC12B_EMR;    // Extended Mode Register
 } AT91S_ADC12B, *AT91PS_ADC12B;
-#line 2411 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2411 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CR : (ADC12B Offset: 0x00) Control Register --------
-#line 2418 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2418 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_MR : (ADC12B Offset: 0x04) Mode Register --------
-#line 2438 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2438 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CHER : (ADC12B Offset: 0x10) Channel Enable Register --------
-#line 2463 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2463 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CHDR : (ADC12B Offset: 0x14) Channel Disable Register --------
-#line 2488 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2488 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CHSR : (ADC12B Offset: 0x18) Channel Status Register --------
-#line 2513 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2513 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_SR : (ADC12B Offset: 0x1C) Status Register --------
-#line 2574 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2574 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_LCDR : (ADC12B Offset: 0x20) Last Converted Data Register --------
 
 // -------- ADC12B_IER : (ADC12B Offset: 0x24) Interrupt Enable Register --------
-#line 2637 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2637 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_IDR : (ADC12B Offset: 0x28) Interrupt Disable Register --------
-#line 2698 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2698 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_IMR : (ADC12B Offset: 0x2C) Interrupt Mask Register --------
-#line 2759 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2759 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CDR[8] : (ADC12B Offset: 0x30) Channel Data Register --------
 
 // -------- ADC12B_ACR : (ADC12B Offset: 0x64) Analog Control Register --------
-#line 2772 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2772 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_EMR : (ADC12B Offset: 0x68) Extended Mode Register --------
 
 
@@ -4096,15 +4084,15 @@ typedef struct _AT91S_TC {
 	AT91_REG	 TC_IDR; 	// Interrupt Disable Register
 	AT91_REG	 TC_IMR; 	// Interrupt Mask Register
 } AT91S_TC, *AT91PS_TC;
-#line 2808 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2808 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TC_CCR : (TC Offset: 0x0) TC Channel Control Register -------- 
 
 
 
 // -------- TC_CMR : (TC Offset: 0x4) TC Channel Mode Register: Capture Mode / Waveform Mode -------- 
-#line 2906 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2906 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TC_SR : (TC Offset: 0x20) TC Channel Status Register -------- 
-#line 2918 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2918 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TC_IER : (TC Offset: 0x24) TC Channel Interrupt Enable Register -------- 
 // -------- TC_IDR : (TC Offset: 0x28) TC Channel Interrupt Disable Register -------- 
 // -------- TC_IMR : (TC Offset: 0x2c) TC Channel Interrupt Mask Register -------- 
@@ -4129,11 +4117,11 @@ typedef struct _AT91S_TCB {
 	AT91_REG	 TCB_FEATURES; 	// TC FEATURES REGISTER 
 	AT91_REG	 TCB_VER; 	//  Version Register
 } AT91S_TCB, *AT91PS_TCB;
-#line 2952 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2952 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TCB_BCR : (TCB Offset: 0xc0) TC Block Control Register -------- 
 
 // -------- TCB_BMR : (TCB Offset: 0xc4) TC Block Mode Register -------- 
-#line 2970 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2970 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR Embedded Flash Controller 2.0
@@ -4147,11 +4135,11 @@ typedef struct _AT91S_EFC {
 	AT91_REG	 Reserved0[1]; 	// 
 	AT91_REG	 EFC_FVR; 	// EFC Flash Version Register
 } AT91S_EFC, *AT91PS_EFC;
-#line 2991 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2991 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- EFC_FMR : (EFC Offset: 0x0) EFC Flash Mode Register -------- 
-#line 2998 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2998 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- EFC_FCR : (EFC Offset: 0x4) EFC Flash Command Register -------- 
-#line 3018 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3018 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- EFC_FSR : (EFC Offset: 0x8) EFC Flash Status Register -------- 
 
 
@@ -4203,37 +4191,37 @@ typedef struct _AT91S_MCI {
 	AT91_REG	 Reserved2[54]; 	// 
 	AT91_REG	 MCI_FIFO; 	// MCI FIFO Aperture Register
 } AT91S_MCI, *AT91PS_MCI;
-#line 3097 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3097 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_CR : (MCI Offset: 0x0) MCI Control Register -------- 
-#line 3119 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3119 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_MR : (MCI Offset: 0x4) MCI Mode Register -------- 
-#line 3136 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3136 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_DTOR : (MCI Offset: 0x8) MCI Data Timeout Register -------- 
-#line 3147 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3147 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_SDCR : (MCI Offset: 0xc) MCI SD Card Register -------- 
-#line 3157 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3157 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_CMDR : (MCI Offset: 0x14) MCI Command Register -------- 
-#line 3197 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3197 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_BLKR : (MCI Offset: 0x18) MCI Block Register -------- 
 
 // -------- MCI_CSTOR : (MCI Offset: 0x1c) MCI Completion Signal Timeout Register -------- 
-#line 3210 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3210 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_SR : (MCI Offset: 0x40) MCI Status Register -------- 
-#line 3241 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3241 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_IER : (MCI Offset: 0x44) MCI Interrupt Enable Register -------- 
 // -------- MCI_IDR : (MCI Offset: 0x48) MCI Interrupt Disable Register -------- 
 // -------- MCI_IMR : (MCI Offset: 0x4c) MCI Interrupt Mask Register -------- 
 // -------- MCI_DMA : (MCI Offset: 0x50) MCI DMA Configuration Register -------- 
-#line 3255 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3255 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_CFG : (MCI Offset: 0x54) MCI Configuration Register -------- 
-#line 3268 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3268 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_WPCR : (MCI Offset: 0xe4) Write Protection Control Register -------- 
 
 
 
 
 // -------- MCI_WPSR : (MCI Offset: 0xe8) Write Protection Status Register -------- 
-#line 3288 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3288 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_VER : (MCI Offset: 0xfc)  VERSION  Register -------- 
 
 
@@ -4271,11 +4259,11 @@ typedef struct _AT91S_TWI {
 	AT91_REG	 TWI_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 TWI_PTSR; 	// PDC Transfer Status Register
 } AT91S_TWI, *AT91PS_TWI;
-#line 3344 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3344 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_CR : (TWI Offset: 0x0) TWI Control Register -------- 
-#line 3352 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3352 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_MMR : (TWI Offset: 0x4) TWI Master Mode Register -------- 
-#line 3360 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3360 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_SMR : (TWI Offset: 0x8) TWI Slave Mode Register -------- 
 
 // -------- TWI_CWGR : (TWI Offset: 0x10) TWI Clock Waveform Generator Register -------- 
@@ -4283,7 +4271,7 @@ typedef struct _AT91S_TWI {
 
 
 // -------- TWI_SR : (TWI Offset: 0x20) TWI Status Register -------- 
-#line 3385 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3385 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_IER : (TWI Offset: 0x24) TWI Interrupt Enable Register -------- 
 // -------- TWI_IDR : (TWI Offset: 0x28) TWI Interrupt Disable Register -------- 
 // -------- TWI_IMR : (TWI Offset: 0x2c) TWI Interrupt Mask Register -------- 
@@ -4329,13 +4317,13 @@ typedef struct _AT91S_USART {
 	AT91_REG	 US_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 US_PTSR; 	// PDC Transfer Status Register
 } AT91S_USART, *AT91PS_USART;
-#line 3453 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3453 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_CR : (USART Offset: 0x0)  Control Register -------- 
-#line 3472 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3472 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_MR : (USART Offset: 0x4)  Mode Register -------- 
-#line 3522 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3522 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_IER : (USART Offset: 0x8)  Interrupt Enable Register -------- 
-#line 3542 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3542 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_IDR : (USART Offset: 0xc)  Interrupt Disable Register -------- 
 // -------- US_IMR : (USART Offset: 0x10)  Interrupt Mask Register -------- 
 // -------- US_CSR : (USART Offset: 0x14)  Channel Status Register -------- 
@@ -4345,7 +4333,7 @@ typedef struct _AT91S_USART {
 
 
 // -------- US_MAN : (USART Offset: 0x50) Manchester Encoder Decoder Register -------- 
-#line 3566 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3566 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR Synchronous Serial Controller Interface
@@ -4371,7 +4359,7 @@ typedef struct _AT91S_SSC {
 	AT91_REG	 SSC_IDR; 	// Interrupt Disable Register
 	AT91_REG	 SSC_IMR; 	// Interrupt Mask Register
 } AT91S_SSC, *AT91PS_SSC;
-#line 3610 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3610 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_CR : (SSC Offset: 0x0) SSC Control Register -------- 
 
 
@@ -4379,15 +4367,15 @@ typedef struct _AT91S_SSC {
 
 
 // -------- SSC_RCMR : (SSC Offset: 0x10) SSC Receive Clock Mode Register -------- 
-#line 3644 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3644 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_RFMR : (SSC Offset: 0x14) SSC Receive Frame Mode Register -------- 
-#line 3658 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3658 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_TCMR : (SSC Offset: 0x18) SSC Transmit Clock Mode Register -------- 
 // -------- SSC_TFMR : (SSC Offset: 0x1c) SSC Transmit Frame Mode Register -------- 
 
 
 // -------- SSC_SR : (SSC Offset: 0x40) SSC Status Register -------- 
-#line 3677 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3677 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_IER : (SSC Offset: 0x44) SSC Interrupt Enable Register -------- 
 // -------- SSC_IDR : (SSC Offset: 0x48) SSC Interrupt Disable Register -------- 
 // -------- SSC_IMR : (SSC Offset: 0x4c) SSC Interrupt Mask Register -------- 
@@ -4406,9 +4394,9 @@ typedef struct _AT91S_PWMC_CH {
 	AT91_REG	 PWMC_DTR; 	// Channel Dead Time Value Register
 	AT91_REG	 PWMC_DTUPDR; 	// Channel Dead Time Update Value Register
 } AT91S_PWMC_CH, *AT91PS_PWMC_CH;
-#line 3706 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3706 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CMR : (PWMC_CH Offset: 0x0) PWMC Channel Mode Register -------- 
-#line 3727 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3727 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CDTYR : (PWMC_CH Offset: 0x4) PWMC Channel Duty Cycle Register -------- 
 
 // -------- PWMC_CDTYUPDR : (PWMC_CH Offset: 0x8) PWMC Channel Duty Cycle Update Register -------- 
@@ -4524,20 +4512,20 @@ typedef struct _AT91S_PWMC {
 	AT91_REG	 Reserved3[20]; 	// 
 	AT91S_PWMC_CH	 PWMC_CH[8]; 	// PWMC Channel 0
 } AT91S_PWMC, *AT91PS_PWMC;
-#line 3922 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3922 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_MR : (PWMC Offset: 0x0) PWMC Mode Register -------- 
-#line 3946 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3946 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_ENA : (PWMC Offset: 0x4) PWMC Enable Register -------- 
-#line 3963 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3963 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_DIS : (PWMC Offset: 0x8) PWMC Disable Register -------- 
 // -------- PWMC_SR : (PWMC Offset: 0xc) PWMC Status Register -------- 
 // -------- PWMC_IER1 : (PWMC Offset: 0x10) PWMC Interrupt Enable Register -------- 
-#line 3982 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3982 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_IDR1 : (PWMC Offset: 0x14) PWMC Interrupt Disable Register -------- 
 // -------- PWMC_IMR1 : (PWMC Offset: 0x18) PWMC Interrupt Mask Register -------- 
 // -------- PWMC_ISR1 : (PWMC Offset: 0x1c) PWMC Interrupt Status Register -------- 
 // -------- PWMC_SYNC : (PWMC Offset: 0x20) PWMC Synchronous Channels Register -------- 
-#line 4006 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4006 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_UPCR : (PWMC Offset: 0x28) PWMC Update Control Register -------- 
 
 // -------- PWMC_SCUP : (PWMC Offset: 0x2c) PWM Update Period Register -------- 
@@ -4553,27 +4541,27 @@ typedef struct _AT91S_PWMC {
 // -------- PWMC_IDR2 : (PWMC Offset: 0x38) PWMC Interrupt Disable Register -------- 
 // -------- PWMC_IMR2 : (PWMC Offset: 0x3c) PWMC Interrupt Mask Register -------- 
 // -------- PWMC_ISR2 : (PWMC Offset: 0x40) PWMC Interrupt Status Register -------- 
-#line 4037 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4037 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OOV : (PWMC Offset: 0x44) PWM Output Override Value Register -------- 
-#line 4070 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4070 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OS : (PWMC Offset: 0x48) PWM Output Selection Register -------- 
-#line 4103 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4103 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSS : (PWMC Offset: 0x4c) PWM Output Selection Set Register -------- 
-#line 4136 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4136 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSC : (PWMC Offset: 0x50) PWM Output Selection Clear Register -------- 
-#line 4169 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4169 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSSUPD : (PWMC Offset: 0x54) Output Selection Set for PWMH / PWML output of the channel x -------- 
-#line 4202 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4202 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSCUPD : (PWMC Offset: 0x58) Output Selection Clear for PWMH / PWML output of the channel x -------- 
-#line 4235 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4235 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FMR : (PWMC Offset: 0x5c) PWM Fault Mode Register -------- 
-#line 4260 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4260 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FSR : (PWMC Offset: 0x60) Fault Input x Value -------- 
-#line 4277 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4277 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FCR : (PWMC Offset: 0x64) Fault y Clear -------- 
-#line 4286 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4286 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FPV : (PWMC Offset: 0x68) PWM Fault Protection Value -------- 
-#line 4303 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4303 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FPER1 : (PWMC Offset: 0x6c) PWM Fault Protection Enable Register 1 -------- 
 
 
@@ -4595,25 +4583,25 @@ typedef struct _AT91S_PWMC {
 
 
 // -------- PWMC_EL0MR : (PWMC Offset: 0x7c) PWM Event Line 0 Mode Register -------- 
-#line 4332 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4332 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL1MR : (PWMC Offset: 0x80) PWM Event Line 1 Mode Register -------- 
-#line 4341 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4341 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL2MR : (PWMC Offset: 0x84) PWM Event line 2 Mode Register -------- 
-#line 4350 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4350 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL3MR : (PWMC Offset: 0x88) PWM Event line 3 Mode Register -------- 
-#line 4359 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4359 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL4MR : (PWMC Offset: 0x8c) PWM Event line 4 Mode Register -------- 
-#line 4368 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4368 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL5MR : (PWMC Offset: 0x90) PWM Event line 5 Mode Register -------- 
-#line 4377 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4377 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL6MR : (PWMC Offset: 0x94) PWM Event line 6 Mode Register -------- 
-#line 4386 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4386 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL7MR : (PWMC Offset: 0x98) PWM Event line 7 Mode Register -------- 
-#line 4395 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4395 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_WPCR : (PWMC Offset: 0xe4) PWM Write Protection Control Register -------- 
-#line 4404 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4404 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_WPVS : (PWMC Offset: 0xe8) Write Protection Status Register -------- 
-#line 4419 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4419 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CMP0V : (PWMC Offset: 0x130) PWM Comparison Value 0 Register -------- 
 
 
@@ -4621,7 +4609,7 @@ typedef struct _AT91S_PWMC {
 
 
 // -------- PWMC_CMP0M : (PWMC Offset: 0x138) PWM Comparison 0 Mode Register -------- 
-#line 4432 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4432 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CMP0MUPD : (PWMC Offset: 0x13c) PWM Comparison 0 Mode Update Register -------- 
 
 
@@ -4678,14 +4666,14 @@ typedef struct _AT91S_SPI {
 	AT91_REG	 SPI_FEATURES; 	// SPI FEATURES REGISTER 
 	AT91_REG	 SPI_VER; 	// Version Register
 } AT91S_SPI, *AT91PS_SPI;
-#line 4505 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4505 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SPI_CR : (SPI Offset: 0x0) SPI Control Register -------- 
 
 
 
 
 // -------- SPI_MR : (SPI Offset: 0x4) SPI Mode Register -------- 
-#line 4521 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4521 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SPI_RDR : (SPI Offset: 0x8) Receive Data Register -------- 
 
 
@@ -4693,12 +4681,12 @@ typedef struct _AT91S_SPI {
 
 
 // -------- SPI_SR : (SPI Offset: 0x10) Status Register -------- 
-#line 4539 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4539 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SPI_IER : (SPI Offset: 0x14) Interrupt Enable Register -------- 
 // -------- SPI_IDR : (SPI Offset: 0x18) Interrupt Disable Register -------- 
 // -------- SPI_IMR : (SPI Offset: 0x1c) Interrupt Mask Register -------- 
 // -------- SPI_CSR : (SPI Offset: 0x30) Chip Select Register -------- 
-#line 4560 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4560 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR UDPHS Enpoint FIFO data register
@@ -4713,7 +4701,7 @@ typedef struct _AT91S_UDPHS_EPTFIFO {
 	AT91_REG	 UDPHS_READEPT5[16384]; 	// FIFO Endpoint Data Register 5
 	AT91_REG	 UDPHS_READEPT6[16384]; 	// FIFO Endpoint Data Register 6
 } AT91S_UDPHS_EPTFIFO, *AT91PS_UDPHS_EPTFIFO;
-#line 4584 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4584 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR UDPHS Endpoint struct
@@ -4729,11 +4717,11 @@ typedef struct _AT91S_UDPHS_EPT {
 	AT91_REG	 UDPHS_EPTCLRSTA; 	// UDPHS Endpoint Clear Status Register
 	AT91_REG	 UDPHS_EPTSTA; 	// UDPHS Endpoint Status Register
 } AT91S_UDPHS_EPT, *AT91PS_UDPHS_EPT;
-#line 4609 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4609 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_EPTCFG : (UDPHS_EPT Offset: 0x0) UDPHS Endpoint Config Register -------- 
-#line 4634 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4634 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_EPTCTLENB : (UDPHS_EPT Offset: 0x4) UDPHS Endpoint Control Enable Register -------- 
-#line 4654 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4654 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_EPTCTLDIS : (UDPHS_EPT Offset: 0x8) UDPHS Endpoint Control Disable Register -------- 
 
 // -------- UDPHS_EPTCTL : (UDPHS_EPT Offset: 0xc) UDPHS Endpoint Control Register -------- 
@@ -4743,7 +4731,7 @@ typedef struct _AT91S_UDPHS_EPT {
 // -------- UDPHS_EPTCLRSTA : (UDPHS_EPT Offset: 0x18) UDPHS Endpoint Clear Status Register -------- 
 
 // -------- UDPHS_EPTSTA : (UDPHS_EPT Offset: 0x1c) UDPHS Endpoint Status Register -------- 
-#line 4684 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4684 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR UDPHS DMA struct
@@ -4755,13 +4743,13 @@ typedef struct _AT91S_UDPHS_DMA {
 	AT91_REG	 UDPHS_DMACONTROL; 	// UDPHS DMA Channel Control Register
 	AT91_REG	 UDPHS_DMASTATUS; 	// UDPHS DMA Channel Status Register
 } AT91S_UDPHS_DMA, *AT91PS_UDPHS_DMA;
-#line 4702 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4702 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_DMANXTDSC : (UDPHS_DMA Offset: 0x0) UDPHS DMA Next Descriptor Address Register -------- 
 
 // -------- UDPHS_DMAADDRESS : (UDPHS_DMA Offset: 0x4) UDPHS DMA Channel Address Register -------- 
 
 // -------- UDPHS_DMACONTROL : (UDPHS_DMA Offset: 0x8) UDPHS DMA Channel Control Register -------- 
-#line 4716 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4716 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_DMASTATUS : (UDPHS_DMA Offset: 0xc) UDPHS DMA Channelx Status Register -------- 
 
 
@@ -4797,20 +4785,20 @@ typedef struct _AT91S_UDPHS {
 	AT91_REG	 Reserved3[72]; 	// 
 	AT91S_UDPHS_DMA	 UDPHS_DMA[6]; 	// UDPHS DMA channel struct (not use [0])
 } AT91S_UDPHS, *AT91PS_UDPHS;
-#line 4770 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4770 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_CTRL : (UDPHS Offset: 0x0) UDPHS Control Register -------- 
-#line 4777 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4777 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_FNUM : (UDPHS Offset: 0x4) UDPHS Frame Number Register -------- 
 
 
 
 // -------- UDPHS_IEN : (UDPHS Offset: 0x10) UDPHS Interrupt Enable Register -------- 
-#line 4802 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4802 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_INTSTA : (UDPHS Offset: 0x14) UDPHS Interrupt Status Register -------- 
 
 // -------- UDPHS_CLRINT : (UDPHS Offset: 0x18) UDPHS Clear Interrupt Register -------- 
 // -------- UDPHS_EPTRST : (UDPHS Offset: 0x1c) UDPHS Endpoints Reset Register -------- 
-#line 4813 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4813 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_TSTSOFCNT : (UDPHS Offset: 0xd0) UDPHS Test SOF Counter Register -------- 
 
 
@@ -4823,7 +4811,7 @@ typedef struct _AT91S_UDPHS {
 // -------- UDPHS_TSTMODREG : (UDPHS Offset: 0xdc) UDPHS Test Mode Register -------- 
 
 // -------- UDPHS_TST : (UDPHS Offset: 0xe0) UDPHS Test Register -------- 
-#line 4834 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4834 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_RIPPADDRSIZE : (UDPHS Offset: 0xec) UDPHS PADDRSIZE Register -------- 
 
 // -------- UDPHS_RIPNAME1 : (UDPHS Offset: 0xf0) UDPHS Name Register -------- 
@@ -4831,7 +4819,7 @@ typedef struct _AT91S_UDPHS {
 // -------- UDPHS_RIPNAME2 : (UDPHS Offset: 0xf4) UDPHS Name Register -------- 
 
 // -------- UDPHS_IPFEATURES : (UDPHS Offset: 0xf8) UDPHS Features Register -------- 
-#line 4852 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4852 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_IPVERSION : (UDPHS Offset: 0xfc) UDPHS Version Register -------- 
 
 
@@ -4848,7 +4836,7 @@ typedef struct _AT91S_HDMA_CH {
 	AT91_REG	 HDMA_CTRLB; 	// HDMA Channel Control B Register
 	AT91_REG	 HDMA_CFG; 	// HDMA Channel Configuration Register
 } AT91S_HDMA_CH, *AT91PS_HDMA_CH;
-#line 4877 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4877 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_SADDR : (HDMA_CH Offset: 0x0)  -------- 
 
 // -------- HDMA_DADDR : (HDMA_CH Offset: 0x4)  -------- 
@@ -4856,11 +4844,11 @@ typedef struct _AT91S_HDMA_CH {
 // -------- HDMA_DSCR : (HDMA_CH Offset: 0x8)  -------- 
 
 // -------- HDMA_CTRLA : (HDMA_CH Offset: 0xc)  -------- 
-#line 4900 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4900 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CTRLB : (HDMA_CH Offset: 0x10)  -------- 
-#line 4921 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4921 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CFG : (HDMA_CH Offset: 0x14)  -------- 
-#line 4963 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4963 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR HDMA controller
@@ -4889,7 +4877,7 @@ typedef struct _AT91S_HDMA {
 	AT91_REG	 HDMA_FEATURES; 	// HDMA FEATURES REGISTER 
 	AT91_REG	 HDMA_VER; 	// HDMA VERSION REGISTER 
 } AT91S_HDMA, *AT91PS_HDMA;
-#line 5011 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5011 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_GCFG : (HDMA Offset: 0x0)  -------- 
 
 
@@ -4899,22 +4887,22 @@ typedef struct _AT91S_HDMA {
 
 
 // -------- HDMA_SREQ : (HDMA Offset: 0x8)  -------- 
-#line 5044 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5044 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CREQ : (HDMA Offset: 0xc)  -------- 
-#line 5069 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5069 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_LAST : (HDMA Offset: 0x10)  -------- 
-#line 5094 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5094 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_EBCIER : (HDMA Offset: 0x18) Buffer Transfer Completed/Chained Buffer Transfer Completed/Access Error Interrupt Enable Register -------- 
-#line 5119 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5119 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_EBCIDR : (HDMA Offset: 0x1c)  -------- 
 // -------- HDMA_EBCIMR : (HDMA Offset: 0x20)  -------- 
 // -------- HDMA_EBCISR : (HDMA Offset: 0x24)  -------- 
 // -------- HDMA_CHER : (HDMA Offset: 0x28)  -------- 
-#line 5195 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5195 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CHDR : (HDMA Offset: 0x2c)  -------- 
-#line 5244 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5244 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CHSR : (HDMA Offset: 0x30)  -------- 
-#line 5293 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5293 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_VER : (HDMA Offset: 0x1fc)  -------- 
 
 // *****************************************************************************
@@ -4953,27 +4941,27 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for HSMC4 peripheral ========== 
-#line 5370 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5370 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for MATRIX peripheral ========== 
-#line 5410 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5410 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for NVIC peripheral ========== 
-#line 5464 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5464 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for MPU peripheral ========== 
-#line 5476 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5476 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for CM3 peripheral ========== 
-#line 5485 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5485 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_DBGU peripheral ========== 
-#line 5496 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5496 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for DBGU peripheral ========== 
-#line 5514 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5514 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PIOA peripheral ========== 
-#line 5566 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5566 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PIOB peripheral ========== 
-#line 5618 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5618 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PIOC peripheral ========== 
-#line 5670 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5670 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PMC peripheral ========== 
-#line 5695 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5695 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for CKGR peripheral ========== 
 
 
@@ -4985,7 +4973,7 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for SUPC peripheral ========== 
-#line 5712 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5712 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for RTTC peripheral ========== 
 
 
@@ -4996,23 +4984,23 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for RTC peripheral ========== 
-#line 5734 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5734 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for ADC0 peripheral ========== 
-#line 5760 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5760 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for ADC12B peripheral ==========
-#line 5774 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5774 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TC0 peripheral ========== 
-#line 5785 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5785 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TC1 peripheral ========== 
-#line 5796 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5796 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TC2 peripheral ========== 
-#line 5807 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5807 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TCB0 peripheral ========== 
-#line 5815 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5815 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TCB1 peripheral ========== 
-#line 5823 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5823 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TCB2 peripheral ========== 
-#line 5831 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5831 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for EFC0 peripheral ========== 
 
 
@@ -5026,65 +5014,65 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for MCI0 peripheral ========== 
-#line 5869 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5869 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_TWI0 peripheral ========== 
-#line 5880 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5880 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_TWI1 peripheral ========== 
-#line 5891 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5891 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TWI0 peripheral ========== 
-#line 5908 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5908 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TWI1 peripheral ========== 
-#line 5925 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5925 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US0 peripheral ========== 
-#line 5936 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5936 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US0 peripheral ========== 
-#line 5957 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5957 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US1 peripheral ========== 
-#line 5968 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5968 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US1 peripheral ========== 
-#line 5989 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5989 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US2 peripheral ========== 
-#line 6000 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6000 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US2 peripheral ========== 
-#line 6021 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6021 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US3 peripheral ========== 
-#line 6032 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6032 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US3 peripheral ========== 
-#line 6053 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6053 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_SSC0 peripheral ========== 
-#line 6064 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6064 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for SSC0 peripheral ========== 
-#line 6081 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6081 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_PWMC peripheral ========== 
-#line 6092 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6092 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH0 peripheral ========== 
-#line 6101 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6101 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH1 peripheral ========== 
-#line 6110 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6110 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH2 peripheral ========== 
-#line 6119 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6119 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH3 peripheral ========== 
-#line 6128 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6128 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC peripheral ========== 
-#line 6206 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6206 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for SPI0 peripheral ========== 
-#line 6221 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6221 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPTFIFO peripheral ========== 
-#line 6229 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6229 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_0 peripheral ========== 
-#line 6237 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6237 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_1 peripheral ========== 
-#line 6245 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6245 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_2 peripheral ========== 
-#line 6253 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6253 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_3 peripheral ========== 
-#line 6261 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6261 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_4 peripheral ========== 
-#line 6269 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6269 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_5 peripheral ========== 
-#line 6277 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6277 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_6 peripheral ========== 
-#line 6285 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6285 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_DMA_1 peripheral ========== 
 
 
@@ -5116,27 +5104,27 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for UDPHS peripheral ========== 
-#line 6332 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6332 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_0 peripheral ========== 
-#line 6339 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6339 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_1 peripheral ========== 
-#line 6346 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6346 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_2 peripheral ========== 
-#line 6353 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6353 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_3 peripheral ========== 
-#line 6360 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6360 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA peripheral ========== 
-#line 6378 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6378 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               PIO DEFINITIONS FOR AT91SAM3U4
 // *****************************************************************************
-#line 6652 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6652 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               PERIPHERAL ID DEFINITIONS FOR AT91SAM3U4
 // *****************************************************************************
-#line 6687 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6687 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               BASE ADDRESS DEFINITIONS FOR AT91SAM3U4
@@ -5144,7 +5132,7 @@ typedef struct _AT91S_HDMA {
 // AT91_CAST does nothing for C code, so essentially the type cast is just the generic peripheral struct AT91PS_x
 // So AT91C_BASE_X should just be an address to the starting peripheral register address 
 // *****************************************************************************
-#line 6769 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6769 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               MEMORY MAPPING DEFINITIONS FOR AT91SAM3U4
@@ -5165,9 +5153,9 @@ typedef struct _AT91S_HDMA {
 
 
 // IFLASH0
-#line 6795 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6795 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // IFLASH1
-#line 6802 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6802 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // EBI_CS0
 
 
@@ -5205,8 +5193,8 @@ typedef struct _AT91S_HDMA {
 
 
 
-#line 48 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\exceptions.h"
+#line 36 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\exceptions.h"
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
@@ -5335,8 +5323,8 @@ extern __weak void HDMA_IrqHandler(void);
 // USB Device High Speed UDP_HS
 extern __weak void UDPD_IrqHandler(void);
 
-#line 49 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\interrupts.h"
+#line 37 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\interrupts.h"
 /**********************************************************************************************************************
 File: interrupts.h                                                               
 
@@ -5407,377 +5395,6 @@ Constants / Definitions
 
 
 
-/**********************************************************************************************************************
-Interrupt Premption Priorities (Highest -> Lowest)
-
-Interrupt priorities start at 0 (highest priority) and go to
-15 (lowest priority).  However, these correspond to Exception priorities 16 
-through 31 since there are Core exceptions that are always of higher priority.
-The interrupt number is processor specific and can be found around line 6650 in 
-the AT91SAM3U4 header file and as "Peripheral Identifiers" on page 42 of the 10-Feb-12 datasheet.
-Interrupt number / peripheral identifier has nothing to do with the corresponding interrupt priority.
-Interrupt priorities are set by loading a priority slot with an interrupt number.
-
-Priority -1 (core exception)
-SysTick
-
-Priority 0
-AT91C_ID_TC0    (22) // Timer Counter 0
-AT91C_ID_WDG    ( 4) // WATCHDOG TIMER
-
-Priority 1
-AT91C_ID_US2    (15) // USART 2
-
-Priority 2
-AT91C_ID_TWI0   (18) // TWI 0
-AT91C_ID_SPI0   (20) // Serial Peripheral Interface
-
-Priority 3
-AT91C_ID_US0    (13) // USART 0
-AT91C_ID_US1    (14) // USART 1
-
-Priority 4
-AT91C_ID_TC1    (23) // Timer Counter 1
-AT91C_ID_TC2    (24) // Timer Counter 2
-
-Priority 5
-AT91C_ID_PIOA   (10) // Parallel IO Controller A
-AT91C_ID_PIOB   (11) // Parallel IO Controller B
-AT91C_ID_PIOC   (12) // Parallel IO Controller C
-
-All unused interrupt sources will be set to priority 31.
-*/
-
-
-
-
-/* Bit Set Description
-    31 [1] ( 3) // REAL TIME TIMER priority 15
-    30 [1] "
-    29 [1] "
-    28 [1] "
-
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [1] ( 2) // REAL TIME CLOCK priority 15
-    22 [1] "
-    21 [1] "
-    20 [1] "
-
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] ( 1) // RESET CONTROLLER priority 0
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [1] ( 0) // SUPPLY CONTROLLER priority 15
-    06 [1] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* Bit Set Description
-    31 [1] ( 7) // EFC1 priority 15
-    30 [1] "
-    29 [1] "
-    28 [1] "
-
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [1] ( 6) // EFC0 priority 15
-    22 [1] "
-    21 [1] "
-    20 [1] "
-
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [1] ( 5) // PMC priority 15
-    14 [1] "
-    13 [1] "
-    12 [1] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] ( 4) // WATCHDOG TIMER priority 0
-    06 [1] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* Bit Set Description
-    31 [0] (11) // Parallel IO Controller B priority 5
-    30 [1] "
-    29 [0] "
-    28 [1] "
-
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] (10) // Parallel IO Controller A priority 5
-    22 [1] "
-    21 [0] "
-    20 [1] "
-
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [1] ( 9) // HSMC4 priority 15
-    14 [1] "
-    13 [1] "
-    12 [1] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [1] ( 8) // DBGU priority 15
-    06 [1] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* Bit Set Description
-    31 [1] (15) // USART 2 priority 15
-    30 [1] "
-    29 [1] "
-    28 [1] "
-
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] (14) // USART 1 priority 3
-    22 [0] "
-    21 [1] "
-    20 [1] "
-
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] (13) // USART 0 priority 3
-    14 [0] "
-    13 [1] "
-    12 [1] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] (12) // Parallel IO Controller C priority 5
-    06 [1] "
-    05 [0] "
-    04 [1] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* Bit Set Description
-    31 [1] (19) // TWI 1 priority 15
-    30 [1] "
-    29 [1] "
-    28 [1] "
-
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] (18) // TWI 0 priority 2
-    22 [0] "
-    21 [1] "
-    20 [0] "
-
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [1] (17) // Multimedia Card Interface priority 15
-    14 [1] "
-    13 [1] "
-    12 [1] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [1] (16) // USART 3 priority 15
-    06 [1] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* Bit Set Description
-    31 [0] (23) // Timer Counter 1 priority 4
-    30 [1] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] (22) // Timer Counter 0 priority 0
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [1] (21) // Serial Synchronous Controller 0 priority 15
-    14 [1] "
-    13 [1] "
-    12 [1] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] (20) // Serial Peripheral Interface priority 2
-    06 [0] "
-    05 [1] "
-    04 [0] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* Bit Set Description
-    31 [1] (27) // 10-bit ADC Controller (ADC) priority 15
-    30 [1] "
-    29 [1] "
-    28 [1] "
-
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [1] (26) // 12-bit ADC Controller (ADC12B) priority 15
-    22 [1] "
-    21 [1] "
-    20 [1] "
-
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [1] (25) // Pulse Width Modulation Controller priority 15
-    14 [1] "
-    13 [1] "
-    12 [1] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] (24) // Timer Counter 2 priority 4
-    06 [1] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* Bit Set Description
-    31 - 16 [0] Unimplemented
-
-    15 [0] (29) // USB Device High Speed priority 1
-    14 [0] "
-    13 [0] "
-    12 [1] "
-
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [1] (28) // HDMA priority 15
-    06 [1] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-
 
 /**********************************************************************************************************************
 Function Prototypes
@@ -5787,12 +5404,9 @@ Function Prototypes
 /* Public functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
-void InterruptSetup(void);
-
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions */
@@ -5805,8 +5419,8 @@ void InterruptSetup(void);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#line 50 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 38 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 /******************************************************************************
  * @file:    core_cm3.h
  * @purpose: CMSIS Cortex-M3 Core Peripheral Access Layer Header File
@@ -5891,7 +5505,7 @@ void InterruptSetup(void);
 /*lint -e751 */
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
 /* stdint.h standard header */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
@@ -5901,7 +5515,7 @@ void InterruptSetup(void);
   #pragma system_include
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -5947,9 +5561,9 @@ void InterruptSetup(void);
 
 
 
-#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 11 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
+#line 11 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
 
 
 
@@ -6175,15 +5789,15 @@ typedef int __data_intptr_t; typedef unsigned int __data_uintptr_t;
 
 
 
-#line 258 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
+#line 258 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 86 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 86 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 /**************************************************
  *
  * This file declares the ARM intrinsic inline functions.
@@ -6197,7 +5811,7 @@ V5.04:0576 */
 
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -6243,9 +5857,9 @@ V5.04:0576 */
 
 
 
-#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 15 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 15 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 
   #pragma system_include
@@ -6298,7 +5912,7 @@ __intrinsic __nounwind void          __set_FAULTMASK(unsigned long);
 __intrinsic __nounwind unsigned long __get_BASEPRI( void );
 __intrinsic __nounwind void          __set_BASEPRI( unsigned long );
 
-#line 74 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 74 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 __intrinsic __nounwind void __disable_fiq(void);
 __intrinsic __nounwind void __enable_fiq(void);
@@ -6381,7 +5995,7 @@ __intrinsic __nounwind void __set_FPSCR( unsigned long );
 __intrinsic __nounwind unsigned char __CLZ( unsigned long );
 
 /* Architecture v5TE */
-#line 167 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 167 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 __intrinsic __nounwind int         __QCFlag( void );
 __intrinsic __nounwind void __reset_QC_flag( void );
@@ -6422,7 +6036,7 @@ __intrinsic __nounwind unsigned long __USAT     (unsigned long val,
                                       unsigned int __constrange( 0, 31 ) sat );
 
 
-#line 374 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 374 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 /* Architecture v7 instructions.... */
 __intrinsic __nounwind void __DMB(void);
@@ -6438,7 +6052,7 @@ __intrinsic __nounwind void __ISB(void);
 
 
 
-#line 89 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 89 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -6585,7 +6199,7 @@ typedef struct
 
 
 /* Memory Protection Unit */
-#line 251 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 251 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 /* Core Debug Register */
@@ -6599,9 +6213,9 @@ typedef struct
 
 
 /* Memory mapping of Cortex-M3 Hardware */
-#line 270 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 270 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 277 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 277 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -6615,7 +6229,7 @@ typedef struct
  ******************************************************************************/
 
 
-#line 298 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 298 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -6626,12 +6240,12 @@ typedef struct
 
 /* ###################  Compiler specific Intrinsics  ########################### */
 
-#line 623 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 623 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 /* IAR iccarm specific functions */
 
 
 
-#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 /**************************************************
  *
  * This file shall be included in appropriate CMSIS header
@@ -6674,7 +6288,7 @@ typedef struct
 
 
 
-#line 110 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 110 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 
 static uint32_t __get_xPSR(void)
 {
@@ -6685,7 +6299,7 @@ static uint32_t __get_xPSR(void)
 
 
 
-#line 173 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 173 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 
 
 
@@ -6696,7 +6310,7 @@ static uint32_t __get_xPSR(void)
 
 
 
-#line 206 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 206 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 
 
 
@@ -6757,11 +6371,11 @@ static inline uint32_t __ROR(uint32_t op1, uint32_t op2)
 #pragma diag_default=Pe940
 #pragma diag_default=Pe177
 
-#line 628 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 628 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 799 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 799 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 1048 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 1048 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -7004,45 +6618,8 @@ static inline uint32_t ITM_SendChar (uint32_t ch)
 
 
 /*lint -restore */
-#line 51 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\application\\main.h"
-/***********************************************************************************************************************
-File: main.h
-
-Description:
-Header file for main.c.
-*******************************************************************************/
-
-
-
-
-/***********************************************************************************************************************
-* Firmware Version - Printed FIRMWARE_MAIN_REV.FIRMWARE_SUB_REV1 FIRMWARE_SUB_REV2
-* See releasenotes.txt for firmware details.
-***********************************************************************************************************************/
-
-
-
-
-
-/***********************************************************************************************************************
-* Constant Definitions
-***********************************************************************************************************************/
-/* G_u32ApplicationFlags definitions are in configuration.h */
-
-/* G_u32SystemFlags */
-#line 32 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\application\\main.h"
-
-
-
-
-
-
-
-
-
-#line 52 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
+#line 39 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
 /*******************************************************************************
 * File: typedefs.h                                                               
 * Description:
@@ -7094,13 +6671,42 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 
-#line 84 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
+#line 84 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
 
 
 
 
-#line 53 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.h"
+#line 40 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\application\\main.h"
+/***********************************************************************************************************************
+File: main.h
+
+Description:
+Header file for main.c.
+*******************************************************************************/
+
+
+
+
+/***********************************************************************************************************************
+* Firmware Version - Printed FIRMWARE_MAIN_REV.FIRMWARE_SUB_REV1 FIRMWARE_SUB_REV2
+* See releasenotes.txt for firmware details.
+***********************************************************************************************************************/
+
+
+
+
+
+/***********************************************************************************************************************
+* Constant Definitions
+***********************************************************************************************************************/
+/* G_u32ApplicationFlags definitions are in configuration.h */
+
+/* G_u32SystemFlags */
+
+#line 42 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.h"
 /***********************************************************************************************************************
 File: utilities.h                                                                
 ***********************************************************************************************************************/
@@ -7150,7 +6756,6 @@ Constants / Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
-bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_);
 u8 ASCIIHexCharToChar(u8);
 u8 HexToASCIICharUpper(u8 u8Char_);
 u8 HexToASCIICharLower(u8 u8Char_);
@@ -7174,10172 +6779,22 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#line 54 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-/* Common driver header files */
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antmessage.h"
-/** \file antmessage.h
-*
-*  Contains ANT message IDs and other definiations useful for ANT messaging
-*
-* $Name:  $
-*/
-/*
- * Copyright (C) 2006 Dynastream Innovations Inc. All rights reserved. 
- *
- * The intellectual property contained within this file is sole property of Dynastream Innovations Inc. 
- * Any distribution without the prior written consent of Dynastream Innovations Inc. is strictly prohibited.
- *
- * Dynastream Innovations Inc. does not guarantee error free operation of the intellectual property contained 
- * herein. 
- * 
- * Please forward all questions regarding this code to ANT Technical Support.
- * 
- * Dynastream Innovations Inc.
- * 228 River Avenue
- * Cochrane, Alberta, Canada
- * T4C 2C1
- * 
- * (P) (403) 932-9292
- * (F) (403) 932-6521
- * (TF) 1-866-932-9292 in North America
- * (E) support@thisisant.com
- * 
- * www.thisisant.com
- */ 
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Message Format
-// Messages are in the format:
-//
-// AX XX YY -------- CK
-//
-// where: AX    is the 1 byte sync byte either transmit or recieve
-//        XX    is the 1 byte size of the message (0-249) NOTE: THIS WILL BE LIMITED BY THE EMBEDDED RECEIVE BUFFER SIZE
-//        YY    is the 1 byte ID of the message (1-255, 0 is invalid)
-//        ----- is the data of the message (0-249 bytes of data)
-//        CK    is the 1 byte Checksum of the message
-/////////////////////////////////////////////////////////////////////////////
-#line 64 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antmessage.h"
-
-//////////////////////////////////////////////
-// Buffer Indices - use these indexes when the buffer does NOT include the SYNC byte
-//////////////////////////////////////////////
-#line 78 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antmessage.h"
-
-//////////////////////////////////////////////
-// Message ID's
-//////////////////////////////////////////////
-
-
-
-
-
-
-
-
-#line 99 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antmessage.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////
-// Message Sizes
-//////////////////////////////////////////////
-
-
-
-
-
-
-#line 135 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antmessage.h"
-
-
-
-
-
-
-
-
-
-#line 57 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antdefines.h"
-/** \file antdefines.h
-*
-* Conatins definitions for ANT config parameters and ANT event codes
-*
-* $Name:  $
-*/
-/*
- * Copyright (C) 2006 Dynastream Innovations Inc. All rights reserved. 
- *
- * The intellectual property contained within this file is sole property of Dynastream Innovations Inc. 
- * Any distribution without the prior written consent of Dynastream Innovations Inc. is strictly prohibited.
- *
- * Dynastream Innovations Inc. does not guarantee error free operation of the intellectual property contained 
- * herein. 
- * 
- * Please forward all questions regarding this code to ANT Technical Support.
- * 
- * Dynastream Innovations Inc.
- * 228 River Avenue
- * Cochrane, Alberta, Canada
- * T4C 2C1
- * 
- * (P) (403) 932-9292
- * (F) (403) 932-6521
- * (TF) 1-866-932-9292 in North America
- * (E) support@thisisant.com
- * 
- * www.thisisant.com
- */ 
-
-
-
-
-//////////////////////////////////////////////
-// ANT Clock Definition
-//////////////////////////////////////////////
-
-
-//////////////////////////////////////////////
-// Radio TX Power Definitions
-//////////////////////////////////////////////
-
-
-
-
-
-
-//////////////////////////////////////////////
-// Default System Definitions
-//////////////////////////////////////////////
-
-
-
-
-
-
-//////////////////////////////////////////////
-// ID Definitions
-//////////////////////////////////////////////
-
-
-
-
-
-
-//////////////////////////////////////////////
-// Assign Channel Parameters
-//////////////////////////////////////////////
-
-
-
-
-
-//////////////////////////////////////////////
-// Assign Channel Types
-//////////////////////////////////////////////
-
-
-
-
-
-
-//////////////////////////////////////////////
-// Channel Status
-//////////////////////////////////////////////
-#line 92 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antdefines.h"
-
-//////////////////////////////////////////////
-// Standard capabilities defines
-//////////////////////////////////////////////
-#line 102 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antdefines.h"
-
-//////////////////////////////////////////////
-// Advanced capabilities defines
-//////////////////////////////////////////////
-
-
-
-//////////////////////////////////////////////
-// Burst Message Sequence 
-//////////////////////////////////////////////
-
-
-
-
-
-
-//////////////////////////////////////////////
-// Shared Channel Commands / Datatypes
-//////////////////////////////////////////////
-
-
-
-
-
-//...
-
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////
-// AtoD SubTypes
-///////////////////////////////////////////////////////////////////////
-
-
-
-//////////////////////////////////////////////
-// Response / Event Codes
-//////////////////////////////////////////////
-
-
-#line 152 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\antdefines.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 58 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\ant_api.h"
-/**********************************************************************************************************************
-* File: ant_api.h      
-*
-* Description:
-* ANT implementation for Cortex-M3 / AP2 SPI
-**********************************************************************************************************************/
-
-
-
-
-
-/**********************************************************************************************************************
-Constants
-**********************************************************************************************************************/
-
-
-
-
-
-
-/**********************************************************************************************************************
-Type definitions
-**********************************************************************************************************************/
-typedef enum {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED} AntChannelStatusType;
-typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
-
-typedef struct
-{
-  u32 u32TimeStamp;                                  /* Current G_u32SystemTime1s */
-  AntApplicationMessageType eMessageType;            /* Type of data */
-  u8 au8MessageData[(u8)8];  /* Array for message data */
-  void *psNextMessage;                               /* Pointer to AntDataMessageStructType */
-} AntApplicationMsgListType;
-
-
-/**********************************************************************************************************************
-Application messages
-**********************************************************************************************************************/
-
-/*----------------------------------------------------------------------------------------------------------------------
-ANT_TICK communicates the message period to the application.  
-
-If ANT is running as a master, ANT_TICK occurs every time a broadcast or acknowledged
-data message is sent. 
-
-If ANT is running as a slave, ANT_TICK occurs when ever a message is received from the
-master or if ANT misses a message that it was expecting based on the established timing 
-of a paired channel (EVENT_RX_FAIL event is generated).  This should be communicated 
-in case a missed message is important to any application using ANT.  
-
-MSG_NAME  MSG_ID     D_0      D_1      D_2     D_3     D_4     D_5     D_6
-ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
-                    CODE                              MSG #   MSG #   MSG #
-                                                      HIGH    MID     LOW
----------------------------------------------------------------------------------------------------------------------*/
-
-
-#line 67 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\ant_api.h"
-
-
-
-/**********************************************************************************************************************
-Function prototypes
-**********************************************************************************************************************/
-
-/* ANT public Interface-layer Functions */
-bool AntChannelConfig(bool);
-bool AntOpenChannel(void);
-bool AntCloseChannel(void);
-bool AntUnassignChannel(void);
-AntChannelStatusType AntRadioStatus(void);
-
-bool AntQueueBroadcastMessage(u8 *pu8Data_);
-bool AntQueueAcknowledgedMessage(u8 *pu8Data_);
-bool AntReadData(void);
-
-
-#line 59 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\ant.h"
-/**********************************************************************************************************************
-File: ant.h                                                                
-
-Description:
-ANT implementation for Cortex-M3 / AP2 SPI
-
-Search "####" for ANT Channel ID defaults
-
-**********************************************************************************************************************/
-
-
-
-
-
-/*******************************************************************************
-* Type definitions
-*******************************************************************************/
-
-typedef struct 
-{
-  u8 AntChannel;
-  u8 AntChannelType;
-  u8 AntNetwork;
-  u8 AntSerialLo;
-  u8 AntSerialHi;
-  u8 AntDeviceType;
-  u8 AntTransmissionType;
-  u8 AntChannelPeriodLo;
-  u8 AntChannelPeriodHi;
-  u8 AntFrequency;
-  u8 AntTxPower;
-} AntSetupDataType;
-
-/* Message struct for outgoing data messages */
-typedef struct
-{
-  u32 u32TimeStamp;                     /* Current G_u32SystemTime1s */
-  u8 au8MessageData[(((UCHAR)13) + ((((UCHAR)1) + ((UCHAR)1) + ((UCHAR)1)) + ((UCHAR)1)))];     /* Array for message data */
-  void *psNextMessage;                  /* Pointer to AntDataMessageStructType */
-} AntOutgoingMessageListType;
-
-
-/*******************************************************************************
-* Constants
-*******************************************************************************/
-/* Configuration */
-
-
-
-#line 56 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\ant.h"
-
-
-
-
-/* Symbols for bytes in messages to help readability */
-#line 72 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\ant.h"
-
-
-/*******************************************************************************
-* Macros 
-*******************************************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*******************************************************************************
-* Application Values
-*******************************************************************************/
-
-/* G_u32AntFlags */
-/* Error / event flags */
-
-
-
-
-
-
-
-
-/* Status flags */
-
-
-
-
-
-
-/* Control flags */
-
-
-
-
-
-/* end G_u32AntFlags */
-
-/* Default Channel ID parameters */
-
-
-
-
-
-/* #### Default channel configuration parameters #### */
-
-
-
-
-
-
-
-
-
-
-
-/* #### end of default channel configuration parameters ####*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*******************************************************************************
-* Function prototypes
-*******************************************************************************/
-
-/* ANT Private Serial-layer Functions */
-static void AntSyncSerialInitialize(void);
-static void AntSrdyPulse(void);
-static void AntRxMessage(void);
-static void AntAbortMessage(void);
-static void AdvanceAntRxBufferCurrentChar(void);
-static void AdvanceAntRxBufferUnreadMsgPointer(void);
-
-
-/* ANT Protected Interface-layer Functions */
-void AntInitialize(void);
-void AntRunActiveState(void);
-bool AntTxMessage(u8 *pu8AntTxMessage_);
-u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_);
-void AntTxFlowControlCallback(void);
-void AntRxFlowControlCallback(void);
-u8 AntCalculateTxChecksum(u8* pu8Message_);
-bool AntQueueOutgoingMessage(u8 *pu8Message_);
-void AntDeQueueApplicationMessage(void);
-
-/* ANT private Interface-layer Functions */
-static u8 AntProcessMessage(void);
-static void AntTick(u8 u8Code_);
-static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, u8 *pu8DataSource_);
-static void AntDeQueueOutgoingMessage(void);
-
-
-/* ANT State Machine Definition */
-void AntSM_Idle(void);
-void AntSM_ReceiveMessage(void);
-void AntSM_TransmitMessage(void);
-void AntSM_NoResponse(void);
-
-#line 60 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\buttons.h"
-/***********************************************************************************************************************
-File: buttons.h                                                                
-***********************************************************************************************************************/
-
-
-
-
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-/**********************************************************************************************************************
-File: configuration.h      
-
-Description:
-Main configuration header file for project.  This file bridges many of the generic features of the 
-firmware to the specific features of the design. The definitions should be updated
-to match the target hardware.  
- 
-Bookmarks:
-!!!!! External module peripheral assignments
-@@@@@ GPIO board-specific parameters
-##### Communication peripheral board-specific parameters
-
-DEBUG UART IS 115200-8-N-1
-ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
-
-***********************************************************************************************************************/
-
-#line 262 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%BUZZER% Buzzer Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
-
-
-
-
-
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%ANT% Interface Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Board-specific ANT definitions are kept here
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-##### Communication peripheral board-specific parameters
-***********************************************************************************************************************/
-/*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-Blade UART Setup
-
-The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-Debug UART Setup
-
-Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 38400 bps
-=> CD = 78.125 - (FP / 8)
-Set FP = 1, CD = 78 = 0x4E
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26 = 0x1A
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-LCD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI LCD screen. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-ANT USART Setup in SSP
-SPI slave mode to communicate with an ANT device. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK (delicious!) NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as soon as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [1] USCLKS SCK
-    04 [1] "
-
-    03 [1] USART_MODE SPI Slave
-    02 [1] "
-    01 [1] "
-    00 [1] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [1] CTSIC Clear to Send Change interrupt enabled 
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled 
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled 
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled YET
-    00 [0] RXRDY Receiver Ready interrupt enabled 
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-!!!!! Not applicable for slave (note that incoming clock cannot 
-exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
-or 2MHz, so no issues.
-*/
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-SD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI SD card. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*--------------------------------------------------------------------------------------------------------------------
-Two Wire Interface setup
-
-I²C Master mode for ASCII LCD communication
-*/
-
-/*-------------------- TWI0 ---------------------*/
-/*Control Register*/
-
-/*
-    31-8 [0] Reserved
-
-    07 [0] SWRST - Software reset
-    06 [0] QUICK - SMBUS Quick Command
-    05 [1] SVDIS - Slave mode disable - disabled
-    04 [0] SVEN - Slave mode enable
-
-    03 [0] MSDIS - Master mode disable
-    02 [1] MSEN - Master mode enable
-    01 [0] STOP - Stop a transfer
-    00 [0] START - Start a transfer
-*/
-
-/*Master Mode Register*/
-
-/*
-    31-24 [0] Reserved
-    
-    23 [0] Reserved
-    22 [0] DADR - device slave address - start with zero
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] MREAD - Master Read Direction - 0 -> Write, 1 -> Read
-
-    11 [0] Reserved
-    10 [0] "
-    09 [0] IADRSZ - Internal device address - 0 = no internal device address
-    08 [0] "
-
-    07-0 [0] Reserved
-*/
-
-/* Clock Wave Generator Register */
-/* 
-    Calculation:
-        T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
-        T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
-
-        T_MCK - period of master clock = 1/(48 MHz)
-        T_low/T_high - period of the low and high signals
-        
-        CKDIV = 2, CHDIV and CLDIV = 59
-        T_low/T_high = 2.5 microseconds
-
-        Data frequency - 
-        f = ((T_low + T_high)^-1)
-        f = 200000 Hz 0r 200 kHz
-
-    Additional Rates:
-        50 kHz - 0x00027777
-       100 kHz - 0x00023B3B
-       200 kHz - 0x00021D1D
-       400 kHz - 0x00030707  *Maximum rate*
-*/
-
-/*
-    31-20 [0] Reserved
-    
-    19 [0] Reserved
-    18 [0] CKDIV
-    17 [1] "
-    16 [0] "
-
-    15 [0] CHDIV
-    14 [0] "
-    13 [0] "
-    12 [1] "
-
-    11 [1] "
-    10 [1] "
-    09 [0] "
-    08 [1] "
-
-    07 [0] CLDIV - Clock Low Divider
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [1] "
-    01 [0] "
-    00 [1] "
-*/
-
-/*Interrupt Enable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [0] TXBUFE - Transmit Buffer Empty
-    14 [0] RXBUFF - Receive Buffer Full
-    13 [0] ENDTX - End of Transmit Buffer
-    12 [0] ENDRX - End of Receive Buffer
-
-    11 [0] EOSACC - End of Slave Address
-    10 [0] SCL_WS - Clock Wait State
-    09 [0] ARBLST - Arbitration Lost
-    08 [1] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [1] OVRE - Overrun Error
-    05 [0] GACC - General Call Access
-    04 [0] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [0] TXRDY - Transmit Holding Register Ready
-    01 [1] RXRDY - Receive Holding Register Ready
-    00 [0] TXCOMP - Transmission Completed
-*/
-
-/*Interrupt Disable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [1] TXBUFE - Transmit Buffer Empty
-    14 [1] RXBUFF - Receive Buffer Full
-    13 [1] ENDTX - End of Transmit Buffer
-    12 [1] ENDRX - End of Receive Buffer
-
-    11 [1] EOSACC - End of Slave Address
-    10 [1] SCL_WS - Clock Wait State
-    09 [1] ARBLST - Arbitration Lost
-    08 [0] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [0] OVRE - Overrun Error
-    05 [1] GACC - General Call Access
-    04 [1] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [1] TXRDY - Transmit Holding Register Ready
-    01 [0] RXRDY - Receive Holding Register Ready
-    00 [1] TXCOMP - Transmission Completed
-*/
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-#line 9 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\buttons.h"
-
-/***********************************************************************************************************************
-Type Definitions
-***********************************************************************************************************************/
-typedef enum {RELEASED, PRESSED} ButtonStateType; 
-typedef enum {BUTTON_PORTA = 0, BUTTON_PORTB = 0x80} ButtonPortType;  /* Offset between port registers (in 32 bit words) */
-typedef enum {BUTTON_ACTIVE_LOW = 0, BUTTON_ACTIVE_HIGH = 1} ButtonActiveType;
-
-typedef struct 
-{
-  ButtonActiveType eActiveState;
-  ButtonPortType ePort;
-}ButtonConfigType;
-
-
-/***********************************************************************************************************************
-Constants / Definitions
-***********************************************************************************************************************/
-
-
-
-
-/***********************************************************************************************************************
-Function Declarations
-***********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions                                                                                                   */
-/*--------------------------------------------------------------------------------------------------------------------*/
-bool IsButtonPressed(u32 u32Button_);
-bool WasButtonPressed(u32 u32Button_);
-void ButtonAcknowledge(u32 u32Button_);
-bool IsButtonHeld(u32 u32Button_, u32 u32ButtonHeldTime_);
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions                                                                                                */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void ButtonInitialize(void);                        
-void ButtonRunActiveState(void);
-
-u32 GetButtonBitLocation(u8 u8Button_, ButtonPortType ePort_);
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions                                                                                                  */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-static void ButtonSM_Idle(void);                
-static void ButtonSM_ButtonActive(void);        
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File                                                                                                        */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 61 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\leds.h"
-/******************************************************************************
-File: leds.h                                                               
-
-Description:
-Header file for leds.c
-
-DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
-USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
-INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
-RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
-
-******************************************************************************/
-
-
-
-
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-/**********************************************************************************************************************
-File: configuration.h      
-
-Description:
-Main configuration header file for project.  This file bridges many of the generic features of the 
-firmware to the specific features of the design. The definitions should be updated
-to match the target hardware.  
- 
-Bookmarks:
-!!!!! External module peripheral assignments
-@@@@@ GPIO board-specific parameters
-##### Communication peripheral board-specific parameters
-
-DEBUG UART IS 115200-8-N-1
-ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
-
-***********************************************************************************************************************/
-
-#line 262 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%BUZZER% Buzzer Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
-
-
-
-
-
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%ANT% Interface Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Board-specific ANT definitions are kept here
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-##### Communication peripheral board-specific parameters
-***********************************************************************************************************************/
-/*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-Blade UART Setup
-
-The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-Debug UART Setup
-
-Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 38400 bps
-=> CD = 78.125 - (FP / 8)
-Set FP = 1, CD = 78 = 0x4E
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26 = 0x1A
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-LCD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI LCD screen. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-ANT USART Setup in SSP
-SPI slave mode to communicate with an ANT device. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK (delicious!) NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as soon as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [1] USCLKS SCK
-    04 [1] "
-
-    03 [1] USART_MODE SPI Slave
-    02 [1] "
-    01 [1] "
-    00 [1] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [1] CTSIC Clear to Send Change interrupt enabled 
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled 
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled 
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled YET
-    00 [0] RXRDY Receiver Ready interrupt enabled 
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-!!!!! Not applicable for slave (note that incoming clock cannot 
-exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
-or 2MHz, so no issues.
-*/
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-SD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI SD card. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*--------------------------------------------------------------------------------------------------------------------
-Two Wire Interface setup
-
-I²C Master mode for ASCII LCD communication
-*/
-
-/*-------------------- TWI0 ---------------------*/
-/*Control Register*/
-
-/*
-    31-8 [0] Reserved
-
-    07 [0] SWRST - Software reset
-    06 [0] QUICK - SMBUS Quick Command
-    05 [1] SVDIS - Slave mode disable - disabled
-    04 [0] SVEN - Slave mode enable
-
-    03 [0] MSDIS - Master mode disable
-    02 [1] MSEN - Master mode enable
-    01 [0] STOP - Stop a transfer
-    00 [0] START - Start a transfer
-*/
-
-/*Master Mode Register*/
-
-/*
-    31-24 [0] Reserved
-    
-    23 [0] Reserved
-    22 [0] DADR - device slave address - start with zero
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] MREAD - Master Read Direction - 0 -> Write, 1 -> Read
-
-    11 [0] Reserved
-    10 [0] "
-    09 [0] IADRSZ - Internal device address - 0 = no internal device address
-    08 [0] "
-
-    07-0 [0] Reserved
-*/
-
-/* Clock Wave Generator Register */
-/* 
-    Calculation:
-        T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
-        T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
-
-        T_MCK - period of master clock = 1/(48 MHz)
-        T_low/T_high - period of the low and high signals
-        
-        CKDIV = 2, CHDIV and CLDIV = 59
-        T_low/T_high = 2.5 microseconds
-
-        Data frequency - 
-        f = ((T_low + T_high)^-1)
-        f = 200000 Hz 0r 200 kHz
-
-    Additional Rates:
-        50 kHz - 0x00027777
-       100 kHz - 0x00023B3B
-       200 kHz - 0x00021D1D
-       400 kHz - 0x00030707  *Maximum rate*
-*/
-
-/*
-    31-20 [0] Reserved
-    
-    19 [0] Reserved
-    18 [0] CKDIV
-    17 [1] "
-    16 [0] "
-
-    15 [0] CHDIV
-    14 [0] "
-    13 [0] "
-    12 [1] "
-
-    11 [1] "
-    10 [1] "
-    09 [0] "
-    08 [1] "
-
-    07 [0] CLDIV - Clock Low Divider
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [1] "
-    01 [0] "
-    00 [1] "
-*/
-
-/*Interrupt Enable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [0] TXBUFE - Transmit Buffer Empty
-    14 [0] RXBUFF - Receive Buffer Full
-    13 [0] ENDTX - End of Transmit Buffer
-    12 [0] ENDRX - End of Receive Buffer
-
-    11 [0] EOSACC - End of Slave Address
-    10 [0] SCL_WS - Clock Wait State
-    09 [0] ARBLST - Arbitration Lost
-    08 [1] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [1] OVRE - Overrun Error
-    05 [0] GACC - General Call Access
-    04 [0] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [0] TXRDY - Transmit Holding Register Ready
-    01 [1] RXRDY - Receive Holding Register Ready
-    00 [0] TXCOMP - Transmission Completed
-*/
-
-/*Interrupt Disable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [1] TXBUFE - Transmit Buffer Empty
-    14 [1] RXBUFF - Receive Buffer Full
-    13 [1] ENDTX - End of Transmit Buffer
-    12 [1] ENDRX - End of Receive Buffer
-
-    11 [1] EOSACC - End of Slave Address
-    10 [1] SCL_WS - Clock Wait State
-    09 [1] ARBLST - Arbitration Lost
-    08 [0] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [0] OVRE - Overrun Error
-    05 [1] GACC - General Call Access
-    04 [1] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [1] TXRDY - Transmit Holding Register Ready
-    01 [0] RXRDY - Receive Holding Register Ready
-    00 [1] TXCOMP - Transmission Completed
-*/
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-#line 18 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\leds.h"
-
-/******************************************************************************
-Type Definitions
-******************************************************************************/
-
-/* %LED% The order of the LEDs in LedNumberType below must match the order of the definitions provided in leds_x.c */
-
-typedef enum {WHITE = 0, PURPLE, BLUE, CYAN, GREEN, YELLOW, ORANGE, RED, LCD_RED, LCD_GREEN, LCD_BLUE} LedNumberType;
-
-
-#line 37 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\leds.h"
-
-typedef enum {LED_NORMAL_MODE, LED_PWM_MODE, LED_BLINK_MODE} LedModeType;
-typedef enum {LED_PORTA = 0, LED_PORTB = 0x80} LedPortType;  /* Offset between port registers (in 32 bit words) */
-typedef enum {LED_ACTIVE_LOW = 0, LED_ACTIVE_HIGH = 1} LedActiveType;
-typedef enum {LED_PWM_DUTY_LOW = 0, LED_PWM_DUTY_HIGH = 1} LedPWMDutyType;
-
-
-
-/* Standard blinky values.  If other values are needed, add them at the end of the enum */
-typedef enum {LED_0_5HZ = 1000, LED_1HZ = 500, LED_2HZ = 250, LED_4HZ = 125, LED_8HZ = 63,
-              LED_PWM_0 = 0, LED_PWM_5 = 1, LED_PWM_10 = 2, LED_PWM_15 = 3, LED_PWM_20 = 4, 
-              LED_PWM_25 = 5, LED_PWM_30 = 6, LED_PWM_35 = 7, LED_PWM_40 = 8, LED_PWM_45 = 9, 
-              LED_PWM_50 = 10, LED_PWM_55 = 11, LED_PWM_60 = 12, LED_PWM_65 = 13, LED_PWM_70 = 14, 
-              LED_PWM_75 = 15, LED_PWM_80 = 16, LED_PWM_85 = 17, LED_PWM_90 = 18, LED_PWM_95 = 19, 
-              LED_PWM_100 = (u8)20
-             } LedRateType;
-
-typedef struct 
-{
-  LedModeType eMode;
-  LedRateType eRate;
-  u16 u16Count;
-  LedPWMDutyType eCurrentDuty;
-  LedActiveType eActiveState;
-  LedPortType ePort;
-}LedConfigType;
-
-
-/******************************************************************************
-* Constants
-******************************************************************************/
-
-
-
-/******************************************************************************
-* Function Declarations
-******************************************************************************/
-/* Public Functions */
-void LedOn(LedNumberType eLED_);
-void LedOff(LedNumberType eLED_);
-void LedToggle(LedNumberType eLED_);
-void LedPWM(LedNumberType eLED_, LedRateType ePwmRate_);
-void LedBlink(LedNumberType eLED_, LedRateType ePwmRate_);
-
-/* Protected Functions */
-void LedInitialize(void);
-
-/* Private Functions */
-void LedUpdate(void);
-
-
-/******************************************************************************
-* State Machine Function Prototypes
-******************************************************************************/
-void LedSM_Idle(void);       /* No blinking LEDs */
-void LedSM_Blinky(void);     /* At least one blinky LED so values need checking */
-
-
-#line 62 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\messaging.h"
-/**********************************************************************************************************************
-File: messaging.h                                                                
-
-Description:
-This is a messaging .h file new source code header file.
-**********************************************************************************************************************/
-
-
-
-
-
-/**********************************************************************************************************************
-Constants / Definitions
-**********************************************************************************************************************/
-/* G_u32MessagingFlags */
-
-
-
-
-  
-/* Tx buffer allocation: be aware of RAM usage when selecting the two parameters below.
-Queue size in bytes is TX_QUEUE_SIZE x MAX_TX_MESSAGE_LENGTH */
-
-
-
-
-
-
-
-
-
-
-
-
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-typedef enum {EMPTY = 0, WAITING, SENDING, RECEIVING, COMPLETE, TIMEOUT, ABANDONED, NOT_FOUND = 0xff} MessageStateType;
-
-/* Message struct for data messages */
-typedef struct
-{
-  u32 u32Token;                         /* Unigue token for this message */
-  u32 u32Size;                          /* Size of the data payload in bytes */
-  u8 pu8Message[(u16)128]; /* Data payload array */
-  void* psNextMessage;                  /* Pointer to next message */
-} MessageType;
-
-typedef struct
-{
-  bool bFree;                           /* TRUE if message slot is available */
-  MessageType Message;                  /* The slot's message */
-} MessageSlot;
-
-typedef struct
-{
-  u32 u32Token;                         /* Unigue token for this message; a token is never 0 */
-  MessageStateType eState;              /* State of the message */
-  u32 u32Timestamp;                     /* Time the message status was posted */          
-} MessageStatus;
-
-
-/**********************************************************************************************************************
-* Function Declarations
-**********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-MessageStateType QueryMessageStatus(u32 u32Token_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void MessagingInitialize(void);
-void MessagingRunActiveState(void);
-
-u32 QueueMessage(MessageType** eTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_);
-void DeQueueMessage(MessageType** pTargetQueue_);
-
-void UpdateMessageStatus(u32 u32Token_, MessageStateType eNewState_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-static void AddNewMessageStatus(u32 u32Token_);
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-void MessagingIdle(void);             
-void MessagingError(void);         
-
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 63 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\sam3u_i2c.h"
-/**********************************************************************************************************************
-File: sam3u_TWI.h                                                                
-
-Description:
-Header file for sam3u_TWI.c
-**********************************************************************************************************************/
-
-
-
-
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-/**********************************************************************************************************************
-File: configuration.h      
-
-Description:
-Main configuration header file for project.  This file bridges many of the generic features of the 
-firmware to the specific features of the design. The definitions should be updated
-to match the target hardware.  
- 
-Bookmarks:
-!!!!! External module peripheral assignments
-@@@@@ GPIO board-specific parameters
-##### Communication peripheral board-specific parameters
-
-DEBUG UART IS 115200-8-N-1
-ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
-
-***********************************************************************************************************************/
-
-#line 262 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%BUZZER% Buzzer Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
-
-
-
-
-
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%ANT% Interface Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Board-specific ANT definitions are kept here
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-##### Communication peripheral board-specific parameters
-***********************************************************************************************************************/
-/*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-Blade UART Setup
-
-The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-Debug UART Setup
-
-Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 38400 bps
-=> CD = 78.125 - (FP / 8)
-Set FP = 1, CD = 78 = 0x4E
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26 = 0x1A
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-LCD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI LCD screen. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-ANT USART Setup in SSP
-SPI slave mode to communicate with an ANT device. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK (delicious!) NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as soon as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [1] USCLKS SCK
-    04 [1] "
-
-    03 [1] USART_MODE SPI Slave
-    02 [1] "
-    01 [1] "
-    00 [1] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [1] CTSIC Clear to Send Change interrupt enabled 
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled 
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled 
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled YET
-    00 [0] RXRDY Receiver Ready interrupt enabled 
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-!!!!! Not applicable for slave (note that incoming clock cannot 
-exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
-or 2MHz, so no issues.
-*/
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-SD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI SD card. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*--------------------------------------------------------------------------------------------------------------------
-Two Wire Interface setup
-
-I²C Master mode for ASCII LCD communication
-*/
-
-/*-------------------- TWI0 ---------------------*/
-/*Control Register*/
-
-/*
-    31-8 [0] Reserved
-
-    07 [0] SWRST - Software reset
-    06 [0] QUICK - SMBUS Quick Command
-    05 [1] SVDIS - Slave mode disable - disabled
-    04 [0] SVEN - Slave mode enable
-
-    03 [0] MSDIS - Master mode disable
-    02 [1] MSEN - Master mode enable
-    01 [0] STOP - Stop a transfer
-    00 [0] START - Start a transfer
-*/
-
-/*Master Mode Register*/
-
-/*
-    31-24 [0] Reserved
-    
-    23 [0] Reserved
-    22 [0] DADR - device slave address - start with zero
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] MREAD - Master Read Direction - 0 -> Write, 1 -> Read
-
-    11 [0] Reserved
-    10 [0] "
-    09 [0] IADRSZ - Internal device address - 0 = no internal device address
-    08 [0] "
-
-    07-0 [0] Reserved
-*/
-
-/* Clock Wave Generator Register */
-/* 
-    Calculation:
-        T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
-        T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
-
-        T_MCK - period of master clock = 1/(48 MHz)
-        T_low/T_high - period of the low and high signals
-        
-        CKDIV = 2, CHDIV and CLDIV = 59
-        T_low/T_high = 2.5 microseconds
-
-        Data frequency - 
-        f = ((T_low + T_high)^-1)
-        f = 200000 Hz 0r 200 kHz
-
-    Additional Rates:
-        50 kHz - 0x00027777
-       100 kHz - 0x00023B3B
-       200 kHz - 0x00021D1D
-       400 kHz - 0x00030707  *Maximum rate*
-*/
-
-/*
-    31-20 [0] Reserved
-    
-    19 [0] Reserved
-    18 [0] CKDIV
-    17 [1] "
-    16 [0] "
-
-    15 [0] CHDIV
-    14 [0] "
-    13 [0] "
-    12 [1] "
-
-    11 [1] "
-    10 [1] "
-    09 [0] "
-    08 [1] "
-
-    07 [0] CLDIV - Clock Low Divider
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [1] "
-    01 [0] "
-    00 [1] "
-*/
-
-/*Interrupt Enable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [0] TXBUFE - Transmit Buffer Empty
-    14 [0] RXBUFF - Receive Buffer Full
-    13 [0] ENDTX - End of Transmit Buffer
-    12 [0] ENDRX - End of Receive Buffer
-
-    11 [0] EOSACC - End of Slave Address
-    10 [0] SCL_WS - Clock Wait State
-    09 [0] ARBLST - Arbitration Lost
-    08 [1] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [1] OVRE - Overrun Error
-    05 [0] GACC - General Call Access
-    04 [0] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [0] TXRDY - Transmit Holding Register Ready
-    01 [1] RXRDY - Receive Holding Register Ready
-    00 [0] TXCOMP - Transmission Completed
-*/
-
-/*Interrupt Disable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [1] TXBUFE - Transmit Buffer Empty
-    14 [1] RXBUFF - Receive Buffer Full
-    13 [1] ENDTX - End of Transmit Buffer
-    12 [1] ENDRX - End of Receive Buffer
-
-    11 [1] EOSACC - End of Slave Address
-    10 [1] SCL_WS - Clock Wait State
-    09 [1] ARBLST - Arbitration Lost
-    08 [0] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [0] OVRE - Overrun Error
-    05 [1] GACC - General Call Access
-    04 [1] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [1] TXRDY - Transmit Holding Register Ready
-    01 [0] RXRDY - Receive Holding Register Ready
-    00 [1] TXCOMP - Transmission Completed
-*/
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-#line 12 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\sam3u_i2c.h"
-
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-typedef enum {STOP, NO_STOP, NA} TWIStopType;
-typedef enum {WRITE, READ} TWIMessageType;
-
-typedef struct 
-{
-  AT91PS_TWI pBaseAddress;            /* Base address of the associated peripheral */
-  MessageType* pTransmitBuffer;       /* Pointer to the transmit message linked list */
-  u8* pu8RxBuffer;                    /* Pointer to receive buffer in user application */
-  u32 u32Flags;                       /* Flags for peripheral */
-} TWIPeripheralType;
-
-typedef struct
-{
-  TWIMessageType Direction;           /* Tx/Rx Message Type */
-  u32 u32Size;                        /* Size of the transfer */
-  u8 u8Address;                       /* Slave address */
-  u8 u8Attempts;                      /* Number of attempts taken to send msg */
-  
-  /* Only Applicable to Write Operations */
-  TWIStopType Stop;                   
-  
-  /* Only Applicable to Read Operations */
-  u8* pu8RxBuffer;                    /* Pointer to receive buffer in user application */
-}TWIMessageQueueType;
-
-/* TWIx_u32Flags definitions in TWIPeripheralType*/
-
-
-
-
-
-
-/**********************************************************************************************************************
-Constants / Definitions
-**********************************************************************************************************************/
-/* TWI_u32Flags (TWI application flags) */
-
-
-
-
-
-/* end of TWI_u32Flags */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**********************************************************************************************************************
-* Function Declarations
-**********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_);
-bool TWI0ReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_);
-u32 TWI0WriteByte(u8 u8SlaveAddress_, u8 u8Byte_, TWIStopType Send_);
-u32 TWI0WriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TWIStopType Send_);
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void TWIInitialize(void);
-void TWIRunActiveState(void);
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-static void TWI0FillTxBuffer(void);
-static void TWIManualMode(void);
-void TWI0_IRQHandler(void);
-void TWI1_IRQHandler(void);
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-void TWISM_Idle(void);
-void TWISM_Transmitting(void);
-void TWISM_Receiving(void);
-void TWISM_Error(void);         
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 65 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\sam3u_ssp.h"
-/**********************************************************************************************************************
-File: sam3u_ssp.h                                                                
-
-Description:
-Header file for sam3u_ssp.c
-**********************************************************************************************************************/
-
-
-
-
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-/**********************************************************************************************************************
-File: configuration.h      
-
-Description:
-Main configuration header file for project.  This file bridges many of the generic features of the 
-firmware to the specific features of the design. The definitions should be updated
-to match the target hardware.  
- 
-Bookmarks:
-!!!!! External module peripheral assignments
-@@@@@ GPIO board-specific parameters
-##### Communication peripheral board-specific parameters
-
-DEBUG UART IS 115200-8-N-1
-ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
-
-***********************************************************************************************************************/
-
-#line 262 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%BUZZER% Buzzer Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
-
-
-
-
-
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%ANT% Interface Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Board-specific ANT definitions are kept here
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-##### Communication peripheral board-specific parameters
-***********************************************************************************************************************/
-/*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-Blade UART Setup
-
-The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-Debug UART Setup
-
-Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 38400 bps
-=> CD = 78.125 - (FP / 8)
-Set FP = 1, CD = 78 = 0x4E
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26 = 0x1A
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-LCD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI LCD screen. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-ANT USART Setup in SSP
-SPI slave mode to communicate with an ANT device. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK (delicious!) NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as soon as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [1] USCLKS SCK
-    04 [1] "
-
-    03 [1] USART_MODE SPI Slave
-    02 [1] "
-    01 [1] "
-    00 [1] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [1] CTSIC Clear to Send Change interrupt enabled 
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled 
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled 
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled YET
-    00 [0] RXRDY Receiver Ready interrupt enabled 
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-!!!!! Not applicable for slave (note that incoming clock cannot 
-exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
-or 2MHz, so no issues.
-*/
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-SD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI SD card. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*--------------------------------------------------------------------------------------------------------------------
-Two Wire Interface setup
-
-I²C Master mode for ASCII LCD communication
-*/
-
-/*-------------------- TWI0 ---------------------*/
-/*Control Register*/
-
-/*
-    31-8 [0] Reserved
-
-    07 [0] SWRST - Software reset
-    06 [0] QUICK - SMBUS Quick Command
-    05 [1] SVDIS - Slave mode disable - disabled
-    04 [0] SVEN - Slave mode enable
-
-    03 [0] MSDIS - Master mode disable
-    02 [1] MSEN - Master mode enable
-    01 [0] STOP - Stop a transfer
-    00 [0] START - Start a transfer
-*/
-
-/*Master Mode Register*/
-
-/*
-    31-24 [0] Reserved
-    
-    23 [0] Reserved
-    22 [0] DADR - device slave address - start with zero
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] MREAD - Master Read Direction - 0 -> Write, 1 -> Read
-
-    11 [0] Reserved
-    10 [0] "
-    09 [0] IADRSZ - Internal device address - 0 = no internal device address
-    08 [0] "
-
-    07-0 [0] Reserved
-*/
-
-/* Clock Wave Generator Register */
-/* 
-    Calculation:
-        T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
-        T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
-
-        T_MCK - period of master clock = 1/(48 MHz)
-        T_low/T_high - period of the low and high signals
-        
-        CKDIV = 2, CHDIV and CLDIV = 59
-        T_low/T_high = 2.5 microseconds
-
-        Data frequency - 
-        f = ((T_low + T_high)^-1)
-        f = 200000 Hz 0r 200 kHz
-
-    Additional Rates:
-        50 kHz - 0x00027777
-       100 kHz - 0x00023B3B
-       200 kHz - 0x00021D1D
-       400 kHz - 0x00030707  *Maximum rate*
-*/
-
-/*
-    31-20 [0] Reserved
-    
-    19 [0] Reserved
-    18 [0] CKDIV
-    17 [1] "
-    16 [0] "
-
-    15 [0] CHDIV
-    14 [0] "
-    13 [0] "
-    12 [1] "
-
-    11 [1] "
-    10 [1] "
-    09 [0] "
-    08 [1] "
-
-    07 [0] CLDIV - Clock Low Divider
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [1] "
-    01 [0] "
-    00 [1] "
-*/
-
-/*Interrupt Enable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [0] TXBUFE - Transmit Buffer Empty
-    14 [0] RXBUFF - Receive Buffer Full
-    13 [0] ENDTX - End of Transmit Buffer
-    12 [0] ENDRX - End of Receive Buffer
-
-    11 [0] EOSACC - End of Slave Address
-    10 [0] SCL_WS - Clock Wait State
-    09 [0] ARBLST - Arbitration Lost
-    08 [1] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [1] OVRE - Overrun Error
-    05 [0] GACC - General Call Access
-    04 [0] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [0] TXRDY - Transmit Holding Register Ready
-    01 [1] RXRDY - Receive Holding Register Ready
-    00 [0] TXCOMP - Transmission Completed
-*/
-
-/*Interrupt Disable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [1] TXBUFE - Transmit Buffer Empty
-    14 [1] RXBUFF - Receive Buffer Full
-    13 [1] ENDTX - End of Transmit Buffer
-    12 [1] ENDRX - End of Receive Buffer
-
-    11 [1] EOSACC - End of Slave Address
-    10 [1] SCL_WS - Clock Wait State
-    09 [1] ARBLST - Arbitration Lost
-    08 [0] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [0] OVRE - Overrun Error
-    05 [1] GACC - General Call Access
-    04 [1] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [1] TXRDY - Transmit Holding Register Ready
-    01 [0] RXRDY - Receive Holding Register Ready
-    00 [1] TXCOMP - Transmission Completed
-*/
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-#line 12 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\sam3u_ssp.h"
-
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-typedef enum {MSB_FIRST, LSB_FIRST} SspBitOrderType;
-typedef enum {SPI_MASTER, SPI_SLAVE, SPI_SLAVE_FLOW_CONTROL} SpiModeType;
-
-typedef struct 
-{
-  PeripheralType SspPeripheral;       /* Easy name of peripheral */
-  AT91PS_PIO pCsGpioAddress;          /* Base address for GPIO port for chip select line */
-  u32 u32CsPin;                       /* Pin location for SSEL line */
-  SspBitOrderType BitOrder;           /* MSB_FIRST or LSB_FIRST: this is only available in SPI_SLAVE_FLOW_CONTROL mode */
-  SpiModeType SpiMode;                /* Type of SPI configured */
-  fnCode_type fnSlaveTxFlowCallback;  /* Callback function for SPI_SLAVE_FLOW_CONTROL transmit */
-  fnCode_type fnSlaveRxFlowCallback;  /* Callback function for SPI_SLAVE_FLOW_CONTROL receive */
-  u8* pu8RxBufferAddress;             /* Address to circular receive buffer */
-  u8** ppu8RxNextByte;                /* Location of pointer to next byte to write in buffer for SPI_SLAVE_FLOW_CONTROL*/
-  u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
-} SspConfigurationType;
-
-typedef struct 
-{
-  AT91PS_USART pBaseAddress;          /* Base address of the associated peripheral */
-  AT91PS_PIO pCsGpioAddress;          /* Base address for GPIO port for chip select line */
-  u32 u32CsPin;                       /* Pin location for SSEL line */
-  SspBitOrderType BitOrder;           /* MSB_FIRST or LSB_FIRST: this is only available in SPI_SLAVE_FLOW_CONTROL mode */
-  SpiModeType SpiMode;                /* Type of SPI configured */
-  u16 u16Pad;                         /* Preserve 4-byte alignment */
-  u32 u32PrivateFlags;                /* Private peripheral flags */
-  fnCode_type fnSlaveTxFlowCallback;  /* Callback function for SPI SLAVE transmit that uses flow control */
-  fnCode_type fnSlaveRxFlowCallback;  /* Callback function for SPI SLAVE receive that uses flow control */
-  u8* pu8RxBuffer;                    /* Pointer to circular receive buffer in user application */
-  u8** ppu8RxNextByte;                /* Pointer to buffer location where next received byte will be placed (SPI_SLAVE_FLOW_CONTROL) */
-  u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
-  u8 u8PeripheralId;                  /* Simple peripheral ID number */
-  u8 u8Pad;                           /* Preserve 4-byte alignment */
-  MessageType* psTransmitBuffer;      /* Pointer to the transmit message struct linked list */
-  u32 u32CurrentTxBytesRemaining;     /* Counter for bytes remaining in current transfer */
-  u8* pu8CurrentTxData;               /* Pointer to current location in the Tx buffer */
-} SspPeripheralType;
-
-/* u32PrivateFlags */
-
-
-
-
-
-/**********************************************************************************************************************
-Constants / Definitions
-**********************************************************************************************************************/
-/* G_u32SspxApplicationFlags */
-
-
-
-
-/* end G_u32SspxApplicationFlags */
-
-/* SSP_u32Flags (local SSP application flags) */
-
-
-
-
-
-/* end of SSP_u32Flags flags */
-
-
-
-
-
-
-/**********************************************************************************************************************
-* Function Declarations
-**********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_);
-void SspRelease(SspPeripheralType* psSspPeripheral_);
-
-void SspAssertCS(SspPeripheralType* psSspPeripheral_);
-void SspDeAssertCS(SspPeripheralType* psSspPeripheral_);
-
-u32 SspWriteByte(SspPeripheralType* psSspPeripheral_, u8 u8Byte_);
-u32 SspWriteData(SspPeripheralType* psSspPeripheral_, u32 u32Size_, u8* u8Data_);
-
-u32 SspReadByte(SspPeripheralType* psSspPeripheral_);
-u32 SspReadData(SspPeripheralType* psSspPeripheral_, u32 u32Size_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void SspInitialize(void);
-void SspRunActiveState(void);
-
-void SspManualMode(void);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void SSP0_IRQHandler(void);
-void SSP1_IRQHandler(void);
-void SSP2_IRQHandler(void);
-void SspGenericHandler(void);
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-void SspSM_Idle(void);
-void SspSM_Error(void);         
-
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 66 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\sam3u_uart.h"
-/**********************************************************************************************************************
-File: sam3u_uart.h                                                                
-
-Description:
-Header file for sam3u_uart.c
-**********************************************************************************************************************/
-
-
-
-
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-/**********************************************************************************************************************
-File: configuration.h      
-
-Description:
-Main configuration header file for project.  This file bridges many of the generic features of the 
-firmware to the specific features of the design. The definitions should be updated
-to match the target hardware.  
- 
-Bookmarks:
-!!!!! External module peripheral assignments
-@@@@@ GPIO board-specific parameters
-##### Communication peripheral board-specific parameters
-
-DEBUG UART IS 115200-8-N-1
-ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
-
-***********************************************************************************************************************/
-
-#line 262 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\configuration.h"
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%BUZZER% Buzzer Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
-
-
-
-
-
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%ANT% Interface Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Board-specific ANT definitions are kept here
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-##### Communication peripheral board-specific parameters
-***********************************************************************************************************************/
-/*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-Blade UART Setup
-
-The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-Debug UART Setup
-
-Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 38400 bps
-=> CD = 78.125 - (FP / 8)
-Set FP = 1, CD = 78 = 0x4E
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26 = 0x1A
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-LCD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI LCD screen. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-ANT USART Setup in SSP
-SPI slave mode to communicate with an ANT device. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK (delicious!) NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as soon as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [1] USCLKS SCK
-    04 [1] "
-
-    03 [1] USART_MODE SPI Slave
-    02 [1] "
-    01 [1] "
-    00 [1] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [1] CTSIC Clear to Send Change interrupt enabled 
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled 
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled 
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled YET
-    00 [0] RXRDY Receiver Ready interrupt enabled 
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-!!!!! Not applicable for slave (note that incoming clock cannot 
-exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
-or 2MHz, so no issues.
-*/
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-SD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI SD card. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*--------------------------------------------------------------------------------------------------------------------
-Two Wire Interface setup
-
-I²C Master mode for ASCII LCD communication
-*/
-
-/*-------------------- TWI0 ---------------------*/
-/*Control Register*/
-
-/*
-    31-8 [0] Reserved
-
-    07 [0] SWRST - Software reset
-    06 [0] QUICK - SMBUS Quick Command
-    05 [1] SVDIS - Slave mode disable - disabled
-    04 [0] SVEN - Slave mode enable
-
-    03 [0] MSDIS - Master mode disable
-    02 [1] MSEN - Master mode enable
-    01 [0] STOP - Stop a transfer
-    00 [0] START - Start a transfer
-*/
-
-/*Master Mode Register*/
-
-/*
-    31-24 [0] Reserved
-    
-    23 [0] Reserved
-    22 [0] DADR - device slave address - start with zero
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] MREAD - Master Read Direction - 0 -> Write, 1 -> Read
-
-    11 [0] Reserved
-    10 [0] "
-    09 [0] IADRSZ - Internal device address - 0 = no internal device address
-    08 [0] "
-
-    07-0 [0] Reserved
-*/
-
-/* Clock Wave Generator Register */
-/* 
-    Calculation:
-        T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
-        T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
-
-        T_MCK - period of master clock = 1/(48 MHz)
-        T_low/T_high - period of the low and high signals
-        
-        CKDIV = 2, CHDIV and CLDIV = 59
-        T_low/T_high = 2.5 microseconds
-
-        Data frequency - 
-        f = ((T_low + T_high)^-1)
-        f = 200000 Hz 0r 200 kHz
-
-    Additional Rates:
-        50 kHz - 0x00027777
-       100 kHz - 0x00023B3B
-       200 kHz - 0x00021D1D
-       400 kHz - 0x00030707  *Maximum rate*
-*/
-
-/*
-    31-20 [0] Reserved
-    
-    19 [0] Reserved
-    18 [0] CKDIV
-    17 [1] "
-    16 [0] "
-
-    15 [0] CHDIV
-    14 [0] "
-    13 [0] "
-    12 [1] "
-
-    11 [1] "
-    10 [1] "
-    09 [0] "
-    08 [1] "
-
-    07 [0] CLDIV - Clock Low Divider
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [1] "
-    01 [0] "
-    00 [1] "
-*/
-
-/*Interrupt Enable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [0] TXBUFE - Transmit Buffer Empty
-    14 [0] RXBUFF - Receive Buffer Full
-    13 [0] ENDTX - End of Transmit Buffer
-    12 [0] ENDRX - End of Receive Buffer
-
-    11 [0] EOSACC - End of Slave Address
-    10 [0] SCL_WS - Clock Wait State
-    09 [0] ARBLST - Arbitration Lost
-    08 [1] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [1] OVRE - Overrun Error
-    05 [0] GACC - General Call Access
-    04 [0] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [0] TXRDY - Transmit Holding Register Ready
-    01 [1] RXRDY - Receive Holding Register Ready
-    00 [0] TXCOMP - Transmission Completed
-*/
-
-/*Interrupt Disable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [1] TXBUFE - Transmit Buffer Empty
-    14 [1] RXBUFF - Receive Buffer Full
-    13 [1] ENDTX - End of Transmit Buffer
-    12 [1] ENDRX - End of Receive Buffer
-
-    11 [1] EOSACC - End of Slave Address
-    10 [1] SCL_WS - Clock Wait State
-    09 [1] ARBLST - Arbitration Lost
-    08 [0] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [0] OVRE - Overrun Error
-    05 [1] GACC - General Call Access
-    04 [1] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [1] TXRDY - Transmit Holding Register Ready
-    01 [0] RXRDY - Receive Holding Register Ready
-    00 [1] TXCOMP - Transmission Completed
-*/
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-#line 12 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\sam3u_uart.h"
-
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-typedef struct 
-{
-  PeripheralType UartPeripheral;      /* Easy name of peripheral */
-  u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
-  u8* pu8RxBufferAddress;             /* Address to circular receive buffer */
-  u8** pu8RxNextByte;                 /* Pointer to buffer location where next received byte will be placed */
-  fnCode_type fnRxCallback;           /* Callback function for receiving data */
-} UartConfigurationType;
-
-typedef struct 
-{
-  AT91PS_USART pBaseAddress;          /* Base address of the associated peripheral */
-  u32 u32PrivateFlags;            /* Flags for peripheral */
-  MessageType* psTransmitBuffer;      /* Pointer to the transmit message linked list */
-  u32 u32CurrentTxBytesRemaining;     /* Counter for bytes remaining in current transfer */
-  u8* pu8CurrentTxData;               /* Pointer to current location in the Tx buffer */
-  u8* pu8RxBuffer;                    /* Pointer to circular receive buffer in user application */
-  u8** pu8RxNextByte;                 /* Pointer to buffer location where next received byte will be placed */
-  fnCode_type fnRxCallback;           /* Callback function for receiving data */
-  u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
-  u8 u8PeripheralId;                  /* Simple peripheral ID number */
-  u8 u8Pad;
-} UartPeripheralType;
-
-/* u32PrivateFlags */
-
-
-
-/**********************************************************************************************************************
-Constants / Definitions
-**********************************************************************************************************************/
-/* G_u32UartxApplicationFlags */
-
-
-
-
-/* end G_u32UartxApplicationFlags */
-
-/* UART_u32Flags (UART application flags) */
-
-
-
-
-/* end of UART_u32Flags */
-
-
-
-
-
-
-
-
-
-/* The UART peripheral base addresses are essentially re-defined here because the defs in AT91SAM3U4.h can't be
-casted back to integers for comparisons as far as we could tell! */
-
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-Constants / Definitions
-***********************************************************************************************************************/
-
-
-/**********************************************************************************************************************
-* Function Declarations
-**********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-bool Uart_putc(u8 u8Char_);
-bool Uart_getc(u8* pu8Byte_);
-bool UartCheckForNewChar(void);
-
-UartPeripheralType* UartRequest(UartConfigurationType* psUartConfig_);
-void UartRelease(UartPeripheralType* psUartPeripheral_);
-
-u32 UartWriteByte(UartPeripheralType* psUartPeripheral_, u8 u8Byte_);
-u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* u8Data_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void UartInitialize(void);
-void UartRunActiveState(void);
-
-void UartManualMode(void);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-//static void UartFillTxBuffer(UartPeripheralType* UartPeripheral_);
-//static void UartReadRxBuffer(UartPeripheralType* psTargetUart_);
-
-void UART_IRQHandler(void);
-void UART0_IRQHandler(void);
-void UART1_IRQHandler(void);
-void UART2_IRQHandler(void);
-void UartGenericHandler(void);
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-void UartSM_Idle(void);
-void UartSM_Transmitting(void);
-void UartSM_Error(void);         
-
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 67 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-/* MPGL1-specific header files */
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\bsp\\mpgl1-ehdw-03.h"
-/***********************************************************************************************************************
-* File: mpgl1-ehdw-03.h                                                                
-* 
-* Description:
-* This file provides header information for the mpgl1-ehdw-03 board.
-***********************************************************************************************************************/
-
-
-
-
-/***********************************************************************************************************************
-Type Definitions
-***********************************************************************************************************************/
-
-/***********************************************************************************************************************
-* Constants
-***********************************************************************************************************************/
-#line 27 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\bsp\\mpgl1-ehdw-03.h"
-
-
-
-/* To get 1 ms tick, need SYSTICK_COUNT to be 0.001 * SysTick Clock.  
-Should be 6000 for 48MHz CCLK. */
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-* Macros
-***********************************************************************************************************************/
-
-
-
-
-
-
-/***********************************************************************************************************************
-* Function Declarations
-***********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public Functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void SystemStatusReport(void);
-
-void PWMSetupAudio(void);
-void PWMAudioSetFrequency(u32 u32Channel_, u16 u16Frequency_);
-void PWMAudioOn(u32 u32Channel_);
-void PWMAudioOff(u32 u32Channel_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected Functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void ClockSetup(void);
-void SysTickSetup(void);
-void SystemSleep(void);
-void WatchDogSetup(void);
-void GpioSetup(void);
-
-
-/***********************************************************************************************************************
-Perihperal Setup Initializations
-
-Bookmarks:
-@@@@@ Clock, Power Control, Systick and Watchdog setup values
-!!!!! GPIO pin names
-##### GPIO initial setup values
-$$$$$ PWM setup values
-
-***********************************************************************************************************************/
-
-/***********************************************************************************************************************
-@@@@@ Clock, Systick and Power Control setup values
-***********************************************************************************************************************/
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [1] AT91C_ID_UDPHS  USB Device High Speed clock enabled
-    28 [0] AT91C_ID_HDMA   HDMA
-
-    27 [0] AT91C_ID_ADC    10-bit ADC Controller (ADC) not enabled
-    26 [1] AT91C_ID_ADC12B 12-bit ADC Controller (ADC12B) clock enabled
-    25 [1] AT91C_ID_PWMC   Pulse Width Modulation Controller clock enabled
-    24 [1] AT91C_ID_TC2    Timer Counter 2 clock enabled
-
-    23 [1] AT91C_ID_TC1    Timer Counter 1 clock enabled
-    22 [1] AT91C_ID_TC0    Timer Counter 0 clock enabled
-    21 [1] AT91C_ID_SSC0   Serial Synchronous Controller 0 clock enabled
-    20 [1] AT91C_ID_SPI0   Serial Peripheral Interface clock enabled
-
-    19 [1] AT91C_ID_TWI1   TWI 1 clock enabled
-    18 [1] AT91C_ID_TWI0   TWI 0 clock enabled
-    17 [0] AT91C_ID_MCI0   Multimedia Card Interface not enabled
-    16 [0] AT91C_ID_US3    USART 3 not enabled
-
-    15 [1] AT91C_ID_US2    USART 2 clock enabled
-    14 [1] AT91C_ID_US1    USART 1 clock enabled
-    13 [1] AT91C_ID_US0    USART 0 clock enabled
-    12 [0] AT91C_ID_PIOC   Parallel IO Controller C  not enabled
-
-    11 [1] AT91C_ID_PIOB   Parallel IO Controller B clock enabled
-    10 [1] AT91C_ID_PIOA   Parallel IO Controller A clock enabled
-    09 [0] AT91C_ID_HSMC4  HSMC4 not enabled
-    08 [1] AT91C_ID_DBGU   DBGU (standalone UART) clock enabled
-
-    07 [0] AT91C_ID_EFC1   EFC1 not enabled
-    06 [1] AT91C_ID_EFC0   EFC0 clock enabled
-    05 [1] AT91C_ID_PMC    PMC clock enabled
-    04 [1] AT91C_ID_WDG    WATCHDOG TIMER clock enabled
-
-    03 [0] AT91C_ID_RTT    REAL TIME TIMER not enabled
-    02 [0] AT91C_ID_RTC    REAL TIME CLOCK not enabled
-    01 [1] AT91C_ID_RSTC   RESET CONTROLLER clock enabled
-    00 [1] AT91C_ID_SUPC   SUPPLY CONTROLLER clock enabled
-*/
-
-
-
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] CFDEN clock failure detector disabled
-    24 [0] MOSCSEL internal main oscillator selected for now
-
-    23 [0] KEY 0x37
-    22 [0] "
-    21 [1] "
-    20 [1] "
-
-    19 [0] "
-    18 [1] "
-    17 [1] "
-    16 [1] "
-
-    15 [1] MOSCXTST main crystal start-up time (based on 8 x the slow clock frequency)
-    14 [1] "
-    13 [1] "
-    12 [1] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] Reserved
-    06 [0] MOSCRCF 8MHz
-    05 [0] "
-    04 [1] "
-
-    03 [1] MOSCRCEN main on-chip RC osc is on for now
-    02 [0] WAITMODE disabled
-    01 [0] MOSCXTBY main crystal osc is not bypassed
-    00 [1] MOSCXTEN main crystal osc is enabled
-*/
-
-
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] "
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] "
-    14 [0] "
-    13 [1] UPLLDIV UPLL divided by 2 
-    12 [0] Reserved 
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] PRES processor clock prescaler selected clock divided by 2
-    05 [0] 
-    04 [1] 
-
-    03 [0] 
-    02 [0] 
-    01 [0] CSS Master clock selection MAIN_CLK for now
-    00 [1] 
-*/
-
-
-
-
-/* The PLL DIVA and MULA coefficients set the PLLA output frequency.
-The PLLA input frequency must be between 8 and 16 MHz so with 12MHz clock, DIVA must be 1.
-Since we want PLLACK at 96 MHz:
-(96 MHZ * DIVA / 12 MHz) - 1 = MULA = 7
-*/
-
-
-/* Bit Set Description
-    31 [0] Reserved
-    30 [0] "
-    29 [1] Always 1
-    28 [0] "
-
-    27 [0] "
-    26 [0] MULA
-    25 [0] "
-    24 [0] "
-
-
-    23 [0] "
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [1] "
-    17 [1] "
-    16 [1] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [1] PLLACOUNT
-    12 [1] "
-
-    11 [1] "
-    10 [1] "
-    09 [1] "
-    08 [1] "
-
-    07 [0] DIVA
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [1] "
-*/
-
-
-
-
-
-
-/* Bit Set Description
-    31:20 Reserved 
-
-    19 [0] Reserved
-    18 [0] "
-    17 [0] "
-    16 [0] Countflag (read only)
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] "
-    02 [0] Clock source is CPU clock / 8
-    01 [1] System tick interrupt on 
-    00 [1] System tick is enabled 
-*/
-
-
-/* Watch Dog Values
-The watchdog oscillator is on the internal 32k RC with a 128 prescaler = 3.9ms / tick.  For a minimum 5 second watchdog timeout, the watchdog
-counter must be set at 1280. */
-
-
-/*
-    31 [1] Key
-    30 [0] " 
-    29 [1] "
-    28 [0] "
-
-    27 [0] "
-    26 [1] "
-    25 [0] "
-    24 [1] "
-
-    23 - 04 [0] Reserved
-
-    03 [0] Reserved
-    02 [0] "
-    01 [0] "
-    00 [1] WDRSTT Restart watchdog
-*/
-
-
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] WDIDLEHLT Watchdog runs when system is idle
-    28 [1] WDDBGHLT Watchdog stops in debug state
-
-    27 [0] WDD Watchdog delta value
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] "
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [1] "
-
-    15 [1] WDDIS Watchdog is disabled for now
-    14 [0] WDRPROC watchdog reset processor off
-    13 [0] WDRSTEN Watchdog reset enable off
-    12 [0] WDFIEN Watchdog fault interrupt enable off
-
-    11 [0] WDV Watchdog counter value
-    10 [1] "
-    09 [0] "
-    08 [1] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/***********************************************************************************************************************
-!!!!! GPIO pin names
-***********************************************************************************************************************/
-/* Hardware Definition for PCB MPGL1-EHDW-03 */
-
-/* Port A bit positions */
-#line 415 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\bsp\\mpgl1-ehdw-03.h"
-
-
-/* Port B bit positions */
-#line 450 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\bsp\\mpgl1-ehdw-03.h"
-
-
-/***********************************************************************************************************************
-##### GPIO setup values
-***********************************************************************************************************************/
-
-/* PIO Enable Register: 
-0: No effect
-1: Pin is controlled by PIO
-*/
-
-/* 
-    31 [1] PA_31_HEARTBEAT PIO control enabled
-    30 [0] PA_30_AN_DEMO PIO control not enabled
-    29 [0] PA_29_BUZZER2 PIO control not enabled
-    28 [0] PA_28_BUZZER1 PIO control not enabled
-
-    27 [0] PA_27_CLOCK_OUT PIO control not enabled
-    26 [1] PA_26_ANT_PWR_EN PIO control enabled
-    25 [0] PA_25_ANT_USPI2_SCK PIO control not enabled
-    24 [0] PA_24_SD_USPI1_SCK PIO control not enabled
-
-    23 [0] PA_23_ANT_USPI2_MOSI PIO control not enabled
-    22 [0] PA_22_ANT_USPI2_MISO PIO control not enabled
-    21 [0] PA_21_SD_USPI1_MISO PIO control not enabled
-    20 [0] PA_20_SD_USPI1_MOSI PIO control not enabled
-
-    19 [0] PA_19_DEBUG_U0_PIMO PIO control not enabled
-    18 [0] PA_18_DEBUG_U0_POMI PIO control not enabled
-    17 [1] PA_17_BUTTON0 PIO control enabled
-    16 [1] PA_16_BLADE_CS PIO control enabled
-
-    15 [0] PA_15_BLADE_SCK PIO control not enabled
-    14 [0] PA_14_BLADE_MOSI PIO control not enabled
-    13 [0] PA_13_BLADE_MISO PIO control not enabled
-    12 [0] PA_12_BLADE_UPOMI PIO control not enabled
-
-    11 [0] PA_11_BLADE_UPIMO PIO control not enabled
-    10 [0] PA_10_I2C_SCL PIO control not enabled
-    09 [0] PA_09_I2C_SDA PIO control not enabled
-    08 [0] PA_08_SD_CS_MCDA3 PIO control not enabled
-
-    07 [0] PA_07_HSMCI_MCDA2 PIO control not enabled
-    06 [0] PA_06_HSMCI_MCDA1 PIO control not enabled
-    05 [0] PA_05_HSMCI_MCDA0 PIO control not enabled
-    04 [0] PA_04_HSMCI_MCCDA PIO control not enabled
-
-    03 [0] PA_03_HSMCI_MCCK PIO control not enabled
-    02 [1] PA_02_SD_DETECT PIO control enabled
-    01 [1] PA_01_SD_WP PIO control enabled
-    00 [1] PA_00_TP54 PIO control enabled
-*/
-
-
-/*
-    31 [0] PB_31_ PIO control not enabled
-    30 [0] PB_30_ PIO control not enabled
-    29 [0] PB_29_ PIO control not enabled
-    28 [0] PB_28_ PIO control not enabled
-
-    27 [0] PB_27_ PIO control not enabled
-    26 [0] PB_26_ PIO control not enabled
-    25 [0] PB_25_ PIO control not enabled
-    24 [1] PB_24_ANT_SRDY PIO control enabled
-
-    23 [1] PB_23_ANT_MRDY PIO control enabled
-    22 [0] PB_22_ANT_USPI2_CS PIO control not enabled
-    21 [1] PB_21_ANT_RESET PIO control enabled
-    20 [1] PB_20_LED_RED PIO control enabled
-
-    19 [1] PB_19_LED_GRN PIO control enabled
-    18 [1] PB_18_LED_BLU PIO control enabled
-    17 [1] PB_17_LED_YLW PIO control enabled
-    16 [1] PB_16_LED_CYN PIO control enabled
-
-    15 [1] PB_15_LED_ORG PIO control enabled
-    14 [1] PB_14_LED_PRP PIO control enabled
-    13 [1] PB_13_LED_WHT PIO control enabled
-    12 [1] PB_12_LCD_BL_BLU PIO control enabled
-
-    11 [1] PB_11_LCD_BL_GRN PIO control enabled
-    10 [1] PB_10_LCD_BL_RED PIO control enabled
-    09 [1] PB_09_LCD_RST PIO control enabled
-    08 [1] PB_08_TP62 PIO control enabled
-
-    07 [1] PB_07_TP60 PIO control enabled
-    06 [1] PB_06_TP58 PIO control enabled
-    05 [1] PB_05_TP56 PIO control enabled
-    04 [0] PB_04_BLADE_AN1 PIO control not enabled
-
-    03 [0] PB_03_BLADE_AN0 PIO control not enabled
-    02 [1] PB_02_BUTTON3 PIO control enabled
-    01 [1] PB_01_BUTTON2 PIO control enabled
-    00 [1] PB_00_BUTTON1 PIO control enabled
-*/
-
-
-/* PIO Disable Register: 
-0: No effect
-1: Pin is controlled by corresponding peripheral
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT not controlled by peripheral
-    30 [1] PA_30_AN_DEMO controlled by peripheral
-    29 [1] PA_29_BUZZER2 controlled by peripheral
-    28 [1] PA_28_BUZZER1 controlled by peripheral
-
-    27 [1] PA_27_CLOCK_OUT controlled by peripheral
-    26 [0] PA_26_ANT_PWR_EN not controlled by peripheral
-    25 [1] PA_25_ANT_USPI2_SCK controlled by peripheral
-    24 [1] PA_24_SD_USPI1_SCK controlled by peripheral
-
-    23 [1] PA_23_ANT_USPI2_MOSI controlled by peripheral
-    22 [1] PA_22_ANT_USPI2_MISO controlled by peripheral
-    21 [1] PA_21_SD_USPI1_MISO controlled by peripheral
-    20 [1] PA_20_SD_USPI1_MOSI controlled by peripheral
-
-    19 [1] PA_19_DEBUG_U0_PIMO controlled by peripheral
-    18 [1] PA_18_DEBUG_U0_POMI controlled by peripheral
-    17 [0] PA_17_BUTTON0 not controlled by peripheral
-    16 [0] PA_16_BLADE_CS not controlled by peripheral
-
-    15 [1] PA_15_BLADE_SCK controlled by peripheral
-    14 [1] PA_14_BLADE_MOSI controlled by peripheral
-    13 [1] PA_13_BLADE_MISO controlled by peripheral
-    12 [1] PA_12_BLADE_UPOMI controlled by peripheral
-
-    11 [1] PA_11_BLADE_UPIMO controlled by peripheral
-    10 [1] PA_10_I2C_SCL controlled by peripheral
-    09 [1] PA_09_I2C_SDA controlled by peripheral
-    08 [1] PA_08_SD_CS_MCDA3 controlled by peripheral
-
-    07 [1] PA_07_HSMCI_MCDA2 controlled by peripheral
-    06 [1] PA_06_HSMCI_MCDA1 controlled by peripheral
-    05 [1] PA_05_HSMCI_MCDA0 controlled by peripheral
-    04 [1] PA_04_HSMCI_MCCDA controlled by peripheral
-
-    03 [1] PA_03_HSMCI_MCCK controlled by peripheral
-    02 [0] PA_02_SD_DETECT not controlled by peripheral
-    01 [0] PA_01_SD_WP not controlled by peripheral
-    00 [0] PA_00_TP54 not controlled by peripheral
-*/
-
-
-/*
-    31 [0] PB_31_ 
-    30 [0] PB_30_ 
-    29 [0] PB_29_ 
-    28 [0] PB_28_ 
-
-    27 [0] PB_27_ 
-    26 [0] PB_26_ 
-    25 [0] PB_25_ 
-    24 [0] PB_24_ANT_SRDY not controlled by peripheral
-
-    23 [0] PB_23_ANT_MRDY not controlled by peripheral
-    22 [1] PB_22_ANT_USPI2_CS controlled by peripheral
-    21 [0] PB_21_ANT_RESET not controlled by peripheral
-    20 [0] PB_20_LED_RED not controlled by peripheral
-
-    19 [0] PB_19_LED_GRN not controlled by peripheral
-    18 [0] PB_18_LED_BLU not controlled by peripheral
-    17 [0] PB_17_LED_YLW not controlled by peripheral
-    16 [0] PB_16_LED_CYN not controlled by peripheral
-
-    15 [0] PB_15_LED_ORG not controlled by peripheral
-    14 [0] PB_14_LED_PRP not controlled by peripheral
-    13 [0] PB_13_LED_WHT not controlled by peripheral
-    12 [0] PB_12_LCD_BL_BLU not controlled by peripheral
-
-    11 [0] PB_11_LCD_BL_GRN not controlled by peripheral
-    10 [0] PB_10_LCD_BL_RED not controlled by peripheral
-    09 [0] PB_09_LCD_RST not controlled by peripheral
-    08 [0] PB_08_TP62 not controlled by peripheral
-
-    07 [0] PB_07_TP60 not controlled by peripheral
-    06 [0] PB_06_TP58 not controlled by peripheral
-    05 [0] PB_05_TP56 not controlled by peripheral
-    04 [1] PB_04_BLADE_AN1 controlled by peripheral
-
-    03 [1] PB_03_BLADE_AN0 controlled by peripheral
-    02 [0] PB_02_BUTTON3 not controlled by peripheral
-    01 [0] PB_01_BUTTON2 not controlled by peripheral
-    00 [0] PB_00_BUTTON1 not controlled by peripheral
-*/
-
-/* PIO Controller Output Enable Register
-Configures the pin as an output or input.
-0: No effect
-1: Enables the output on the I/O line
-*/
-
-/* 
-    31 [1] PA_31_HEARTBEAT output enabled
-    30 [0] PA_30_AN_DEMO input
-    29 [1] PA_29_BUZZER2 output enabled
-    28 [1] PA_28_BUZZER1 output enabled
-
-    27 [1] PA_27_CLOCK_OUT output enabled
-    26 [1] PA_26_ANT_PWR_EN output enabled
-    25 [1] PA_25_ANT_USPI2_SCK output enabled
-    24 [1] PA_24_SD_USPI1_SCK output enabled
-
-    23 [0] PA_23_ANT_USPI2_MOSI input
-    22 [1] PA_22_ANT_USPI2_MISO output enabled
-    21 [0] PA_21_SD_USPI1_MISO input input
-    20 [1] PA_20_SD_USPI1_MOSI output enabled
-
-    19 [0] PA_19_DEBUG_U0_PIMO input
-    18 [1] PA_18_DEBUG_U0_POMI output enabled
-    17 [0] PA_17_BUTTON0 input
-    16 [1] PA_16_BLADE_CS output enabled
-
-    15 [1] PA_15_BLADE_SCK output enabled
-    14 [1] PA_14_BLADE_MOSI output enabled
-    13 [0] PA_13_BLADE_MISO input
-    12 [1] PA_12_BLADE_UPOMI output enabled
-
-    11 [0] PA_11_BLADE_UPIMO  input
-    10 [1] PA_10_I2C_SCL output enabled
-    09 [1] PA_09_I2C_SDA output enabled
-    08 [1] PA_08_SD_CS_MCDA3 output enabled
-
-    07 [1] PA_07_HSMCI_MCDA2 output enabled
-    06 [1] PA_06_HSMCI_MCDA1 output enabled
-    05 [1] PA_05_HSMCI_MCDA0 output enabled
-    04 [1] PA_04_HSMCI_MCCDA output enabled
-
-    03 [1] PA_03_HSMCI_MCCK output enabled
-    02 [0] PA_02_SD_DETECT input
-    01 [0] PA_01_SD_WP input
-    00 [1] PA_00_TP54 output enabled
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [1] PB_24_ANT_SRDY output enabled
-
-    23 [1] PB_23_ANT_MRDY output enabled
-    22 [0] PB_22_ANT_USPI2_CS
-    21 [1] PB_21_ANT_RESET output enabled
-    20 [1] PB_20_LED_RED output enabled
-
-    19 [1] PB_19_LED_GRN output enabled
-    18 [1] PB_18_LED_BLU output enabled
-    17 [1] PB_17_LED_YLW output enabled
-    16 [1] PB_16_LED_CYN output enabled
-
-    15 [1] PB_15_LED_ORG output enabled
-    14 [1] PB_14_LED_PRP output enabled
-    13 [1] PB_13_LED_WHT output enabled
-    12 [1] PB_12_LCD_BL_BLU output enabled
-
-    11 [1] PB_11_LCD_BL_GRN output enabled
-    10 [1] PB_10_LCD_BL_RED output enabled
-    09 [1] PB_09_LCD_RST output enabled
-    08 [1] PB_08_TP62 output enabled
-
-    07 [1] PB_07_TP60 output enabled
-    06 [1] PB_06_TP58 output enabled
-    05 [1] PB_05_TP56 output enabled
-    04 [0] PB_04_BLADE_AN1 input
-
-    03 [0] PB_03_BLADE_AN0 input
-    02 [0] PB_02_BUTTON3 input
-    01 [0] PB_01_BUTTON2 input
-    00 [0] PB_00_BUTTON1 input
-*/
-
-/* PIO Controller Output Disable Register
-0: No effect
-1: Disables the output on the I/O line.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT output 
-    30 [1] PA_30_AN_DEMO input
-    29 [0] PA_29_BUZZER2 output 
-    28 [0] PA_28_BUZZER1 output 
-
-    27 [0] PA_27_CLOCK_OUT output 
-    26 [0] PA_26_ANT_PWR_EN output 
-    25 [0] PA_25_ANT_USPI2_SCK output 
-    24 [0] PA_24_SD_USPI1_SCK output 
-
-    23 [1] PA_23_ANT_USPI2_MOSI input
-    22 [0] PA_22_ANT_USPI2_MISO output 
-    21 [1] PA_21_SD_USPI1_MISO input 
-    20 [0] PA_20_SD_USPI1_MOSI output 
-
-    19 [1] PA_19_DEBUG_U0_PIMO input
-    18 [0] PA_18_DEBUG_U0_POMI output 
-    17 [1] PA_17_BUTTON0 input
-    16 [0] PA_16_BLADE_CS output 
-
-    15 [0] PA_15_BLADE_SCK output 
-    14 [0] PA_14_BLADE_MOSI output 
-    13 [1] PA_13_BLADE_MISO input
-    12 [0] PA_12_BLADE_UPOMI output 
-
-    11 [1] PA_11_BLADE_UPIMO input
-    10 [0] PA_10_I2C_SCL output 
-    09 [0] PA_09_I2C_SDA output 
-    08 [0] PA_08_SD_CS_MCDA3 output 
-
-    07 [0] PA_07_HSMCI_MCDA2 output 
-    06 [0] PA_06_HSMCI_MCDA1 output 
-    05 [0] PA_05_HSMCI_MCDA0 output 
-    04 [0] PA_04_HSMCI_MCCDA output 
-
-    03 [0] PA_03_HSMCI_MCCK output 
-    02 [1] PA_02_SD_DETECT input
-    01 [1] PA_01_SD_WP input
-    00 [0] PA_00_TP54 output 
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY output
-
-    23 [0] PB_23_ANT_MRDY output
-    22 [1] PB_22_ANT_USPI2_CS input
-    21 [0] PB_21_ANT_RESET output 
-    20 [0] PB_20_LED_RED output 
-
-    19 [0] PB_19_LED_GRN output 
-    18 [0] PB_18_LED_BLU output 
-    17 [0] PB_17_LED_YLW output 
-    16 [0] PB_16_LED_CYN output 
-
-    15 [0] PB_15_LED_ORG output 
-    14 [0] PB_14_LED_PRP output 
-    13 [0] PB_13_LED_WHT output 
-    12 [0] PB_12_LCD_BL_BLU output 
-
-    11 [0] PB_11_LCD_BL_GRN output 
-    10 [0] PB_10_LCD_BL_RED output 
-    09 [0] PB_09_LCD_RST output 
-    08 [0] PB_08_TP62 output 
-
-    07 [0] PB_07_TP60 output 
-    06 [0] PB_06_TP58 output 
-    05 [0] PB_05_TP56 output 
-    04 [1] PB_04_BLADE_AN1 input
-
-    03 [1] PB_03_BLADE_AN0 input
-    02 [1] PB_02_BUTTON3 input
-    01 [1] PB_01_BUTTON2 input
-    00 [1] PB_00_BUTTON1 input
-*/
-
-/* PIO Controller Input Filter Enable Register
-0: No effect
-1: Enables the input glitch filter on the I/O line.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT no glitch filter
-    30 [0] PA_30_AN_DEMO no glitch filter
-    29 [0] PA_29_BUZZER2 no glitch filter
-    28 [0] PA_28_BUZZER1 no glitch filter
-
-    27 [0] PA_27_CLOCK_OUT no glitch filter
-    26 [0] PA_26_ANT_PWR_EN no glitch filter
-    25 [0] PA_25_ANT_USPI2_SCK no glitch filter
-    24 [0] PA_24_SD_USPI1_SCK no glitch filter
-
-    23 [0] PA_23_ANT_USPI2_MOSI no glitch filter
-    22 [0] PA_22_ANT_USPI2_MISO no glitch filter
-    21 [0] PA_21_SD_USPI1_MISO no glitch filter
-    20 [0] PA_20_SD_USPI1_MOSI no glitch filter
-
-    19 [0] PA_19_DEBUG_U0_PIMO no glitch filter
-    18 [0] PA_18_DEBUG_U0_POMI no glitch filter
-    17 [0] PA_17_BUTTON0 no glitch filter
-    16 [0] PA_16_BLADE_CS no glitch filter
-
-    15 [0] PA_15_BLADE_SCK no glitch filter
-    14 [0] PA_14_BLADE_MOSI no glitch filter
-    13 [0] PA_13_BLADE_MISO no glitch filter
-    12 [0] PA_12_BLADE_UPOMI no glitch filter
-
-    11 [0] PA_11_BLADE_UPIMO no glitch filter
-    10 [0] PA_10_I2C_SCL no glitch filter
-    09 [0] PA_09_I2C_SDA no glitch filter
-    08 [0] PA_08_SD_CS_MCDA3 no glitch filter
-
-    07 [0] PA_07_HSMCI_MCDA2 no glitch filter
-    06 [0] PA_06_HSMCI_MCDA1 no glitch filter
-    05 [0] PA_05_HSMCI_MCDA0 no glitch filter
-    04 [0] PA_04_HSMCI_MCCDA no glitch filter
-
-    03 [0] PA_03_HSMCI_MCCK no glitch filter
-    02 [0] PA_02_SD_DETECT no glitch filter
-    01 [0] PA_01_SD_WP no glitch filter
-    00 [0] PA_00_TP54 no glitch filter
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY no glitch filter
-
-    23 [0] PB_23_ANT_MRDY no glitch filter
-    22 [0] PB_22_ANT_USPI2_CS no glitch filter
-    21 [0] PB_21_ANT_RESET no glitch filter
-    20 [0] PB_20_LED_RED no glitch filter
-
-    19 [0] PB_19_LED_GRN no glitch filter
-    18 [0] PB_18_LED_BLU no glitch filter
-    17 [0] PB_17_LED_YLW no glitch filter
-    16 [0] PB_16_LED_CYN no glitch filter
-
-    15 [0] PB_15_LED_ORG no glitch filter
-    14 [0] PB_14_LED_PRP no glitch filter
-    13 [0] PB_13_LED_WHT no glitch filter
-    12 [0] PB_12_LCD_BL_BLU no glitch filter
-
-    11 [0] PB_11_LCD_BL_GRN no glitch filter
-    10 [0] PB_10_LCD_BL_RED no glitch filter
-    09 [0] PB_09_LCD_RST no glitch filter
-    08 [0] PB_08_TP62 no glitch filter
-
-    07 [0] PB_07_TP60 no glitch filter
-    06 [0] PB_06_TP58 no glitch filter
-    05 [0] PB_05_TP56 no glitch filter
-    04 [0] PB_04_BLADE_AN1 no glitch filter
-
-    03 [0] PB_03_BLADE_AN0 no glitch filter
-    02 [0] PB_02_BUTTON3 no glitch filter
-    01 [0] PB_01_BUTTON2 no glitch filter
-    00 [0] PB_00_BUTTON1 no glitch filter
-*/
-
-/* PIO Controller Input Filter Disable Register
-0: No effect
-1: Disables the input glitch filter on the I/O line.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT no input filter
-    30 [0] PA_30_AN_DEMO no input filter
-    29 [0] PA_29_BUZZER2 no input filter
-    28 [0] PA_28_BUZZER1 no input filter
-
-    27 [0] PA_27_CLOCK_OUT no input filter
-    26 [0] PA_26_ANT_PWR_EN no input filter
-    25 [0] PA_25_ANT_USPI2_SCK no input filter
-    24 [0] PA_24_SD_USPI1_SCK no input filter
-
-    23 [0] PA_23_ANT_USPI2_MOSI no input filter
-    22 [0] PA_22_ANT_USPI2_MISO no input filter
-    21 [0] PA_21_SD_USPI1_MISO no input filter
-    20 [0] PA_20_SD_USPI1_MOSI no input filter
-
-    19 [0] PA_19_DEBUG_U0_PIMO no input filter
-    18 [0] PA_18_DEBUG_U0_POMI no input filter
-    17 [0] PA_17_BUTTON0 no input filter
-    16 [0] PA_16_BLADE_CS no input filter
-
-    15 [0] PA_15_BLADE_SCK no input filter
-    14 [0] PA_14_BLADE_MOSI no input filter
-    13 [0] PA_13_BLADE_MISO no input filter
-    12 [0] PA_12_BLADE_UPOMI no input filter
-
-    11 [0] PA_11_BLADE_UPIMO no input filter
-    10 [0] PA_10_I2C_SCL no input filter
-    09 [0] PA_09_I2C_SDA no input filter
-    08 [0] PA_08_SD_CS_MCDA3 no input filter
-
-    07 [0] PA_07_HSMCI_MCDA2 no input filter
-    06 [0] PA_06_HSMCI_MCDA1 no input filter
-    05 [0] PA_05_HSMCI_MCDA0 no input filter
-    04 [0] PA_04_HSMCI_MCCDA no input filter
-
-    03 [0] PA_03_HSMCI_MCCK no input filter
-    02 [0] PA_02_SD_DETECT no input filter
-    01 [0] PA_01_SD_WP no input filter
-    00 [0] PA_00_TP54 no input filter
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY no input filter
-
-    23 [0] PB_23_ANT_MRDY no input filter
-    22 [0] PB_22_ANT_USPI2_CS no input filter
-    21 [0] PB_21_ANT_RESET no input filter
-    20 [0] PB_20_LED_RED no input filter
-
-    19 [0] PB_19_LED_GRN no input filter
-    18 [0] PB_18_LED_BLU no input filter
-    17 [0] PB_17_LED_YLW no input filter
-    16 [0] PB_16_LED_CYN no input filter
-
-    15 [0] PB_15_LED_ORG no input filter
-    14 [0] PB_14_LED_PRP no input filter
-    13 [0] PB_13_LED_WHT no input filter
-    12 [0] PB_12_LCD_BL_BLU no input filter
-
-    11 [0] PB_11_LCD_BL_GRN no input filter
-    10 [0] PB_10_LCD_BL_RED no input filter
-    09 [0] PB_09_LCD_RST no input filter
-    08 [0] PB_08_TP62 no input filter
-
-    07 [0] PB_07_TP60 no input filter
-    06 [0] PB_06_TP58 no input filter
-    05 [0] PB_05_TP56 no input filter
-    04 [0] PB_04_BLADE_AN1 no input filter
-
-    03 [0] PB_03_BLADE_AN0 no input filter
-    02 [0] PB_02_BUTTON3 no input filter
-    01 [0] PB_01_BUTTON2 no input filter
-    00 [0] PB_00_BUTTON1 no input filter
-*/
-
-/* PIO Controller Set Output Data Register
-Default start-up IO values are held here.
-0: No effect
-1: Sets the data to be driven on the I/O line.
-*/
-
-/* 
-    31 [1] PA_31_HEARTBEAT output high 
-    30 [0] PA_30_AN_DEMO N/A
-    29 [0] PA_29_BUZZER2 output low
-    28 [0] PA_28_BUZZER1 output low
-
-    27 [1] PA_27_CLOCK_OUT output high
-    26 [0] PA_26_ANT_PWR_EN output high Z
-    25 [0] PA_25_ANT_USPI2_SCK N/A
-    24 [0] PA_24_SD_USPI1_SCK N/A
-
-    23 [0] PA_23_ANT_USPI2_MOSI N/A
-    22 [0] PA_22_ANT_USPI2_MISO N/A
-    21 [0] PA_21_SD_USPI1_MISO N/A
-    20 [0] PA_20_SD_USPI1_MOSI N/A
-
-    19 [0] PA_19_DEBUG_U0_PIMO N/A
-    18 [0] PA_18_DEBUG_U0_POMI N/A
-    17 [0] PA_17_BUTTON0 N/A
-    16 [1] PA_16_BLADE_CS output high
-
-    15 [0] PA_15_BLADE_SCK N/A
-    14 [0] PA_14_BLADE_MOSI N/A
-    13 [0] PA_13_BLADE_MISO N/A
-    12 [0] PA_12_BLADE_UPOMI N/A
-
-    11 [0] PA_11_BLADE_UPIMO N/A
-    10 [0] PA_10_I2C_SCL N/A
-    09 [0] PA_09_I2C_SDA N/A
-    08 [0] PA_08_SD_CS_MCDA3 N/A
-
-    07 [0] PA_07_HSMCI_MCDA2 N/A
-    06 [0] PA_06_HSMCI_MCDA1 N/A
-    05 [0] PA_05_HSMCI_MCDA0 N/A
-    04 [0] PA_04_HSMCI_MCCDA N/A
-
-    03 [0] PA_03_HSMCI_MCCK N/A
-    02 [0] PA_02_SD_DETECT N/A
-    01 [0] PA_01_SD_WP N/A
-    00 [0] PA_00_TP54 N/A
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [1] PB_24_ANT_SRDY output high
-
-    23 [1] PB_23_ANT_MRDY output high
-    22 [0] PB_22_ANT_USPI2_CS N/A
-    21 [1] PB_21_ANT_RESET output high
-    20 [1] PB_20_LED_RED output high
-
-    19 [1] PB_19_LED_GRN output high
-    18 [1] PB_18_LED_BLU output high
-    17 [1] PB_17_LED_YLW output high
-    16 [1] PB_16_LED_CYN output high
-
-    15 [1] PB_15_LED_ORG output high
-    14 [1] PB_14_LED_PRP output high
-    13 [1] PB_13_LED_WHT output high
-    12 [1] PB_12_LCD_BL_BLU output high
-
-    11 [1] PB_11_LCD_BL_GRN output high
-    10 [1] PB_10_LCD_BL_RED output high
-    09 [1] PB_09_LCD_RST output high
-    08 [0] PB_08_TP62 N/A
-
-    07 [0] PB_07_TP60 N/A
-    06 [0] PB_06_TP58 N/A
-    05 [0] PB_05_TP56 N/A
-    04 [0] PB_04_BLADE_AN1 N/A
-
-    03 [0] PB_03_BLADE_AN0 N/A
-    02 [0] PB_02_BUTTON3 N/A
-    01 [0] PB_01_BUTTON2 N/A
-    00 [0] PB_00_BUTTON1 N/A
-*/
-
-/* PIO Controller Clear Output Data Register
-Initial output values are stored here.
-0: No effect
-1: Clears the data to be driven on the I/O line.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT output high 
-    30 [0] PA_30_AN_DEMO N/A
-    29 [1] PA_29_BUZZER2 output low
-    28 [1] PA_28_BUZZER1 output low
-
-    27 [0] PA_27_CLOCK_OUT output high
-    26 [0] PA_26_ANT_PWR_EN output high Z
-    25 [0] PA_25_ANT_USPI2_SCK N/A
-    24 [0] PA_24_SD_USPI1_SCK N/A
-
-    23 [0] PA_23_ANT_USPI2_MOSI N/A
-    22 [0] PA_22_ANT_USPI2_MISO N/A
-    21 [0] PA_21_SD_USPI1_MISO N/A
-    20 [0] PA_20_SD_USPI1_MOSI N/A
-
-    19 [0] PA_19_DEBUG_U0_PIMO N/A
-    18 [0] PA_18_DEBUG_U0_POMI N/A
-    17 [0] PA_17_BUTTON0 N/A
-    16 [0] PA_16_BLADE_CS output high
-
-    15 [0] PA_15_BLADE_SCK N/A
-    14 [0] PA_14_BLADE_MOSI N/A
-    13 [0] PA_13_BLADE_MISO N/A
-    12 [0] PA_12_BLADE_UPOMI N/A
-
-    11 [0] PA_11_BLADE_UPIMO N/A
-    10 [0] PA_10_I2C_SCL N/A
-    09 [0] PA_09_I2C_SDA N/A
-    08 [0] PA_08_SD_CS_MCDA3 N/A
-
-    07 [0] PA_07_HSMCI_MCDA2 N/A
-    06 [0] PA_06_HSMCI_MCDA1 N/A
-    05 [0] PA_05_HSMCI_MCDA0 N/A
-    04 [0] PA_04_HSMCI_MCCDA N/A
-
-    03 [0] PA_03_HSMCI_MCCK N/A
-    02 [0] PA_02_SD_DETECT N/A
-    01 [0] PA_01_SD_WP N/A
-    00 [0] PA_00_TP54 N/A
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY output high
-
-    23 [0] PB_23_ANT_MRDY output high
-    22 [0] PB_22_ANT_USPI2_CS N/A
-    21 [0] PB_21_ANT_RESET output high
-    20 [0] PB_20_LED_RED output high
-
-    19 [0] PB_19_LED_GRN output high
-    18 [0] PB_18_LED_BLU output high
-    17 [0] PB_17_LED_YLW output high
-    16 [0] PB_16_LED_CYN output high
-
-    15 [0] PB_15_LED_ORG output high
-    14 [0] PB_14_LED_PRP output high
-    13 [0] PB_13_LED_WHT output high
-    12 [0] PB_12_LCD_BL_BLU output high
-
-    11 [0] PB_11_LCD_BL_GRN output high
-    10 [0] PB_10_LCD_BL_RED output high
-    09 [0] PB_09_LCD_RST output high
-    08 [0] PB_08_TP62 N/A
-
-    07 [0] PB_07_TP60 N/A
-    06 [0] PB_06_TP58 N/A
-    05 [0] PB_05_TP56 N/A
-    04 [0] PB_04_BLADE_AN1 N/A
-
-    03 [0] PB_03_BLADE_AN0 N/A
-    02 [0] PB_02_BUTTON3 N/A
-    01 [0] PB_01_BUTTON2 N/A
-    00 [0] PB_00_BUTTON1 N/A
-*/
-
-/* PIO Multi-driver (open drain) Enable Register
-0: No effect
-1: Enables Multi Drive on the I/O line.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT
-    30 [0] PA_30_AN_DEMO
-    29 [0] PA_29_BUZZER2
-    28 [0] PA_28_BUZZER1
-
-    27 [0] PA_27_CLOCK_OUT
-    26 [1] PA_26_ANT_PWR_EN open drain
-    25 [0] PA_25_ANT_USPI2_SCK
-    24 [0] PA_24_SD_USPI1_SCK
-
-    23 [0] PA_23_ANT_USPI2_MOSI
-    22 [0] PA_22_ANT_USPI2_MISO
-    21 [0] PA_21_SD_USPI1_MISO
-    20 [0] PA_20_SD_USPI1_MOSI
-
-    19 [0] PA_19_DEBUG_U0_PIMO
-    18 [0] PA_18_DEBUG_U0_POMI
-    17 [0] PA_17_BUTTON0
-    16 [0] PA_16_BLADE_CS
-
-    15 [0] PA_15_BLADE_SCK
-    14 [0] PA_14_BLADE_MOSI
-    13 [0] PA_13_BLADE_MISO
-    12 [0] PA_12_BLADE_UPOMI
-
-    11 [0] PA_11_BLADE_UPIMO
-    10 [1] PA_10_I2C_SCL open drain
-    09 [1] PA_09_I2C_SDA open drain
-    08 [0] PA_08_SD_CS_MCDA3
-
-    07 [0] PA_07_HSMCI_MCDA2
-    06 [0] PA_06_HSMCI_MCDA1
-    05 [0] PA_05_HSMCI_MCDA0
-    04 [0] PA_04_HSMCI_MCCDA
-
-    03 [0] PA_03_HSMCI_MCCK
-    02 [0] PA_02_SD_DETECT
-    01 [0] PA_01_SD_WP
-    00 [0] PA_00_TP54
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY
-
-    23 [0] PB_23_ANT_MRDY
-    22 [0] PB_22_ANT_USPI2_CS
-    21 [0] PB_21_ANT_RESET
-    20 [0] PB_20_LED_RED
-
-    19 [0] PB_19_LED_GRN
-    18 [0] PB_18_LED_BLU
-    17 [0] PB_17_LED_YLW
-    16 [0] PB_16_LED_CYN
-
-    15 [0] PB_15_LED_ORG
-    14 [0] PB_14_LED_PRP
-    13 [0] PB_13_LED_WHT
-    12 [0] PB_12_LCD_BL_BLU
-
-    11 [0] PB_11_LCD_BL_GRN
-    10 [0] PB_10_LCD_BL_RED
-    09 [0] PB_09_LCD_RST
-    08 [0] PB_08_TP62
-
-    07 [0] PB_07_TP60
-    06 [0] PB_06_TP58
-    05 [0] PB_05_TP56
-    04 [0] PB_04_BLADE_AN1
-
-    03 [0] PB_03_BLADE_AN0
-    02 [0] PB_02_BUTTON3
-    01 [0] PB_01_BUTTON2
-    00 [0] PB_00_BUTTON1
-*/
-
-/* PIO Multi-driver Disable Register
-0: No effect
-1: Disables Multi Drive on the I/O line.
-*/
-
-/* 
-    31 [1] PA_31_HEARTBEAT not open drain
-    30 [1] PA_30_AN_DEMO not open drain
-    29 [1] PA_29_BUZZER2 not open drain
-    28 [1] PA_28_BUZZER1 not open drain
-
-    27 [1] PA_27_CLOCK_OUT not open drain
-    26 [0] PA_26_ANT_PWR_EN
-    25 [1] PA_25_ANT_USPI2_SCK not open drain
-    24 [1] PA_24_SD_USPI1_SCK not open drain
-
-    23 [1] PA_23_ANT_USPI2_MOSI not open drain
-    22 [1] PA_22_ANT_USPI2_MISO not open drain
-    21 [1] PA_21_SD_USPI1_MISO not open drain
-    20 [1] PA_20_SD_USPI1_MOSI not open drain
-
-    19 [1] PA_19_DEBUG_U0_PIMO not open drain
-    18 [1] PA_18_DEBUG_U0_POMI not open drain
-    17 [1] PA_17_BUTTON0 not open drain
-    16 [1] PA_16_BLADE_CS not open drain
-
-    15 [1] PA_15_BLADE_SCK not open drain
-    14 [1] PA_14_BLADE_MOSI not open drain
-    13 [1] PA_13_BLADE_MISO not open drain
-    12 [1] PA_12_BLADE_UPOMI not open drain
-
-    11 [1] PA_11_BLADE_UPIMO not open drain
-    10 [0] PA_10_I2C_SCL
-    09 [0] PA_09_I2C_SDA
-    08 [1] PA_08_SD_CS_MCDA3 not open drain
-
-    07 [1] PA_07_HSMCI_MCDA2 not open drain
-    06 [1] PA_06_HSMCI_MCDA1 not open drain
-    05 [1] PA_05_HSMCI_MCDA0 not open drain
-    04 [1] PA_04_HSMCI_MCCDA not open drain
-
-    03 [1] PA_03_HSMCI_MCCK not open drain
-    02 [1] PA_02_SD_DETECT not open drain
-    01 [1] PA_01_SD_WP not open drain
-    00 [1] PA_00_TP54 not open drain
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [1] PB_24_ANT_SRDY not open drain
-
-    23 [1] PB_23_ANT_MRDY not open drain
-    22 [1] PB_22_ANT_USPI2_CS not open drain
-    21 [1] PB_21_ANT_RESET not open drain
-    20 [1] PB_20_LED_RED not open drain
-
-    19 [1] PB_19_LED_GRN not open drain
-    18 [1] PB_18_LED_BLU not open drain
-    17 [1] PB_17_LED_YLW not open drain
-    16 [1] PB_16_LED_CYN not open drain
-
-    15 [1] PB_15_LED_ORG not open drain
-    14 [1] PB_14_LED_PRP not open drain
-    13 [1] PB_13_LED_WHT not open drain
-    12 [1] PB_12_LCD_BL_BLU not open drain
-
-    11 [1] PB_11_LCD_BL_GRN not open drain
-    10 [1] PB_10_LCD_BL_RED not open drain
-    09 [1] PB_09_LCD_RST not open drain
-    08 [1] PB_08_TP62 not open drain
-
-    07 [1] PB_07_TP60 not open drain
-    06 [1] PB_06_TP58 not open drain
-    05 [1] PB_05_TP56 not open drain
-    04 [1] PB_04_BLADE_AN1 not open drain
-
-    03 [1] PB_03_BLADE_AN0 not open drain
-    02 [1] PB_02_BUTTON3 not open drain
-    01 [1] PB_01_BUTTON2 not open drain
-    00 [1] PB_00_BUTTON1 not open drain
-*/
-
-/* PIO Pull Up Disable Register
-0: No effect
-1: Disables the pull up resistor on the I/O line.
-*/
-
-/* 
-    31 [1] PA_31_HEARTBEAT no pull-up
-    30 [1] PA_30_AN_DEMO no pull-up
-    29 [1] PA_29_BUZZER2 no pull-up
-    28 [1] PA_28_BUZZER1 no pull-up
-
-    27 [1] PA_27_CLOCK_OUT no pull-up
-    26 [1] PA_26_ANT_PWR_EN no pull-up
-    25 [1] PA_25_ANT_USPI2_SCK no pull-up
-    24 [1] PA_24_SD_USPI1_SCK no pull-up
-
-    23 [1] PA_23_ANT_USPI2_MOSI no pull-up
-    22 [1] PA_22_ANT_USPI2_MISO no pull-up
-    21 [1] PA_21_SD_USPI1_MISO no pull-up
-    20 [1] PA_20_SD_USPI1_MOSI no pull-up
-
-    19 [1] PA_19_DEBUG_U0_PIMO no pull-up
-    18 [1] PA_18_DEBUG_U0_POMI no pull-up
-    17 [1] PA_17_BUTTON0 no pull-up
-    16 [1] PA_16_BLADE_CS no pull-up
-
-    15 [1] PA_15_BLADE_SCK no pull-up
-    14 [1] PA_14_BLADE_MOSI no pull-up
-    13 [1] PA_13_BLADE_MISO no pull-up
-    12 [1] PA_12_BLADE_UPOMI no pull-up
-
-    11 [1] PA_11_BLADE_UPIMO no pull-up
-    10 [1] PA_10_I2C_SCL no pull-up
-    09 [1] PA_09_I2C_SDA no pull-up
-    08 [1] PA_08_SD_CS_MCDA3 no pull-up
-
-    07 [1] PA_07_HSMCI_MCDA2 no pull-up
-    06 [1] PA_06_HSMCI_MCDA1 no pull-up
-    05 [1] PA_05_HSMCI_MCDA0 no pull-up
-    04 [1] PA_04_HSMCI_MCCDA no pull-up
-
-    03 [1] PA_03_HSMCI_MCCK no pull-up
-    02 [1] PA_02_SD_DETECT no pull-up
-    01 [1] PA_01_SD_WP no pull-up
-    00 [0] PA_00_TP54 pull-up enabled
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [1] PB_24_ANT_SRDY no pull-up
-
-    23 [1] PB_23_ANT_MRDY no pull-up
-    22 [1] PB_22_ANT_USPI2_CS no pull-up
-    21 [1] PB_21_ANT_RESET no pull-up
-    20 [1] PB_20_LED_RED no pull-up
-
-    19 [1] PB_19_LED_GRN no pull-up
-    18 [1] PB_18_LED_BLU no pull-up
-    17 [1] PB_17_LED_YLW no pull-up
-    16 [1] PB_16_LED_CYN no pull-up
-
-    15 [1] PB_15_LED_ORG no pull-up
-    14 [1] PB_14_LED_PRP no pull-up
-    13 [1] PB_13_LED_WHT no pull-up
-    12 [1] PB_12_LCD_BL_BLU no pull-up
-
-    11 [1] PB_11_LCD_BL_GRN no pull-up
-    10 [1] PB_10_LCD_BL_RED no pull-up
-    09 [1] PB_09_LCD_RST no pull-up
-    08 [0] PB_08_TP62 pull-up enabled
-
-    07 [0] PB_07_TP60 pull-up enabled
-    06 [0] PB_06_TP58 pull-up enabled
-    05 [0] PB_05_TP56 pull-up enabled
-    04 [1] PB_04_BLADE_AN1 no pull-up
-
-    03 [1] PB_03_BLADE_AN0 no pull-up
-    02 [1] PB_02_BUTTON3 no pull-up
-    01 [1] PB_01_BUTTON2 no pull-up
-    00 [1] PB_00_BUTTON1 no pull-up
-*/
-
-/* PIO Pull Up Enable Register
-0: No effect
-1: Enables the pull-up resistor on the selected pin
-*/
-
-/*
-    31 [0] PA_31_HEARTBEAT no pull-up
-    30 [0] PA_30_AN_DEMO no pull-up
-    29 [0] PA_29_BUZZER2 no pull-up
-    28 [0] PA_28_BUZZER1 no pull-up
-
-    27 [0] PA_27_CLOCK_OUT no pull-up
-    26 [0] PA_26_ANT_PWR_EN no pull-up
-    25 [0] PA_25_ANT_USPI2_SCK no pull-up
-    24 [0] PA_24_SD_USPI1_SCK no pull-up
-
-    23 [0] PA_23_ANT_USPI2_MOSI no pull-up
-    22 [0] PA_22_ANT_USPI2_MISO no pull-up
-    21 [0] PA_21_SD_USPI1_MISO no pull-up
-    20 [0] PA_20_SD_USPI1_MOSI no pull-up
-
-    19 [0] PA_19_DEBUG_U0_PIMO no pull-up
-    18 [0] PA_18_DEBUG_U0_POMI no pull-up
-    17 [0] PA_17_BUTTON0 no pull-up
-    16 [0] PA_16_BLADE_CS no pull-up
-
-    15 [0] PA_15_BLADE_SCK no pull-up
-    14 [0] PA_14_BLADE_MOSI no pull-up
-    13 [0] PA_13_BLADE_MISO no pull-up
-    12 [0] PA_12_BLADE_UPOMI no pull-up
-
-    11 [0] PA_11_BLADE_UPIMO no pull-up
-    10 [0] PA_10_I2C_SCL no pull-up
-    09 [0] PA_09_I2C_SDA no pull-up
-    08 [0] PA_08_SD_CS_MCDA3 no pull-up
-
-    07 [0] PA_07_HSMCI_MCDA2 no pull-up
-    06 [0] PA_06_HSMCI_MCDA1 no pull-up
-    05 [0] PA_05_HSMCI_MCDA0 no pull-up
-    04 [0] PA_04_HSMCI_MCCDA no pull-up
-
-    03 [0] PA_03_HSMCI_MCCK no pull-up
-    02 [0] PA_02_SD_DETECT no pull-up
-    01 [0] PA_01_SD_WP no pull-up
-    00 [1] PA_00_TP54 pull-up enabled
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY no pull-up
-
-    23 [0] PB_23_ANT_MRDY no pull-up
-    22 [0] PB_22_ANT_USPI2_CS no pull-up
-    21 [0] PB_21_ANT_RESET no pull-up
-    20 [0] PB_20_LED_RED no pull-up
-
-    19 [0] PB_19_LED_GRN no pull-up
-    18 [0] PB_18_LED_BLU no pull-up
-    17 [0] PB_17_LED_YLW no pull-up
-    16 [0] PB_16_LED_CYN no pull-up
-
-    15 [0] PB_15_LED_ORG no pull-up
-    14 [0] PB_14_LED_PRP no pull-up
-    13 [0] PB_13_LED_WHT no pull-up
-    12 [0] PB_12_LCD_BL_BLU no pull-up
-
-    11 [0] PB_11_LCD_BL_GRN no pull-up
-    10 [0] PB_10_LCD_BL_RED no pull-up
-    09 [0] PB_09_LCD_RST no pull-up
-    08 [1] PB_08_TP62 pull-up enabled
-
-    07 [1] PB_07_TP60 pull-up enabled
-    06 [1] PB_06_TP58 pull-up enabled
-    05 [1] PB_05_TP56 pull-up enabled
-    04 [0] PB_04_BLADE_AN1 no pull-up
-
-    03 [0] PB_03_BLADE_AN0 no pull-up
-    02 [0] PB_02_BUTTON3 no pull-up
-    01 [0] PB_01_BUTTON2 no pull-up
-    00 [0] PB_00_BUTTON1 no pull-up
-*/
-
-
-/* PIO Peripheral AB Select Register
-0: Assigns the I/O line to the Peripheral A function.
-1: Assigns the I/O line to the Peripheral B function.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT N/A
-    30 [1] PA_30_AN_DEMO PERIPHERAL B
-    29 [1] PA_29_BUZZER2 PERIPHERAL B
-    28 [1] PA_28_BUZZER1 PERIPHERAL B
-
-    27 [1] PA_27_CLOCK_OUT PERIPHERAL B
-    26 [0] PA_26_ANT_PWR_EN N/A
-    25 [1] PA_25_ANT_USPI2_SCK PERIPHERAL B
-    24 [1] PA_24_SD_USPI1_SCK PERIPHERAL B
-
-    23 [0] PA_23_ANT_USPI2_MOSI PERIPHERAL A
-    22 [0] PA_22_ANT_USPI2_MISO PERIPHERAL A
-    21 [0] PA_21_SD_USPI1_MISO PERIPHERAL A
-    20 [0] PA_20_SD_USPI1_MOSI PERIPHERAL A
-
-    19 [0] PA_19_DEBUG_U0_PIMO PERIPHERAL A
-    18 [0] PA_18_DEBUG_U0_POMI PERIPHERAL A
-    17 [0] PA_17_BUTTON0 N/A
-    16 [0] PA_16_BLADE_CS PERIPHERAL A
-
-    15 [0] PA_15_BLADE_SCK PERIPHERAL A
-    14 [0] PA_14_BLADE_MOSI PERIPHERAL A
-    13 [0] PA_13_BLADE_MISO PERIPHERAL A
-    12 [0] PA_12_BLADE_UPOMI PERIPHERAL A
-
-    11 [0] PA_11_BLADE_UPIMO PERIPHERAL A
-    10 [0] PA_10_I2C_SCL PERIPHERAL A
-    09 [0] PA_09_I2C_SDA PERIPHERAL A
-    08 [0] PA_08_SD_CS_MCDA3 PERIPHERAL A
-
-    07 [0] PA_07_HSMCI_MCDA2 PERIPHERAL A
-    06 [0] PA_06_HSMCI_MCDA1 PERIPHERAL A
-    05 [0] PA_05_HSMCI_MCDA0 PERIPHERAL A
-    04 [0] PA_04_HSMCI_MCCDA PERIPHERAL A
-
-    03 [0] PA_03_HSMCI_MCCK PERIPHERAL A
-    02 [0] PA_02_SD_DETECT N/A
-    01 [0] PA_01_SD_WP N/A
-    00 [0] PA_00_TP54 N/A
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY N/A
-
-    23 [0] PB_23_ANT_MRDY N/A
-    22 [1] PB_22_ANT_USPI2_CS PERIPHERAL B
-    21 [0] PB_21_ANT_RESET N/A
-    20 [0] PB_20_LED_RED N/A
-
-    19 [0] PB_19_LED_GRN N/A
-    18 [0] PB_18_LED_BLU N/A
-    17 [0] PB_17_LED_YLW N/A
-    16 [0] PB_16_LED_CYN N/A
-
-    15 [0] PB_15_LED_ORG N/A
-    14 [0] PB_14_LED_PRP N/A
-    13 [0] PB_13_LED_WHT N/A
-    12 [0] PB_12_LCD_BL_BLU N/A
-
-    11 [0] PB_11_LCD_BL_GRN N/A
-    10 [0] PB_10_LCD_BL_RED N/A
-    09 [0] PB_09_LCD_RST N/A
-    08 [0] PB_08_TP62 N/A
-
-    07 [0] PB_07_TP60 N/A
-    06 [0] PB_06_TP58 N/A
-    05 [0] PB_05_TP56 N/A
-    04 [1] PB_04_BLADE_AN1 PERIPHERAL B
-
-    03 [1] PB_03_BLADE_AN0 PERIPHERAL B
-    02 [0] PB_02_BUTTON3 N/A
-    01 [0] PB_01_BUTTON2 N/A
-    00 [0] PB_00_BUTTON1 N/A
-*/
-
-/* PIO System Clock Glitch Input Filtering Select Register
-0: No effect
-1: The Glitch Filter is able to filter glitches with a duration < Tmck/2.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT
-    30 [0] PA_30_AN_DEMO
-    29 [0] PA_29_BUZZER2
-    28 [0] PA_28_BUZZER1
-
-    27 [0] PA_27_CLOCK_OUT
-    26 [0] PA_26_ANT_PWR_EN
-    25 [0] PA_25_ANT_USPI2_SCK
-    24 [0] PA_24_SD_USPI1_SCK
-
-    23 [0] PA_23_ANT_USPI2_MOSI
-    22 [0] PA_22_ANT_USPI2_MISO
-    21 [0] PA_21_SD_USPI1_MISO
-    20 [0] PA_20_SD_USPI1_MOSI
-
-    19 [0] PA_19_DEBUG_U0_PIMO
-    18 [0] PA_18_DEBUG_U0_POMI
-    17 [0] PA_17_BUTTON0
-    16 [0] PA_16_BLADE_CS
-
-    15 [0] PA_15_BLADE_SCK
-    14 [0] PA_14_BLADE_MOSI
-    13 [0] PA_13_BLADE_MISO
-    12 [0] PA_12_BLADE_UPOMI
-
-    11 [0] PA_11_BLADE_UPIMO
-    10 [0] PA_10_I2C_SCL
-    09 [0] PA_09_I2C_SDA
-    08 [0] PA_08_SD_CS_MCDA3
-
-    07 [0] PA_07_HSMCI_MCDA2
-    06 [0] PA_06_HSMCI_MCDA1
-    05 [0] PA_05_HSMCI_MCDA0
-    04 [0] PA_04_HSMCI_MCCDA
-
-    03 [0] PA_03_HSMCI_MCCK
-    02 [0] PA_02_SD_DETECT
-    01 [0] PA_01_SD_WP
-    00 [0] PA_00_TP54
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY
-
-    23 [0] PB_23_ANT_MRDY
-    22 [0] PB_22_ANT_USPI2_CS
-    21 [0] PB_21_ANT_RESET
-    20 [0] PB_20_LED_RED
-
-    19 [0] PB_19_LED_GRN
-    18 [0] PB_18_LED_BLU
-    17 [0] PB_17_LED_YLW
-    16 [0] PB_16_LED_CYN
-
-    15 [0] PB_15_LED_ORG
-    14 [0] PB_14_LED_PRP
-    13 [0] PB_13_LED_WHT
-    12 [0] PB_12_LCD_BL_BLU
-
-    11 [0] PB_11_LCD_BL_GRN
-    10 [0] PB_10_LCD_BL_RED
-    09 [0] PB_09_LCD_RST
-    08 [0] PB_08_TP62
-
-    07 [0] PB_07_TP60
-    06 [0] PB_06_TP58
-    05 [0] PB_05_TP56
-    04 [0] PB_04_BLADE_AN1
-
-    03 [0] PB_03_BLADE_AN0
-    02 [0] PB_02_BUTTON3
-    01 [0] PB_01_BUTTON2
-    00 [0] PB_00_BUTTON1
-*/
-
-/* PIO Debouncing Input Filtering Select Register
-0: No effect
-1: The Debouncing Filter is able to filter pulses with a duration < Tdiv_slclk/2.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT
-    30 [0] PA_30_AN_DEMO
-    29 [0] PA_29_BUZZER2
-    28 [0] PA_28_BUZZER1
-
-    27 [0] PA_27_CLOCK_OUT
-    26 [0] PA_26_ANT_PWR_EN
-    25 [0] PA_25_ANT_USPI2_SCK
-    24 [0] PA_24_SD_USPI1_SCK
-
-    23 [0] PA_23_ANT_USPI2_MOSI
-    22 [0] PA_22_ANT_USPI2_MISO
-    21 [0] PA_21_SD_USPI1_MISO
-    20 [0] PA_20_SD_USPI1_MOSI
-
-    19 [0] PA_19_DEBUG_U0_PIMO
-    18 [0] PA_18_DEBUG_U0_POMI
-    17 [0] PA_17_BUTTON0
-    16 [0] PA_16_BLADE_CS
-
-    15 [0] PA_15_BLADE_SCK
-    14 [0] PA_14_BLADE_MOSI
-    13 [0] PA_13_BLADE_MISO
-    12 [0] PA_12_BLADE_UPOMI
-
-    11 [0] PA_11_BLADE_UPIMO
-    10 [0] PA_10_I2C_SCL
-    09 [0] PA_09_I2C_SDA
-    08 [0] PA_08_SD_CS_MCDA3
-
-    07 [0] PA_07_HSMCI_MCDA2
-    06 [0] PA_06_HSMCI_MCDA1
-    05 [0] PA_05_HSMCI_MCDA0
-    04 [0] PA_04_HSMCI_MCCDA
-
-    03 [0] PA_03_HSMCI_MCCK
-    02 [0] PA_02_SD_DETECT
-    01 [0] PA_01_SD_WP
-    00 [0] PA_00_TP54
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY
-
-    23 [0] PB_23_ANT_MRDY
-    22 [0] PB_22_ANT_USPI2_CS
-    21 [0] PB_21_ANT_RESET
-    20 [0] PB_20_LED_RED
-
-    19 [0] PB_19_LED_GRN
-    18 [0] PB_18_LED_BLU
-    17 [0] PB_17_LED_YLW
-    16 [0] PB_16_LED_CYN
-
-    15 [0] PB_15_LED_ORG
-    14 [0] PB_14_LED_PRP
-    13 [0] PB_13_LED_WHT
-    12 [0] PB_12_LCD_BL_BLU
-
-    11 [0] PB_11_LCD_BL_GRN
-    10 [0] PB_10_LCD_BL_RED
-    09 [0] PB_09_LCD_RST
-    08 [0] PB_08_TP62
-
-    07 [0] PB_07_TP60
-    06 [0] PB_06_TP58
-    05 [0] PB_05_TP56
-    04 [0] PB_04_BLADE_AN1
-
-    03 [0] PB_03_BLADE_AN0
-    02 [0] PB_02_BUTTON3
-    01 [0] PB_01_BUTTON2
-    00 [0] PB_00_BUTTON1
-*/
-
-/* PIO Slow Clock Divider Debouncing Register
-Tdiv_slclk = 2*(DIV+1)*Tslow_clock. 
-*/
-
-/*
-    31 - 16 [0] Reserved
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] DIV
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*
-    31 - 16 [0] Reserved
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] DIV
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-/* PIO Output Write Enable Register
-0: No effect
-1: Enables writing PIO_ODSR for the I/O line.
-*/
-
-/* 
-    31 [1] PA_31_HEARTBEAT write enabled
-    30 [0] PA_30_AN_DEMO
-    29 [1] PA_29_BUZZER2 write enabled
-    28 [1] PA_28_BUZZER1 write enabled
-
-    27 [0] PA_27_CLOCK_OUT
-    26 [1] PA_26_ANT_PWR_EN write enabled
-    25 [0] PA_25_ANT_USPI2_SCK
-    24 [0] PA_24_SD_USPI1_SCK
-
-    23 [0] PA_23_ANT_USPI2_MOSI
-    22 [0] PA_22_ANT_USPI2_MISO
-    21 [0] PA_21_SD_USPI1_MISO
-    20 [0] PA_20_SD_USPI1_MOSI
-
-    19 [0] PA_19_DEBUG_U0_PIMO
-    18 [0] PA_18_DEBUG_U0_POMI
-    17 [0] PA_17_BUTTON0
-    16 [1] PA_16_BLADE_CS write enabled
-
-    15 [0] PA_15_BLADE_SCK
-    14 [0] PA_14_BLADE_MOSI
-    13 [0] PA_13_BLADE_MISO
-    12 [0] PA_12_BLADE_UPOMI
-
-    11 [0] PA_11_BLADE_UPIMO
-    10 [0] PA_10_I2C_SCL
-    09 [0] PA_09_I2C_SDA
-    08 [0] PA_08_SD_CS_MCDA3
-
-    07 [0] PA_07_HSMCI_MCDA2
-    06 [0] PA_06_HSMCI_MCDA1
-    05 [0] PA_05_HSMCI_MCDA0
-    04 [0] PA_04_HSMCI_MCCDA
-
-    03 [0] PA_03_HSMCI_MCCK
-    02 [0] PA_02_SD_DETECT
-    01 [0] PA_01_SD_WP
-    00 [0] PA_00_TP54
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [1] PB_24_ANT_SRDY write enabled
-
-    23 [1] PB_23_ANT_MRDY write enabled
-    22 [1] PB_22_ANT_USPI2_CS write enabled
-    21 [1] PB_21_ANT_RESET write enabled
-    20 [1] PB_20_LED_RED write enabled
-
-    19 [1] PB_19_LED_GRN write enabled
-    18 [1] PB_18_LED_BLU write enabled
-    17 [1] PB_17_LED_YLW write enabled
-    16 [1] PB_16_LED_CYN write enabled
-
-    15 [1] PB_15_LED_ORG write enabled
-    14 [1] PB_14_LED_PRP write enabled
-    13 [1] PB_13_LED_WHT write enabled
-    12 [1] PB_12_LCD_BL_BLU write enabled
-
-    11 [1] PB_11_LCD_BL_GRN write enabled
-    10 [1] PB_10_LCD_BL_RED write enabled
-    09 [1] PB_09_LCD_RST write enabled
-    08 [0] PB_08_TP62
-
-    07 [0] PB_07_TP60
-    06 [0] PB_06_TP58
-    05 [0] PB_05_TP56
-    04 [0] PB_04_BLADE_AN1
-
-    03 [0] PB_03_BLADE_AN0
-    02 [0] PB_02_BUTTON3
-    01 [0] PB_01_BUTTON2
-    00 [0] PB_00_BUTTON1
-*/
-
-/* PIO Output Write Disable Register
-0: No effect
-1: Disables writing PIO_ODSR for the I/O line.
-For now, don't worry about explictly disabling any write capability.
-*/
-
-/* 
-    31 [0] PA_31_HEARTBEAT
-    30 [0] PA_30_AN_DEMO
-    29 [0] PA_29_BUZZER2
-    28 [0] PA_28_BUZZER1
-
-    27 [0] PA_27_CLOCK_OUT
-    26 [0] PA_26_ANT_PWR_EN
-    25 [0] PA_25_ANT_USPI2_SCK
-    24 [0] PA_24_SD_USPI1_SCK
-
-    23 [0] PA_23_ANT_USPI2_MOSI
-    22 [0] PA_22_ANT_USPI2_MISO
-    21 [0] PA_21_SD_USPI1_MISO
-    20 [0] PA_20_SD_USPI1_MOSI
-
-    19 [0] PA_19_DEBUG_U0_PIMO
-    18 [0] PA_18_DEBUG_U0_POMI
-    17 [0] PA_17_BUTTON0
-    16 [0] PA_16_BLADE_CS
-
-    15 [0] PA_15_BLADE_SCK
-    14 [0] PA_14_BLADE_MOSI
-    13 [0] PA_13_BLADE_MISO
-    12 [0] PA_12_BLADE_UPOMI
-
-    11 [0] PA_11_BLADE_UPIMO
-    10 [0] PA_10_I2C_SCL
-    09 [0] PA_09_I2C_SDA
-    08 [0] PA_08_SD_CS_MCDA3
-
-    07 [0] PA_07_HSMCI_MCDA2
-    06 [0] PA_06_HSMCI_MCDA1
-    05 [0] PA_05_HSMCI_MCDA0
-    04 [0] PA_04_HSMCI_MCCDA
-
-    03 [0] PA_03_HSMCI_MCCK
-    02 [0] PA_02_SD_DETECT
-    01 [0] PA_01_SD_WP
-    00 [0] PA_00_TP54
-*/
-
-
-/*
-    31 [0] PB_31_
-    30 [0] PB_30_
-    29 [0] PB_29_
-    28 [0] PB_28_
-
-    27 [0] PB_27_
-    26 [0] PB_26_
-    25 [0] PB_25_
-    24 [0] PB_24_ANT_SRDY
-
-    23 [0] PB_23_ANT_MRDY
-    22 [0] PB_22_ANT_USPI2_CS
-    21 [0] PB_21_ANT_RESET
-    20 [0] PB_20_LED_RED
-
-    19 [0] PB_19_LED_GRN
-    18 [0] PB_18_LED_BLU
-    17 [0] PB_17_LED_YLW
-    16 [0] PB_16_LED_CYN
-
-    15 [0] PB_15_LED_ORG
-    14 [0] PB_14_LED_PRP
-    13 [0] PB_13_LED_WHT
-    12 [0] PB_12_LCD_BL_BLU
-
-    11 [0] PB_11_LCD_BL_GRN
-    10 [0] PB_10_LCD_BL_RED
-    09 [0] PB_09_LCD_RST
-    08 [0] PB_08_TP62
-
-    07 [0] PB_07_TP60
-    06 [0] PB_06_TP58
-    05 [0] PB_05_TP56
-    04 [0] PB_04_BLADE_AN1
-
-    03 [0] PB_03_BLADE_AN0
-    02 [0] PB_02_BUTTON3
-    01 [0] PB_01_BUTTON2
-    00 [0] PB_00_BUTTON1
-*/
-
-/* PIO Write Protect Mode Register PIO_WPMR
-Enables the Write Protect if WPKEY corresponds to 0x50494F (“PIO” in ASCII).
-Though this is defined in the user guide, there is no definition in the processor header file.
-We don't want to lock access to the GPIO registers anyway, so we won't use this for now.
-*/
-
-/*
-    31 -08 [0] WPKEY
-
-    07 [0] Reserved
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] WPEN
-*/
-
-
-/***********************************************************************************************************************
-$$$$$ PWM setup values
-***********************************************************************************************************************/
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] PREB MCK
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] DIVB = 1 => CLKB is on, no DIVB factor
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [1] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] PREA MCK
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] DIVA = 1 => CLKA is on, no DIVA factor
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [1] "
-*/
-
-
-
-/*
-    31 - 4 [0] Reserved
-
-    03 [0] Channel 3 not enabled
-    02 [0] Channel 2 not enabled
-    01 [1] Channel 1 enabled
-    00 [1] Channel 0 enabled
-*/
-
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] PTRCS
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] Reserved
-    18 [0] "
-    17 [0] UPDM
-    16 [0] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] SYNC3 not synchronous
-    02 [0] SYNC2 not synchronous
-    01 [0] SYNC1 not synchronous
-    00 [0] SYNC0 not synchronous
-*/
-
-
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] "
-
-    23 [0] "
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] DTLI dead-time low channel output is not inverted
-    17 [0] DTHI dead-time high channel output is not inverted
-    16 [0] DTE dead-time generator disabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] CES channel event at end of PWM period
-    09 [0] CPOL channel starts low
-    08 [0] CALG period is left aligned
-
-    07 [0] Reserved
-    06 [0] "
-    05 [0] "
-    04 [0] "
-
-    03 [0] CPRE clock is MCK/8
-    02 [0] "
-    01 [1] "
-    00 [1] "
-*/
-
-
-
-/* To achieve the full range of audio we want from 100Hz to 20kHz, we must be able to set periods
-of 10ms to 50us.
-10ms at 48MHz clock is 480,000 ticks
-50us at 48MHz clock is 2400 ticks
-Only 16 bits are available to set the PWM period, so scale the clock by 8:
-10ms at 6MHz clock is 60,000 ticks
-50us at 6MHz clock is 300 ticks
-
-Set the default period for audio on channel 0 as 1/1kHz
-1ms at 6MHz = 6000 (duty = 3000)
-Set the default period for audio on channel 1 as 1/4kHz
-0.25ms at 6MHz = 1500 (duty = 750)
-
-In general, the period is 6000000 / frequency and duty is always period / 2. 
-*/
-
-
-
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-/*
-    31 [0] 
-    30 [0] 
-    29 [0] 
-    28 [0] 
-
-    27 [0] 
-    26 [0] 
-    25 [0] 
-    24 [0] 
-
-    23 [0] 
-    22 [0] 
-    21 [0] 
-    20 [0] 
-
-    19 [0] 
-    18 [0] 
-    17 [0] 
-    16 [0] 
-
-    15 [0] 
-    14 [0] 
-    13 [0] 
-    12 [0] 
-
-    11 [0] 
-    10 [0] 
-    09 [0] 
-    08 [0] 
-
-    07 [0] 
-    06 [0] 
-    05 [0] 
-    04 [0] 
-
-    03 [0] 
-    02 [0] 
-    01 [0] 
-    00 [0] 
-*/
-
-
-#line 71 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\lcd_nhd-c0220biz.h"
-/******************************************************************************
-File: NHD-C0220BiZ_LCD.h                                                               
-
-Description:
-Header file for Newhaven Display NHD-C0220BiZ-FS(RGB)-FBW-3VM LCD.
-
-DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
-USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
-INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
-RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
-
-******************************************************************************/
-
-
-
-
-
-
-                                                                /* Careful!!!! - the documentation for the LCD says 0x78 however,
-                                                                   that includes the Read/Write Bit */
-/* Flag Bits */
-
-
-
-
-
-
-
-
-
-
-
-
-#line 40 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\lcd_nhd-c0220biz.h"
-/*------------------------------------------------------------------------------
-Operational Notes:
-RS and R/W lines are controlled to enable various states:
-
-RS			R/W				Operation
-0				 0				Instruction Write
-0				 1				Read busy flag (DB7) and address counter (DB0 - DB6)
-1				 0				Data Write
-1				 1				Data Read
-
-However, the I²C implementation of the LCD does not support reading data
-back from the module.  Therefore, the R/W bit is always 0 which leaves
-only RS to selection Instruction (Command) or Data mode.
-
-For a two-line display, the character addresses are 0x00 - 0x27 (line 1)
-and 0x40 - 0x67 (line 2), but only 20 chars can be displayed.  The extra
-space can be used for scrolling displays.
-*/
-
-
-/* LCD Commands */
-/* "CMD" requires RS = 0, R/W = 0 */
-/* Data sheet initialization values */
-#line 70 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\lcd_nhd-c0220biz.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-																			    /* Bottom 6 bits are address (0x00-0x27 and 0x40-0x67) */
-#line 96 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\lcd_nhd-c0220biz.h"
-
-/**********************************************************************************************************************
-* Function Declarations
-**********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void LCDCommand(u8 u8Command_);
-void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_);
-void LCDMessage(u8 u8Address_, u8 *u8Message_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void LcdInitialize(void);
-void LcdRunActiveState(void);
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-void LcdSM_Idle(void);
-
-  
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-
-#line 72 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\sdcard.h"
-/**********************************************************************************************************************
-File: sdcard.h                                                                
-
-Description:
-Header file for sdcard.c
-**********************************************************************************************************************/
-
-
-
-
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-typedef enum {SD_NO_CARD, SD_CARD_ERROR, SD_IDLE, SD_READING, SD_DATA_READY, SD_WRITING} SdCardStateType;
-
-
-/**********************************************************************************************************************
-Constants / Definitions
-**********************************************************************************************************************/
-/* SD_u32Flags */
-#line 28 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\sdcard.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* SD Commands support in SPI mode */
-#line 70 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\sdcard.h"
-
-#line 77 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\sdcard.h"
-
-
-
-
-
-
-
-
-/* Card type flags (CardType) */
-
-
-
-
-
-
-/* Card status */
-
-
-
-/* Data tokens */
-
-
-
-
-/* SD Error Codes */
-#line 108 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\drivers\\sdcard.h"
-
-
-/**********************************************************************************************************************
-* Function Declarations
-**********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Macros */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-SdCardStateType SdGetStatus(void);
-bool SdReadBlock(u32 u32BlockAddress_);
-bool SdWriteBlock(u32 u32BlockAddress_);             
-bool SdGetReadData(u8* pu8Destination_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void SdCardInitialize(void);
-void SdCardRunActiveState(void);
-
-bool SdIsCardInserted(void);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-static void SdCommand(u8* pau8Command_);
-static void AdvanceSD_pu8RxBufferParser(u32 u32NumBytes_);
-static void FlushSdRxBuffer(void);
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-static void SdIdleNoCard(void);     
-static void SdCardDummies(void);
-static void SdCardResponseCMD0(void);
-static void SdCardResponseCMD8(void);
-static void SdCardReadCMD8(void);
-static void SdCardACMD41(void);
-static void SdCardResponseACMD41(void);
-static void SdCardResponseCMD58(void);
-static void SdCardResponseCMD16(void);
-static void SdCardReadCMD58(void);
-
-static void SdCardReadyIdle(void);          
-static void SdCardResponseCMD17(void);
-static void SdCardWaitStartToken(void);          
-static void SdCardDataTransfer(void);
-static void SdFailedDataTransfer(void);
-
-static void SdCardWaitReady(void);
-static void SdCardWaitCommand(void);
-static void SdCardWaitSSP(void);
-
-static void SdError(void);         
-
-
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 73 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-//#include "mpgl1_audio_test.h"
-//#include "mpgl1_board_test.h"
-
-
-#line 94 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-/* Common application header files */
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\application\\debug.h"
-/***********************************************************************************************************************
-File: debug.h                                                                
-***********************************************************************************************************************/
-
-
-
-
-
-/***********************************************************************************************************************
-* Constants / Definitions
-***********************************************************************************************************************/
-
-
-
-/* G_u32DebugFlags */
-
-
-
-
-
-
-
-
-
-
-
-/* end of G_u32DebugFlags */
-
-
-
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-typedef struct
-{
-  u8 *pu8CommandName;
-  fnCode_type DebugFunction;
-} DebugCommandType;
-
-
-/***********************************************************************************************************************
-* Command-Specific Definitions
-***********************************************************************************************************************/
-
-
-
-
-/* New commands must update the definitions below. Valid commands are in the range
-00 - 99.  Command name string is a maximum of DEBUG_CMD_NAME_LENGTH characters. */
-
-
-
-/*                              "0123456789ABCDEF0123456789ABCDEF"  Character position reference */
-#line 63 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\application\\debug.h"
-
-#line 76 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\application\\debug.h"
-
-
-
-
-/* Error codes */
-
-
-
-
-/***********************************************************************************************************************
-* Function Declarations
-***********************************************************************************************************************/
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public Functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-u32 DebugPrintf(u8* u8String_);
-void DebugLineFeed(void);       
-void DebugPrintNumber(u32 u32Number_);
-
-void SystemStatusReport(void);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void DebugInitialize(void);                   
-void DebugRunActiveState(void);
-void DebugRxCallback(void);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-static void DebugCommandPrepareList(void);           
-static void DebugCommandDummy(void);
-
-static void DebugCommandLedTestToggle(void);
-static void DebugLedTestCharacter(u8 u8Char_);
-static void DebugCommandSysTimeToggle(void);
-
-
-
-
-
-
-
-
-/***********************************************************************************************************************
-* State Machine Declarations
-***********************************************************************************************************************/
-static void DebugSM_Idle(void);                       
-static void DebugSM_CheckCmd(void);                   
-static void DebugSM_ProcessCmd(void);                 
-
-static void DebugSM_Error(void);
-
-
-
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 97 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\application\\music.h"
-/**********************************************************************************************************************
-File: music.h      
-
-Description:
-Definitions for musical notes
-
-***********************************************************************************************************************/
-
-
-/* Musical note definitions */
-#line 51 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\application\\music.h"
-
-/* Musical note definitions - short hand */
-#line 98 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\application\\user_app.h"
-/**********************************************************************************************************************
-File: user_app.h                                                                
-
-----------------------------------------------------------------------------------------------------------------------
-To start a new task using this user_app as a template:
-1. Follow the instructions at the top of user_app.c
-2. Use ctrl-h to find and replace all instances of "user_app" with "yournewtaskname"
-3. Use ctrl-h to find and replace all instances of "UserApp" with "YourNewTaskName"
-4. Use ctrl-h to find and replace all instances of "USER_APP" with "YOUR_NEW_TASK_NAME"
-5. Add #include yournewtaskname.h" to configuration.h
-6. Add/update any special configurations required in configuration.h (e.g. peripheral assignment and setup values)
-7. Delete this text (between the dashed lines)
-----------------------------------------------------------------------------------------------------------------------
-
-Description:
-Header file for yournewtaskname.c
-
-**********************************************************************************************************************/
-
-
-
-
-/**********************************************************************************************************************
-Type Definitions
-**********************************************************************************************************************/
-
-
-/**********************************************************************************************************************
-Constants / Definitions
-**********************************************************************************************************************/
-
-
-/**********************************************************************************************************************
-Function Declarations
-**********************************************************************************************************************/
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions                                                                                                   */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions                                                                                                */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void UserAppInitialize(void);
-void UserAppRunActiveState(void);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions                                                                                                  */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-static void UserAppSM_Idle(void);             
-static void UserAppSM_Error(void);         
-static void UserAppSM_FailedInit(void);        
-
-
-
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* End of File                                                                                                        */
-/*--------------------------------------------------------------------------------------------------------------------*/
-#line 99 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
+#line 43 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 
 
 /**********************************************************************************************************************
 !!!!! External peripheral assignments
 ***********************************************************************************************************************/
-/* G_u32ApplicationFlags */
-/* The order of these flags corresponds to the order of applications in SystemStatusReport() (debug.c) */
-
-
-
-
-
-
-
-/* MPGL1 specific application flags */
-
-
-
-
-
-#line 126 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-
-/**********************************************************************************************************************
-!!!!! External device peripheral assignments
-***********************************************************************************************************************/
-/* %UART% Configuration */
-/* Blade UART Peripheral Allocation (UART) */
-#line 139 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-
-
-
-
-/* Debug UART Peripheral Allocation (USART0) */
-#line 151 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-
-
-
-
-
-/* %SSP% Configuration */
-/* SD SPI Peripheral Allocation (USART1) */
-#line 167 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-
-
-
-
-#line 186 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-/* ANT SPI Peripheral Allocation (USART2) */
-#line 194 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-
-
-
-
-
-/* Blade I²C (TWI0) / Accelerometer (MPGL2_R01 only) */
 
 
 /***********************************************************************************************************************
 @@@@@ GPIO board-specific parameters
 ***********************************************************************************************************************/
-/*----------------------------------------------------------------------------------------------------------------------
-%LED% LED Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Update the values below for the LEDs on the board.  Any name can be used for the LED definitions.
-Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the correct values for the LEDs in the system.  
-*/
-
-
-
-
-
-
-#line 227 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%BUTTON% Button Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Update the values below for the buttons on the board.  Any name can be used for the BUTTON definitions.
-Open buttons.c and edit the GPIO definitions sections with the bit numbers for the buttons.
-The order of the definitions below must match the order of the definitions provided in buttons.c. 
-*/
-
-
-
-
-
-
-
-
-
-/* All buttons on each port must be ORed together here: set to 0 if no buttons on the port */
-
-
-
-
-#line 260 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%BUZZER% Buzzer Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
-
-
-
-
-
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%ANT% Interface Configuration                                                                                                  
-------------------------------------------------------------------------------------------------------------------------
-Board-specific ANT definitions are kept here
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /***********************************************************************************************************************
 ##### Communication peripheral board-specific parameters
 ***********************************************************************************************************************/
-/*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-Blade UART Setup
-
-The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-Debug UART Setup
-
-Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK NACK generated (N/A for async)
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [0] MSBF/CPOL LSB first
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP 1 stop bit
-    12 [0] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] SYNC/CPHA asynchronous
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [0] USART_MODE normal
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
-
-    03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / (8(2-OVER)(CD + FP / 8))
-=> CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
-MCK = 48MHz
-OVER = 0 (16-bit oversampling)
-
-BAUD desired = 38400 bps
-=> CD = 78.125 - (FP / 8)
-Set FP = 1, CD = 78 = 0x4E
-
-BAUD desired = 115200 bps
-=> CD = 26.042 - (FP / 8)
-Set FP = 0, CD = 26 = 0x1A
-
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP = 0
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 26 = 0x1A
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [0] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-LCD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI LCD screen. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-ANT USART Setup in SSP
-SPI slave mode to communicate with an ANT device. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [0] RXDIS receiver not disabled
-    04 [1] RXEN receiver enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK (delicious!) NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as soon as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [0] CLKO USART does not drive the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [1] USCLKS SCK
-    04 [1] "
-
-    03 [1] USART_MODE SPI Slave
-    02 [1] "
-    01 [1] "
-    00 [1] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [1] CTSIC Clear to Send Change interrupt enabled 
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled 
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled 
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled YET
-    00 [0] RXRDY Receiver Ready interrupt enabled 
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-!!!!! Not applicable for slave (note that incoming clock cannot 
-exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
-or 2MHz, so no issues.
-*/
-
-
-
-/*----------------------------------------------------------------------------------------------------------------------
-SD USART Setup in SSP mode
-
-SPI mode to communicate with an SPI SD card. 
-*/
-/* USART Control Register - Page 734 */
-
-/*
-    31 - 20 [0] Reserved
-
-    19 [0] RTSDIS/RCS no release/force RTS to 1
-    18 [0] RTSEN/FCS no drive/force RTS to 0
-    17 [0] DTRDIS no drive DTR to 1
-    16 [0] DTREN no drive DTR to 0
-
-    15 [0] RETTO no restart timeout
-    14 [0] RSTNACK N/A
-    13 [0] RSTIT N/A
-    12 [0] SENDA N/A
-
-    11 [0] STTTO no start time-out
-    10 [0] STPBRK no stop break
-    09 [0] STTBRK no transmit break
-    08 [0] RSTSTA status bits not reset
-
-    07 [0] TXDIS transmitter not disabled
-    06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
-
-    03 [0] RSTTX not reset
-    02 [0] RSTRX not reset
-    01 [0] Reserved
-    00 [0] "
-*/
-
-/* USART Mode Register - page 737 */
-
-/*
-    31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
-    30 [0] MODSYNC Manchester start bit N/A
-    29 [0] MAN Machester encoding disabled
-    28 [0] FILTER no filter on Rx line
-
-    27 [0] Reserved
-    26 [0] MAX_ITERATION (ISO7816 mode only)
-    25 [0] "
-    24 [0] "
-
-    23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
-    20 [0] INACK transmission starts as oons as byte is written to US_THR
-
-    19 [0] OVER 16x oversampling
-    18 [1] CLKO USART drives the SCK pin
-    17 [0] MODE9 CHRL defines char length
-    16 [1] CPOL clock is high when inactive
-
-    15 [0] CHMODE normal mode
-    14 [0] "
-    13 [0] NBSTOP N/A
-    12 [1] "
-
-    11 [1] PAR no parity
-    10 [0] "
-    09 [0] "
-    08 [0] CPHA data captured on leading edge of SPCK (first high to low transition does not count)
-
-    07 [1] CHRL 8 bits
-    06 [1] "
-    05 [0] USCLKS MCK
-    04 [0] "
-
-    03 [1] USART_MODE SPI Master
-    02 [1] "
-    01 [1] "
-    00 [0] "
-*/
-
-
-/* USART Interrupt Enable Register - Page 741 */
-
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] "
-    24 [0] MANE Manchester Error interrupt not enabled
-
-    23 [0] Reserved
-    22 [0] "
-    21 [0] "
-    20 [0] "
-
-    19 [0] CTSIC Clear to Send Change interrupt not enabled
-    18 [0] DCDIC Data Carrier Detect Change interrupt not enabled
-    17 [0] DSRIC Data Set Ready Change interrupt not enabled
-    16 [0] RIIC Ring Inidicator Change interrupt not enabled
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] NACK Non Ack interrupt not enabled
-    12 [0] RXBUFF Reception Buffer Full (PDC) interrupt not enabled
-
-    11 [0] TXBUFE Transmission Buffer Empty (PDC) interrupt not enabled
-    10 [0] ITER/UNRE Max number of Repetitions Reached interrupt not enabled
-    09 [0] TXEMPTY Transmitter Empty interrupt not enabled (yet)
-    08 [0] TIMEOUT Receiver Time-out interrupt not enabled
-
-    07 [0] PARE Parity Error interrupt not enabled
-    06 [0] FRAME Framing Error interrupt not enabled
-    05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
-
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
-    02 [0] RXBRK Break Received interrupt not enabled
-    01 [0] TXRDY Transmitter Ready interrupt not enabled
-    00 [0] RXRDY Receiver Ready interrupt not enabled
-*/
-
-/* USART Interrupt Disable Register - Page 743 */
-
-
-/* USART Baud Rate Generator Register - Page 752
-BAUD = MCK / CD 
-=> CD = MCK / BAUD
-BAUD desired = 1 Mbps
-=> CD = 48
-*/
-
-/*
-    31-20 [0] Reserved
-
-    19 [0] Reserved
-    18 [0] FP baud disabled
-    17 [0] "
-    16 [0] "
-
-    15 [0] CD = 48 = 0x30
-    14 [0] "
-    13 [0] "
-    12 [0] "
-
-    11 [0] "
-    10 [0] "
-    09 [0] "
-    08 [0] "
-
-    07 [0] "
-    06 [0] "
-    05 [1] "
-    04 [1] "
-
-    03 [0] "
-    02 [0] "
-    01 [0] "
-    00 [0] "
-*/
-
-
-/*--------------------------------------------------------------------------------------------------------------------
-Two Wire Interface setup
-
-I²C Master mode for ASCII LCD communication
-*/
-
-/*-------------------- TWI0 ---------------------*/
-/*Control Register*/
-
-/*
-    31-8 [0] Reserved
-
-    07 [0] SWRST - Software reset
-    06 [0] QUICK - SMBUS Quick Command
-    05 [1] SVDIS - Slave mode disable - disabled
-    04 [0] SVEN - Slave mode enable
-
-    03 [0] MSDIS - Master mode disable
-    02 [1] MSEN - Master mode enable
-    01 [0] STOP - Stop a transfer
-    00 [0] START - Start a transfer
-*/
-
-/*Master Mode Register*/
-
-/*
-    31-24 [0] Reserved
-    
-    23 [0] Reserved
-    22 [0] DADR - device slave address - start with zero
-    21 [0] "
-    20 [0] "
-
-    19 [0] "
-    18 [0] "
-    17 [0] "
-    16 [0] "
-
-    15 [0] Reserved
-    14 [0] "
-    13 [0] "
-    12 [0] MREAD - Master Read Direction - 0 -> Write, 1 -> Read
-
-    11 [0] Reserved
-    10 [0] "
-    09 [0] IADRSZ - Internal device address - 0 = no internal device address
-    08 [0] "
-
-    07-0 [0] Reserved
-*/
-
-/* Clock Wave Generator Register */
-/* 
-    Calculation:
-        T_low = ((CLDIV * (2^CKDIV))+4) * T_MCK
-        T_high = ((CHDIV * (2^CKDIV))+4) * T_MCK
-
-        T_MCK - period of master clock = 1/(48 MHz)
-        T_low/T_high - period of the low and high signals
-        
-        CKDIV = 2, CHDIV and CLDIV = 59
-        T_low/T_high = 2.5 microseconds
-
-        Data frequency - 
-        f = ((T_low + T_high)^-1)
-        f = 200000 Hz 0r 200 kHz
-
-    Additional Rates:
-        50 kHz - 0x00027777
-       100 kHz - 0x00023B3B
-       200 kHz - 0x00021D1D
-       400 kHz - 0x00030707  *Maximum rate*
-*/
-
-/*
-    31-20 [0] Reserved
-    
-    19 [0] Reserved
-    18 [0] CKDIV
-    17 [1] "
-    16 [0] "
-
-    15 [0] CHDIV
-    14 [0] "
-    13 [0] "
-    12 [1] "
-
-    11 [1] "
-    10 [1] "
-    09 [0] "
-    08 [1] "
-
-    07 [0] CLDIV - Clock Low Divider
-    06 [0] "
-    05 [0] "
-    04 [1] "
-
-    03 [1] "
-    02 [1] "
-    01 [0] "
-    00 [1] "
-*/
-
-/*Interrupt Enable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [0] TXBUFE - Transmit Buffer Empty
-    14 [0] RXBUFF - Receive Buffer Full
-    13 [0] ENDTX - End of Transmit Buffer
-    12 [0] ENDRX - End of Receive Buffer
-
-    11 [0] EOSACC - End of Slave Address
-    10 [0] SCL_WS - Clock Wait State
-    09 [0] ARBLST - Arbitration Lost
-    08 [1] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [1] OVRE - Overrun Error
-    05 [0] GACC - General Call Access
-    04 [0] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [0] TXRDY - Transmit Holding Register Ready
-    01 [1] RXRDY - Receive Holding Register Ready
-    00 [0] TXCOMP - Transmission Completed
-*/
-
-/*Interrupt Disable Register*/
-
-/*
-    31-16 [0] Reserved
-
-    15 [1] TXBUFE - Transmit Buffer Empty
-    14 [1] RXBUFF - Receive Buffer Full
-    13 [1] ENDTX - End of Transmit Buffer
-    12 [1] ENDRX - End of Receive Buffer
-
-    11 [1] EOSACC - End of Slave Address
-    10 [1] SCL_WS - Clock Wait State
-    09 [1] ARBLST - Arbitration Lost
-    08 [0] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [0] OVRE - Overrun Error
-    05 [1] GACC - General Call Access
-    04 [1] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [1] TXRDY - Transmit Holding Register Ready
-    01 [0] RXRDY - Receive Holding Register Ready
-    00 [1] TXCOMP - Transmission Completed
-*/
 
 
 
@@ -17347,7 +6802,7 @@ I²C Master mode for ASCII LCD communication
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-#line 23 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
+#line 23 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
@@ -17381,30 +6836,6 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public Functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------
-Function: IsTimeUp
-  
-Description:
-Checks if the difference between the current time and the saved time is greater
-than the period specified. The referenced current time is always G_u32SystemTime1ms.
-
-Requires:
-  - *pu32SavedTick_ points to the saved tick value (in ms)
-  - u32Period_ is the desired period in ms
-
-Promises:
-  - Returns FALSE if u32Period_ has not elapsed
-  - Returns TRUE if u32Period_ has elapsed
-*/
-bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
-{
-#line 97 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
-  return(TRUE);
-  
-
-  
-} /* end IsTimeUp() */
 
 
 /*-----------------------------------------------------------------------------/

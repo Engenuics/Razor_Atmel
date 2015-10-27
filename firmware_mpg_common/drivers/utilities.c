@@ -54,52 +54,6 @@ Function Definitions
 /* Public Functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------
-Function: IsTimeUp
-  
-Description:
-Checks if the difference between the current time and the saved time is greater
-than the period specified. The referenced current time is always G_u32SystemTime1ms.
-
-Requires:
-  - *pu32SavedTick_ points to the saved tick value (in ms)
-  - u32Period_ is the desired period in ms
-
-Promises:
-  - Returns FALSE if u32Period_ has not elapsed
-  - Returns TRUE if u32Period_ has elapsed
-*/
-bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
-{
-#ifndef SIMULATOR_MODE
-  u32 u32TimeElapsed;
-  
-  /* Check to see if the timer in question has rolled */
-  if(G_u32SystemTime1ms >= *pu32SavedTick_)
-  {
-    u32TimeElapsed = G_u32SystemTime1ms - *pu32SavedTick_;
-  }
-  else
-  {
-    u32TimeElapsed = (0xFFFFFFFF - *pu32SavedTick_) + G_u32SystemTime1ms;
-  }
-
-  /* Now determine if time is up */
-  if(u32TimeElapsed < u32Period_)
-  {
-    return(FALSE);
-  }
-  else
-  {
-    return(TRUE);
-  }
-#else
-  return(TRUE);
-  
-#endif /* SIMULATOR_MODE */
-  
-} /* end IsTimeUp() */
-
 
 /*-----------------------------------------------------------------------------/
 Function: ASCIIHexCharToChar

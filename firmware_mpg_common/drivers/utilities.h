@@ -47,7 +47,6 @@ Constants / Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
-bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_);
 u8 ASCIIHexCharToChar(u8);
 u8 HexToASCIICharUpper(u8 u8Char_);
 u8 HexToASCIICharLower(u8 u8Char_);

@@ -1,47 +1,49 @@
 ###############################################################################
 #
-# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        14/Oct/2015  14:35:18
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        26/Oct/2015  21:01:48
 # Copyright 1999-2014 IAR Systems AB.
 #
 #    Cpu mode     =  thumb
 #    Endian       =  little
 #    Source file  =  
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c
+#        D:\MPG Source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c
 #    Command line =  
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c
-#        --preprocess=cl
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
-#        -lC
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
-#        -o
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\
-#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
-#        --no_clustering --no_scheduling --debug --endian=little
-#        --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program Files\IAR
-#        Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h" -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\ -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\bsp\ -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\drivers\
-#        -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\application\
-#        -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\
-#        -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\application\
-#        -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\cmsis\
-#        -I
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\drivers\
-#        -On --use_c++_inline -I "C:\Program Files\IAR
+#        "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c"
+#        --preprocess=cl "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\" -lC
+#        "D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\"
+#        -o "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\" --no_cse
+#        --no_unroll --no_inline --no_code_motion --no_tbaa --no_clustering
+#        --no_scheduling --debug --endian=little --cpu=Cortex-M3 -e --fpu=None
+#        --dlib_config "C:\Program Files (x86)\IAR
+#        Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h" -I "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\" -I "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\bsp\" -I "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\drivers\" -I
+#        "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\application\" -I
+#        "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\"
+#        -I "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\application\"
+#        -I "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\cmsis\"
+#        -I "D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\drivers\"
+#        -On --use_c++_inline -I "C:\Program Files (x86)\IAR
 #        Systems\EWARM_7_20_1\arm\CMSIS\Include\"
 #    List file    =  
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\board_cstartup_iar.lst
+#        D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\board_cstartup_iar.lst
 #    Object file  =  
-#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\board_cstartup_iar.o
+#        D:\MPG
+#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\board_cstartup_iar.o
 #
 ###############################################################################
 
-D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c
+D:\MPG Source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c
       1          /* ----------------------------------------------------------------------------
       2           *         ATMEL Microcontroller Software Support 
       3           * ----------------------------------------------------------------------------
