@@ -7,6 +7,7 @@ Container for the MPG firmware.
 
 #include "configuration.h"
 
+#ifdef SOLUTION
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
@@ -21,7 +22,7 @@ All Global variable names shall start with "G_"
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Main_" and be declared as static.
 ***********************************************************************************************************************/
-static u8 Main_u8Servers = 0;                  /* Number of active servers */
+static u8 Main_u8Servers = 0;                  /* Number of people slinging drinks */
 
 
 /***********************************************************************************************************************
@@ -30,6 +31,11 @@ Main Program
 
 void main(void)
 {
+  u32 u32UselessVariableForExample;
+  u32 au32BigArray[] = {5, 4, 3, 2, 1};
+  DrinkType aeDrinkArray[3] = {BEER, SHOOTER};
+  ServerType* psServerList = 0;
+
   /* Pointer example code */
   u8 u8Test = 0xA5;
   u8* pu8Example;
@@ -60,11 +66,99 @@ void main(void)
   while(1)
   {
     
+    
   } /* end while(1) main super loop */
   
 } /* end main() */
 
 
+/***********************************************************************************************************************
+* Function definitions
+***********************************************************************************************************************/
+
+/*---------------------------------------------------------------------------------------------------------------------/
+Function InitializeServer
+
+Description:
+Initializes a new server.  A new server has an empty tray of drinks and is
+assigned the next number available.
+
+Requires:
+  - psServer_ points to the server to be initialized
+  - Main_u8Servers holds the current number of active servers
+
+Promises:
+  - Returns TRUE if the server is initialized
+  - Returns FALSE if the server cannot be initialized as there are too many
+*/
+bool InitializeServer(ServerType* psServer_)
+{
+  /* Check that we have are not at the maximum server limit */
+  if(Main_u8Servers == 255)
+  {
+    return(FALSE);
+  }
+
+  /* Room for more servers so add this new one */
+  Main_u8Servers++;
+  psServer_->u8ServerNumber = Main_u8Servers;
+
+  /* Load up some drinks */
+  for(u8 i = 0; i < MAX_DRINKS; i++)
+  {
+    psServer_->asServingTray[i] = EMPTY;
+  }
+
+  return(TRUE);
+  
+} /* end InitializeServer() */
+
+
+/*---------------------------------------------------------------------------------------------------------------------/
+Function CreateServer
+
+Description:
+Creates a new, unitialized server object.
+
+Requires:
+  - psServerList_ points to the server list where the server is added.
+  - Needs enough heap space to create a ServerType object
+
+Promises:
+  - Returns TRUE if the server is created; the new server object is added to the end of psServerList_ 
+  - Returns FALSE if the server cannot be created
+*/
+bool CreateServer(ServerType* psServerList_)
+{
+  ServerType* psNewServer = 0;
+  ServerType* pServerParser;
+  
+  /* Try to create the server object */
+  psNewServer = malloc( sizeof(ServerType) );
+  
+  /* Check that we have are not at the maximum server limit */
+  if(psNewServer == NULL)
+  {
+    return(FALSE);
+  }
+
+  /* Server created successfully, so add to the list */
+  pServerParser = psServerList_;
+  while(pServerParser->psNextServer != NULL)
+  {
+    pServerParser = pServerParser->psNextServer;
+  }
+  
+  /* pServerParser is now pointing at the end node update the end pointer to the new node */
+  pServerParser->psNextServer = psNewServer;
+
+  return(TRUE);
+  
+} /* end CreateServer() */
+
+
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
+#endif /* SOLUTION */

@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>3565501067</fileChecksum>
+  <fileChecksum>975683246</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
@@ -651,7 +651,7 @@
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 254 30 206 63 258 136 319 255 186 275</file>
+          <file> 254 30 206 63 132 258 136 319 255 186 275</file>
         </tool>
       </inputs>
     </file>
@@ -727,11 +727,11 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 85 86</file>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 85 86</file>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
         </tool>
       </inputs>
     </file>
@@ -750,11 +750,11 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 85 86</file>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 85 86</file>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
         </tool>
       </inputs>
     </file>
@@ -941,7 +941,7 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 85 86</file>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -964,7 +964,11 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 85 86</file>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
         </tool>
       </inputs>
     </file>
@@ -1155,7 +1159,7 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 85 86</file>
+          <file> 148 12 5 0 123 189 55 295 247 173 190 167 149 150 151 84 297 228 139 152 199 86</file>
         </tool>
       </inputs>
     </file>
@@ -1801,10 +1805,6 @@
     <forcedrebuild>
       <name>$PROJ_DIR$\RWLanguageIC.c</name>
       <tool>ICCARM</tool>
-    </forcedrebuild>
-    <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>ILINK</tool>
     </forcedrebuild>
   </configuration>
   <configuration>

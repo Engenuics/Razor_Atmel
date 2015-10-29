@@ -217,6 +217,9 @@
         <name>$PROJ_DIR$\..\application\main.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\application\main_solution.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\utilities.h</name>
       </file>
     </group>
@@ -224,6 +227,9 @@
       <name>Source</name>
       <file>
         <name>$PROJ_DIR$\..\application\main.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\application\main_solution.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\utilities.c</name>

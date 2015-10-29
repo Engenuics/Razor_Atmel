@@ -36,6 +36,11 @@ typedef struct
 } ServerType;
 
 
+/***********************************************************************************************************************
+* Function declarations
+***********************************************************************************************************************/
+bool InitializeServer(ServerType* psServer_);
+bool CreateServer(ServerType* psServerList_);
 
 
 #endif /* __MAIN_H */

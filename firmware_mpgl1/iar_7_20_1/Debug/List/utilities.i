@@ -42,6 +42,8 @@ Bookmarks:
 /**********************************************************************************************************************
 Runtime switches
 ***********************************************************************************************************************/
+//#define SOLUTION        /* Define to build and use the solution to this module */
+
 
 /**********************************************************************************************************************
 Type Definitions
@@ -2356,7 +2358,7 @@ _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind dou
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 34 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 36 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 #line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 /* string.h standard header */
 /* Copyright 2009-2010 IAR Systems AB. */
@@ -2634,7 +2636,7 @@ _Pragma("function_effects = no_state, no_errno, no_write(1,2)") __intrinsic __no
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 35 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 37 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 //  ----------------------------------------------------------------------------
 //          ATMEL Microcontroller Software Support  -  ROUSSET  -
@@ -5193,7 +5195,7 @@ typedef struct _AT91S_HDMA {
 
 
 
-#line 36 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 38 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\exceptions.h"
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support 
@@ -5323,7 +5325,7 @@ extern __weak void HDMA_IrqHandler(void);
 // USB Device High Speed UDP_HS
 extern __weak void UDPD_IrqHandler(void);
 
-#line 37 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 39 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\interrupts.h"
 /**********************************************************************************************************************
 File: interrupts.h                                                               
@@ -5419,7 +5421,7 @@ Function Prototypes
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#line 38 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 40 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 /******************************************************************************
  * @file:    core_cm3.h
@@ -6618,7 +6620,7 @@ static inline uint32_t ITM_SendChar (uint32_t ch)
 
 
 /*lint -restore */
-#line 39 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 41 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
 /*******************************************************************************
 File: typedefs.h                                                               
@@ -6677,7 +6679,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 
 
 
-#line 40 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 42 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\application\\main.h"
 /***********************************************************************************************************************
@@ -6709,9 +6711,17 @@ Header file for main.c.
 ***********************************************************************************************************************/
 
 
+/***********************************************************************************************************************
+* Function declarations
+***********************************************************************************************************************/
 
-#line 42 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-//#include "main_solution.h"
+
+
+#line 45 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+
+
+
+
 #line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.h"
 /***********************************************************************************************************************
 File: utilities.h                                                                
@@ -6785,7 +6795,7 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#line 44 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 50 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 
 
 /**********************************************************************************************************************

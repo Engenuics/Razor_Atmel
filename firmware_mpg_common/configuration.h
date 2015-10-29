@@ -19,6 +19,8 @@ Bookmarks:
 /**********************************************************************************************************************
 Runtime switches
 ***********************************************************************************************************************/
+//#define SOLUTION        /* Define to build and use the solution to this module */
+
 
 /**********************************************************************************************************************
 Type Definitions
@@ -38,8 +40,12 @@ Includes
 #include "core_cm3.h"
 #include "typedefs.h"
 
+#ifndef SOLUTION
 #include "main.h"
-//#include "main_solution.h"
+#else
+#include "main_solution.h"
+#endif
+
 #include "utilities.h"
 
 
