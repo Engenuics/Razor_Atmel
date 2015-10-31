@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=2105161585
+Checksum=-831776706
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -37,6 +37,8 @@ Fmt0=ServerType-u8ServerNumber	3	0
 Fmt0=u8[3]	3	0
 [watch_formats]
 Fmt0={W}1:u8CurrentServer	3	0
+Fmt1={W}3:pu8Example	4	0
+Fmt2={W}3:u8Test	4	0
 [InterruptLog]
 LogEnabled=0
 SumEnabled=0
@@ -53,8 +55,8 @@ ShowTimeSum=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.61.3" 0 0 1 "" 0 ""
-Bp1=_ 1 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.35.7" 0 0 1 "" 0 ""
+Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.62.3" 0 0 1 "" 0 ""
+Bp1=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.35.7" 0 0 1 "" 0 ""
 Count=2
 [Interrupts]
 Enabled=1

@@ -6692,9 +6692,11 @@ Header file for main.c.
 ***********************************************************************************************************************/
 
 
+
 /***********************************************************************************************************************
 * Type Definitions
 ***********************************************************************************************************************/
+typedef enum {EMPTY, BEER, SHOOTER, WINE, HIBALL} DrinkType;
 
 
 /***********************************************************************************************************************
@@ -6821,6 +6823,7 @@ All Global variable names shall start with "G_"
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Main_" and be declared as static.
 ***********************************************************************************************************************/
+static u8 Main_u8Servers = 0; /* Number of active servers */
 
 
 /***********************************************************************************************************************
@@ -6829,6 +6832,27 @@ Main Program
 
 void main(void)
 {
+  u32 u32UselessVariableForExample;
+  u32 au32BigArray[] = {5, 4, 3, 2, 1};
+  DrinkType aeDrinkArray[3] = {BEER, SHOOTER};
+
+  u8 u8Test = 0xA5;
+  u8* pu8Example;
+  u32 u32Test = 0x0000ffff;
+  u32* pu32Example;
+
+  /* Load the addresses into our pointer variables */
+  pu8Example = &u8Test;
+  pu32Example = &u32Test;
+
+  /* Access the variables via the pointers (two different ways) */
+  *pu8Example += 1;
+  (*pu32Example)++;
+
+  /* Move the pointers (watch out for the second one!) */
+  pu8Example++;
+  *pu32Example++;  
+  
   while(1)
   {
     
