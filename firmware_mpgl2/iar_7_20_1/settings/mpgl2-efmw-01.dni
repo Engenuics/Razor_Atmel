@@ -25,7 +25,7 @@ TypeViolation=1
 UnspecRange=1
 ActionState=1
 [DebugChecksum]
-Checksum=352684921
+Checksum=-1719229216
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -84,8 +84,7 @@ mode=0
 [Breakpoints2]
 Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\interrupts.c}.124.3" 0 0 1 "" 0 "" 0
 Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c}.1421.9" 0 0 1 "" 0 "" 0
-Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\application\main.c}.60.1" 0 0 1 "" 0 "" 0
-Count=3
+Count=2
 [Aliases]
 Count=0
 SuppressDialog=0
