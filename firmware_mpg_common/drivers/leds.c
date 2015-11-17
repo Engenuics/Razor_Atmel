@@ -30,15 +30,15 @@ Turn the specified LED off. LED response is immediate.
 e.g. LedOff(BLUE);
 
 void LedToggle(LedNumberType eLED_)
-Toggle the specified LED.  LED response is immediate.
+Toggle the specified LED.  LED response is immediate. LED must be in NORMAL mode.
 e.g. LedToggle(BLUE);
 
 void LedPWM(LedNumberType eLED_, LedRateType ePwmRate_)
-Sets up an LED for PWM mode.  PWM mode requries the main loop to be running at 1ms period.
+Sets up an LED for PWM mode.  PWM mode requires the main loop to be running at 1ms period.
 e.g. LedPWM(BLUE, LED_PWM_5);
 
 void LedBlink(LedNumberType eLED_, LedRateType eBlinkRate_)
-Sets an LED to BLINK mode.  BLINK mode requries the main loop to be running at 1ms period.
+Sets an LED to BLINK mode.  BLINK mode requires the main loop to be running at 1ms period.
 e.g. LedBlink(BLUE, LED_1HZ);
 
 Protected:
