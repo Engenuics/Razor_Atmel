@@ -82,7 +82,7 @@
           
           
           
-        <item>G_u32SystemTime1ms</item><item>G_u32SystemTime1s</item><item>Ant_pu8AntRxBufferCurrentChar</item><item>Ant_pu8AntRxBufferUnreadMsg</item><item>Ant_pu8AntRxBufferNextChar</item><item>Ant_u32RxByteCounter</item><item>Ant_psDataOutgoingMsgList</item><item>G_u32Ssp2ApplicationFlags</item><item>G_u32AntFlags</item><item>Ant_DebugProcessRxMessages</item><item>Ant_u8AntNewRxMessages</item><item>Ant_DebugTotalRxMessages</item><item>G_u32Ssp2ApplicationFlags</item><item>Ant_u32RxTimeoutCounter</item><item></item></expressions>
+        <item>G_u32SystemTime1ms</item><item>G_u32SystemTime1s</item><item>Ant_pu8AntRxBufferCurrentChar</item><item>Ant_pu8AntRxBufferUnreadMsg</item><item>Ant_pu8AntRxBufferNextChar</item><item>Ant_u32RxByteCounter</item><item>Ant_psDataOutgoingMsgList</item><item>G_u32Ssp2ApplicationFlags</item><item>G_u32AntFlags</item><item>Ant_DebugProcessRxMessages</item><item>Ant_u8AntNewRxMessages</item><item>Ant_DebugTotalRxMessages</item><item>G_u32Ssp2ApplicationFlags</item><item>Ant_u32RxTimeoutCounter</item><item/></expressions>
         <col-names>
           
           
@@ -133,7 +133,7 @@
       <WATCH_4>
         <expressions>
           
-        <item>Ant_au8AntRxBuffer</item><item></item></expressions>
+        <item>Ant_au8AntRxBuffer</item><item/></expressions>
         <col-names>
           
           
