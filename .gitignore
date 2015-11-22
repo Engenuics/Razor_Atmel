@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 Debug/
 *.TMP
 *.dep
 *.wsdt
 *.wspos
+=======
+Debug/
+>>>>>>> origin/master
