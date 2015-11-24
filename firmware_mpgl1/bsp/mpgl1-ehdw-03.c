@@ -296,11 +296,9 @@ Function: PWMAudioSetFrequency
 
 Description:
 Configures the PWM peripheral with the desired frequency.
-Note, we don't care if we interrupt the current cycle, so the direct registers
-are used rather than the double-buffered values.
 
 Requires:
-  - u32Channel_ is the channel of interest - either AT91C_PWMC_CHID0 or AT91C_PWMC_CHID1
+  - u32Channel_ is the channel of interest - either BUZZER1 or BUZZER2
   - u16Frequency_ is in Hertz and should be in the range 100 - 20,000 since
     that is the audible range.  Higher and lower frequencies are allowed, though.
   - The PWM peripheral is correctly configured for the current processor clock speed.

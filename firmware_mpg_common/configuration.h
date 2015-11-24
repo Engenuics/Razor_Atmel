@@ -261,7 +261,7 @@ The order of the definitions below must match the order of the definitions provi
 /*----------------------------------------------------------------------------------------------------------------------
 %BUZZER% Buzzer Configuration                                                                                                  
 ------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
+MPG1 has two buzzers, MPG2 only has one */
 
 #define BUZZER1               AT91C_PWMC_CHID0
 

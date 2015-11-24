@@ -7,7 +7,8 @@ Button functions and state machine.  The application handles all debouncing and 
 ------------------------------------------------------------------------------------------------------------------------
 API:
 Types:
-The argument u32Button_ is either BUTTON0 or BUTTON1.  
+MPG1: The argument u32Button_ is either BUTTON0, BUTTON1, BUTTON2, or BUTTON3.  
+MPG1: The argument u32Button_ is either BUTTON0 or BUTTON1.  
 
 Public:
 bool IsButtonPressed(u32 u32Button_)

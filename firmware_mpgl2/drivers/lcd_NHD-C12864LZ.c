@@ -49,7 +49,7 @@ Task details:
 ------------------------------------------------------------------------------------------------------------------------
 API:
 LcdFontType {LCD_FONT_SMALL, LCD_FONT_BIG}
-LcdShiftTypeLCD_SHIFT_UP, LCD_SHIFT_DOWN, LCD_SHIFT_RIGHT, LCD_SHIFT_LEFT}
+LcdShiftType {LCD_SHIFT_UP, LCD_SHIFT_DOWN, LCD_SHIFT_RIGHT, LCD_SHIFT_LEFT}
 PixelAddressType
 {
   u16 u16PixelRowAddress;
@@ -67,25 +67,44 @@ PixelBlockType
 void LcdSetPixel(PixelAddressType* sPixelAddress_)
 Turn on one pixel in the LCD RAM.  
 - sPixelAddress_ is the address of the pixel to set
-e.g. LcdSetPixel(&sTestStringLocation);
+e.g. Turn on a pixel in the center of the screen:
+PixelAddressType sTargetPixel = {32, 64};
+LcdSetPixel(&sTargetPixel);
 
 void LcdClearPixel(PixelAddressType* sPixelAddress_)
 Turn off one pixel in the LCD RAM.  
 - sPixelAddress_ is the address of the pixel to clear
-e.g. LcdClearPixel(&sTestStringLocation);
+e.g. Turn off a pixel in the center of the screen:
+PixelAddressType sTargetPixel = {32, 64};
+LcdClearPixel(&sTargetPixel);
+
+void LcdClearPixels(PixelBlockType* sPixelsToClear_)
+Clears the selected block of pixels.  A custom area can be provided to this function,
+but several commonly used predefined areas are included.
+(G_sLcdClearWholeScreen, G_sLcdClearLine0, ..., G_sLcdClearLine7)
+- sPixelsToClear_: block definition of pixel area to clear
+e.g. Clear a 25 x 30 block of pixels in the top-right corner of the LCD:
+PixelBlockType sPixelsToClear;
+
+sPixelsToClear.u16RowStart = 0;
+sPixelsToClear.u16ColumnStart = 0;
+sPixelsToClear.u16RowSize = 25;
+sPixelsToClear.u16ColumnSize = 30;
+LcdClearPixels(sPixelsToClear);
+
+void LcdClearScreen(void)
+Clears all of the current pixel data.
+e.g. LcdClearScreen();
 
 void LcdLoadString(const unsigned char* pu8String_, LcdFontType eFont_, PixelAddressType* sStartPixel_);
 Updates the local LCD memory with an ASCII string in the font specified.  Any pixels that 
 will not fit on the LCD are ignored (but this will allow for partial characters to be drawn).
 - pu8String_: pointer to C-string to be printed
 - eFont_: font of choice
-- Lcd_sUpdateArea: location where the top left pixel of the first character bitmap square is specifed
-e.g. 
+- sStartPixel_: location where the top left pixel of the first character bitmap square is specifed
+e.g. Load a string on the bottom text line left justified.
+PixelAddressType sTestStringLocation = {LCD_SMALL_FONT_LINE7, LCD_LEFT_MOST_COLUMN); 
 u8 au8TestString[] = "Testing";
-PixelAddressType sTestStringLocation;
-
-sTestStringLocation.u16PixelRowAddress = LCD_SMALL_FONT_LINE7;
-sTestStringLocation.u16PixelColumnAddress = 10;
 LcdLoadSting(au8TestString, LCD_FONT_SMALL, &sTestStringLocation); 
 
 void LcdLoadBitmap(u8* aau8Bitmap_, PixelBlockType* sBitmapSize_)
@@ -97,19 +116,9 @@ PixelBlockType sEngenuicsImage;
 
 sEngenuicsImage.u16RowStart = 0;
 sEngenuicsImage.u16ColumnStart = 0;
-sEngenuicsImage.u16RowSize = 25;
-sEngenuicsImage.u16ColumnSize = 25;
+sEngenuicsImage.u16RowSize = 50;
+sEngenuicsImage.u16ColumnSize = 50;
 LcdLoadBitmap(&aau8EngenuicsLogoBlack[0][0], sEngenuicsImage);
-
-void LcdClearPixels(PixelBlockType* sPixelsToClear_)
-Clears the selected block of pixels.  A custom area can be provided to this function,
-but several commonly used predefined areas are included.
-(G_sLcdClearWholeScreen, G_sLcdClearLine0, ..., G_sLcdClearLine7)
-- sPixelsToClear_: block definition of pixel area to clear
-
-void LcdClearScreen(void)
-Clears all of the current pixel data.
-e.g. LcdClearScreen();
 
 bool LcdCommand(u8 u8Command_)
 Sends a control command to the LCD.  

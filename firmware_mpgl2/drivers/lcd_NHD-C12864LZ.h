@@ -78,6 +78,11 @@ typedef struct
 #define LCD_PAGES                     (u8)8
 #define LCD_ROWS                      (u16)(LCD_PAGES * LCD_PAGE_SIZE)
 #define LCD_COLUMNS                   (u16)128
+
+#define LCD_LEFT_MOST_COLUMN          (u16)0
+#define LCD_RIGHT_MOST_COLUMN         (u16)(LCD_COLUMNS - 1)
+#define LCD_TOP_MOST_ROW              (u16)0
+#define LCD_BOTTOM_MOST_ROW           (u16)(LCD_ROWS - 1)
 #define LCD_CENTER_COLUMN             (u16)(LCD_COLUMNS / 2)
 #define LCD_IMAGE_ROWS                LCD_ROWS
 #define LCD_IMAGE_COLUMNS             (u16)(LCD_COLUMNS * LCD_PIXEL_BITS / 8)
@@ -127,8 +132,6 @@ typedef struct
 #define LCD_BIG_FONT_LINE2            (u8)(2 * (LCD_BIG__FONT_ROWS + LCD_BIG__FONT_ROW_SPACING))
 #define LCD_BIG_FONT_LINE3            (u8)(3 * (LCD_BIG__FONT_ROWS + LCD_BIG__FONT_ROW_SPACING))
 
-#define LCD_LEFT_MOST_COLUMN          (u8)0
-#define LCD_RIGHT_MOST_COLUMN         (u8)127
 #define LCD_FRAMES_MSG_COLUMN         (u8)(10 * LCD_SMALL_FONT_COLSPACE)
 #define LCD_IP_START_COLUMN           (u8)(3 * LCD_SMALL_FONT_COLSPACE)
 
