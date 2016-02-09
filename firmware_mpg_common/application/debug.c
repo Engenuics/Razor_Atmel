@@ -16,6 +16,36 @@ The terminal program used to interface to the debugger should be set to:
 - send "CR" for new line
 - 115200-8-N-1
 
+
+------------------------------------------------------------------------------------------------------------------------
+API:
+Types: none
+
+Public:
+u32 DebugPrintf(u8* u8String_)
+Queues the string pointed to by u8String_ to the Debug port.  The string must be
+null-terminated.  It may also contain control charactesr like newline (\n) and line feed (\f)
+e.g.
+u8 u8String[] = "A string to print.\n\r"
+DebugPrintf(u8String);
+
+void DebugLineFeed(void)
+Queues a <CR><LF> sequence to the debug UART.
+e.g.
+DebugLineFeed();
+
+void DebugPrintNumber(u32 u32Number_)
+Formats a long into an ASCII string and queues to print.  Leading zeros are not printed.
+e.g.
+u32 u32Number = 1234567;
+DebugPrintNumber(u32Number);
+
+
+DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
+USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
+INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
+RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
+
 ***********************************************************************************************************************/
 
 #include "configuration.h"
