@@ -8,3 +8,4 @@ firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.wsdt
 *.dep
 *.dbgdt
 firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.Debug.cspy.bat
+firmware_mpg_common/application/user_app_led_basic.c

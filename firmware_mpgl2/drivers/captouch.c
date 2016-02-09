@@ -5,6 +5,7 @@ Description:
 Driver for Capacitive Touch sensors. This code supports the horizontal slider on the MPG2 board
 and any future buttons/sliders that may be added.
 
+------------------------------------------------------------------------------------------------------------------------
 API:
 void CapTouchOn(void)
 Activates the Captouch sensors
