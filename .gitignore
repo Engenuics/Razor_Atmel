@@ -1,3 +1,4 @@
+firmware_mpgl2/iar_7_20_1/settings/
 firmware_mpgl1/iar_7_20_1/Debug/Exe/mpgl1-efmw-01.hex
 *.TMP
 Debug/
@@ -9,3 +10,11 @@ firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.wsdt
 *.dbgdt
 firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.Debug.cspy.bat
 firmware_mpg_common/application/user_app_led_basic.c
+firmware_mpgl2/iar_7_20_1/mpgl2-efmw-01.dep
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.dni
+firmware_mpgl2/iar_7_20_1/mpgl2-efmw-01.dep
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.dni
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.wspos
+firmware_mpgl2/iar_7_20_1/mpgl2-efmw-01.dep
+*.dbgdt
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.dni
