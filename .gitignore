@@ -1,3 +1,10 @@
 firmware_mpgl1/iar_7_20_1/Debug/Exe/mpgl1-efmw-01.hex
 *.TMP
 Debug/
+firmware_mpgl2/iar_7_20_1/mpgl2-efmw-01.dep
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.dbgdt
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.Debug.cspy.bat
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.wsdt
+*.dep
+*.dbgdt
+firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.Debug.cspy.bat

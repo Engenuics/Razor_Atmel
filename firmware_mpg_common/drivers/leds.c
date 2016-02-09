@@ -333,6 +333,28 @@ void LedInitialize(void)
   static u8 au8LedStartupMsg[] = "LED functions ready\n\r";
 
 #if MPGL2
+  /* Display code for board picture */
+#if 0
+  LedOn(RED0);
+  LedOn(BLUE0);
+  LedOn(GREEN0);
+  
+  LedOn(BLUE1);
+
+  LedOn(GREEN2);
+
+  LedOn(RED3);
+
+  while(1);
+  LedOn(RED1);
+  LedOn(RED2);
+  LedOn(BLUE1);
+  LedOn(BLUE3);
+  LedOn(GREEN1);
+  LedOn(GREEN3);
+#endif
+
+
   /* Test code for checking LEDs */
 #if 0
   LedOn(RED0);
@@ -347,6 +369,7 @@ void LedInitialize(void)
   LedOn(GREEN1);
   LedOn(GREEN2);
   LedOn(GREEN3);
+  while(1);
 #endif
 
 #endif /* MPGL2 */
