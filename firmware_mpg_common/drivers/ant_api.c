@@ -25,7 +25,36 @@ typedef enum {BROADCAST, ACKNOWLEDGED, BURST, CONTROL} AntDataMessageType;
 bool AntChannelConfig(bool)
 All channel configuration is sent to the ANT device and TRUE is returned if successful.
 This requires a global data structure to be set up in the task.  It is intended to run to completion inside
-the application's initialization section.
+the application's initialization section.  
+
+To do this, copy the following code block into the application's Initialize()
+function.
+
+    G_stAntSetupData.AntChannel          = ANT_CHANNEL_USERAPP;
+    G_stAntSetupData.AntChannelType      = ANT_CHANNEL_TYPE_USERAPP;
+    G_stAntSetupData.AntNetwork          = ANT_NETWORK_USERAPP;
+    G_stAntSetupData.AntSerialLo         = ANT_SERIAL_LO_USERAPP;
+    G_stAntSetupData.AntSerialHi         = ANT_SERIAL_HI_USERAPP;
+    G_stAntSetupData.AntDeviceType       = ANT_DEVICE_TYPE_USERAPP;
+    G_stAntSetupData.AntTransmissionType = ANT_TRANSMISSION_TYPE_USERAPP;
+    G_stAntSetupData.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_USERAPP;
+    G_stAntSetupData.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_USERAPP;
+    G_stAntSetupData.AntFrequency        = ANT_FREQUENCY_USERAPP;
+    G_stAntSetupData.AntTxPower          = ANT_TX_POWER_USERAPP;
+
+Copy the following definitions into the application's header file:
+
+#define ANT_CHANNEL_USERAPP             (u8)                  // Channel 0 - 7
+#define ANT_CHANNEL_TYPE_USERAPP        (u8)                  // CHANNEL_TYPE_SLAVE, CHANNEL_TYPE_MASTER, CHANNEL_TYPE_MASTER_TX_ONLY, CHANNEL_TYPE_SHARED_SLAVE, CHANNEL_TYPE_SHARED_MASTER
+#define ANT_NETWORK_USERAPP             (u8)                  // 
+#define ANT_SERIAL_LO_USERAPP
+#define ANT_SERIAL_HI_USERAPP
+#define ANT_DEVICE_TYPE_USERAPP
+#define ANT_TRANSMISSION_TYPE_USERAPP
+#define ANT_CHANNEL_PERIOD_LO_USERAPP
+#define ANT_CHANNEL_PERIOD_HI_USERAPP
+#define ANT_FREQUENCY_USERAPP
+#define ANT_TX_POWER_USERAPP
 
 bool AntOpenChannel(void)
 Queues a request to open the configured channel.
