@@ -17,6 +17,9 @@ Constants
 #define ANT_APPLICATION_MESSAGE_BYTES       (u8)8
 #define ANT_DATA_BYTES                      (u8)8
 
+/* Device Types */
+#define	DEVICE_TYPE_BOARDTEST		              (u8)0x60
+
 
 /**********************************************************************************************************************
 Type definitions

@@ -15,61 +15,124 @@ to be handled seperately as an add-on to this API.
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
-Types
 
+Globals
+// Configuration struct
+extern AntSetupDataType G_stAntSetupData;                   // From ant.c
+
+// Globals for passing data from the ANT application to the API (import these to application)
+extern u32 G_u32AntApiCurrentDataTimeStamp;                       // From ant_api.c
+extern AntApplicationMessageType G_eAntApiCurrentMessageClass;    // From ant_api.c
+extern u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];  // From ant_api.c
+
+Types
 typedef enum {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPEN, ANT_CLOSED} AntChannelStatusType;
-typedef enum {BROADCAST, ACKNOWLEDGED, BURST, CONTROL} AntDataMessageType;
+typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
 
 
 ***ANT CONFIGURATION / STATUS FUNCTIONS***
 bool AntChannelConfig(bool)
 All channel configuration is sent to the ANT device and TRUE is returned if successful.
 This requires a global data structure to be set up in the task.  It is intended to run to completion inside
-the application's initialization section.
+the application's initialization section.  
+
+To do this, copy the following code block into the application's Initialize()
+function.
+
+  G_stAntSetupData.AntChannel          = ANT_CHANNEL_USERAPP;
+  G_stAntSetupData.AntSerialLo         = ANT_SERIAL_LO_USERAPP;
+  G_stAntSetupData.AntSerialHi         = ANT_SERIAL_HI_USERAPP;
+  G_stAntSetupData.AntDeviceType       = ANT_DEVICE_TYPE_USERAPP;
+  G_stAntSetupData.AntTransmissionType = ANT_TRANSMISSION_TYPE_USERAPP;
+  G_stAntSetupData.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_USERAPP;
+  G_stAntSetupData.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_USERAPP;
+  G_stAntSetupData.AntFrequency        = ANT_FREQUENCY_USERAPP;
+  G_stAntSetupData.AntTxPower          = ANT_TX_POWER_USERAPP;
+
+Copy the following definitions into the application's header file:
+
+#define ANT_CHANNEL_USERAPP             (u8)                  // Channel 0 - 7
+#define ANT_SERIAL_LO_USERAPP           (u8)                  // Low byte of two-byte Device #
+#define ANT_SERIAL_HI_USERAPP           (u8)                  // High byte of two-byte Device #
+#define ANT_DEVICE_TYPE_USERAPP         (u8)                  // 1 - 255
+#define ANT_TRANSMISSION_TYPE_USERAPP   (u8)                  // 1-127 (MSB is pairing bit)
+#define ANT_CHANNEL_PERIOD_LO_USERAPP   (u8)0x00              // Low byte of two-byte channel period 0x0001 - 0x7fff
+#define ANT_CHANNEL_PERIOD_HI_USERAPP   (u8)0x20              // High byte of two-byte channel period 
+#define ANT_FREQUENCY_USERAPP           (u8)50                // 2400MHz + this number 0 - 99
+#define ANT_TX_POWER_USERAPP            RADIO_TX_POWER_0DBM   // RADIO_TX_POWER_0DBM, RADIO_TX_POWER_MINUS5DBM, RADIO_TX_POWER_MINUS10DBM, RADIO_TX_POWER_MINUS20DBM
+
+
+AntChannelStatus AntRadioStatus(void)
+Query the ANT radio channel status.  Returns ANT_UNCONFIGURED, ANT_CLOSING, ANT_OPEN, or ANT_CLOSED
+
 
 bool AntOpenChannel(void)
 Queues a request to open the configured channel.
-Returns TRUE if message is successfully queued.  Application should monitor AntRadioStatus()
-for channel status.
-e.g. 
-if(AntOpenChannel())
+Returns TRUE if message is successfully queued - this can be ignored or checked.  
+Application should monitor AntRadioStatus() for actual channel status.
+e.g.
+AntChannelStatusType eAntCurrentState;
+
+// Request to open channel only on an already closed channel.
+eAntCurrentState = AntRadioStatus();
+
+if(eAntCurrentState == ANT_CLOSED )
 {
-  ApplicationState = ApplicationWaitForOpen;
+   AntOpenChannel();
 }
+
 
 bool AntCloseChannel(void)
 Queues a request to close the configured channel.
-Returns TRUE if message is successfully queued.  Application should monitor AntRadioStatus()
-for channel status.
-if(AntCloseChannel())
+Returns TRUE if message is successfully queued - this can be ignored or checked.  
+Application should monitor AntRadioStatus() for channel status.
+e.g.
+AntChannelStatusType eAntCurrentState;
+
+// Request to close channel only on an open channel.
+eAntCurrentState = AntRadioStatus();
+
+if(eAntCurrentState == ANT_OPEN )
 {
-  ApplicationState = ApplicationWaitForClose;
+   AntCloseChannel();
 }
+
 
 bool AntUnassignChannel(void)
-Quees a request to unassign the ANT channel.
-Returns TRUE if message is successfully queued.  Application should monitor AntRadioStatus()
+Quees a request to unassign the ANT channel.  Returns TRUE if message is successfully queued.  Application should monitor AntRadioStatus()
 for channel status.
-if(AntUnassignChannel())
-{
-  ApplicationState = ApplicationWaitForChannelAssignment;
-}
+e.g.
+AntChannelStatusType eAntCurrentState;
 
-AntChannelStatus AntRadioStatus(void)
-Query the ANT radio channel status.
+eAntCurrentState = AntRadioStatus();
+
+if(eAntCurrentState == ANT_CLOSED )
+{
+   // Request to unassign channel (allowed only on a closed channel).
+   AntUnassignChannel();
+}
 
 
 ***ANT DATA FUNCTIONS***
 bool AntQueueBroadcastMessage(u8 *pu8Data_)
 Queue a broadcast data message.
+e.g.
+u8 u8DataToSend[ANT_DATA_BYTES] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+AntQueueBroadcastMessage(&u8DataToSend[0]);
+
 
 bool AntQueueAcknowledgedMessage(u8 *pu8Data_)
 Queue an acknowledged data message.
+e.g.
+u8 u8DataToSend[ANT_DATA_BYTES] = {0x07, 0x06, 0x05, 0x04, 0x03, 0xdd, 0xee, 0xff};
+AntQueueAcknowledgedMessage(u8DataToSend);
+
 
 bool AntReadData(void)
-Check the incoming message buffer for any message from the ANT system.  If no messages are present,
-returns FALSE.  If message is there, returns TRUE and application can read G_asAntApiCurrentData
-to get message info.
+Check the incoming message buffer for any message from the ANT system (either an event or data).  
+If no messages are present, returns FALSE.  If a message is there, returns TRUE and application can read:
+- G_eAntApiCurrentMessageClass to see what kind of message is present
+- G_asAntApiCurrentData to get message info.
 
 
 ***********************************************************************************************************************/
@@ -81,9 +144,9 @@ to get message info.
 Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_<type>AntApi"
 ***********************************************************************************************************************/
-u32 G_u32AntApiCurrentDataTimeStamp = 0;                                /* Current G_u32SystemTime1s */
+u32 G_u32AntApiCurrentDataTimeStamp = 0;                                /* Current read message's G_u32SystemTime1ms */
 
-AntApplicationMessageType G_eAntApiCurrentMessageClass = ANT_EMPTY;  /* Type of data */
+AntApplicationMessageType G_eAntApiCurrentMessageClass = ANT_EMPTY;     /* Type of data */
 u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];               /* Array for message data */
 
 /*----------------------------------------------------------------------------*/
@@ -144,7 +207,7 @@ Promises:
 */
 bool AntChannelConfig(bool bMaster_)
 {
-  u8 au8ANTAssignChannel0[]    = {MESG_ASSIGN_CHANNEL_SIZE, MESG_ASSIGN_CHANNEL_ID, G_stAntSetupData.AntChannel, G_stAntSetupData.AntChannelType, G_stAntSetupData.AntNetwork, CS};
+  u8 au8ANTAssignChannel0[]    = {MESG_ASSIGN_CHANNEL_SIZE, MESG_ASSIGN_CHANNEL_ID, G_stAntSetupData.AntChannel, CHANNEL_TYPE_MASTER, G_stAntSetupData.AntNetwork, CS};
   u8 au8ANTSetChannelID0[]     = {MESG_CHANNEL_ID_SIZE, MESG_CHANNEL_ID_ID, G_stAntSetupData.AntChannel, G_stAntSetupData.AntSerialLo, G_stAntSetupData.AntSerialHi, G_stAntSetupData.AntDeviceType, G_stAntSetupData.AntTransmissionType, CS};
   u8 au8ANTSetChannelPeriod0[] = {MESG_CHANNEL_MESG_PERIOD_SIZE, MESG_CHANNEL_MESG_PERIOD_ID, G_stAntSetupData.AntChannel, G_stAntSetupData.AntChannelPeriodLo, G_stAntSetupData.AntChannelPeriodHi, CS};
   u8 au8ANTSetChannelRFFreq0[] = {MESG_CHANNEL_RADIO_FREQ_SIZE, MESG_CHANNEL_RADIO_FREQ_ID, G_stAntSetupData.AntChannel, G_stAntSetupData.AntFrequency, CS};           

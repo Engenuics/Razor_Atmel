@@ -213,7 +213,7 @@ void LcdInitialize(void)
     LCD_CONTRAST_CMD, LCD_DISPLAY_SET_CMD, LCD_FOLLOWER_CMD 
   };
                  /* "012345567890123456789" */
-  u8 au8Welcome[] = "WELCOME!             ";
+  u8 au8Welcome[] = "RAZOR SAM3U2 ASCII   ";
   
   /* State to Idle */
   Lcd_StateMachine = LcdSM_Idle;
