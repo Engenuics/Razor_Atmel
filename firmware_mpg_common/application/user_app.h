@@ -28,6 +28,16 @@ Type Definitions
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
+/* Required constants for ANT channel configuration */
+#define ANT_CHANNEL_USERAPP             (u8)0                 // Channel 0 - 7
+#define ANT_SERIAL_LO_USERAPP           (u8)0x34              // Low byte of two-byte Device #
+#define ANT_SERIAL_HI_USERAPP           (u8)0x12              // High byte of two-byte Device #
+#define ANT_DEVICE_TYPE_USERAPP         (u8)1                 // 1 - 255
+#define ANT_TRANSMISSION_TYPE_USERAPP   (u8)1                 // 1-127 (MSB is pairing bit)
+#define ANT_CHANNEL_PERIOD_LO_USERAPP   (u8)0x00              // Low byte of two-byte channel period 0x0001 - 0x7fff
+#define ANT_CHANNEL_PERIOD_HI_USERAPP   (u8)0x20              // High byte of two-byte channel period 
+#define ANT_FREQUENCY_USERAPP           (u8)50                // 2400MHz + this number 0 - 99
+#define ANT_TX_POWER_USERAPP            RADIO_TX_POWER_0DBM   // RADIO_TX_POWER_0DBM, RADIO_TX_POWER_MINUS5DBM, RADIO_TX_POWER_MINUS10DBM, RADIO_TX_POWER_MINUS20DBM
 
 
 /**********************************************************************************************************************

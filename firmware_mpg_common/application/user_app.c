@@ -46,6 +46,12 @@ volatile u32 G_u32UserAppFlags;                       /* Global state flags */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
+extern AntSetupDataType G_stAntSetupData;                         /* From ant.c */
+
+extern u32 G_u32AntApiCurrentDataTimeStamp;                       /* From ant_api.c */
+extern AntApplicationMessageType G_eAntApiCurrentMessageClass;    /* From ant_api.c */
+extern u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];  /* From ant_api.c */
+
 extern volatile u32 G_u32SystemFlags;                  /* From main.c */
 extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 
@@ -88,10 +94,36 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+  u8 au8WelcomeMessage[] = "ANT Master";
 
+  /* Write a weclome message on the LCD */
+#if MPG1
+  /* Set a message up on the LCD. Delay is required to let the clear command send. */
+  LCDCommand(LCD_CLEAR_CMD);
+  for(u32 i = 0; i < 10000; i++);
+  LCDMessage(LINE1_START_ADDR, au8WelcomeMessage);
+#endif /* MPG 1*/
+  
+#if 0 // untested for MPG2
+  
+#endif /* MPG2 */
+
+ /* Configure ANT for this application */
+  G_stAntSetupData.AntChannel          = ANT_CHANNEL_USERAPP;
+  G_stAntSetupData.AntSerialLo         = ANT_SERIAL_LO_USERAPP;
+  G_stAntSetupData.AntSerialHi         = ANT_SERIAL_HI_USERAPP;
+  G_stAntSetupData.AntDeviceType       = ANT_DEVICE_TYPE_USERAPP;
+  G_stAntSetupData.AntTransmissionType = ANT_TRANSMISSION_TYPE_USERAPP;
+  G_stAntSetupData.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_USERAPP;
+  G_stAntSetupData.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_USERAPP;
+  G_stAntSetupData.AntFrequency        = ANT_FREQUENCY_USERAPP;
+  G_stAntSetupData.AntTxPower          = ANT_TX_POWER_USERAPP;
+
+  
   /* If good initialization, set state to Idle */
-  if( 1 /* Add condition for good init */)
+  if( AntChannelConfig(ANT_MASTER) )
   {
+    AntOpenChannel();
     UserApp_StateMachine = UserAppSM_Idle;
   }
   else
@@ -137,7 +169,72 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
-    
+  static u8 au8TestMessage[] = {0, 0, 0, 0, 0xA5, 0, 0, 0};
+  u8 au8DataContent[] = "xxxxxxxxxxxxxxxx";
+  
+  /* Check all the buttons and update au8TestMessage according to the button state */ 
+  au8TestMessage[0] = 0x00;
+  if( IsButtonPressed(BUTTON0) )
+  {
+    au8TestMessage[0] = 0xff;
+  }
+  
+  au8TestMessage[1] = 0x00;
+  if( IsButtonPressed(BUTTON1) )
+  {
+    au8TestMessage[1] = 0xff;
+  }
+
+#ifdef MPG1
+  au8TestMessage[2] = 0x00;
+  if( IsButtonPressed(BUTTON2) )
+  {
+    au8TestMessage[2] = 0xff;
+  }
+
+  au8TestMessage[3] = 0x00;
+  if( IsButtonPressed(BUTTON3) )
+  {
+    au8TestMessage[3] = 0xff;
+  }
+#endif /* MPG1 */
+  
+  if( AntReadData() )
+  {
+     /* New data message: check what it is */
+    if(G_eAntApiCurrentMessageClass == ANT_DATA)
+    {
+      /* We got some data: parse it into au8DataContent[] */
+      for(u8 i = 0; i < ANT_DATA_BYTES; i++)
+      {
+        au8DataContent[2 * i]     = HexToASCIICharUpper(G_au8AntApiCurrentData[i] / 16);
+        au8DataContent[2 * i + 1] = HexToASCIICharUpper(G_au8AntApiCurrentData[i] % 16);
+      }
+
+#ifdef MPG1
+      LCDMessage(LINE2_START_ADDR, au8DataContent);
+#endif /* MPG1 */
+      
+#ifdef MPG2
+#endif /* MPG2 */
+      
+    }
+    else if(G_eAntApiCurrentMessageClass == ANT_TICK)
+    {
+     /* Update and queue the new message data */
+      au8TestMessage[7]++;
+      if(au8TestMessage[7] == 0)
+      {
+        au8TestMessage[6]++;
+        if(au8TestMessage[6] == 0)
+        {
+          au8TestMessage[5]++;
+        }
+      }
+      AntQueueBroadcastMessage(au8TestMessage);
+    }
+  } /* end AntReadData() */
+  
 } /* end UserAppSM_Idle() */
 
 

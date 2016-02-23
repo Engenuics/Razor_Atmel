@@ -173,6 +173,7 @@
         <option>
           <name>CCDefines</name>
           <state>MPGL1</state>
+          <state>MPG1</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
