@@ -47,9 +47,9 @@ typedef struct
 #define ANT_MASTER  TRUE
 #define ANT_SLAVE   FALSE
 
-#define ANT_ACTIVITY_LOOP_CYCLES  (u32)4       /* Number of instruction cycles in an ANT activity loop */
-#define ANT_MAX_ACTIVITY_TIME     (u32)500     /* Target time in microseconds for max time to allow the ANT task to do something */
-#define MICRO_PER_SECOND          (u32)1000000 /* Microseconds per second */
+#define ANT_ACTIVITY_LOOP_CYCLES  (u32)4        /* Number of instruction cycles in an ANT activity loop */
+#define ANT_MAX_ACTIVITY_TIME     (u32)500      /* Target time in microseconds for max time to allow the ANT task to do something */
+#define MICRO_PER_SECOND          (u32)1000000  /* Microseconds per second */
 #define ANT_ACTIVITY_TIME_COUNT   (u32)10000    /* Value used in a while loop that is waiting for an activity to be completed */
 #define ANT_SRDY_DELAY            (u32)200      /* A loop-kill delay to provide guaranteed minimum space for SRDY messages */
 #define ANT_SRDY_PERIOD           (u32)20       /* A loop-kill delay to stretch the SRDY pulse out */
@@ -59,14 +59,14 @@ typedef struct
 #if 1
 /* Symbols for bytes in messages to help readability */
 #define CH                        (u8)0         /* Channel */
-#define D_0                        (u8)0         /* Data */
-#define D_1                        (u8)0         /* Data */
-#define D_2                        (u8)0         /* Data */
-#define D_3                        (u8)0         /* Data */
-#define D_4                        (u8)0         /* Data */
-#define D_5                        (u8)0         /* Data */
-#define D_6                        (u8)0         /* Data */
-#define D_7                        (u8)0         /* Data */
+#define D_0                       (u8)0         /* Data */
+#define D_1                       (u8)0         /* Data */
+#define D_2                       (u8)0         /* Data */
+#define D_3                       (u8)0         /* Data */
+#define D_4                       (u8)0         /* Data */
+#define D_5                       (u8)0         /* Data */
+#define D_6                       (u8)0         /* Data */
+#define D_7                       (u8)0         /* Data */
 #define CS                        (u8)0         /* Checksum */
 #endif
 
