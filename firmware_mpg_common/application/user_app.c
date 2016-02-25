@@ -52,6 +52,12 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
+extern AntSetupDataType G_stAntSetupData;                         /* From ant.c */
+
+extern u32 G_u32AntApiCurrentDataTimeStamp;                       /* From ant_api.c */
+extern AntApplicationMessageType G_eAntApiCurrentMessageClass;    /* From ant_api.c */
+extern u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];  /* From ant_api.c */
+
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -59,6 +65,9 @@ Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
 static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
+
+static u32 UserApp_u32DataMsgCount = 0;             /* Counts the number of ANT_DATA packets received */
+static u32 UserApp_u32TickMsgCount = 0;             /* Counts the number of ANT_TICK packets received */
 
 
 /**********************************************************************************************************************
@@ -88,15 +97,44 @@ Promises:
 */
 void UserAppInitialize(void)
 {
-
+  u8 au8WelcomeMessage[] = "ANT SLAVE DEMO";
+  u8 au8Instructions[] = "B0 toggles radio";
+  
+  /* Clear screen and place start messages */
+#ifdef MPG2
+  PixelAddressType sStringLocation = {LCD_SMALL_FONT_LINE0, LCD_LEFT_MOST_COLUMN}; 
+  LcdClearScreen();
+  LcdLoadString(au8WelcomeMessage, LCD_FONT_SMALL, &sStringLocation); 
+  sStringLocation.u16PixelRowAddress = LCD_SMALL_FONT_LINE1;
+  LcdLoadString(au8Instructions, LCD_FONT_SMALL, &sStringLocation); 
+  
+  /* Start with LED0 in RED state = channel is not configured */
+  LedOn(RED0);
+  
+#endif /* MPG2 */
+  
+ /* Configure ANT for this application */
+  G_stAntSetupData.AntChannel          = ANT_CHANNEL_USERAPP;
+  G_stAntSetupData.AntSerialLo         = ANT_SERIAL_LO_USERAPP;
+  G_stAntSetupData.AntSerialHi         = ANT_SERIAL_HI_USERAPP;
+  G_stAntSetupData.AntDeviceType       = ANT_DEVICE_TYPE_USERAPP;
+  G_stAntSetupData.AntTransmissionType = ANT_TRANSMISSION_TYPE_USERAPP;
+  G_stAntSetupData.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_USERAPP;
+  G_stAntSetupData.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_USERAPP;
+  G_stAntSetupData.AntFrequency        = ANT_FREQUENCY_USERAPP;
+  G_stAntSetupData.AntTxPower          = ANT_TX_POWER_USERAPP;
+  
   /* If good initialization, set state to Idle */
-  if( 1 /* Add condition for good init */)
+  if( AntChannelConfig(ANT_SLAVE) )
   {
+    /* Channel is configured, so change LED to yellow */
+    LedOn(GREEN0);
     UserApp_StateMachine = UserAppSM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
+    LedBlink(RED0, LED_2HZ);
     UserApp_StateMachine = UserAppSM_FailedInit;
   }
 
@@ -137,15 +175,133 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
+  /* Look for BUTTON 0 to open channel */
+  if(WasButtonPressed(BUTTON0))
+  {
+    /* Got the button, so complete one-time actions before next state */
+    ButtonAcknowledge(BUTTON0);
+    
+    /* Queue open channel and change LED0 from yellow to blinking green to indicate channel is opening */
+    AntOpenChannel();
+    LedOff(RED0);
+    LedBlink(GREEN0, LED_2HZ);
+    
+    /* Set timer and advance states */
+    UserApp_u32Timeout = G_u32SystemTime1ms;
+    UserApp_StateMachine = UserAppSM_WaitChannelOpen;
+  }
     
 } /* end UserAppSM_Idle() */
+     
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for channel to open */
+static void UserAppSM_WaitChannelOpen(void)
+{
+  /* Monitor the channel status to check if channel is opened */
+  if(AntRadioStatus() == ANT_OPEN)
+  {
+    LedOn(GREEN0);
+    UserApp_StateMachine = UserAppSM_ChannelOpen;
+  }
+  
+  /* Check for timeout */
+  if( IsTimeUp(&UserApp_u32Timeout, TIMEOUT_VALUE) )
+  {
+    AntCloseChannel();
+    LedOn(RED0);
+    LedOn(GREEN0);
+    UserApp_StateMachine = UserAppSM_Idle;
+
+  }
+    
+} /* end UserAppSM_WaitChannelOpen() */
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Channel is open, so monitor data */
+static void UserAppSM_ChannelOpen(void)
+{
+  /* Check for BUTTON0 to close channel */
+  if(WasButtonPressed(BUTTON0))
+  {
+    /* Got the button, so complete one-time actions before next state */
+    ButtonAcknowledge(BUTTON0);
+    
+    /* Queue close channel and change LED0 to blinking green to indicate channel is closing */
+    AntCloseChannel();
+    LedOff(RED0);
+    LedOff(BLUE0);
+    LedBlink(GREEN0, LED_2HZ);
+    
+    /* Set timer and advance states */
+    UserApp_u32Timeout = G_u32SystemTime1ms;
+    UserApp_StateMachine = UserAppSM_WaitChannelClose;
+  }
+  
+  /* Always check for ANT messages */
+  if( AntReadData() )
+  {
+     /* New data message: check what it is */
+    if(G_eAntApiCurrentMessageClass == ANT_DATA)
+    {
+      UserApp_u32DataMsgCount++;
+      
+    }
+    else if(G_eAntApiCurrentMessageClass == ANT_TICK)
+    {
+     UserApp_u32TickMsgCount++;
+     
+     /* Look at the TICK contents to check the event code */
+     
+     /* If we are synced with a device, blue is solid */
+     /* If we are paired but missing messages, blue blinks */
+     /* If we drop to search, LED0 is green */
+    }
+    
+  } /* end AntReadData() */
+  
+
+  /* A slave channel can close on its own, so explicitly check channel status */
+  if(AntRadioStatus() != ANT_OPEN)
+  {
+    LedBlink(GREEN0, LED_2HZ);
+    LedOff(BLUE0);
+    
+    UserApp_u32Timeout = G_u32SystemTime1ms;
+    UserApp_StateMachine = UserAppSM_WaitChannelClose;
+  }
+      
+} /* end UserAppSM_ChannelOpen() */
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for channel to close */
+static void UserAppSM_WaitChannelClose(void)
+{
+  /* Monitor the channel status to check if channel is closed */
+  if(AntRadioStatus() == ANT_CLOSED)
+  {
+    LedOn(GREEN0);
+    LedOn(RED0);
+    UserApp_StateMachine = UserAppSM_Idle;
+  }
+  
+  /* Check for timeout */
+  if( IsTimeUp(&UserApp_u32Timeout, TIMEOUT_VALUE) )
+  {
+    LedBlink(RED0, LED_4HZ);
+    LedOff(GREEN0);
+    UserApp_StateMachine = UserAppSM_Error;
+  }
+    
+} /* end UserAppSM_WaitChannelClose() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void UserAppSM_Error(void)          
 {
-  UserApp_StateMachine = UserAppSM_Idle;
   
 } /* end UserAppSM_Error() */
 
