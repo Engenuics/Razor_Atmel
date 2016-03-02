@@ -41,6 +41,9 @@ Constants / Definitions
 
 #define TIMEOUT_VALUE                   (u32)2000             /* Maximum allowed timeout value for any transition state */
 
+/* G_u32UserAppFlags */
+#define _CHANNEL_SYNCED                 0x00000001            /* Set when channel is synced */
+
 
 /**********************************************************************************************************************
 Function Declarations
