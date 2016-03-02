@@ -1131,10 +1131,16 @@ static u8 AntProcessMessage(void)
               }
             }
             
-            /* Indication of this event still occurs at the ANT message period, so 
-            an ANT_TICK message should be queued to the application message list.
-            Overwrite au8MessageCopy with the ANT_TICK message data. */
+            /* Queue an ANT_TICK message to the application message list. */
             AntTick(EVENT_RX_FAIL);
+            break;
+          }
+
+          case EVENT_RX_FAIL_GO_TO_SEARCH: /* slave has lost sync with Master (channel still open) */
+          {
+            /* The slave missed enough consecutive messages so it goes back to search: communicate this to the
+            application in case it matters. Could also queue a debug message here. */
+            AntTick(EVENT_RX_FAIL_GO_TO_SEARCH);
             break;
           }
 
@@ -1159,15 +1165,22 @@ static u8 AntProcessMessage(void)
 
           case EVENT_TRANSFER_TX_FAILED: /* ACK was not received from an acknowledged data message */
           { 
-
             /* Regardless of complete or fail, it is time to send the next message */
             AntTick(EVENT_TRANSFER_TX_FAILED);
             break;
           } 
 
+          case EVENT_RX_SEARCH_TIMEOUT: /* The ANT channel is going to close due to search timeout */
+          {
+            /* Forward this to application */
+            AntTick(EVENT_RX_SEARCH_TIMEOUT);
+            break;
+          }
+ 
           case EVENT_CHANNEL_CLOSED: /* The ANT channel is now closed */
           {
-            G_u32AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN;
+            DebugPrintf("Channel closed\n\r");
+            G_u32AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
             break;
           }
           
