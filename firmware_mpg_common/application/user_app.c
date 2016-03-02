@@ -295,30 +295,6 @@ static void UserAppSM_ChannelOpen(void)
           {
             LedOn(BLUE3);
           }
-#if 0
-          switch (G_au8AntApiCurrentData[1])
-          {
-            case 1:
-            {
-              LedOn(RED3);
-              break;
-            }
-            case 2:
-            {
-              LedOn(GREEN3);
-              break;
-            }
-            case 3:
-            {
-              LedOn(BLUE3);
-              break;
-            }
-            default:
-            {
-              break;
-            }
-          } /* end switch */
-#endif
         }
       }
     }
