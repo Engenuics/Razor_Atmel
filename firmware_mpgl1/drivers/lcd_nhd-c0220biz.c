@@ -109,6 +109,11 @@ void LCDCommand(u8 u8Command_)
   /* Queue the command to the I²C application */
   TWI0WriteData(LCD_ADDRESS, sizeof(au8LCDWriteCommand), &au8LCDWriteCommand[0], STOP);
 
+  /* Add a delay during initialization to let the command send properly */
+  if(G_u32SystemFlags & _SYSTEM_INITIALIZING )
+  {
+    for(u32 i = 0; i < 500000; i++);
+  }
   
 } /* end LCDCommand() */
 
