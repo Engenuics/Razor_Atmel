@@ -52,12 +52,6 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
-extern AntSetupDataType G_stAntSetupData;                         /* From ant.c */
-
-extern u32 G_u32AntApiCurrentDataTimeStamp;                       /* From ant_api.c */
-extern AntApplicationMessageType G_eAntApiCurrentMessageClass;    /* From ant_api.c */
-extern u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];  /* From ant_api.c */
-
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -65,9 +59,6 @@ Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
 static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
-
-static u32 UserApp_u32DataMsgCount = 0;             /* Counts the number of ANT_DATA packets received */
-static u32 UserApp_u32TickMsgCount = 0;             /* Counts the number of ANT_TICK packets received */
 
 
 /**********************************************************************************************************************
