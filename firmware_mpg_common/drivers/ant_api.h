@@ -59,6 +59,7 @@ ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
 
 
 #define   MESSAGE_ANT_TICK                        (u8)0xFF
+
 #define   ANT_TICK_MSG_ID_INDEX                   (u8)0
 #define   ANT_TICK_MSG_EVENT_CODE_INDEX           (u8)1
 #define   ANT_TICK_MSG_SENTINEL1_INDEX            (u8)2
