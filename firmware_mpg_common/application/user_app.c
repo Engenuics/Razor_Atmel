@@ -88,9 +88,44 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+#ifdef MPGL1
+  /* All discrete LEDs to off */
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
+  
+  /* Backlight to white */  
+  LedOn(LCD_RED);
+  LedOn(LCD_GREEN);
+  LedOn(LCD_BLUE);
+#endif /* MPGL1 */
+
+#ifdef MPGL2
+  /* All discrete LEDs to off */
+  LedOff(RED0);
+  LedOff(RED1);
+  LedOff(RED2);
+  LedOff(RED3);
+  LedOff(GREEN0);
+  LedOff(GREEN1);
+  LedOff(GREEN2);
+  LedOff(GREEN3);
+  LedOff(BLUE0);
+  LedOff(BLUE1);
+  LedOff(BLUE2);
+  LedOff(BLUE3);
+  
+  /* Backlight to white */  
+  LedOn(LCD_BL);
+#endif /* MPGL2 */
   
   /* If good initialization, set state to Idle */
-  if( 1 )
+  if( 1 /* Add condition for good init */)
   {
     UserApp_StateMachine = UserAppSM_Idle;
   }
@@ -134,17 +169,202 @@ State Machine Function Definitions
 **********************************************************************************************************************/
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a message to be queued */
+/* Update counter and display on LEDs. */
 static void UserAppSM_Idle(void)
 {
+  static u16 u16BlinkCount = 0;
+  static u8 u8Counter = 0;
+  static u8 u8ColorIndex = 0;
+  
+#ifdef MPG1
+  u16BlinkCount++;
+  if(u16BlinkCount == 500)
+  {
+    u16BlinkCount = 0;
     
+    /* Update the counter and roll at 16 */
+    u8Counter++;
+    if(u8Counter == 16)
+    {
+      u8Counter = 0;
+      
+      /* Manage the backlight color */
+      u8ColorIndex++;
+      if(u8ColorIndex == 7)
+      {
+        u8ColorIndex = 0;
+      }
+      
+    /* Parse the current count to set the LEDs.  RED is bit 0, ORANGE is bit 1,
+    YELLOW is bit 2, GREEN is bit 3. */
+    
+    if(u8Counter & 0x01)
+    {
+      LedOn(RED);
+    }
+    else
+    {
+      LedOff(RED);
+    }
+
+    if(u8Counter & 0x02)
+    {
+      LedOn(ORANGE);
+    }
+    else
+    {
+      LedOff(ORANGE);
+    }
+
+    if(u8Counter & 0x04)
+    {
+      LedOn(YELLOW);
+    }
+    else
+    {
+      LedOff(YELLOW);
+    }
+
+    if(u8Counter & 0x08)
+    {
+      LedOn(GREEN);
+    }
+    else
+    {
+      LedOff(GREEN);
+    }
+
+      /* Set the backlight color: white (all), purple (blue + red), blue, cyan (blue + green),
+      green, yellow (green + red), red */
+      switch(u8ColorIndex)
+      {
+        case 0: /* white */
+          LedOn(LCD_RED);
+          LedOn(LCD_GREEN);
+          LedOn(LCD_BLUE);
+          break;
+
+        case 1: /* purple */
+          LedOn(LCD_RED);
+          LedOff(LCD_GREEN);
+          LedOn(LCD_BLUE);
+          break;
+          
+        case 2: /* blue */
+          LedOff(LCD_RED);
+          LedOff(LCD_GREEN);
+          LedOn(LCD_BLUE);
+          break;
+          
+        case 3: /* cyan */
+          LedOff(LCD_RED);
+          LedOn(LCD_GREEN);
+          LedOn(LCD_BLUE);
+          break;
+          
+        case 4: /* green */
+          LedOff(LCD_RED);
+          LedOn(LCD_GREEN);
+          LedOff(LCD_BLUE);
+          break;
+          
+        case 5: /* yellow */
+          LedOn(LCD_RED);
+          LedOn(LCD_GREEN);
+          LedOff(LCD_BLUE);
+          break;
+          
+        case 6: /* red */
+          LedOn(LCD_RED);
+          LedOff(LCD_GREEN);
+          LedOff(LCD_BLUE);
+          break;
+          
+        default: /* off */
+          LedOff(LCD_RED);
+          LedOff(LCD_GREEN);
+          LedOff(LCD_BLUE);
+          break;
+      } /* end switch */
+    } /* end if(u8Counter == 16) */
+    
+  } /* end if(u16BlinkCount == 500) */
+#endif /* MPGL1 */
+
+#ifdef MPG2
+  u16BlinkCount++;
+  if(u16BlinkCount == 500)
+  {
+    u16BlinkCount = 0;
+    
+    /* Update the counter and roll at 16 */
+    u8Counter++;
+    if(u8Counter == 16)
+    {
+      u8Counter = 0;
+      
+      LedOff((LedNumberType)(RED3 + (4 * u8ColorIndex)));
+      LedOff((LedNumberType)(RED2 + (4 * u8ColorIndex)));
+      LedOff((LedNumberType)(RED1 + (4 * u8ColorIndex)));
+      LedOff((LedNumberType)(RED0 + (4 * u8ColorIndex)));
+      
+      u8ColorIndex++;
+      if(u8ColorIndex == 3)
+      {
+        u8ColorIndex = 0;
+      }
+    } /* end if(u8Counter == 16) */
+    
+    /* Parse the current count to set the LEDs.  From leds.h we see the enum for red, green and blue
+    are seperated by 4 so use this with u8ColorIndex to */
+    
+    if(u8Counter & 0x01)
+    {
+      LedOn((LedNumberType)(RED3 + (4 * u8ColorIndex)));
+    }
+    else
+    {
+      LedOff(RED3 + (4 * u8ColorIndex));
+    }
+
+    if(u8Counter & 0x02)
+    {
+      LedOn(RED2 + (4 * u8ColorIndex));
+    }
+    else
+    {
+      LedOff(RED2 + (4 * u8ColorIndex));
+    }
+
+    if(u8Counter & 0x04)
+    {
+      LedOn(RED1 + (4 * u8ColorIndex));
+    }
+    else
+    {
+      LedOff(RED1 + (4 * u8ColorIndex));
+    }
+
+    if(u8Counter & 0x08)
+    {
+      LedOn(RED0 + (4 * u8ColorIndex));
+    }
+    else
+    {
+      LedOff(RED0 + (4 * u8ColorIndex));
+    }
+    
+  } /* end if(u16BlinkCount == 500) */
+#endif /* MPG2 */  
+  
 } /* end UserAppSM_Idle() */
-     
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void UserAppSM_Error(void)          
 {
+  UserApp_StateMachine = UserAppSM_Idle;
   
 } /* end UserAppSM_Error() */
 
