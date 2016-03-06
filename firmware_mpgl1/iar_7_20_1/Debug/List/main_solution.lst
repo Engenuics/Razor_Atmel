@@ -1,0 +1,384 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        06/Mar/2016  15:25:45
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\application\main_solution.c
+#    Command line =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\application\main_solution.c
+#        -D MPGL1 -D MPG1 --preprocess=cl
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
+#        -lC
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
+#        -o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h" -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\bsp\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\drivers\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\cmsis\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\drivers\
+#        -On --use_c++_inline -I "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\CMSIS\Include\"
+#    List file    =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\main_solution.lst
+#    Object file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\main_solution.o
+#
+###############################################################################
+
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\application\main_solution.c
+      1          /***********************************************************************************************************************
+      2          File: main.c                                                                
+      3          
+      4          Description:
+      5          Container for the MPG firmware.  
+      6          ***********************************************************************************************************************/
+      7          
+      8          #include "configuration.h"
+      9          
+     10          #ifdef SOLUTION
+     11          /***********************************************************************************************************************
+     12          Global variable definitions with scope across entire project.
+     13          All Global variable names shall start with "G_"
+     14          ***********************************************************************************************************************/
+     15          /* New variables */
+     16          
+     17          /*--------------------------------------------------------------------------------------------------------------------*/
+     18          /* External global variables defined in other files (must indicate which file they are defined in) */
+     19          
+     20          
+     21          /***********************************************************************************************************************
+     22          Global variable definitions with scope limited to this local application.
+     23          Variable names shall start with "Main_" and be declared as static.
+     24          ***********************************************************************************************************************/
+     25          static u8 Main_u8Servers = 0;                  /* Number of people slinging drinks */
+     26          
+     27          
+     28          /***********************************************************************************************************************
+     29          Main Program
+     30          ***********************************************************************************************************************/
+     31          
+     32          void main(void)
+     33          {
+     34          #if 0 /* Set this to 1 to run the example code */
+     35            
+     36            u32 u32UselessVariableForExample;
+     37            u32 au32BigArray[] = {5, 4, 3, 2, 1};
+     38            DrinkType aeDrinkArray[3] = {BEER, SHOOTER};
+     39          
+     40            /* Pointer example code */
+     41            u8 u8Test = 0xA5;
+     42            u8* pu8Example;
+     43            u32 u32Test = 0x0000ffff;
+     44            u32* pu32Example;
+     45          
+     46            /* Load the addresses into our pointer variables */
+     47            pu8Example = &u8Test;
+     48            pu32Example = &u32Test;
+     49          
+     50            /* Access the variables via the pointers (two different ways) */
+     51            *pu8Example += 1;
+     52            (*pu32Example)++;
+     53          
+     54            /* Move the pointers (watch out for the second one!) */
+     55            pu8Example++;
+     56            *pu32Example++;
+     57            
+     58            /* Struct example code */
+     59            u8 u8CurrentServer;
+     60            ServerType sServer1;
+     61            ServerType* psServerParser;
+     62          
+     63            psServerParser = &sServer1;
+     64            sServer1.u8ServerNumber = 18;
+     65            u8CurrentServer = psServerParser->u8ServerNumber;
+     66          #endif
+     67            
+     68            /* Module exercise solution begins here */
+     69            u32 u32LoopCounter = 0;
+     70            ServerType* psServerList = NULL;
+     71            ServerType* psServerListParser = NULL;
+     72            ServerType* psServerListDoomed = NULL;
+     73            bool bOrderDrink = FALSE;
+     74            DrinkType eDrink = BEER;
+     75            u8 u8EmptyCount;
+     76            const char au8MessageDrinkOrdered[]  = "Drink ordered   ";
+     77            const char au8MessageDrinkServed[]   = "Drink served    ";
+     78            const char au8MessageNewServer[]     = "New server added";
+     79            const char au8MessageNoServer[]      = "No free server  ";
+     80            const char au8MessageServerRemoved[] = "Server removed  ";
+     81            char au8MessageCurrent[]             = "                ";
+     82            bool bNewMessage = FALSE;
+     83            
+     84            while(1)
+     85            {
+     86              /* Watch for a drink order */
+     87              if(bOrderDrink)
+     88              {
+     89                /* Parse through the list to determine if a server has space */
+     90                psServerListParser = psServerList;
+     91                while( (psServerListParser != NULL) && bOrderDrink)
+     92                {
+     93                  for(u8 i = 0; i < MAX_DRINKS; i++)
+     94                  {
+     95                    if(psServerListParser->asServingTray[i] == EMPTY)
+     96                    {
+     97                      /* Found a space: choose the type of drink based on the current system count */
+     98                      eDrink = (DrinkType)((u32LoopCounter % 4) + 1);
+     99                      psServerListParser->asServingTray[i] = eDrink;
+    100                      strcpy(au8MessageCurrent, au8MessageDrinkOrdered);
+    101                      bNewMessage = TRUE;
+    102                
+    103                      /* Clear the drink order */
+    104                      bOrderDrink = FALSE;
+    105                      break;
+    106                    }
+    107                  } /* end for */
+    108                  
+    109                  /* Move to next server in the list */
+    110                  psServerListParser = psServerListParser->psNextServer;
+    111                  
+    112                } /* end while */
+    113                
+    114                /* If bOrderDrink is still TRUE, then the drink order is still waiting so see if another server is available */
+    115                if(bOrderDrink)
+    116                {
+    117                  if(CreateServer(&psServerList))
+    118                  {
+    119                    /* Server was created so initialize and add to list; the drink will be ordered next iteration */
+    120                    strcpy(au8MessageCurrent, au8MessageNewServer);
+    121                    bNewMessage = TRUE;
+    122                  }
+    123                  else
+    124                  {
+    125                    strcpy(au8MessageCurrent, au8MessageNoServer);
+    126                    bNewMessage = TRUE;
+    127          
+    128                    /* The order is ignored */
+    129                    bOrderDrink = FALSE;
+    130                  }
+    131                }
+    132              } /* end if (bOrderDrink) */
+    133          
+    134                  
+    135              /* Check if it is time to remove a drink */
+    136              if(u32LoopCounter % DRINK_SERVE_TIME == 0)
+    137              {
+    138                /* Select one of the servers somewhat randomly based on the number of the last drink ordered */
+    139                psServerListParser = psServerList;
+    140                if(psServerListParser != NULL)
+    141                {
+    142                  for(u8 i = 0; i < (u8)eDrink; i++)
+    143                  {
+    144                    /* Parse through to the server making sure to stay in the list */
+    145                    if(psServerListParser->psNextServer != NULL)
+    146                    {
+    147                      psServerListParser = psServerListParser->psNextServer;
+    148                    }
+    149                  }
+    150                  
+    151                  /* Look through the tray to find a drink to remove and check if the tray is empty */
+    152                  u8EmptyCount = 0;
+    153                  for(u8 i = 0; i < MAX_DRINKS; i++)
+    154                  {
+    155                    if(psServerListParser->asServingTray[i] != EMPTY)
+    156                    {
+    157                      /* If this is the first drink found on the tray, it's the one to be removed */
+    158                      if( i - u8EmptyCount == 0 )
+    159                      {
+    160                        /* Remove the drink and queue message */
+    161                        psServerListParser->asServingTray[i] = EMPTY;
+    162                        u8EmptyCount++;
+    163                        strcpy(au8MessageCurrent, au8MessageDrinkServed);
+    164                        bNewMessage = TRUE;
+    165                      }
+    166                    }
+    167                    else
+    168                    {
+    169                      u8EmptyCount++;
+    170                    }
+    171                  }
+    172                  
+    173                  /* If the server's tray is now empty, remove the server */
+    174                  if(u8EmptyCount == MAX_DRINKS)
+    175                  {
+    176                    /* Put a pointer on this node as it will be removed and put the parser back to the start of the list */
+    177                    psServerListDoomed = psServerListParser;
+    178                    psServerListParser = psServerList;
+    179                    
+    180                    /* Handle if doomed node is first */
+    181                    if(psServerListParser == psServerListDoomed)
+    182                    {
+    183                      psServerList = psServerListDoomed->psNextServer;
+    184                    }
+    185                    else
+    186                    {
+    187                      /* Find the node just before the doomed node */
+    188                      while(psServerListParser->psNextServer != psServerListDoomed)
+    189                      {
+    190                        psServerListParser = psServerListParser->psNextServer;
+    191                      }
+    192                      
+    193                      /* Connect the current node to the node after the doomed list */
+    194                      psServerListParser->psNextServer = psServerListDoomed->psNextServer;
+    195                    }
+    196                    
+    197                    /* Free the memory of the doomed node */
+    198                    free(psServerListDoomed);
+    199                    Main_u8Servers--;
+    200                    strcpy(au8MessageCurrent, au8MessageServerRemoved);
+    201                    bNewMessage = TRUE;
+    202                  } /* end if(u8EmptyCount == MAX_DRINKS) */
+    203                  
+    204                } /* if(psServerListParser != NULL) */
+    205              } /* if(u32LoopCounter % DRINK_SERVE_TIME == 0) */
+    206          
+    207          
+    208              /* Check to see if a new message was added */
+    209              if(bNewMessage)
+    210              {
+    211                /* Clear the variable: set a breakpoint here to halt whenever a new message is posted */
+    212                bNewMessage = FALSE;
+    213              }
+    214          
+    215              /* Pause for the next iteration - about 1ms of instructions */
+    216              for(u32 i = 0; i < 1700; i++);
+    217              u32LoopCounter++;
+    218          
+    219            } /* end while(1) main super loop */
+    220            
+    221          } /* end main() */
+    222          
+    223          
+    224          /***********************************************************************************************************************
+    225          * Function definitions
+    226          ***********************************************************************************************************************/
+    227          
+    228          /*---------------------------------------------------------------------------------------------------------------------/
+    229          Function InitializeServer
+    230          
+    231          Description:
+    232          Initializes a new server.  A new server has an empty tray of drinks and is
+    233          assigned the next number available.
+    234          
+    235          Requires:
+    236            - psServer_ points to the server list where a new server is to be initialized; 
+    237              since the server list is a pointer to a linked list, this is a pointer-to-pointer
+    238            - Main_u8Servers holds the current number of active servers
+    239          
+    240          Promises:
+    241            - Returns TRUE if the server is initialized
+    242            - Returns FALSE if the server cannot be initialized
+    243          */
+    244          bool InitializeServer(ServerType** psServer_)
+    245          {
+    246            if(*psServer_ == NULL)
+    247            {
+    248              return(FALSE);
+    249            }
+    250          
+    251            (*psServer_)->u8ServerNumber = Main_u8Servers;
+    252          
+    253            /* Start with an empty tray */
+    254            for(u8 i = 0; i < MAX_DRINKS; i++)
+    255            {
+    256              (*psServer_)->asServingTray[i] = EMPTY;
+    257            }
+    258          
+    259            return(TRUE);
+    260            
+    261          } /* end InitializeServer() */
+    262          
+    263          
+    264          /*---------------------------------------------------------------------------------------------------------------------/
+    265          Function CreateServer
+    266          
+    267          Description:
+    268          Creates a new, unitialized server object.
+    269          
+    270          Requires:
+    271            - psServerList_ points to the server list where the server is added.
+    272            - Needs enough heap space to create a ServerType object
+    273          
+    274          Promises:
+    275            - Returns TRUE if the server is created; the new server object is added to the end of psServerList_ 
+    276            - Returns FALSE if the server cannot be created
+    277          */
+    278          bool CreateServer(ServerType** psServerList_)
+    279          {
+    280            ServerType* psNewServer = 0;
+    281            ServerType** pServerParser;
+    282            
+    283            /* Check that we have are not at the maximum server limit */
+    284            if(Main_u8Servers >= MAX_SERVERS)
+    285            {
+    286              return(FALSE);
+    287            }
+    288          
+    289            /* Try to create the server object */
+    290            psNewServer = malloc( sizeof(ServerType) );
+    291            
+    292            /* Check that we have are not at the maximum server limit */
+    293            if(psNewServer == NULL)
+    294            {
+    295              return(FALSE);
+    296            }
+    297          
+    298            /* Server created successfully, so initialize and add to the list */
+    299            Main_u8Servers++;
+    300            InitializeServer(&psNewServer);
+    301            pServerParser = psServerList_;
+    302            
+    303            /* If empty list, new node is start of list */
+    304            if(*pServerParser == NULL)
+    305            {
+    306              *pServerParser = psNewServer;
+    307            }
+    308            
+    309            /* If not an empty list, parse through until the last node is found */
+    310            else
+    311            {
+    312              while((*pServerParser)->psNextServer != NULL)
+    313              {
+    314                *pServerParser = (*pServerParser)->psNextServer;
+    315              }
+    316          
+    317              /* pServerParser is now pointing at the end node update the end pointer to the new node */
+    318              (*pServerParser)->psNextServer = psNewServer;
+    319          
+    320            }
+    321          
+    322            return(TRUE);
+    323            
+    324          } /* end CreateServer() */
+    325          
+    326          
+    327          
+    328          /*--------------------------------------------------------------------------------------------------------------------*/
+    329          /* End of File */
+    330          /*--------------------------------------------------------------------------------------------------------------------*/
+    331          #endif /* SOLUTION */
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

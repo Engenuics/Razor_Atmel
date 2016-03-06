@@ -20,7 +20,9 @@ Header file for main.c.
 /***********************************************************************************************************************
 * Constant Definitions
 ***********************************************************************************************************************/
-#define MAX_DRINKS          (u8)10      /* Maximum number of drinks a server can hold */
+#define MAX_DRINKS          (u8)3       /* Maximum number of drinks a server can hold */
+#define MAX_SERVERS         (u8)3       /* Maximum number of servers */
+#define DRINK_SERVE_TIME    (u32)30000  /* Loop iterations before drink is removed */
 
 
 /***********************************************************************************************************************
@@ -30,7 +32,7 @@ typedef enum {EMPTY, BEER, SHOOTER, WINE, HIBALL} DrinkType;
 
 typedef struct
 {
-  u8 u8ServerNumber;                    /* Unique token for this message */
+  u8 u8ServerNumber;                    /* Unique token for this item */
   DrinkType asServingTray[MAX_DRINKS];  /* Data payload array */
   void* psNextServer;                   /* Pointer to next ServerType*/
 } ServerType;
@@ -39,8 +41,8 @@ typedef struct
 /***********************************************************************************************************************
 * Function declarations
 ***********************************************************************************************************************/
-bool InitializeServer(ServerType* psServer_);
-bool CreateServer(ServerType* psServerList_);
+bool InitializeServer(ServerType** psServer_);
+bool CreateServer(ServerType** psServerList_);
 
 
 #endif /* __MAIN_H */

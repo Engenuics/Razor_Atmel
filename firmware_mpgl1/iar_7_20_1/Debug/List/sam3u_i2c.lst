@@ -1,0 +1,2018 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        04/Mar/2016  23:31:47
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\sam3u_i2c.c
+#    Command line =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\sam3u_i2c.c
+#        -D MPGL1 -D MPG1 --preprocess=cl
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
+#        -lC
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\
+#        -o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h" -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\bsp\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\drivers\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\cmsis\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\drivers\
+#        -On --use_c++_inline -I "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\CMSIS\Include\"
+#    List file    =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\sam3u_i2c.lst
+#    Object file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\sam3u_i2c.o
+#
+###############################################################################
+
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\sam3u_i2c.c
+      1          /**********************************************************************************************************************
+      2          File: sam3u_TWI.c                                                                
+      3          
+      4          Description: 
+      5          Provides a driver to use TWI0 peripheral to send and receive data using interrupts.
+      6          Currently Set at - 200kHz Master Mode.
+      7          This is a simpler version of a serial system driver that does not use resource control
+      8          through Request() and Release() calls
+      9          
+     10          
+     11          ------------------------------------------------------------------------------------------------------------------------
+     12          API:
+     13          
+     14          Public use Functions:
+     15          
+     16          bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_);
+     17          bool TWI0ReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_);
+     18          u32 TWIWriteByte(TWIPeripheralType* psTWIPeripheral_, u8 u8Byte_, TWIStopType Send_);
+     19          u32 TWIWriteData(TWIPeripheralType* psTWIPeripheral_, u32 u32Size_, u8* u8Data_, TWIStopType Send_);
+     20          
+     21          All of these functions return a value that should be checked to ensure the operation will be completed
+     22          
+     23          Both TWI0ReadByte and TWI0ReadData require that pu8RxBuffer is large enough to hold the data
+     24          As well it is assumed, that since you know the amount of data to be sent, a stop can be sent
+     25          when all bytes have benn received (and not tie the data and clock line low).
+     26          
+     27          WriteByte and WriteData have the option to hold the lines low as it waits for more data 
+     28          to be queue. If a stop condition is not sent only Writes can follow until a stop condition is
+     29          requested (as the current transmission isn't complete).
+     30          
+     31          !!!!! ISSUES: 
+     32              - No Debugging of Read functionality
+     33          
+     34          **********************************************************************************************************************/
+     35          
+     36          #include "configuration.h"
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void NVIC_EnableIRQ(IRQn_Type)
+   \                     NVIC_EnableIRQ: (+1)
+   \   00000000   0x2101             MOVS     R1,#+1
+   \   00000002   0xF010 0x021F      ANDS     R2,R0,#0x1F
+   \   00000006   0x4091             LSLS     R1,R1,R2
+   \   00000008   0x.... 0x....      LDR.W    R2,??DataTable14  ;; 0xe000e100
+   \   0000000C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000000E   0x0943             LSRS     R3,R0,#+5
+   \   00000010   0xF842 0x1023      STR      R1,[R2, R3, LSL #+2]
+   \   00000014   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void NVIC_ClearPendingIRQ(IRQn_Type)
+   \                     NVIC_ClearPendingIRQ: (+1)
+   \   00000000   0x2101             MOVS     R1,#+1
+   \   00000002   0xF010 0x021F      ANDS     R2,R0,#0x1F
+   \   00000006   0x4091             LSLS     R1,R1,R2
+   \   00000008   0x.... 0x....      LDR.W    R2,??DataTable14_1  ;; 0xe000e280
+   \   0000000C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000000E   0x0943             LSRS     R3,R0,#+5
+   \   00000010   0xF842 0x1023      STR      R1,[R2, R3, LSL #+2]
+   \   00000014   0x4770             BX       LR               ;; return
+     37          
+     38          
+     39          /***********************************************************************************************************************
+     40          Global variable definitions with scope across entire project.
+     41          All Global variable names shall start with "G_"
+     42          ***********************************************************************************************************************/
+     43          /* New variables */
+     44          
+     45          /*--------------------------------------------------------------------------------------------------------------------*/
+     46          /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
+     47          extern volatile u32 G_u32SystemTime1ms;        /* From board-specific source file */
+     48          extern volatile u32 G_u32SystemTime1s;         /* From board-specific source file */
+     49          
+     50          extern volatile u32 G_u32SystemFlags;          /* From main.c */
+     51          extern volatile u32 G_u32ApplicationFlags;     /* From main.c */
+     52          
+     53          
+     54          /***********************************************************************************************************************
+     55          Global variable definitions with scope limited to this local application.
+     56          Variable names shall start with "TWI_" and be declared as static.
+     57          ***********************************************************************************************************************/
+
+   \                                 In section .bss, align 4
+     58          static fnCode_type TWI_StateMachine;              /* The TWI application state machine function pointer */
+   \                     TWI_StateMachine:
+   \   00000000                      DS8 4
+     59          
+
+   \                                 In section .bss, align 4
+     60          static u32 TWI_u32Timer;                          /* Counter used across states */
+   \                     TWI_u32Timer:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+     61          static u32 TWI_u32Flags;                          /* Application flags for TWI */
+   \                     TWI_u32Flags:
+   \   00000000                      DS8 4
+     62          
+
+   \                                 In section .bss, align 4
+     63          static TWIPeripheralType TWI_Peripheral0;         /* TWI0 peripheral object */
+   \                     TWI_Peripheral0:
+   \   00000000                      DS8 16
+
+   \                                 In section .bss, align 4
+     64          static TWIPeripheralType* TWI0;
+   \                     TWI0:
+   \   00000000                      DS8 4
+     65          
+
+   \                                 In section .bss, align 4
+     66          static u32 TWI_u32CurrentBytesRemaining;                        /* Down counter for number of bytes being clocked out */
+   \                     TWI_u32CurrentBytesRemaining:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+     67          static u8* TWI_pu8CurrentTxData;                                /* Pointer to current message being clocked out */
+   \                     TWI_pu8CurrentTxData:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+     68          static TWIMessageQueueType TWI_MessageBuffer[TX_QUEUE_SIZE];    /* A circular buffer that stores queued msgs stop condition */
+   \                     TWI_MessageBuffer:
+   \   00000000                      DS8 256
+
+   \                                 In section .bss, align 1
+     69          static u8 TWI_MessageBufferNextIndex;                           /* A pointer to the next position to place a message */
+   \                     TWI_MessageBufferNextIndex:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+     70          static u8 TWI_MessageBufferCurIndex;                            /* A pointer to the current message that is being processed */
+   \                     TWI_MessageBufferCurIndex:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 1
+     71          static u8 TWI_MessageQueueLength;                               /* Counter to track the number of messages stored in the queue */
+   \                     TWI_MessageQueueLength:
+   \   00000000                      DS8 1
+     72          
+     73          
+     74          /***********************************************************************************************************************
+     75          Function Definitions
+     76          ***********************************************************************************************************************/
+     77          
+     78          /*----------------------------------------------------------------------------------------------------------------------
+     79          Function: TWI0ReadByte
+     80          
+     81          Description:
+     82          Queues a TWI Read Message into TWI_MessageBuffer, will be processed after all msgs queued before it
+     83            - Single byte
+     84          
+     85          Requires:
+     86            - Initialization of the task
+     87            - Requires that pu8RxBuffer has the space to save the data
+     88          
+     89          Promises:
+     90            - Queues msg if there is space available
+     91            - Returns TRUE if successful queue
+     92          */
+
+   \                                 In section .text, align 2, keep-with-next
+     93          bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_)
+     94          {
+   \                     TWI0ReadByte: (+1)
+   \   00000000   0xB538             PUSH     {R3-R5,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+   \   00000004   0x000D             MOVS     R5,R1
+     95            if(TWI_MessageQueueLength == TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
+   \   00000006   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   0000000A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000000C   0x2810             CMP      R0,#+16
+   \   0000000E   0xD005             BEQ.N    ??TWI0ReadByte_0
+   \   00000010   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000014   0x6800             LDR      R0,[R0, #+0]
+   \   00000016   0x7B00             LDRB     R0,[R0, #+12]
+   \   00000018   0x0740             LSLS     R0,R0,#+29
+   \   0000001A   0xD501             BPL.N    ??TWI0ReadByte_1
+     96            {
+     97              /* TWI Message Task Queue Full or the Tx transmit isn't complete */
+     98              return FALSE;
+   \                     ??TWI0ReadByte_0: (+1)
+   \   0000001C   0x2000             MOVS     R0,#+0
+   \   0000001E   0xE051             B.N      ??TWI0ReadByte_2
+     99            }
+    100            else
+    101            {
+    102              /* Queue Relevant data for TWI register setup */
+    103              TWI_MessageBuffer[TWI_MessageBufferNextIndex].Direction     = READ;
+   \                     ??TWI0ReadByte_1: (+1)
+   \   00000020   0x2001             MOVS     R0,#+1
+   \   00000022   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000026   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000002A   0x7812             LDRB     R2,[R2, #+0]
+   \   0000002C   0x0112             LSLS     R2,R2,#+4
+   \   0000002E   0x5450             STRB     R0,[R2, R1]
+    104              TWI_MessageBuffer[TWI_MessageBufferNextIndex].u32Size       = 1;
+   \   00000030   0x2001             MOVS     R0,#+1
+   \   00000032   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000036   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000003A   0x7812             LDRB     R2,[R2, #+0]
+   \   0000003C   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000040   0x6048             STR      R0,[R1, #+4]
+    105              TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Address     = u8SlaveAddress_;
+   \   00000042   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000046   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000004A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000004C   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000050   0x7204             STRB     R4,[R0, #+8]
+    106              TWI_MessageBuffer[TWI_MessageBufferNextIndex].pu8RxBuffer   = pu8RxBuffer_;
+   \   00000052   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000056   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000005A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000005C   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000060   0x60C5             STR      R5,[R0, #+12]
+    107              TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Attempts    = 0;
+   \   00000062   0x2000             MOVS     R0,#+0
+   \   00000064   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000068   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000006C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000006E   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000072   0x7248             STRB     R0,[R1, #+9]
+    108              
+    109              /* Not used by Receive */
+    110              TWI_MessageBuffer[TWI_MessageBufferNextIndex].Stop = NA; 
+   \   00000074   0x2002             MOVS     R0,#+2
+   \   00000076   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   0000007A   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000007E   0x7812             LDRB     R2,[R2, #+0]
+   \   00000080   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000084   0x7288             STRB     R0,[R1, #+10]
+    111               
+    112              /* Update array pointers and size */
+    113              TWI_MessageBufferNextIndex++;
+   \   00000086   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   0000008A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000008C   0x1C40             ADDS     R0,R0,#+1
+   \   0000008E   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   00000092   0x7008             STRB     R0,[R1, #+0]
+    114              TWI_MessageQueueLength++;
+   \   00000094   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   00000098   0x7800             LDRB     R0,[R0, #+0]
+   \   0000009A   0x1C40             ADDS     R0,R0,#+1
+   \   0000009C   0x.... 0x....      LDR.W    R1,??DataTable14_2
+   \   000000A0   0x7008             STRB     R0,[R1, #+0]
+    115              if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+   \   000000A2   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   000000A6   0x7800             LDRB     R0,[R0, #+0]
+   \   000000A8   0x2810             CMP      R0,#+16
+   \   000000AA   0xD103             BNE.N    ??TWI0ReadByte_3
+    116              {
+    117                TWI_MessageBufferNextIndex = 0;
+   \   000000AC   0x2000             MOVS     R0,#+0
+   \   000000AE   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   000000B2   0x7008             STRB     R0,[R1, #+0]
+    118              }
+    119              
+    120              /* If the system is initializing, we want to manually cycle the TWI task through one iteration
+    121                to send the message */
+    122              if(G_u32SystemFlags & _SYSTEM_INITIALIZING)
+   \                     ??TWI0ReadByte_3: (+1)
+   \   000000B4   0x.... 0x....      LDR.W    R0,??DataTable14_6
+   \   000000B8   0x6800             LDR      R0,[R0, #+0]
+   \   000000BA   0x2800             CMP      R0,#+0
+   \   000000BC   0xD501             BPL.N    ??TWI0ReadByte_4
+    123              {
+    124                TWIManualMode();
+   \   000000BE   0x.... 0x....      BL       TWIManualMode
+    125              }
+    126              
+    127              return TRUE;
+   \                     ??TWI0ReadByte_4: (+1)
+   \   000000C2   0x2001             MOVS     R0,#+1
+   \                     ??TWI0ReadByte_2: (+1)
+   \   000000C4   0xBD32             POP      {R1,R4,R5,PC}    ;; return
+    128            }
+    129          
+    130          } /* end TWI0ReadByte() */
+    131          
+    132          
+    133          /*----------------------------------------------------------------------------------------------------------------------
+    134          Function: TWI0ReadData
+    135          
+    136          Description:
+    137          Queues a TWI Read Message into TWI_MessageBuffer, will be processed after all msgs queued before it
+    138          
+    139          Requires:
+    140            - Initialization of the task
+    141            - Requires pu8RxBuffer has the space to save the data
+    142          
+    143          Promises:
+    144            - Queues a multi byte command into the command array
+    145            - Returns TRUE if the queue was successful
+    146          */
+
+   \                                 In section .text, align 2, keep-with-next
+    147          bool TWI0ReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_)
+    148          {
+   \                     TWI0ReadData: (+1)
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+   \   00000004   0x000D             MOVS     R5,R1
+   \   00000006   0x0016             MOVS     R6,R2
+    149            if(TWI_MessageQueueLength == TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
+   \   00000008   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   0000000C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000000E   0x2810             CMP      R0,#+16
+   \   00000010   0xD005             BEQ.N    ??TWI0ReadData_0
+   \   00000012   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000016   0x6800             LDR      R0,[R0, #+0]
+   \   00000018   0x7B00             LDRB     R0,[R0, #+12]
+   \   0000001A   0x0740             LSLS     R0,R0,#+29
+   \   0000001C   0xD501             BPL.N    ??TWI0ReadData_1
+    150            {
+    151              /* TWI Message Task Queue Full or the Tx transmit isn't complete */
+    152              return FALSE;
+   \                     ??TWI0ReadData_0: (+1)
+   \   0000001E   0x2000             MOVS     R0,#+0
+   \   00000020   0xE050             B.N      ??TWI0ReadData_2
+    153            }
+    154            else
+    155            {
+    156              /* Queue Relevant data for TWI register setup */
+    157              TWI_MessageBuffer[TWI_MessageBufferNextIndex].Direction     = READ;
+   \                     ??TWI0ReadData_1: (+1)
+   \   00000022   0x2001             MOVS     R0,#+1
+   \   00000024   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000028   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000002C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000002E   0x0112             LSLS     R2,R2,#+4
+   \   00000030   0x5450             STRB     R0,[R2, R1]
+    158              TWI_MessageBuffer[TWI_MessageBufferNextIndex].u32Size       = u32Size_;
+   \   00000032   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000036   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000003A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000003C   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000040   0x6046             STR      R6,[R0, #+4]
+    159              TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Address     = u8SlaveAddress_;
+   \   00000042   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000046   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000004A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000004C   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000050   0x7204             STRB     R4,[R0, #+8]
+    160              TWI_MessageBuffer[TWI_MessageBufferNextIndex].pu8RxBuffer   = pu8RxBuffer_;
+   \   00000052   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000056   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000005A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000005C   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000060   0x60C5             STR      R5,[R0, #+12]
+    161              TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Attempts    = 0;
+   \   00000062   0x2000             MOVS     R0,#+0
+   \   00000064   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000068   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000006C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000006E   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000072   0x7248             STRB     R0,[R1, #+9]
+    162              
+    163              /* Not used by Receive */
+    164              TWI_MessageBuffer[TWI_MessageBufferNextIndex].Stop = NA; 
+   \   00000074   0x2002             MOVS     R0,#+2
+   \   00000076   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   0000007A   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000007E   0x7812             LDRB     R2,[R2, #+0]
+   \   00000080   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000084   0x7288             STRB     R0,[R1, #+10]
+    165              
+    166              /* Update array pointers and size */
+    167              TWI_MessageBufferNextIndex++;
+   \   00000086   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   0000008A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000008C   0x1C40             ADDS     R0,R0,#+1
+   \   0000008E   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   00000092   0x7008             STRB     R0,[R1, #+0]
+    168              TWI_MessageQueueLength++;
+   \   00000094   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   00000098   0x7800             LDRB     R0,[R0, #+0]
+   \   0000009A   0x1C40             ADDS     R0,R0,#+1
+   \   0000009C   0x.... 0x....      LDR.W    R1,??DataTable14_2
+   \   000000A0   0x7008             STRB     R0,[R1, #+0]
+    169              if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+   \   000000A2   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   000000A6   0x7800             LDRB     R0,[R0, #+0]
+   \   000000A8   0x2810             CMP      R0,#+16
+   \   000000AA   0xD103             BNE.N    ??TWI0ReadData_3
+    170              {
+    171                TWI_MessageBufferNextIndex = 0;
+   \   000000AC   0x2000             MOVS     R0,#+0
+   \   000000AE   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   000000B2   0x7008             STRB     R0,[R1, #+0]
+    172              }
+    173              
+    174              /* If the system is initializing, we want to manually cycle the TWI task through one iteration
+    175                to send the message */
+    176              if(G_u32SystemFlags & _SYSTEM_INITIALIZING)
+   \                     ??TWI0ReadData_3: (+1)
+   \   000000B4   0x.... 0x....      LDR.W    R0,??DataTable14_6
+   \   000000B8   0x6800             LDR      R0,[R0, #+0]
+   \   000000BA   0x2800             CMP      R0,#+0
+   \   000000BC   0xD501             BPL.N    ??TWI0ReadData_4
+    177              {
+    178                TWIManualMode();
+   \   000000BE   0x.... 0x....      BL       TWIManualMode
+    179              }
+    180              
+    181              return TRUE;
+   \                     ??TWI0ReadData_4: (+1)
+   \   000000C2   0x2001             MOVS     R0,#+1
+   \                     ??TWI0ReadData_2: (+1)
+   \   000000C4   0xBD70             POP      {R4-R6,PC}       ;; return
+    182            }
+    183          }
+    184          
+    185          
+    186          /*----------------------------------------------------------------------------------------------------------------------
+    187          Function: TWI0WriteByte
+    188          
+    189          Description:
+    190          Queues a single byte for transfer on TWI0 peripheral.  
+    191          
+    192          Requires:
+    193            - Initialization of the task
+    194          
+    195          Promises:
+    196            - Creates a 1-byte message at TWI0->pTransmitBuffer that will be sent by the TWI application
+    197              when it is available.
+    198            - Returns the message token assigned to the message
+    199          */
+
+   \                                 In section .text, align 2, keep-with-next
+    200          u32 TWI0WriteByte(u8 u8SlaveAddress_, u8 u8Byte_, TWIStopType Send_)
+    201          {
+   \                     TWI0WriteByte: (+1)
+   \   00000000   0xB5F8             PUSH     {R3-R7,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+   \   00000004   0x000D             MOVS     R5,R1
+   \   00000006   0x0016             MOVS     R6,R2
+    202            u32 u32Token;
+    203            u8 u8Data = u8Byte_;
+   \   00000008   0xF88D 0x5000      STRB     R5,[SP, #+0]
+    204            
+    205            if(TWI_MessageQueueLength == TX_QUEUE_SIZE)
+   \   0000000C   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   00000010   0x7800             LDRB     R0,[R0, #+0]
+   \   00000012   0x2810             CMP      R0,#+16
+   \   00000014   0xD101             BNE.N    ??TWI0WriteByte_0
+    206            {
+    207              /* TWI Message Task Queue Full */
+    208              return 0;
+   \   00000016   0x2000             MOVS     R0,#+0
+   \   00000018   0xE05C             B.N      ??TWI0WriteByte_1
+    209            }
+    210            else
+    211            {
+    212              /* Queue Message in message system */
+    213              u32Token = QueueMessage(&TWI0->pTransmitBuffer, 1, &u8Data);
+   \                     ??TWI0WriteByte_0: (+1)
+   \   0000001A   0xAA00             ADD      R2,SP,#+0
+   \   0000001C   0x2101             MOVS     R1,#+1
+   \   0000001E   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000022   0x6800             LDR      R0,[R0, #+0]
+   \   00000024   0x1D00             ADDS     R0,R0,#+4
+   \   00000026   0x.... 0x....      BL       QueueMessage
+   \   0000002A   0x0007             MOVS     R7,R0
+    214              if(u32Token)
+   \   0000002C   0x2F00             CMP      R7,#+0
+   \   0000002E   0xD050             BEQ.N    ??TWI0WriteByte_2
+    215              {
+    216                /* Queue Relevant data for TWI register setup */
+    217                TWI_MessageBuffer[TWI_MessageBufferNextIndex].Direction     = WRITE;
+   \   00000030   0x2000             MOVS     R0,#+0
+   \   00000032   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000036   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000003A   0x7812             LDRB     R2,[R2, #+0]
+   \   0000003C   0x0112             LSLS     R2,R2,#+4
+   \   0000003E   0x5450             STRB     R0,[R2, R1]
+    218                TWI_MessageBuffer[TWI_MessageBufferNextIndex].u32Size       = 1;
+   \   00000040   0x2001             MOVS     R0,#+1
+   \   00000042   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000046   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000004A   0x7812             LDRB     R2,[R2, #+0]
+   \   0000004C   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000050   0x6048             STR      R0,[R1, #+4]
+    219                TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Address     = u8SlaveAddress_;
+   \   00000052   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000056   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000005A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000005C   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000060   0x7204             STRB     R4,[R0, #+8]
+    220                TWI_MessageBuffer[TWI_MessageBufferNextIndex].Stop          = Send_;
+   \   00000062   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000066   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000006A   0x7809             LDRB     R1,[R1, #+0]
+   \   0000006C   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000070   0x7286             STRB     R6,[R0, #+10]
+    221                TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Attempts    = 0;
+   \   00000072   0x2000             MOVS     R0,#+0
+   \   00000074   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000078   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000007C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000007E   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000082   0x7248             STRB     R0,[R1, #+9]
+    222                
+    223                /* Not used by Transmit */
+    224                TWI_MessageBuffer[TWI_MessageBufferNextIndex].pu8RxBuffer = NULL;
+   \   00000084   0x2000             MOVS     R0,#+0
+   \   00000086   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   0000008A   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000008E   0x7812             LDRB     R2,[R2, #+0]
+   \   00000090   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000094   0x60C8             STR      R0,[R1, #+12]
+    225                
+    226                /* Update array pointers and size */
+    227                TWI_MessageBufferNextIndex++;
+   \   00000096   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   0000009A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000009C   0x1C40             ADDS     R0,R0,#+1
+   \   0000009E   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   000000A2   0x7008             STRB     R0,[R1, #+0]
+    228                TWI_MessageQueueLength++;
+   \   000000A4   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   000000A8   0x7800             LDRB     R0,[R0, #+0]
+   \   000000AA   0x1C40             ADDS     R0,R0,#+1
+   \   000000AC   0x.... 0x....      LDR.W    R1,??DataTable14_2
+   \   000000B0   0x7008             STRB     R0,[R1, #+0]
+    229                if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+   \   000000B2   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   000000B6   0x7800             LDRB     R0,[R0, #+0]
+   \   000000B8   0x2810             CMP      R0,#+16
+   \   000000BA   0xD103             BNE.N    ??TWI0WriteByte_3
+    230                {
+    231                  TWI_MessageBufferNextIndex = 0;
+   \   000000BC   0x2000             MOVS     R0,#+0
+   \   000000BE   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   000000C2   0x7008             STRB     R0,[R1, #+0]
+    232                }
+    233          
+    234                /* If the system is initializing, we want to manually cycle the TWI task through one iteration
+    235                to send the message */
+    236                if(G_u32SystemFlags & _SYSTEM_INITIALIZING)
+   \                     ??TWI0WriteByte_3: (+1)
+   \   000000C4   0x.... 0x....      LDR.W    R0,??DataTable14_6
+   \   000000C8   0x6800             LDR      R0,[R0, #+0]
+   \   000000CA   0x2800             CMP      R0,#+0
+   \   000000CC   0xD501             BPL.N    ??TWI0WriteByte_2
+    237                {
+    238                  TWIManualMode();
+   \   000000CE   0x.... 0x....      BL       TWIManualMode
+    239                }
+    240              }
+    241              
+    242              return(u32Token);
+   \                     ??TWI0WriteByte_2: (+1)
+   \   000000D2   0x0038             MOVS     R0,R7
+   \                     ??TWI0WriteByte_1: (+1)
+   \   000000D4   0xBDF2             POP      {R1,R4-R7,PC}    ;; return
+    243            }
+    244            
+    245          } /* end TWIWriteByte() */
+    246          
+    247          
+    248          /*----------------------------------------------------------------------------------------------------------------------
+    249          Function: TWI0WriteData
+    250          
+    251          Description:
+    252          Queues a data array for transfer on the  TWI0 peripheral.  
+    253          
+    254          Requires:
+    255            - if a transmission is in progress, the node in the buffer that is currently being sent will not be destroyed during this function.
+    256            - u32Size_ is the number of bytes in the data array
+    257            - u8Data_ points to the first byte of the data array
+    258          
+    259          Promises:
+    260            - adds the data message at TWI_Peripheral0->pTransmitBuffer buffer that will be sent by the TWI application
+    261              when it is available.
+    262            - Returns the message token assigned to the message; 0 is returned if the message cannot be queued in which case
+    263              G_u32MessagingFlags can be checked for the reason
+    264          */
+
+   \                                 In section .text, align 2, keep-with-next
+    265          u32 TWI0WriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TWIStopType Send_)
+    266          {
+   \                     TWI0WriteData: (+1)
+   \   00000000   0xE92D 0x41F0      PUSH     {R4-R8,LR}
+   \   00000004   0x0004             MOVS     R4,R0
+   \   00000006   0x000D             MOVS     R5,R1
+   \   00000008   0x0016             MOVS     R6,R2
+   \   0000000A   0x001F             MOVS     R7,R3
+    267            u32 u32Token;
+    268              
+    269            if(TWI_MessageQueueLength == TX_QUEUE_SIZE)
+   \   0000000C   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   00000010   0x7800             LDRB     R0,[R0, #+0]
+   \   00000012   0x2810             CMP      R0,#+16
+   \   00000014   0xD101             BNE.N    ??TWI0WriteData_0
+    270            {
+    271              /* Queue Message in message system */
+    272              return 0;
+   \   00000016   0x2000             MOVS     R0,#+0
+   \   00000018   0xE05D             B.N      ??TWI0WriteData_1
+    273            }
+    274            else
+    275            {
+    276              /* Queue Message in message system */
+    277              u32Token = QueueMessage(&TWI0->pTransmitBuffer, u32Size_, u8Data_);
+   \                     ??TWI0WriteData_0: (+1)
+   \   0000001A   0x0032             MOVS     R2,R6
+   \   0000001C   0x0029             MOVS     R1,R5
+   \   0000001E   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000022   0x6800             LDR      R0,[R0, #+0]
+   \   00000024   0x1D00             ADDS     R0,R0,#+4
+   \   00000026   0x.... 0x....      BL       QueueMessage
+   \   0000002A   0x4680             MOV      R8,R0
+    278              if(u32Token)
+   \   0000002C   0xF1B8 0x0F00      CMP      R8,#+0
+   \   00000030   0xD050             BEQ.N    ??TWI0WriteData_2
+    279              {
+    280                /* Queue Relevant data for TWI register setup */
+    281                TWI_MessageBuffer[TWI_MessageBufferNextIndex].Direction     = WRITE;
+   \   00000032   0x2000             MOVS     R0,#+0
+   \   00000034   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000038   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000003C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000003E   0x0112             LSLS     R2,R2,#+4
+   \   00000040   0x5450             STRB     R0,[R2, R1]
+    282                TWI_MessageBuffer[TWI_MessageBufferNextIndex].u32Size       = 1;
+   \   00000042   0x2001             MOVS     R0,#+1
+   \   00000044   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   00000048   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000004C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000004E   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000052   0x6048             STR      R0,[R1, #+4]
+    283                TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Address     = u8SlaveAddress_;
+   \   00000054   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000058   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000005C   0x7809             LDRB     R1,[R1, #+0]
+   \   0000005E   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000062   0x7204             STRB     R4,[R0, #+8]
+    284                TWI_MessageBuffer[TWI_MessageBufferNextIndex].Stop          = Send_;
+   \   00000064   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000068   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000006C   0x7809             LDRB     R1,[R1, #+0]
+   \   0000006E   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000072   0x7287             STRB     R7,[R0, #+10]
+    285                TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Attempts    = 0;
+   \   00000074   0x2000             MOVS     R0,#+0
+   \   00000076   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   0000007A   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   0000007E   0x7812             LDRB     R2,[R2, #+0]
+   \   00000080   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000084   0x7248             STRB     R0,[R1, #+9]
+    286                
+    287                /* Not used by Transmit */
+    288                TWI_MessageBuffer[TWI_MessageBufferNextIndex].pu8RxBuffer = NULL;
+   \   00000086   0x2000             MOVS     R0,#+0
+   \   00000088   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   0000008C   0x.... 0x....      LDR.W    R2,??DataTable14_5
+   \   00000090   0x7812             LDRB     R2,[R2, #+0]
+   \   00000092   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000096   0x60C8             STR      R0,[R1, #+12]
+    289                
+    290                /* Update array pointers and size */
+    291                TWI_MessageBufferNextIndex++;
+   \   00000098   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   0000009C   0x7800             LDRB     R0,[R0, #+0]
+   \   0000009E   0x1C40             ADDS     R0,R0,#+1
+   \   000000A0   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   000000A4   0x7008             STRB     R0,[R1, #+0]
+    292                TWI_MessageQueueLength++;
+   \   000000A6   0x.... 0x....      LDR.W    R0,??DataTable14_2
+   \   000000AA   0x7800             LDRB     R0,[R0, #+0]
+   \   000000AC   0x1C40             ADDS     R0,R0,#+1
+   \   000000AE   0x.... 0x....      LDR.W    R1,??DataTable14_2
+   \   000000B2   0x7008             STRB     R0,[R1, #+0]
+    293                if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+   \   000000B4   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   000000B8   0x7800             LDRB     R0,[R0, #+0]
+   \   000000BA   0x2810             CMP      R0,#+16
+   \   000000BC   0xD103             BNE.N    ??TWI0WriteData_3
+    294                {
+    295                  TWI_MessageBufferNextIndex = 0;
+   \   000000BE   0x2000             MOVS     R0,#+0
+   \   000000C0   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   000000C4   0x7008             STRB     R0,[R1, #+0]
+    296                }
+    297          
+    298                /* If the system is initializing, manually cycle the TWI task through one iteration to send the message */
+    299                if(G_u32SystemFlags & _SYSTEM_INITIALIZING)
+   \                     ??TWI0WriteData_3: (+1)
+   \   000000C6   0x.... 0x....      LDR.W    R0,??DataTable14_6
+   \   000000CA   0x6800             LDR      R0,[R0, #+0]
+   \   000000CC   0x2800             CMP      R0,#+0
+   \   000000CE   0xD501             BPL.N    ??TWI0WriteData_2
+    300                {
+    301                  TWIManualMode();
+   \   000000D0   0x.... 0x....      BL       TWIManualMode
+    302                }
+    303              }
+    304            
+    305              return(u32Token);
+   \                     ??TWI0WriteData_2: (+1)
+   \   000000D4   0x4640             MOV      R0,R8
+   \                     ??TWI0WriteData_1: (+1)
+   \   000000D6   0xE8BD 0x81F0      POP      {R4-R8,PC}       ;; return
+    306            }
+    307            
+    308          } /* end TWIWriteData() */
+    309          
+    310          /*--------------------------------------------------------------------------------------------------------------------*/
+    311          /* Protected Functions */
+    312          /*--------------------------------------------------------------------------------------------------------------------*/
+    313          
+    314          /*----------------------------------------------------------------------------------------------------------------------
+    315          Function: TWIInitialize
+    316          
+    317          Description:
+    318          Initializes the TWI application and its variables. 
+    319          
+    320          Requires:
+    321            - 
+    322          
+    323          Promises:
+    324            - TWI peripheral objects are ready 
+    325            - TWI application set to Idle
+    326          */
+
+   \                                 In section .text, align 2, keep-with-next
+    327          void TWIInitialize(void)
+    328          {
+   \                     TWIInitialize: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+    329            u32 u32TargetPerpipheralNumber = AT91C_ID_TWI0;
+   \   00000002   0x2412             MOVS     R4,#+18
+    330            
+    331            AT91C_BASE_PMC->PMC_PCER |= (1<<u32TargetPerpipheralNumber);
+   \   00000004   0x.... 0x....      LDR.W    R0,??DataTable14_7  ;; 0x400e0410
+   \   00000008   0x6800             LDR      R0,[R0, #+0]
+   \   0000000A   0x2101             MOVS     R1,#+1
+   \   0000000C   0x40A1             LSLS     R1,R1,R4
+   \   0000000E   0x4308             ORRS     R0,R1,R0
+   \   00000010   0x.... 0x....      LDR.W    R1,??DataTable14_7  ;; 0x400e0410
+   \   00000014   0x6008             STR      R0,[R1, #+0]
+    332            
+    333            TWI_u32Flags = 0;
+   \   00000016   0x2000             MOVS     R0,#+0
+   \   00000018   0x.... 0x....      LDR.W    R1,??DataTable14_8
+   \   0000001C   0x6008             STR      R0,[R1, #+0]
+    334            TWI0 = &TWI_Peripheral0;
+   \   0000001E   0x.... 0x....      LDR.W    R0,??DataTable14_9
+   \   00000022   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   00000026   0x6008             STR      R0,[R1, #+0]
+    335            TWI_MessageBufferNextIndex = 0;
+   \   00000028   0x2000             MOVS     R0,#+0
+   \   0000002A   0x.... 0x....      LDR.W    R1,??DataTable14_5
+   \   0000002E   0x7008             STRB     R0,[R1, #+0]
+    336            TWI_MessageBufferCurIndex = 0;
+   \   00000030   0x2000             MOVS     R0,#+0
+   \   00000032   0x.... 0x....      LDR.W    R1,??DataTable14_10
+   \   00000036   0x7008             STRB     R0,[R1, #+0]
+    337            TWI_MessageQueueLength = 0;
+   \   00000038   0x2000             MOVS     R0,#+0
+   \   0000003A   0x.... 0x....      LDR.W    R1,??DataTable14_2
+   \   0000003E   0x7008             STRB     R0,[R1, #+0]
+    338            
+    339            /* Initialize the TWI peripheral structures */
+    340            TWI_Peripheral0.pBaseAddress    = AT91C_BASE_TWI0;
+   \   00000040   0x.... 0x....      LDR.W    R0,??DataTable14_11  ;; 0x40084000
+   \   00000044   0x.... 0x....      LDR.W    R1,??DataTable14_9
+   \   00000048   0x6008             STR      R0,[R1, #+0]
+    341            TWI_Peripheral0.pTransmitBuffer = NULL;
+   \   0000004A   0x2000             MOVS     R0,#+0
+   \   0000004C   0x.... 0x....      LDR.W    R1,??DataTable14_9
+   \   00000050   0x6048             STR      R0,[R1, #+4]
+    342            TWI_Peripheral0.pu8RxBuffer     = NULL;
+   \   00000052   0x2000             MOVS     R0,#+0
+   \   00000054   0x.... 0x....      LDR.W    R1,??DataTable14_9
+   \   00000058   0x6088             STR      R0,[R1, #+8]
+    343            TWI_Peripheral0.u32Flags        = 0;
+   \   0000005A   0x2000             MOVS     R0,#+0
+   \   0000005C   0x.... 0x....      LDR.W    R1,??DataTable14_9
+   \   00000060   0x60C8             STR      R0,[R1, #+12]
+    344          
+    345            /* Software reset of peripheral */
+    346            TWI0->pBaseAddress->TWI_CR   |= _TWI_CR_SWRST_BIT;
+   \   00000062   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000066   0x6800             LDR      R0,[R0, #+0]
+   \   00000068   0x6800             LDR      R0,[R0, #+0]
+   \   0000006A   0x6800             LDR      R0,[R0, #+0]
+   \   0000006C   0xF050 0x0080      ORRS     R0,R0,#0x80
+   \   00000070   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   00000074   0x6809             LDR      R1,[R1, #+0]
+   \   00000076   0x6809             LDR      R1,[R1, #+0]
+   \   00000078   0x6008             STR      R0,[R1, #+0]
+    347            TWI_u32Timer = G_u32SystemTime1ms;
+   \   0000007A   0x.... 0x....      LDR.W    R0,??DataTable14_12
+   \   0000007E   0x6800             LDR      R0,[R0, #+0]
+   \   00000080   0x.... 0x....      LDR.W    R1,??DataTable14_13
+   \   00000084   0x6008             STR      R0,[R1, #+0]
+    348            while( !IsTimeUp(&TWI_u32Timer, 5) );
+   \                     ??TWIInitialize_0: (+1)
+   \   00000086   0x2105             MOVS     R1,#+5
+   \   00000088   0x.... 0x....      LDR.W    R0,??DataTable14_13
+   \   0000008C   0x.... 0x....      BL       IsTimeUp
+   \   00000090   0x2800             CMP      R0,#+0
+   \   00000092   0xD0F8             BEQ.N    ??TWIInitialize_0
+    349            
+    350            /* Configure Peripheral */
+    351            TWI0->pBaseAddress->TWI_CWGR = TWI0_CWGR_INIT;
+   \   00000094   0x.... 0x....      LDR.W    R0,??DataTable14_14  ;; 0x21d1d
+   \   00000098   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   0000009C   0x6809             LDR      R1,[R1, #+0]
+   \   0000009E   0x6809             LDR      R1,[R1, #+0]
+   \   000000A0   0x6108             STR      R0,[R1, #+16]
+    352            TWI0->pBaseAddress->TWI_CR   = TWI0_CR_INIT;
+   \   000000A2   0x2024             MOVS     R0,#+36
+   \   000000A4   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   000000A8   0x6809             LDR      R1,[R1, #+0]
+   \   000000AA   0x6809             LDR      R1,[R1, #+0]
+   \   000000AC   0x6008             STR      R0,[R1, #+0]
+    353            TWI0->pBaseAddress->TWI_MMR  = TWI0_MMR_INIT;
+   \   000000AE   0x2000             MOVS     R0,#+0
+   \   000000B0   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   000000B4   0x6809             LDR      R1,[R1, #+0]
+   \   000000B6   0x6809             LDR      R1,[R1, #+0]
+   \   000000B8   0x6048             STR      R0,[R1, #+4]
+    354            TWI0->pBaseAddress->TWI_IER  = TWI0_IER_INIT;
+   \   000000BA   0xF44F 0x70A1      MOV      R0,#+322
+   \   000000BE   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   000000C2   0x6809             LDR      R1,[R1, #+0]
+   \   000000C4   0x6809             LDR      R1,[R1, #+0]
+   \   000000C6   0x6248             STR      R0,[R1, #+36]
+    355            TWI0->pBaseAddress->TWI_IDR  = TWI0_IDR_INIT;
+   \   000000C8   0xF64F 0x6035      MOVW     R0,#+65077
+   \   000000CC   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   000000D0   0x6809             LDR      R1,[R1, #+0]
+   \   000000D2   0x6809             LDR      R1,[R1, #+0]
+   \   000000D4   0x6288             STR      R0,[R1, #+40]
+    356            
+    357            /* Enable TWI interrupts */
+    358            NVIC_ClearPendingIRQ( (IRQn_Type)u32TargetPerpipheralNumber );
+   \   000000D6   0x0020             MOVS     R0,R4
+   \   000000D8   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   000000DA   0x.... 0x....      BL       NVIC_ClearPendingIRQ
+    359            NVIC_EnableIRQ( (IRQn_Type)u32TargetPerpipheralNumber );
+   \   000000DE   0x0020             MOVS     R0,R4
+   \   000000E0   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   000000E2   0x.... 0x....      BL       NVIC_EnableIRQ
+    360          
+    361            TWI_u32CurrentBytesRemaining   = 0;
+   \   000000E6   0x2000             MOVS     R0,#+0
+   \   000000E8   0x.... 0x....      LDR.W    R1,??DataTable14_15
+   \   000000EC   0x6008             STR      R0,[R1, #+0]
+    362            TWI_pu8CurrentTxData           = NULL;
+   \   000000EE   0x2000             MOVS     R0,#+0
+   \   000000F0   0x.... 0x....      LDR.W    R1,??DataTable14_16
+   \   000000F4   0x6008             STR      R0,[R1, #+0]
+    363          
+    364            /* Set application pointer */
+    365            TWI_StateMachine = TWISM_Idle;
+   \   000000F6   0x.... 0x....      ADR.W    R0,TWISM_Idle
+   \   000000FA   0x.... 0x....      LDR.W    R1,??DataTable14_17
+   \   000000FE   0x6008             STR      R0,[R1, #+0]
+    366            
+    367          } /* end TWIInitialize() */
+   \   00000100   0xBD10             POP      {R4,PC}          ;; return
+    368          
+    369          
+    370          /*----------------------------------------------------------------------------------------------------------------------
+    371          Function TWIRunActiveState()
+    372          
+    373          Description:
+    374          Selects and runs one iteration of the current state in the state machine.
+    375          All state machines have a TOTAL of 1ms to execute, so on average n state machines
+    376          may take 1ms / n to execute.
+    377          
+    378          Requires:
+    379            - State machine function pointer points at current state
+    380          
+    381          Promises:
+    382            - Calls the function to pointed by the state machine function pointer
+    383          */
+
+   \                                 In section .text, align 2, keep-with-next
+    384          void TWIRunActiveState(void)
+    385          {
+   \                     TWIRunActiveState: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    386            TWI_StateMachine();
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable14_17
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0x4780             BLX      R0
+    387          
+    388          } /* end TWIRunActiveState */
+   \   0000000A   0xBD01             POP      {R0,PC}          ;; return
+    389          
+    390          
+    391          
+    392          /*--------------------------------------------------------------------------------------------------------------------*/
+    393          /* Protected Functions */
+    394          /*--------------------------------------------------------------------------------------------------------------------*/
+    395          
+    396          /*----------------------------------------------------------------------------------------------------------------------
+    397          Function: TWIFillTxBuffer
+    398          
+    399          Description:
+    400          Fills the TWI peripheral buffer with bytes from the current messsage that is sending.  
+    401          This function can be called from the TWI ISR!
+    402          Note: if the implemented processor does not have a FIFO, this function can still be used but will only ever
+    403          add one byte to the transmitter.
+    404          
+    405          Requires:
+    406            - The TxBuffer is empty
+    407            - TWI_pu8CurrentTxData points to the next byte in the message to be sent
+    408            - TWI_u32CurrentBytesRemaining has an accurate count of the bytes remaining in the message data to be sent
+    409            - Transmit interrupts are off
+    410          
+    411          Promises:
+    412            - Data from *TWI_pu8CurrentTxData is added to the TWI peripheral Tx FIFO until the FIFO is full or there
+    413              is no more data to send.
+    414          */
+
+   \                                 In section .text, align 2, keep-with-next
+    415          static void TWI0FillTxBuffer(void)
+    416          {
+    417            u8 u8ByteCount = TWI_TX_FIFO_SIZE;
+   \                     TWI0FillTxBuffer: (+1)
+   \   00000000   0x2001             MOVS     R0,#+1
+    418            
+    419            /* Use the active global variables to fill up the transmit FIFO */
+    420            while( (u8ByteCount != 0) && (TWI_u32CurrentBytesRemaining != 0) )
+   \                     ??TWI0FillTxBuffer_0: (+1)
+   \   00000002   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000004   0x2800             CMP      R0,#+0
+   \   00000006   0xD01D             BEQ.N    ??TWI0FillTxBuffer_1
+   \   00000008   0x.... 0x....      LDR.W    R1,??DataTable14_15
+   \   0000000C   0x6809             LDR      R1,[R1, #+0]
+   \   0000000E   0x2900             CMP      R1,#+0
+   \   00000010   0xD018             BEQ.N    ??TWI0FillTxBuffer_1
+    421            {
+    422              TWI0->pBaseAddress->TWI_THR = *TWI_pu8CurrentTxData;
+   \   00000012   0x.... 0x....      LDR.W    R1,??DataTable14_16
+   \   00000016   0x6809             LDR      R1,[R1, #+0]
+   \   00000018   0x7809             LDRB     R1,[R1, #+0]
+   \   0000001A   0x.... 0x....      LDR.W    R2,??DataTable14_3
+   \   0000001E   0x6812             LDR      R2,[R2, #+0]
+   \   00000020   0x6812             LDR      R2,[R2, #+0]
+   \   00000022   0x6351             STR      R1,[R2, #+52]
+    423              TWI_pu8CurrentTxData++;
+   \   00000024   0x.... 0x....      LDR.W    R1,??DataTable14_16
+   \   00000028   0x6809             LDR      R1,[R1, #+0]
+   \   0000002A   0x1C49             ADDS     R1,R1,#+1
+   \   0000002C   0x.... 0x....      LDR.W    R2,??DataTable14_16
+   \   00000030   0x6011             STR      R1,[R2, #+0]
+    424              TWI_u32CurrentBytesRemaining--;
+   \   00000032   0x.... 0x....      LDR.W    R1,??DataTable14_15
+   \   00000036   0x6809             LDR      R1,[R1, #+0]
+   \   00000038   0x1E49             SUBS     R1,R1,#+1
+   \   0000003A   0x.... 0x....      LDR.W    R2,??DataTable14_15
+   \   0000003E   0x6011             STR      R1,[R2, #+0]
+    425              u8ByteCount--;
+   \   00000040   0x1E40             SUBS     R0,R0,#+1
+   \   00000042   0xE7DE             B.N      ??TWI0FillTxBuffer_0
+    426            }
+    427            
+    428            /* If there are no remaining bytes to load to the TX FIFO, disable the TWI transmit 
+    429            FIFO empty interrupt */
+    430            if(TWI_u32CurrentBytesRemaining == 0)
+   \                     ??TWI0FillTxBuffer_1: (+1)
+   \   00000044   0x.... 0x....      LDR.W    R1,??DataTable14_15
+   \   00000048   0x6809             LDR      R1,[R1, #+0]
+   \   0000004A   0x2900             CMP      R1,#+0
+   \   0000004C   0xD11C             BNE.N    ??TWI0FillTxBuffer_2
+    431            {
+    432              TWI0->pBaseAddress->TWI_IDR = AT91C_TWI_TXRDY_MASTER;
+   \   0000004E   0x2104             MOVS     R1,#+4
+   \   00000050   0x.... 0x....      LDR.W    R2,??DataTable14_3
+   \   00000054   0x6812             LDR      R2,[R2, #+0]
+   \   00000056   0x6812             LDR      R2,[R2, #+0]
+   \   00000058   0x6291             STR      R1,[R2, #+40]
+    433              if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Stop == STOP)
+   \   0000005A   0x.... 0x....      LDR.W    R1,??DataTable14_4
+   \   0000005E   0x.... 0x....      LDR.W    R2,??DataTable14_10
+   \   00000062   0x7812             LDRB     R2,[R2, #+0]
+   \   00000064   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000068   0x7A89             LDRB     R1,[R1, #+10]
+   \   0000006A   0x2900             CMP      R1,#+0
+   \   0000006C   0xD112             BNE.N    ??TWI0FillTxBuffer_3
+    434              {
+    435                TWI0->pBaseAddress->TWI_CR |= _TWI_CR_STOP_BIT;
+   \   0000006E   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   00000072   0x6809             LDR      R1,[R1, #+0]
+   \   00000074   0x6809             LDR      R1,[R1, #+0]
+   \   00000076   0x6809             LDR      R1,[R1, #+0]
+   \   00000078   0xF051 0x0102      ORRS     R1,R1,#0x2
+   \   0000007C   0x.... 0x....      LDR.W    R2,??DataTable14_3
+   \   00000080   0x6812             LDR      R2,[R2, #+0]
+   \   00000082   0x6812             LDR      R2,[R2, #+0]
+   \   00000084   0x6011             STR      R1,[R2, #+0]
+   \   00000086   0xE005             B.N      ??TWI0FillTxBuffer_3
+    436              }
+    437            }
+    438            /* Otherwise make sure transmit interrupts are enabled */
+    439            else
+    440            {
+    441              TWI0->pBaseAddress->TWI_IER = AT91C_TWI_TXRDY_MASTER;
+   \                     ??TWI0FillTxBuffer_2: (+1)
+   \   00000088   0x2104             MOVS     R1,#+4
+   \   0000008A   0x.... 0x....      LDR.W    R2,??DataTable14_3
+   \   0000008E   0x6812             LDR      R2,[R2, #+0]
+   \   00000090   0x6812             LDR      R2,[R2, #+0]
+   \   00000092   0x6251             STR      R1,[R2, #+36]
+    442            }
+    443            
+    444          } /* end TWIFillTxBuffer() */
+   \                     ??TWI0FillTxBuffer_3: (+1)
+   \   00000094   0x4770             BX       LR               ;; return
+    445          
+    446          
+    447          /*----------------------------------------------------------------------------------------------------------------------
+    448          Function: TWIManualMode
+    449          
+    450          Description:
+    451          Runs a transmit cycle of the TWI application to clock out a message.  This function is used only during
+    452          initialization.
+    453          
+    454          Requires:
+    455            - TWI application has been initialized.
+    456          
+    457          Promises:
+    458            - All bytes currently in the TWI Rx FIFO are read out to the application receive circular buffer.
+    459          */
+
+   \                                 In section .text, align 2, keep-with-next
+    460          static void TWIManualMode(void)
+    461          {
+   \                     TWIManualMode: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    462            TWI_u32Flags |=_TWI_INIT_MODE;
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable14_8
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   0000000C   0x.... 0x....      LDR.W    R1,??DataTable14_8
+   \   00000010   0x6008             STR      R0,[R1, #+0]
+    463            TWI_u32Timer  = G_u32SystemTime1ms;
+   \   00000012   0x.... 0x....      LDR.W    R0,??DataTable14_12
+   \   00000016   0x6800             LDR      R0,[R0, #+0]
+   \   00000018   0x.... 0x....      LDR.W    R1,??DataTable14_13
+   \   0000001C   0x6008             STR      R0,[R1, #+0]
+    464            
+    465            while(TWI_u32Flags &_TWI_INIT_MODE)
+   \                     ??TWIManualMode_0: (+1)
+   \   0000001E   0x.... 0x....      LDR.W    R0,??DataTable14_8
+   \   00000022   0x7800             LDRB     R0,[R0, #+0]
+   \   00000024   0x07C0             LSLS     R0,R0,#+31
+   \   00000026   0xD509             BPL.N    ??TWIManualMode_1
+    466            {
+    467              TWI_StateMachine();
+   \   00000028   0x.... 0x....      LDR.W    R0,??DataTable14_17
+   \   0000002C   0x6800             LDR      R0,[R0, #+0]
+   \   0000002E   0x4780             BLX      R0
+    468              IsTimeUp(&TWI_u32Timer, 1);
+   \   00000030   0x2101             MOVS     R1,#+1
+   \   00000032   0x.... 0x....      LDR.W    R0,??DataTable14_13
+   \   00000036   0x.... 0x....      BL       IsTimeUp
+   \   0000003A   0xE7F0             B.N      ??TWIManualMode_0
+    469            }
+    470                
+    471          } /* end TWIManualMode() */
+   \                     ??TWIManualMode_1: (+1)
+   \   0000003C   0xBD01             POP      {R0,PC}          ;; return
+    472          
+    473          
+    474          /*----------------------------------------------------------------------------------------------------------------------
+    475          Function: TWI0_IrqHandler
+    476          
+    477          Description:
+    478          Handles the TWI0 Peripheral interrupts
+    479          
+    480          Requires:
+    481            - TWI application has been initialized.
+    482          
+    483          Promises:
+    484            - More data has been queued or error flag raised
+    485            - Or recieved byte is placed in desied buffer
+    486          */
+
+   \                                 In section .text, align 2, keep-with-next
+    487          void TWI0_IrqHandler(void)
+    488          {
+   \                     TWI0_IrqHandler: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+    489            u32 u32InterruptStatus;
+    490            
+    491            /* Grab active interrupts and compare with status */
+    492            u32InterruptStatus = AT91C_BASE_TWI0->TWI_IMR;
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable14_18  ;; 0x4008402c
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0x0004             MOVS     R4,R0
+    493            u32InterruptStatus &= AT91C_BASE_TWI0->TWI_SR;
+   \   0000000A   0x.... 0x....      LDR.W    R0,??DataTable14_19  ;; 0x40084020
+   \   0000000E   0x6800             LDR      R0,[R0, #+0]
+   \   00000010   0x4004             ANDS     R4,R0,R4
+    494            
+    495            /* NACK Received */
+    496            if(u32InterruptStatus & _TWI_SR_NACK )
+   \   00000012   0x05E0             LSLS     R0,R4,#+23
+   \   00000014   0xD508             BPL.N    ??TWI0_IrqHandler_0
+    497            {
+    498              /* Error has occurred, reset the msg */
+    499              TWI_u32Flags |= _TWI_ERROR_NACK;
+   \   00000016   0x.... 0x....      LDR.W    R0,??DataTable14_8
+   \   0000001A   0x6800             LDR      R0,[R0, #+0]
+   \   0000001C   0xF050 0x7080      ORRS     R0,R0,#0x1000000
+   \   00000020   0x.... 0x....      LDR.W    R1,??DataTable14_8
+   \   00000024   0x6008             STR      R0,[R1, #+0]
+   \   00000026   0xE046             B.N      ??TWI0_IrqHandler_1
+    500              
+    501            }
+    502            /* Receiving Bytes */
+    503            else if(u32InterruptStatus & _TWI_SR_RXRDY && ( TWI0->u32Flags & _TWI_RECEIVING ) )
+   \                     ??TWI0_IrqHandler_0: (+1)
+   \   00000028   0x07A0             LSLS     R0,R4,#+30
+   \   0000002A   0xD531             BPL.N    ??TWI0_IrqHandler_2
+   \   0000002C   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000030   0x6800             LDR      R0,[R0, #+0]
+   \   00000032   0x7B00             LDRB     R0,[R0, #+12]
+   \   00000034   0x0700             LSLS     R0,R0,#+28
+   \   00000036   0xD52B             BPL.N    ??TWI0_IrqHandler_2
+    504            {
+    505              *TWI0->pu8RxBuffer = TWI0->pBaseAddress->TWI_RHR;
+   \   00000038   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   0000003C   0x6800             LDR      R0,[R0, #+0]
+   \   0000003E   0x6800             LDR      R0,[R0, #+0]
+   \   00000040   0x6B00             LDR      R0,[R0, #+48]
+   \   00000042   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   00000046   0x6809             LDR      R1,[R1, #+0]
+   \   00000048   0x6889             LDR      R1,[R1, #+8]
+   \   0000004A   0x7008             STRB     R0,[R1, #+0]
+    506              TWI0->pu8RxBuffer++;
+   \   0000004C   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000050   0x6800             LDR      R0,[R0, #+0]
+   \   00000052   0x6880             LDR      R0,[R0, #+8]
+   \   00000054   0x1C40             ADDS     R0,R0,#+1
+   \   00000056   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   0000005A   0x6809             LDR      R1,[R1, #+0]
+   \   0000005C   0x6088             STR      R0,[R1, #+8]
+    507              TWI_u32CurrentBytesRemaining--;
+   \   0000005E   0x.... 0x....      LDR.W    R0,??DataTable14_15
+   \   00000062   0x6800             LDR      R0,[R0, #+0]
+   \   00000064   0x1E40             SUBS     R0,R0,#+1
+   \   00000066   0x.... 0x....      LDR.W    R1,??DataTable14_15
+   \   0000006A   0x6008             STR      R0,[R1, #+0]
+    508              
+    509              if(TWI_u32CurrentBytesRemaining == 1)
+   \   0000006C   0x.... 0x....      LDR.W    R0,??DataTable14_15
+   \   00000070   0x6800             LDR      R0,[R0, #+0]
+   \   00000072   0x2801             CMP      R0,#+1
+   \   00000074   0xD11F             BNE.N    ??TWI0_IrqHandler_1
+    510              {
+    511                TWI0->pBaseAddress->TWI_CR |= _TWI_CR_STOP_BIT;
+   \   00000076   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   0000007A   0x6800             LDR      R0,[R0, #+0]
+   \   0000007C   0x6800             LDR      R0,[R0, #+0]
+   \   0000007E   0x6800             LDR      R0,[R0, #+0]
+   \   00000080   0xF050 0x0002      ORRS     R0,R0,#0x2
+   \   00000084   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   00000088   0x6809             LDR      R1,[R1, #+0]
+   \   0000008A   0x6809             LDR      R1,[R1, #+0]
+   \   0000008C   0x6008             STR      R0,[R1, #+0]
+   \   0000008E   0xE012             B.N      ??TWI0_IrqHandler_1
+    512              }
+    513            }
+    514            /* Transmitting Bytes */
+    515            else if(u32InterruptStatus & _TWI_SR_TXRDY && ( TWI0->u32Flags & _TWI_TRANSMITTING ) )
+   \                     ??TWI0_IrqHandler_2: (+1)
+   \   00000090   0x0760             LSLS     R0,R4,#+29
+   \   00000092   0xD508             BPL.N    ??TWI0_IrqHandler_3
+   \   00000094   0x.... 0x....      LDR.W    R0,??DataTable14_3
+   \   00000098   0x6800             LDR      R0,[R0, #+0]
+   \   0000009A   0x7B00             LDRB     R0,[R0, #+12]
+   \   0000009C   0x0780             LSLS     R0,R0,#+30
+   \   0000009E   0xD502             BPL.N    ??TWI0_IrqHandler_3
+    516            {
+    517              /* There is more data queued and peripheral ready */
+    518              TWI0FillTxBuffer();
+   \   000000A0   0x.... 0x....      BL       TWI0FillTxBuffer
+   \   000000A4   0xE007             B.N      ??TWI0_IrqHandler_1
+    519            }
+    520            else
+    521            {
+    522              TWI_u32Flags |= _TWI_ERROR_INTERRUPT;
+   \                     ??TWI0_IrqHandler_3: (+1)
+   \   000000A6   0x.... 0x....      LDR.W    R0,??DataTable14_8
+   \   000000AA   0x6800             LDR      R0,[R0, #+0]
+   \   000000AC   0xF050 0x7000      ORRS     R0,R0,#0x2000000
+   \   000000B0   0x.... 0x....      LDR.W    R1,??DataTable14_8
+   \   000000B4   0x6008             STR      R0,[R1, #+0]
+    523            }
+    524          }
+   \                     ??TWI0_IrqHandler_1: (+1)
+   \   000000B6   0xBD10             POP      {R4,PC}          ;; return
+    525          
+    526          /***********************************************************************************************************************
+    527          State Machine Function Definitions
+    528          
+    529          
+    530          
+    531          ***********************************************************************************************************************/
+    532          
+    533          /*-------------------------------------------------------------------------------------------------------------------*/
+    534          /* Wait for a transmit message to be queued.  Received data is handled in interrupts. */
+
+   \                                 In section .text, align 4, keep-with-next
+    535          void TWISM_Idle(void)
+    536          {
+   \                     TWISM_Idle: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    537            if(TWI_MessageBufferNextIndex != TWI_MessageBufferCurIndex )
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable14_5
+   \   00000006   0x7800             LDRB     R0,[R0, #+0]
+   \   00000008   0x.... 0x....      LDR.W    R1,??DataTable14_10
+   \   0000000C   0x7809             LDRB     R1,[R1, #+0]
+   \   0000000E   0x4288             CMP      R0,R1
+   \   00000010   0xF000 0x8096      BEQ.W    ??TWISM_Idle_0
+    538            {
+    539              TWI0->pBaseAddress->TWI_MMR = TWI0_MMR_INIT;
+   \   00000014   0x2000             MOVS     R0,#+0
+   \   00000016   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   0000001A   0x6809             LDR      R1,[R1, #+0]
+   \   0000001C   0x6809             LDR      R1,[R1, #+0]
+   \   0000001E   0x6048             STR      R0,[R1, #+4]
+    540              TWI0->pBaseAddress->TWI_CR = TWI0_CR_INIT;
+   \   00000020   0x2024             MOVS     R0,#+36
+   \   00000022   0x.... 0x....      LDR.W    R1,??DataTable14_3
+   \   00000026   0x6809             LDR      R1,[R1, #+0]
+   \   00000028   0x6809             LDR      R1,[R1, #+0]
+   \   0000002A   0x6008             STR      R0,[R1, #+0]
+    541              
+    542              if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Direction == WRITE)
+   \   0000002C   0x.... 0x....      LDR.W    R0,??DataTable14_4
+   \   00000030   0x.... 0x....      LDR.W    R1,??DataTable14_10
+   \   00000034   0x7809             LDRB     R1,[R1, #+0]
+   \   00000036   0x0109             LSLS     R1,R1,#+4
+   \   00000038   0x5C08             LDRB     R0,[R1, R0]
+   \   0000003A   0x2800             CMP      R0,#+0
+   \   0000003C   0xD132             BNE.N    ??TWISM_Idle_1
+    543              {
+    544                /* insert new address */
+    545                TWI0->pBaseAddress->TWI_MMR |= ((TWI_MessageBuffer[TWI_MessageBufferCurIndex].u8Address << _TWI_MMR_ADDRESS_SHIFT));
+   \   0000003E   0x....             LDR.N    R0,??DataTable14_3
+   \   00000040   0x6800             LDR      R0,[R0, #+0]
+   \   00000042   0x6800             LDR      R0,[R0, #+0]
+   \   00000044   0x6840             LDR      R0,[R0, #+4]
+   \   00000046   0x....             LDR.N    R1,??DataTable14_4
+   \   00000048   0x.... 0x....      LDR.W    R2,??DataTable14_10
+   \   0000004C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000004E   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000052   0x7A09             LDRB     R1,[R1, #+8]
+   \   00000054   0xEA50 0x4001      ORRS     R0,R0,R1, LSL #+16
+   \   00000058   0x....             LDR.N    R1,??DataTable14_3
+   \   0000005A   0x6809             LDR      R1,[R1, #+0]
+   \   0000005C   0x6809             LDR      R1,[R1, #+0]
+   \   0000005E   0x6048             STR      R0,[R1, #+4]
+    546                
+    547                /* Set up to transmit the message */
+    548                TWI_u32CurrentBytesRemaining = TWI0->pTransmitBuffer->u32Size;
+   \   00000060   0x....             LDR.N    R0,??DataTable14_3
+   \   00000062   0x6800             LDR      R0,[R0, #+0]
+   \   00000064   0x6840             LDR      R0,[R0, #+4]
+   \   00000066   0x6840             LDR      R0,[R0, #+4]
+   \   00000068   0x....             LDR.N    R1,??DataTable14_15
+   \   0000006A   0x6008             STR      R0,[R1, #+0]
+    549                TWI_pu8CurrentTxData = TWI0->pTransmitBuffer->pu8Message;
+   \   0000006C   0x....             LDR.N    R0,??DataTable14_3
+   \   0000006E   0x6800             LDR      R0,[R0, #+0]
+   \   00000070   0x6840             LDR      R0,[R0, #+4]
+   \   00000072   0x3008             ADDS     R0,R0,#+8
+   \   00000074   0x....             LDR.N    R1,??DataTable14_16
+   \   00000076   0x6008             STR      R0,[R1, #+0]
+    550                TWI0FillTxBuffer();    
+   \   00000078   0x.... 0x....      BL       TWI0FillTxBuffer
+    551                
+    552                /* Update the message's status */
+    553                UpdateMessageStatus(TWI0->pTransmitBuffer->u32Token, SENDING);
+   \   0000007C   0x2102             MOVS     R1,#+2
+   \   0000007E   0x....             LDR.N    R0,??DataTable14_3
+   \   00000080   0x6800             LDR      R0,[R0, #+0]
+   \   00000082   0x6840             LDR      R0,[R0, #+4]
+   \   00000084   0x6800             LDR      R0,[R0, #+0]
+   \   00000086   0x.... 0x....      BL       UpdateMessageStatus
+    554            
+    555                /* Proceed to next state to let the current message send */
+    556                TWI0->u32Flags |= (_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
+   \   0000008A   0x....             LDR.N    R0,??DataTable14_3
+   \   0000008C   0x6800             LDR      R0,[R0, #+0]
+   \   0000008E   0x68C0             LDR      R0,[R0, #+12]
+   \   00000090   0xF050 0x0006      ORRS     R0,R0,#0x6
+   \   00000094   0x....             LDR.N    R1,??DataTable14_3
+   \   00000096   0x6809             LDR      R1,[R1, #+0]
+   \   00000098   0x60C8             STR      R0,[R1, #+12]
+    557                TWI_StateMachine = TWISM_Transmitting;
+   \   0000009A   0x.... 0x....      ADR.W    R0,TWISM_Transmitting
+   \   0000009E   0x....             LDR.N    R1,??DataTable14_17
+   \   000000A0   0x6008             STR      R0,[R1, #+0]
+   \   000000A2   0xE044             B.N      ??TWISM_Idle_2
+    558              }
+    559              else if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Direction == READ)
+   \                     ??TWISM_Idle_1: (+1)
+   \   000000A4   0x....             LDR.N    R0,??DataTable14_4
+   \   000000A6   0x....             LDR.N    R1,??DataTable14_10
+   \   000000A8   0x7809             LDRB     R1,[R1, #+0]
+   \   000000AA   0x0109             LSLS     R1,R1,#+4
+   \   000000AC   0x5C08             LDRB     R0,[R1, R0]
+   \   000000AE   0x2801             CMP      R0,#+1
+   \   000000B0   0xD13D             BNE.N    ??TWISM_Idle_2
+    560              {
+    561                /* insert new address and set Read bit */
+    562                TWI0->pBaseAddress->TWI_MMR |= (((TWI_MessageBuffer[TWI_MessageBufferCurIndex].u8Address) << _TWI_MMR_ADDRESS_SHIFT) & _TWI_MMR_MREAD_BIT);
+   \   000000B2   0x....             LDR.N    R0,??DataTable14_3
+   \   000000B4   0x6800             LDR      R0,[R0, #+0]
+   \   000000B6   0x6800             LDR      R0,[R0, #+0]
+   \   000000B8   0x6840             LDR      R0,[R0, #+4]
+   \   000000BA   0x....             LDR.N    R1,??DataTable14_3
+   \   000000BC   0x6809             LDR      R1,[R1, #+0]
+   \   000000BE   0x6809             LDR      R1,[R1, #+0]
+   \   000000C0   0x6048             STR      R0,[R1, #+4]
+    563                
+    564                /* Grab number of desired bytes and the pointer to store the buffer */
+    565                TWI_u32CurrentBytesRemaining = TWI_MessageBuffer[TWI_MessageBufferCurIndex].u32Size;
+   \   000000C2   0x....             LDR.N    R0,??DataTable14_4
+   \   000000C4   0x....             LDR.N    R1,??DataTable14_10
+   \   000000C6   0x7809             LDRB     R1,[R1, #+0]
+   \   000000C8   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   000000CC   0x6840             LDR      R0,[R0, #+4]
+   \   000000CE   0x....             LDR.N    R1,??DataTable14_15
+   \   000000D0   0x6008             STR      R0,[R1, #+0]
+    566                TWI0->pu8RxBuffer = TWI_MessageBuffer[TWI_MessageBufferCurIndex].pu8RxBuffer;
+   \   000000D2   0x....             LDR.N    R0,??DataTable14_4
+   \   000000D4   0x....             LDR.N    R1,??DataTable14_10
+   \   000000D6   0x7809             LDRB     R1,[R1, #+0]
+   \   000000D8   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   000000DC   0x68C0             LDR      R0,[R0, #+12]
+   \   000000DE   0x....             LDR.N    R1,??DataTable14_3
+   \   000000E0   0x6809             LDR      R1,[R1, #+0]
+   \   000000E2   0x6088             STR      R0,[R1, #+8]
+    567                
+    568                if(TWI_u32CurrentBytesRemaining == 1)
+   \   000000E4   0x....             LDR.N    R0,??DataTable14_15
+   \   000000E6   0x6800             LDR      R0,[R0, #+0]
+   \   000000E8   0x2801             CMP      R0,#+1
+   \   000000EA   0xD10A             BNE.N    ??TWISM_Idle_3
+    569                {
+    570                  /* Start and Stop need to be set at same time */
+    571                  TWI0->pBaseAddress->TWI_CR |= (_TWI_CR_START_BIT | _TWI_CR_STOP_BIT);
+   \   000000EC   0x....             LDR.N    R0,??DataTable14_3
+   \   000000EE   0x6800             LDR      R0,[R0, #+0]
+   \   000000F0   0x6800             LDR      R0,[R0, #+0]
+   \   000000F2   0x6800             LDR      R0,[R0, #+0]
+   \   000000F4   0xF050 0x0003      ORRS     R0,R0,#0x3
+   \   000000F8   0x....             LDR.N    R1,??DataTable14_3
+   \   000000FA   0x6809             LDR      R1,[R1, #+0]
+   \   000000FC   0x6809             LDR      R1,[R1, #+0]
+   \   000000FE   0x6008             STR      R0,[R1, #+0]
+   \   00000100   0xE009             B.N      ??TWISM_Idle_4
+    572                }
+    573                else
+    574                {
+    575                  /* Just start bit, stop will be handled by interrupt */
+    576                  TWI0->pBaseAddress->TWI_CR |= _TWI_CR_START_BIT;
+   \                     ??TWISM_Idle_3: (+1)
+   \   00000102   0x....             LDR.N    R0,??DataTable14_3
+   \   00000104   0x6800             LDR      R0,[R0, #+0]
+   \   00000106   0x6800             LDR      R0,[R0, #+0]
+   \   00000108   0x6800             LDR      R0,[R0, #+0]
+   \   0000010A   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   0000010E   0x....             LDR.N    R1,??DataTable14_3
+   \   00000110   0x6809             LDR      R1,[R1, #+0]
+   \   00000112   0x6809             LDR      R1,[R1, #+0]
+   \   00000114   0x6008             STR      R0,[R1, #+0]
+    577                }
+    578                
+    579                /* Proceed to receiving state and set flag */
+    580                TWI0->u32Flags |= _TWI_RECEIVING;
+   \                     ??TWISM_Idle_4: (+1)
+   \   00000116   0x....             LDR.N    R0,??DataTable14_3
+   \   00000118   0x6800             LDR      R0,[R0, #+0]
+   \   0000011A   0x68C0             LDR      R0,[R0, #+12]
+   \   0000011C   0xF050 0x0008      ORRS     R0,R0,#0x8
+   \   00000120   0x....             LDR.N    R1,??DataTable14_3
+   \   00000122   0x6809             LDR      R1,[R1, #+0]
+   \   00000124   0x60C8             STR      R0,[R1, #+12]
+    581                TWI_StateMachine = TWISM_Receiving;
+   \   00000126   0x.... 0x....      ADR.W    R0,TWISM_Receiving
+   \   0000012A   0x....             LDR.N    R1,??DataTable14_17
+   \   0000012C   0x6008             STR      R0,[R1, #+0]
+    582                
+    583              }  
+    584              
+    585              /* Check for errors */
+    586              if(TWI_u32Flags & TWI_ERROR_FLAG_MASK)
+   \                     ??TWISM_Idle_2: (+1)
+   \   0000012E   0x....             LDR.N    R0,??DataTable14_8
+   \   00000130   0x6800             LDR      R0,[R0, #+0]
+   \   00000132   0xF010 0x4F7F      TST      R0,#0xFF000000
+   \   00000136   0xD003             BEQ.N    ??TWISM_Idle_0
+    587              {
+    588                /* Reset peripheral parser and go to error state */
+    589                TWI_StateMachine = TWISM_Error;
+   \   00000138   0x.... 0x....      ADR.W    R0,TWISM_Error
+   \   0000013C   0x....             LDR.N    R1,??DataTable14_17
+   \   0000013E   0x6008             STR      R0,[R1, #+0]
+    590              }
+    591            }
+    592          } /* end TWISM_Idle() */
+   \                     ??TWISM_Idle_0: (+1)
+   \   00000140   0xBD01             POP      {R0,PC}          ;; return
+    593               
+    594          
+    595          /*-------------------------------------------------------------------------------------------------------------------*/
+    596          /* Transmit in progress until current bytes have reached 0.  On exit, the transmit message must be dequeued.
+    597          */
+
+   \                                 In section .text, align 4, keep-with-next
+    598          void TWISM_Transmitting(void)
+    599          {
+   \                     TWISM_Transmitting: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    600            /* Check if a stop condition has been requested */
+    601            if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Stop == STOP)
+   \   00000002   0x....             LDR.N    R0,??DataTable14_4
+   \   00000004   0x....             LDR.N    R1,??DataTable14_10
+   \   00000006   0x7809             LDRB     R1,[R1, #+0]
+   \   00000008   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   0000000C   0x7A80             LDRB     R0,[R0, #+10]
+   \   0000000E   0x2800             CMP      R0,#+0
+   \   00000010   0xD118             BNE.N    ??TWISM_Transmitting_0
+    602            {
+    603              /* Check if all of the message bytes have completely finished sending and transmission complete */
+    604              if( (TWI_u32CurrentBytesRemaining == 0) && 
+    605                  (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXRDY) &&
+    606                  (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXCOMP) )
+   \   00000012   0x....             LDR.N    R0,??DataTable14_15
+   \   00000014   0x6800             LDR      R0,[R0, #+0]
+   \   00000016   0x2800             CMP      R0,#+0
+   \   00000018   0xD126             BNE.N    ??TWISM_Transmitting_1
+   \   0000001A   0x....             LDR.N    R0,??DataTable14_3
+   \   0000001C   0x6800             LDR      R0,[R0, #+0]
+   \   0000001E   0x6800             LDR      R0,[R0, #+0]
+   \   00000020   0x6A00             LDR      R0,[R0, #+32]
+   \   00000022   0x0740             LSLS     R0,R0,#+29
+   \   00000024   0xD520             BPL.N    ??TWISM_Transmitting_1
+   \   00000026   0x....             LDR.N    R0,??DataTable14_3
+   \   00000028   0x6800             LDR      R0,[R0, #+0]
+   \   0000002A   0x6800             LDR      R0,[R0, #+0]
+   \   0000002C   0x6A00             LDR      R0,[R0, #+32]
+   \   0000002E   0x07C0             LSLS     R0,R0,#+31
+   \   00000030   0xD51A             BPL.N    ??TWISM_Transmitting_1
+    607              {
+    608                /*  Clear flags */
+    609                TWI0->u32Flags &= ~(_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
+   \   00000032   0x....             LDR.N    R0,??DataTable14_3
+   \   00000034   0x6800             LDR      R0,[R0, #+0]
+   \   00000036   0x68C0             LDR      R0,[R0, #+12]
+   \   00000038   0xF030 0x0006      BICS     R0,R0,#0x6
+   \   0000003C   0x....             LDR.N    R1,??DataTable14_3
+   \   0000003E   0x6809             LDR      R1,[R1, #+0]
+   \   00000040   0x60C8             STR      R0,[R1, #+12]
+   \   00000042   0xE011             B.N      ??TWISM_Transmitting_1
+    610              }
+    611            }
+    612            else
+    613            {
+    614              /* Check if all of the message bytes have completely finished sending */
+    615              if( (TWI_u32CurrentBytesRemaining == 0) && 
+    616                  (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXRDY) )
+   \                     ??TWISM_Transmitting_0: (+1)
+   \   00000044   0x....             LDR.N    R0,??DataTable14_15
+   \   00000046   0x6800             LDR      R0,[R0, #+0]
+   \   00000048   0x2800             CMP      R0,#+0
+   \   0000004A   0xD10D             BNE.N    ??TWISM_Transmitting_1
+   \   0000004C   0x....             LDR.N    R0,??DataTable14_3
+   \   0000004E   0x6800             LDR      R0,[R0, #+0]
+   \   00000050   0x6800             LDR      R0,[R0, #+0]
+   \   00000052   0x6A00             LDR      R0,[R0, #+32]
+   \   00000054   0x0740             LSLS     R0,R0,#+29
+   \   00000056   0xD507             BPL.N    ??TWISM_Transmitting_1
+    617              { 
+    618                /* Clear flag */
+    619                TWI0->u32Flags &= ~_TWI_TRANSMITTING;
+   \   00000058   0x....             LDR.N    R0,??DataTable14_3
+   \   0000005A   0x6800             LDR      R0,[R0, #+0]
+   \   0000005C   0x68C0             LDR      R0,[R0, #+12]
+   \   0000005E   0xF030 0x0002      BICS     R0,R0,#0x2
+   \   00000062   0x....             LDR.N    R1,??DataTable14_3
+   \   00000064   0x6809             LDR      R1,[R1, #+0]
+   \   00000066   0x60C8             STR      R0,[R1, #+12]
+    620              }
+    621            }
+    622            
+    623            if( !(TWI0->u32Flags & _TWI_TRANSMITTING) )
+   \                     ??TWISM_Transmitting_1: (+1)
+   \   00000068   0x....             LDR.N    R0,??DataTable14_3
+   \   0000006A   0x6800             LDR      R0,[R0, #+0]
+   \   0000006C   0x7B00             LDRB     R0,[R0, #+12]
+   \   0000006E   0x0780             LSLS     R0,R0,#+30
+   \   00000070   0xD425             BMI.N    ??TWISM_Transmitting_2
+    624            {
+    625              /* Update the status queue and then dequeue the message */
+    626              UpdateMessageStatus(TWI0->pTransmitBuffer->u32Token, COMPLETE);
+   \   00000072   0x2104             MOVS     R1,#+4
+   \   00000074   0x....             LDR.N    R0,??DataTable14_3
+   \   00000076   0x6800             LDR      R0,[R0, #+0]
+   \   00000078   0x6840             LDR      R0,[R0, #+4]
+   \   0000007A   0x6800             LDR      R0,[R0, #+0]
+   \   0000007C   0x.... 0x....      BL       UpdateMessageStatus
+    627              DeQueueMessage(&TWI0->pTransmitBuffer);
+   \   00000080   0x....             LDR.N    R0,??DataTable14_3
+   \   00000082   0x6800             LDR      R0,[R0, #+0]
+   \   00000084   0x1D00             ADDS     R0,R0,#+4
+   \   00000086   0x.... 0x....      BL       DeQueueMessage
+    628              
+    629              /* Make sure _TWI_INIT_MODE flag is clear in case this was a manual cycle */
+    630              TWI_u32Flags &= ~_TWI_INIT_MODE;
+   \   0000008A   0x....             LDR.N    R0,??DataTable14_8
+   \   0000008C   0x6800             LDR      R0,[R0, #+0]
+   \   0000008E   0x0840             LSRS     R0,R0,#+1
+   \   00000090   0x0040             LSLS     R0,R0,#+1
+   \   00000092   0x....             LDR.N    R1,??DataTable14_8
+   \   00000094   0x6008             STR      R0,[R1, #+0]
+    631              TWI_StateMachine = TWISM_Idle;
+   \   00000096   0x....             LDR.N    R0,??DataTable14_20
+   \   00000098   0x....             LDR.N    R1,??DataTable14_17
+   \   0000009A   0x6008             STR      R0,[R1, #+0]
+    632              
+    633              /* Update queue pointers */
+    634              TWI_MessageBufferCurIndex++;
+   \   0000009C   0x....             LDR.N    R0,??DataTable14_10
+   \   0000009E   0x7800             LDRB     R0,[R0, #+0]
+   \   000000A0   0x1C40             ADDS     R0,R0,#+1
+   \   000000A2   0x....             LDR.N    R1,??DataTable14_10
+   \   000000A4   0x7008             STRB     R0,[R1, #+0]
+    635              TWI_MessageQueueLength--;
+   \   000000A6   0x....             LDR.N    R0,??DataTable14_2
+   \   000000A8   0x7800             LDRB     R0,[R0, #+0]
+   \   000000AA   0x1E40             SUBS     R0,R0,#+1
+   \   000000AC   0x....             LDR.N    R1,??DataTable14_2
+   \   000000AE   0x7008             STRB     R0,[R1, #+0]
+    636              if(TWI_MessageBufferCurIndex == TX_QUEUE_SIZE)
+   \   000000B0   0x....             LDR.N    R0,??DataTable14_10
+   \   000000B2   0x7800             LDRB     R0,[R0, #+0]
+   \   000000B4   0x2810             CMP      R0,#+16
+   \   000000B6   0xD102             BNE.N    ??TWISM_Transmitting_2
+    637              {
+    638                TWI_MessageBufferCurIndex = 0;
+   \   000000B8   0x2000             MOVS     R0,#+0
+   \   000000BA   0x....             LDR.N    R1,??DataTable14_10
+   \   000000BC   0x7008             STRB     R0,[R1, #+0]
+    639              }
+    640            }
+    641            
+    642            /* Check for errors */
+    643            if(TWI_u32Flags & TWI_ERROR_FLAG_MASK)
+   \                     ??TWISM_Transmitting_2: (+1)
+   \   000000BE   0x....             LDR.N    R0,??DataTable14_8
+   \   000000C0   0x6800             LDR      R0,[R0, #+0]
+   \   000000C2   0xF010 0x4F7F      TST      R0,#0xFF000000
+   \   000000C6   0xD003             BEQ.N    ??TWISM_Transmitting_3
+    644            {
+    645              /* Reset peripheral parser and go to error state */
+    646              TWI_StateMachine = TWISM_Error;
+   \   000000C8   0x.... 0x....      ADR.W    R0,TWISM_Error
+   \   000000CC   0x....             LDR.N    R1,??DataTable14_17
+   \   000000CE   0x6008             STR      R0,[R1, #+0]
+    647            }
+    648            
+    649          } /* end TWISM_Transmitting() */
+   \                     ??TWISM_Transmitting_3: (+1)
+   \   000000D0   0xBD01             POP      {R0,PC}          ;; return
+    650          
+    651          /*-------------------------------------------------------------------------------------------------------------------*/
+    652          /* Receive in progress until current bytes have reached 0.
+    653          */
+
+   \                                 In section .text, align 4, keep-with-next
+    654          void TWISM_Receiving(void)
+    655          {
+    656            if( (TWI_u32CurrentBytesRemaining == 0) &&
+    657                (TWI0->pBaseAddress->TWI_SR & _TWI_SR_RXRDY) &&
+    658                (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXCOMP) )
+   \                     TWISM_Receiving: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable14_15
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0x2800             CMP      R0,#+0
+   \   00000006   0xD12D             BNE.N    ??TWISM_Receiving_0
+   \   00000008   0x....             LDR.N    R0,??DataTable14_3
+   \   0000000A   0x6800             LDR      R0,[R0, #+0]
+   \   0000000C   0x6800             LDR      R0,[R0, #+0]
+   \   0000000E   0x6A00             LDR      R0,[R0, #+32]
+   \   00000010   0x0780             LSLS     R0,R0,#+30
+   \   00000012   0xD527             BPL.N    ??TWISM_Receiving_0
+   \   00000014   0x....             LDR.N    R0,??DataTable14_3
+   \   00000016   0x6800             LDR      R0,[R0, #+0]
+   \   00000018   0x6800             LDR      R0,[R0, #+0]
+   \   0000001A   0x6A00             LDR      R0,[R0, #+32]
+   \   0000001C   0x07C0             LSLS     R0,R0,#+31
+   \   0000001E   0xD521             BPL.N    ??TWISM_Receiving_0
+    659            {
+    660              /* Clear flag */
+    661              TWI0->u32Flags &= ~_TWI_RECEIVING;
+   \   00000020   0x....             LDR.N    R0,??DataTable14_3
+   \   00000022   0x6800             LDR      R0,[R0, #+0]
+   \   00000024   0x68C0             LDR      R0,[R0, #+12]
+   \   00000026   0xF030 0x0008      BICS     R0,R0,#0x8
+   \   0000002A   0x....             LDR.N    R1,??DataTable14_3
+   \   0000002C   0x6809             LDR      R1,[R1, #+0]
+   \   0000002E   0x60C8             STR      R0,[R1, #+12]
+    662              
+    663              /* Make sure _TWI_INIT_MODE flag is clear in case this was a manual cycle */
+    664              TWI_u32Flags &= ~_TWI_INIT_MODE;
+   \   00000030   0x....             LDR.N    R0,??DataTable14_8
+   \   00000032   0x6800             LDR      R0,[R0, #+0]
+   \   00000034   0x0840             LSRS     R0,R0,#+1
+   \   00000036   0x0040             LSLS     R0,R0,#+1
+   \   00000038   0x....             LDR.N    R1,??DataTable14_8
+   \   0000003A   0x6008             STR      R0,[R1, #+0]
+    665              TWI_StateMachine = TWISM_Idle;
+   \   0000003C   0x....             LDR.N    R0,??DataTable14_20
+   \   0000003E   0x....             LDR.N    R1,??DataTable14_17
+   \   00000040   0x6008             STR      R0,[R1, #+0]
+    666              
+    667              /* Update queue pointers */
+    668              TWI_MessageBufferCurIndex++;
+   \   00000042   0x....             LDR.N    R0,??DataTable14_10
+   \   00000044   0x7800             LDRB     R0,[R0, #+0]
+   \   00000046   0x1C40             ADDS     R0,R0,#+1
+   \   00000048   0x....             LDR.N    R1,??DataTable14_10
+   \   0000004A   0x7008             STRB     R0,[R1, #+0]
+    669              TWI_MessageQueueLength--;
+   \   0000004C   0x....             LDR.N    R0,??DataTable14_2
+   \   0000004E   0x7800             LDRB     R0,[R0, #+0]
+   \   00000050   0x1E40             SUBS     R0,R0,#+1
+   \   00000052   0x....             LDR.N    R1,??DataTable14_2
+   \   00000054   0x7008             STRB     R0,[R1, #+0]
+    670              if(TWI_MessageBufferCurIndex == TX_QUEUE_SIZE)
+   \   00000056   0x....             LDR.N    R0,??DataTable14_10
+   \   00000058   0x7800             LDRB     R0,[R0, #+0]
+   \   0000005A   0x2810             CMP      R0,#+16
+   \   0000005C   0xD102             BNE.N    ??TWISM_Receiving_0
+    671              {
+    672                TWI_MessageBufferCurIndex = 0;
+   \   0000005E   0x2000             MOVS     R0,#+0
+   \   00000060   0x....             LDR.N    R1,??DataTable14_10
+   \   00000062   0x7008             STRB     R0,[R1, #+0]
+    673              }
+    674            }
+    675            
+    676            /* Check for errors */
+    677            if(TWI_u32Flags & TWI_ERROR_FLAG_MASK)
+   \                     ??TWISM_Receiving_0: (+1)
+   \   00000064   0x....             LDR.N    R0,??DataTable14_8
+   \   00000066   0x6800             LDR      R0,[R0, #+0]
+   \   00000068   0xF010 0x4F7F      TST      R0,#0xFF000000
+   \   0000006C   0xD003             BEQ.N    ??TWISM_Receiving_1
+    678            {
+    679              /* Reset peripheral parser and go to error state */
+    680              TWI_StateMachine = TWISM_Error;
+   \   0000006E   0x.... 0x....      ADR.W    R0,TWISM_Error
+   \   00000072   0x....             LDR.N    R1,??DataTable14_17
+   \   00000074   0x6008             STR      R0,[R1, #+0]
+    681            }  
+    682            
+    683          }
+   \                     ??TWISM_Receiving_1: (+1)
+   \   00000076   0x4770             BX       LR               ;; return
+    684          
+    685          /*-------------------------------------------------------------------------------------------------------------------*/
+    686          /* Handle an error */
+
+   \                                 In section .text, align 4, keep-with-next
+    687          void TWISM_Error(void)          
+    688          {
+   \                     TWISM_Error: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    689            /* NACK recieved */
+    690            if( TWI_u32Flags & _TWI_ERROR_NACK )
+   \   00000002   0x....             LDR.N    R0,??DataTable14_8
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0x01C0             LSLS     R0,R0,#+7
+   \   00000008   0xD53A             BPL.N    ??TWISM_Error_0
+    691            {
+    692              /* Msg attempted too many times */
+    693              if( ++TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Attempts == MAX_ATTEMPTS )
+   \   0000000A   0x....             LDR.N    R0,??DataTable14_4
+   \   0000000C   0x....             LDR.N    R1,??DataTable14_5
+   \   0000000E   0x7809             LDRB     R1,[R1, #+0]
+   \   00000010   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   00000014   0x7A40             LDRB     R0,[R0, #+9]
+   \   00000016   0x1C40             ADDS     R0,R0,#+1
+   \   00000018   0x....             LDR.N    R1,??DataTable14_4
+   \   0000001A   0x....             LDR.N    R2,??DataTable14_5
+   \   0000001C   0x7812             LDRB     R2,[R2, #+0]
+   \   0000001E   0xEB11 0x1102      ADDS     R1,R1,R2, LSL #+4
+   \   00000022   0x7248             STRB     R0,[R1, #+9]
+   \   00000024   0x....             LDR.N    R0,??DataTable14_4
+   \   00000026   0x....             LDR.N    R1,??DataTable14_5
+   \   00000028   0x7809             LDRB     R1,[R1, #+0]
+   \   0000002A   0xEB10 0x1001      ADDS     R0,R0,R1, LSL #+4
+   \   0000002E   0x7A40             LDRB     R0,[R0, #+9]
+   \   00000030   0x2803             CMP      R0,#+3
+   \   00000032   0xD121             BNE.N    ??TWISM_Error_1
+    694              {
+    695                /* Remove the message from buffer queue */
+    696                TWI_MessageBufferCurIndex++;
+   \   00000034   0x....             LDR.N    R0,??DataTable14_10
+   \   00000036   0x7800             LDRB     R0,[R0, #+0]
+   \   00000038   0x1C40             ADDS     R0,R0,#+1
+   \   0000003A   0x....             LDR.N    R1,??DataTable14_10
+   \   0000003C   0x7008             STRB     R0,[R1, #+0]
+    697                TWI_MessageQueueLength--;
+   \   0000003E   0x....             LDR.N    R0,??DataTable14_2
+   \   00000040   0x7800             LDRB     R0,[R0, #+0]
+   \   00000042   0x1E40             SUBS     R0,R0,#+1
+   \   00000044   0x....             LDR.N    R1,??DataTable14_2
+   \   00000046   0x7008             STRB     R0,[R1, #+0]
+    698                if(TWI_MessageBufferCurIndex == TX_QUEUE_SIZE)
+   \   00000048   0x....             LDR.N    R0,??DataTable14_10
+   \   0000004A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000004C   0x2810             CMP      R0,#+16
+   \   0000004E   0xD102             BNE.N    ??TWISM_Error_2
+    699                {
+    700                  TWI_MessageBufferCurIndex = 0;
+   \   00000050   0x2000             MOVS     R0,#+0
+   \   00000052   0x....             LDR.N    R1,??DataTable14_10
+   \   00000054   0x7008             STRB     R0,[R1, #+0]
+    701                }
+    702                
+    703                if( TWI0->u32Flags & _TWI_TRANSMITTING )
+   \                     ??TWISM_Error_2: (+1)
+   \   00000056   0x....             LDR.N    R0,??DataTable14_3
+   \   00000058   0x6800             LDR      R0,[R0, #+0]
+   \   0000005A   0x7B00             LDRB     R0,[R0, #+12]
+   \   0000005C   0x0780             LSLS     R0,R0,#+30
+   \   0000005E   0xD50B             BPL.N    ??TWISM_Error_1
+    704                {
+    705                  /* Dequeue Msg and Update Status */ 
+    706                  UpdateMessageStatus(TWI0->pTransmitBuffer->u32Token, ABANDONED);
+   \   00000060   0x2106             MOVS     R1,#+6
+   \   00000062   0x....             LDR.N    R0,??DataTable14_3
+   \   00000064   0x6800             LDR      R0,[R0, #+0]
+   \   00000066   0x6840             LDR      R0,[R0, #+4]
+   \   00000068   0x6800             LDR      R0,[R0, #+0]
+   \   0000006A   0x.... 0x....      BL       UpdateMessageStatus
+    707                  DeQueueMessage(&TWI0->pTransmitBuffer);
+   \   0000006E   0x....             LDR.N    R0,??DataTable14_3
+   \   00000070   0x6800             LDR      R0,[R0, #+0]
+   \   00000072   0x1D00             ADDS     R0,R0,#+4
+   \   00000074   0x.... 0x....      BL       DeQueueMessage
+    708                }
+    709              }
+    710          
+    711              /* Reset the msg flags */
+    712              TWI0->u32Flags = 0;
+   \                     ??TWISM_Error_1: (+1)
+   \   00000078   0x2000             MOVS     R0,#+0
+   \   0000007A   0x....             LDR.N    R1,??DataTable14_3
+   \   0000007C   0x6809             LDR      R1,[R1, #+0]
+   \   0000007E   0x60C8             STR      R0,[R1, #+12]
+    713            }
+    714            
+    715            /* Return to Idle */
+    716            TWI_u32Flags &= ~TWI_ERROR_FLAG_MASK;
+   \                     ??TWISM_Error_0: (+1)
+   \   00000080   0x....             LDR.N    R0,??DataTable14_8
+   \   00000082   0x6800             LDR      R0,[R0, #+0]
+   \   00000084   0x0200             LSLS     R0,R0,#+8        ;; ZeroExtS R0,R0,#+8,#+8
+   \   00000086   0x0A00             LSRS     R0,R0,#+8
+   \   00000088   0x....             LDR.N    R1,??DataTable14_8
+   \   0000008A   0x6008             STR      R0,[R1, #+0]
+    717            TWI_StateMachine = TWISM_Idle;
+   \   0000008C   0x....             LDR.N    R0,??DataTable14_20
+   \   0000008E   0x....             LDR.N    R1,??DataTable14_17
+   \   00000090   0x6008             STR      R0,[R1, #+0]
+    718            
+    719          } /* end TWISM_Error() */
+   \   00000092   0xBD01             POP      {R0,PC}          ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14:
+   \   00000000   0xE000E100         DC32     0xe000e100
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_1:
+   \   00000000   0xE000E280         DC32     0xe000e280
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_2:
+   \   00000000   0x........         DC32     TWI_MessageQueueLength
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_3:
+   \   00000000   0x........         DC32     TWI0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_4:
+   \   00000000   0x........         DC32     TWI_MessageBuffer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_5:
+   \   00000000   0x........         DC32     TWI_MessageBufferNextIndex
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_6:
+   \   00000000   0x........         DC32     G_u32SystemFlags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_7:
+   \   00000000   0x400E0410         DC32     0x400e0410
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_8:
+   \   00000000   0x........         DC32     TWI_u32Flags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_9:
+   \   00000000   0x........         DC32     TWI_Peripheral0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_10:
+   \   00000000   0x........         DC32     TWI_MessageBufferCurIndex
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_11:
+   \   00000000   0x40084000         DC32     0x40084000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_12:
+   \   00000000   0x........         DC32     G_u32SystemTime1ms
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_13:
+   \   00000000   0x........         DC32     TWI_u32Timer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_14:
+   \   00000000   0x00021D1D         DC32     0x21d1d
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_15:
+   \   00000000   0x........         DC32     TWI_u32CurrentBytesRemaining
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_16:
+   \   00000000   0x........         DC32     TWI_pu8CurrentTxData
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_17:
+   \   00000000   0x........         DC32     TWI_StateMachine
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_18:
+   \   00000000   0x4008402C         DC32     0x4008402c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_19:
+   \   00000000   0x40084020         DC32     0x40084020
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable14_20:
+   \   00000000   0x........         DC32     TWISM_Idle
+    720          
+    721          /*--------------------------------------------------------------------------------------------------------------------*/
+    722          /* End of File */
+    723          /*--------------------------------------------------------------------------------------------------------------------*/
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   NVIC_ClearPendingIRQ
+       0   NVIC_EnableIRQ
+       0   TWI0FillTxBuffer
+      16   TWI0ReadByte
+        16   -> TWIManualMode
+      16   TWI0ReadData
+        16   -> TWIManualMode
+      24   TWI0WriteByte
+        24   -> QueueMessage
+        24   -> TWIManualMode
+      24   TWI0WriteData
+        24   -> QueueMessage
+        24   -> TWIManualMode
+       8   TWI0_IrqHandler
+         8   -> TWI0FillTxBuffer
+       8   TWIInitialize
+         8   -> IsTimeUp
+         8   -> NVIC_ClearPendingIRQ
+         8   -> NVIC_EnableIRQ
+       8   TWIManualMode
+         8   -- Indirect call
+         8   -> IsTimeUp
+       8   TWIRunActiveState
+         8   -- Indirect call
+       8   TWISM_Error
+         8   -> DeQueueMessage
+         8   -> UpdateMessageStatus
+       8   TWISM_Idle
+         8   -> TWI0FillTxBuffer
+         8   -> UpdateMessageStatus
+       0   TWISM_Receiving
+       8   TWISM_Transmitting
+         8   -> DeQueueMessage
+         8   -> UpdateMessageStatus
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable14
+       4  ??DataTable14_1
+       4  ??DataTable14_10
+       4  ??DataTable14_11
+       4  ??DataTable14_12
+       4  ??DataTable14_13
+       4  ??DataTable14_14
+       4  ??DataTable14_15
+       4  ??DataTable14_16
+       4  ??DataTable14_17
+       4  ??DataTable14_18
+       4  ??DataTable14_19
+       4  ??DataTable14_2
+       4  ??DataTable14_20
+       4  ??DataTable14_3
+       4  ??DataTable14_4
+       4  ??DataTable14_5
+       4  ??DataTable14_6
+       4  ??DataTable14_7
+       4  ??DataTable14_8
+       4  ??DataTable14_9
+      22  NVIC_ClearPendingIRQ
+      22  NVIC_EnableIRQ
+       4  TWI0
+     150  TWI0FillTxBuffer
+     198  TWI0ReadByte
+     198  TWI0ReadData
+     214  TWI0WriteByte
+     218  TWI0WriteData
+     184  TWI0_IrqHandler
+     258  TWIInitialize
+      62  TWIManualMode
+      12  TWIRunActiveState
+     148  TWISM_Error
+     322  TWISM_Idle
+     120  TWISM_Receiving
+     210  TWISM_Transmitting
+     256  TWI_MessageBuffer
+       1  TWI_MessageBufferCurIndex
+       1  TWI_MessageBufferNextIndex
+       1  TWI_MessageQueueLength
+      16  TWI_Peripheral0
+       4  TWI_StateMachine
+       4  TWI_pu8CurrentTxData
+       4  TWI_u32CurrentBytesRemaining
+       4  TWI_u32Flags
+       4  TWI_u32Timer
+
+ 
+   299 bytes in section .bss
+ 2 422 bytes in section .text
+ 
+ 2 422 bytes of CODE memory
+   299 bytes of DATA memory
+
+Errors: none
+Warnings: none

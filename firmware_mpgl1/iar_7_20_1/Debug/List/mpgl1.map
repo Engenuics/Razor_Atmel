@@ -1,36 +1,27 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.20.1.7305/W32 for ARM                 28/Oct/2015  17:19:15
+# IAR ELF Linker V7.20.1.7305/W32 for ARM                 06/Mar/2016  15:25:45
 # Copyright 2007-2014 IAR Systems AB.
 #
 #    Output file  =  
-#        D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Exe\mpgl1.out
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Exe\mpgl1.out
 #    Map file     =  
-#        D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\mpgl1.map
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\mpgl1.map
 #    Command line =  
-#        "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\board_cstartup_iar.o"
-#        "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\core_cm3.o"
-#        "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\exceptions.o"
-#        "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\main.o"
-#        "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\main_solution.o"
-#        "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\utilities.o"
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\board_cstartup_iar.o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\core_cm3.o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\exceptions.o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\main.o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\main_solution.o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj\utilities.o
 #        --redirect _Printf=_PrintfTiny --redirect _Scanf=_ScanfSmallNoMb -o
-#        "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Exe\mpgl1.out"
-#        --map "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\mpgl1.map"
-#        --log initialization,modules,sections --log_file "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\mpgl1.log"
-#        --config "D:\MPG
-#        Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\sam3u2-flash.icf"
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Exe\mpgl1.out
+#        --map
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\mpgl1.map
+#        --log initialization,modules,sections --log_file
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\List\mpgl1.log
+#        --config
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\sam3u2-flash.icf
 #        --semihosting --entry __iar_program_start --vfe
 #
 ###############################################################################
@@ -82,7 +73,7 @@ __SystemLibrary = DLib
 
     Module                ro code  ro data  rw data
     ------                -------  -------  -------
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj: [1]
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj: [1]
     board_cstartup_iar.o       20      188
     exceptions.o               78
     main.o                      2
@@ -184,7 +175,7 @@ exit                  0x0008013f   0x4  Code  Gb  exit.o [3]
 main                  0x0008013d   0x2  Code  Gb  main.o [1]
 
 
-[1] = D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj
+[1] = D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\Debug\Obj
 [2] = command line
 [3] = dl7M_tln.a
 [4] = rt7M_tl.a

@@ -1,46 +1,48 @@
-"D:\MPG Source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c"
+"D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\board_cstartup_iar.c"
 -std=c99
 -ferror-limit=100
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\bsp
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\bsp
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\drivers
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\drivers
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\application
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\application
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\application
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\application
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\cmsis
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\cmsis
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\drivers
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1\..\..\firmware_mpg_common\drivers
 -I
-C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\CMSIS\Include
+C:\Program Files\IAR Systems\EWARM_7_20_1\arm\CMSIS\Include
 -I
-C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\inc
+C:\Program Files\IAR Systems\EWARM_7_20_1\arm\inc
 -I
-C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\inc\c
+C:\Program Files\IAR Systems\EWARM_7_20_1\arm\inc\c
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\iar_7_20_1
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\bsp
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\bsp
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\drivers
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\drivers
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpgl1\application
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl1\application
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpg_common
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpg_common\application
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\application
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpg_common\cmsis
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\cmsis
 -I
-D:\MPG Source\Git\Razor_Atmel\firmware_mpg_common\drivers
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers
 -I
-C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\CMSIS\Include
+C:\Program Files\IAR Systems\EWARM_7_20_1\arm\CMSIS\Include
+-DMPGL1=1
+-DMPG1=1
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
@@ -231,8 +233,8 @@ C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\CMSIS\Include
 -D__HAS_LOCATED_DECLARATION__=1
 -D__HAS_LOCATED_WITH_INIT__=1
 -D__IAR_COMPILERBASE__=593922
--D__DATE__="Oct 28 2015"
--D__TIME__="17:19:15"
+-D__DATE__="Mar  6 2016"
+-D__TIME__="15:25:45"
 -D__STDC__=1
 -D__STDC_VERSION__=199901L
 -D__STDC_HOSTED__=1
@@ -257,8 +259,8 @@ C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\CMSIS\Include
 -D__EDG_SYSV=0
 -D__EDG_ANSIC=1
 -D__EDG_CPP0X_IL_EXTENSIONS_SUPPORTED=1
--D_DLIB_CONFIG_FILE_HEADER_NAME="C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h"
--D_DLIB_CONFIG_FILE_STRING="C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\INC\\c\\DLib_Config_Normal.h"
+-D_DLIB_CONFIG_FILE_HEADER_NAME="C:\Program Files\IAR Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h"
+-D_DLIB_CONFIG_FILE_STRING="C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\INC\\c\\DLib_Config_Normal.h"
 -D__VERSION__="IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM"
 -D_VA_DEFINED=
 -D__CODE_MEMORY_LIST1__()=__CODE_MEM_HELPER1__(__code, 0 )

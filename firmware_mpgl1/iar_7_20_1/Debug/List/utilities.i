@@ -1,4 +1,4 @@
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
 /***********************************************************************************************************************
 File: utilities.c                                                                
 
@@ -20,7 +20,7 @@ if( !IsTimeUp(&u32ApplicationTimer, 1000)
 
 ***********************************************************************************************************************/
 
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 /**********************************************************************************************************************
 File: configuration.h      
 
@@ -55,7 +55,7 @@ Type Definitions
 Includes
 ***********************************************************************************************************************/
 /* Common header files */
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 /* stdlib.h standard header */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -66,7 +66,7 @@ Includes
   #pragma system_include
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -112,7 +112,7 @@ Includes
 
 
 
-#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
 
 
@@ -126,7 +126,7 @@ Includes
    NWx = no_write(x), i.e. it doesn't write through pointer parameter x.
 */
 
-#line 99 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 99 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
 
 
@@ -136,8 +136,8 @@ Includes
 
 
 
-#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 /* yvals.h internal configuration header file. */
 /* Copyright 2001-2010 IAR Systems AB. */
 
@@ -148,7 +148,7 @@ Includes
   #pragma system_include
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -194,9 +194,9 @@ Includes
 
 
 
-#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* Convenience macros */
 
@@ -236,16 +236,16 @@ Includes
 
 
   /* Default turned on when compiling C++, EC++, or C99. */
-#line 59 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 59 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
 
 
-#line 70 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 70 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* Configuration */
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 /***************************************************
  *
  * DLib_Defaults.h is the library configuration manager.
@@ -283,7 +283,7 @@ Includes
 
 
 /* Include the main configuration header file. */
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\INC\\c\\DLib_Config_Normal.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\INC\\c\\DLib_Config_Normal.h"
 /* Customer-specific DLib configuration. */
 /* Copyright (C) 2003 IAR Systems.  All rights reserved. */
 
@@ -296,12 +296,12 @@ Includes
 
 /* No changes to the defaults. */
 
-#line 40 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 40 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
   /* _DLIB_CONFIG_FILE_STRING is the quoted variant of above */
-#line 47 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 47 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 /* Include the product specific header file. */
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
 
 
 
@@ -339,7 +339,7 @@ Includes
 
 
 /* Enable system locking  */
-#line 45 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
+#line 45 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
 
 /* Enable AEABI support */
 
@@ -366,7 +366,7 @@ Includes
 
 
 /* Configure generic ELF init routines. */
-#line 89 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
+#line 89 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product.h"
 
 
 
@@ -374,7 +374,7 @@ Includes
 
 
 
-#line 51 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 51 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -668,7 +668,7 @@ Includes
  * Default is to support long long formatting.
  */
 
-#line 351 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 351 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -877,7 +877,7 @@ Includes
  * Default is to support long long formatting in scanf.
  */
 
-#line 566 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 566 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -1117,7 +1117,7 @@ Includes
 
 
 
-#line 812 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 812 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 /*
@@ -1125,13 +1125,13 @@ Includes
  * ARM AEABI. A target, except ARM, may deviate from it.
  */
 
-#line 826 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 826 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
   /* Possible AEABI deviations */
-#line 836 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 836 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
-#line 844 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 844 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
   /*
    * The "difunc" table contains information about C++ objects that
    * should be dynamically initialized, where each entry in the table
@@ -1176,7 +1176,7 @@ Includes
  * Rtti support.
  */
 
-#line 899 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 899 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 /*
  * Use the "pointers to short" or "pointers to long" implementation of 
@@ -1215,7 +1215,7 @@ Includes
  */
 
   /* size_t/ptrdiff_t must be a 4 bytes unsigned integer. */
-#line 943 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 943 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 
@@ -1263,7 +1263,7 @@ Includes
  * Set this to __weak, if supported.
  *
  */
-#line 997 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
+#line 997 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Defaults.h"
 
 
 /*
@@ -1277,7 +1277,7 @@ Includes
 
 
 
-#line 73 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 73 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1311,7 +1311,7 @@ Includes
  * _LONG_DOUBLE_IS_DOUBLE signals that all internal long double routines
  *                        aren't needed.
  */
-#line 147 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 147 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1327,7 +1327,7 @@ Includes
 
 /* Has support for secure functions (printf_s, scanf_s, etc) */
 /* Will not compile if enabled */
-#line 170 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 170 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 /* Has support for complex C types */
 
@@ -1349,7 +1349,7 @@ Includes
 
 
 /* True C++ language setup */
-#line 233 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 233 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1362,7 +1362,7 @@ Includes
 
 
                 /* NAMESPACE CONTROL */
-#line 292 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 292 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1372,7 +1372,7 @@ Includes
 
 
 
-#line 308 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 308 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1381,7 +1381,7 @@ Includes
 
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 /* xencoding_limits.h internal header file */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
@@ -1392,7 +1392,7 @@ Includes
   #pragma system_include
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -1438,30 +1438,30 @@ Includes
 
 
 
-#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 /* yvals.h internal configuration header file. */
 /* Copyright 2001-2010 IAR Systems AB. */
 
-#line 707 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 707 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 13 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 13 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 
                                 /* Multibyte encoding length. */
 
 
-#line 24 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 24 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 
 
 
 
-#line 42 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
+#line 42 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\xencoding_limits.h"
 
                                 /* Utility macro */
 
@@ -1478,17 +1478,17 @@ V5.04:0576 */
 
 
 
-#line 317 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 317 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
                 /* FLOATING-POINT PROPERTIES */
 
                 /* float properties */
-#line 335 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 335 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* double properties */
-#line 360 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 360 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* long double properties */
                 /* (must be same as double) */
@@ -1496,7 +1496,7 @@ V5.04:0576 */
 
 
 
-#line 382 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 382 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
                 /* INTEGER PROPERTIES */
@@ -1514,7 +1514,7 @@ V5.04:0576 */
   typedef long long _Longlong;
   typedef unsigned long long _ULonglong;
   #pragma language=restore
-#line 405 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 405 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1525,9 +1525,9 @@ V5.04:0576 */
   typedef unsigned short int _Wintt;
 
 
-#line 424 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 424 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
-#line 432 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 432 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* POINTER PROPERTIES */
 
@@ -1539,7 +1539,7 @@ typedef unsigned int     _Sizet;
 
 
                 /* stdarg PROPERTIES */
-#line 454 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 454 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
   typedef _VA_LIST __Va_list;
 
 
@@ -1553,7 +1553,7 @@ __intrinsic __nounwind void __iar_Atexit(void (*)(void));
     unsigned int _Wchar;
     unsigned int _State;
   } _Mbstatet;
-#line 477 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 477 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1582,7 +1582,7 @@ typedef struct
 
                 /* THREAD AND LOCALE CONTROL */
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 /***************************************************
  *
  * DLib_Threads.h is the library threads manager.
@@ -1702,7 +1702,7 @@ typedef struct
 
 
 
-#line 157 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 157 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   /* Thread support, library supports threaded variables in a user specified
      memory area, locks on heap and on FILE */
@@ -1716,13 +1716,13 @@ typedef struct
   
 
 
-#line 176 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 176 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
 
 
 
 
-#line 187 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 187 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
 
 
@@ -1771,7 +1771,7 @@ typedef struct
 
 
 
-#line 242 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 242 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   /* The thread-local variable access function */
   void  *__iar_dlib_perthread_access(void  *);
@@ -1847,7 +1847,7 @@ typedef struct
   __intrinsic __nounwind void __iar_clearlocks(void);
 
 
-#line 323 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 323 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   
 
@@ -1857,7 +1857,7 @@ typedef struct
 
   
 
-#line 341 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
+#line 341 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Threads.h"
 
   typedef unsigned _Once_t;
 
@@ -1877,12 +1877,12 @@ typedef struct
 
 
 
-#line 506 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 506 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
-#line 516 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 516 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* THREAD-LOCAL STORAGE */
-#line 524 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 524 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
                 /* MULTITHREAD PROPERTIES */
@@ -1909,12 +1909,12 @@ typedef struct
   _Pragma("object_attribute = __weak") __intrinsic __nounwind void __iar_Unlockdynamicfilelock(__iar_Rmtx *);
   
   
-#line 564 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 564 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* LOCK MACROS */
-#line 572 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 572 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
-#line 690 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 690 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
                 /* MISCELLANEOUS MACROS AND FUNCTIONS*/
 
@@ -1922,7 +1922,7 @@ typedef struct
 
 
 
-#line 705 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
+#line 705 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\yvals.h"
 
 
 
@@ -1930,8 +1930,8 @@ typedef struct
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 13 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 13 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 /* ysizet.h internal header file. */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
@@ -1942,7 +1942,7 @@ V5.04:0576 */
   #pragma system_include
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -1988,9 +1988,9 @@ V5.04:0576 */
 
 
 
-#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 12 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 12 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 
 
 
@@ -2016,7 +2016,7 @@ typedef unsigned int __data_size_t;
 
 
 
-#line 14 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 14 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 /* Module consistency. */
@@ -2029,7 +2029,7 @@ typedef unsigned int __data_size_t;
 extern int __aeabi_MB_CUR_MAX(void);
 
 
-#line 34 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 34 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
@@ -2136,7 +2136,7 @@ _Pragma("function_effects = no_read(1)")    __intrinsic __nounwind int wctomb(ch
 
 
 
-#line 188 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 188 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
@@ -2211,14 +2211,14 @@ _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind dou
   
 
 
-#line 276 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 276 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
   
   typedef void _Atexfun(void);
   
-#line 304 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 304 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
                 /* INLINES, FOR C and C++ */
@@ -2347,19 +2347,19 @@ _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind dou
 
 
 
-#line 465 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 465 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 
 
 
-#line 494 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
+#line 494 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdlib.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 36 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 36 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 /* string.h standard header */
 /* Copyright 2009-2010 IAR Systems AB. */
 
@@ -2369,7 +2369,7 @@ V5.04:0576 */
   #pragma system_include
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -2415,14 +2415,14 @@ V5.04:0576 */
 
 
 
-#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 11 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 11 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 /* ysizet.h internal header file. */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
-#line 30 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
+#line 30 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ysizet.h"
 
 
 
@@ -2430,9 +2430,9 @@ V5.04:0576 */
 
 
 
-#line 13 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 13 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
 /**************************************************
  *
  * ARM-specific configuration for string.h in DLib.
@@ -2473,7 +2473,7 @@ V5.04:0576 */
 
 
 
-#line 47 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
+#line 47 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\DLib_Product_string.h"
 
 
 
@@ -2511,7 +2511,7 @@ V5.04:0576 */
 
 
 
-#line 16 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 16 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
 
 
@@ -2560,7 +2560,7 @@ _Pragma("function_effects = no_write(2)")        __intrinsic __nounwind size_t  
 
 
 
-#line 81 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 81 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
   _Pragma("function_effects = no_state, no_errno, no_write(1)")    __intrinsic __nounwind void *memchr(const void *_S, int _C, size_t _N);
   _Pragma("function_effects = no_state, no_errno, no_write(1)")    __intrinsic __nounwind char *strchr(const char *_S, int _C);
   _Pragma("function_effects = no_state, no_errno, no_write(1,2)") __intrinsic __nounwind char *strpbrk(const char *_S, const char *_P);
@@ -2584,7 +2584,7 @@ _Pragma("function_effects = no_state, no_errno, no_write(1,2)") __intrinsic __no
 
 
                 /* inlines and overloads, for C and C++ */
-#line 168 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 168 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
                 /* Then the overloads for C. */
     #pragma inline
     void *memchr(const void *_S, int _C, size_t _N)
@@ -2623,21 +2623,21 @@ _Pragma("function_effects = no_state, no_errno, no_write(1,2)") __intrinsic __no
     return (__iar_Strerror(_Err, 0));
   }
 
-#line 451 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 451 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
 
 
 
 
 
-#line 479 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
+#line 479 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\string.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 37 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 37 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 //  ----------------------------------------------------------------------------
 //          ATMEL Microcontroller Software Support  -  ROUSSET  -
 //  ----------------------------------------------------------------------------
@@ -3095,7 +3095,7 @@ typedef struct _AT91S_HSMC4_CS {
 	AT91_REG	 HSMC4_TIMINGS; 	// Timmings Register
 	AT91_REG	 HSMC4_MODE; 	// Mode Register
 } AT91S_HSMC4_CS, *AT91PS_HSMC4_CS;
-#line 466 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 466 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_SETUP : (HSMC4_CS Offset: 0x0) HSMC4 SETUP -------- 
 
 
@@ -3110,9 +3110,9 @@ typedef struct _AT91S_HSMC4_CS {
 
 
 // -------- HSMC4_TIMINGS : (HSMC4_CS Offset: 0xc) HSMC4 TIMINGS -------- 
-#line 488 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 488 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_MODE : (HSMC4_CS Offset: 0x10) HSMC4 MODE -------- 
-#line 510 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 510 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR AHB Static Memory Controller 4 Interface
@@ -3161,33 +3161,33 @@ typedef struct _AT91S_HSMC4 {
 	AT91_REG	 HSMC4_VER; 	// HSMC4 Version Register
 	AT91_REG	 HSMC4_DUMMY; 	// This rtegister was created only ti have AHB constants
 } AT91S_HSMC4, *AT91PS_HSMC4;
-#line 600 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 600 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_CFG : (HSMC4 Offset: 0x0) Configuration Register -------- 
-#line 620 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 620 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_CTRL : (HSMC4 Offset: 0x4) Control Register -------- 
-#line 635 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 635 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_SR : (HSMC4 Offset: 0x8) HSMC4 Status Register -------- 
-#line 665 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 665 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_IER : (HSMC4 Offset: 0xc) HSMC4 Interrupt Enable Register -------- 
 // -------- HSMC4_IDR : (HSMC4 Offset: 0x10) HSMC4 Interrupt Disable Register -------- 
 // -------- HSMC4_IMR : (HSMC4 Offset: 0x14) HSMC4 Interrupt Mask Register -------- 
 // -------- HSMC4_ADDR : (HSMC4 Offset: 0x18) Address Cycle Zero Register -------- 
 
 // -------- HSMC4_BANK : (HSMC4 Offset: 0x1c) Bank Register -------- 
-#line 680 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 680 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCCR : (HSMC4 Offset: 0x20) ECC Control Register -------- 
 
 // -------- HSMC4_ECCCMD : (HSMC4 Offset: 0x24) ECC mode register -------- 
-#line 692 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 692 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCSR1 : (HSMC4 Offset: 0x28) ECC Status Register 1 -------- 
-#line 717 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 717 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCPR0 : (HSMC4 Offset: 0x2c) HSMC4 ECC parity Register 0 -------- 
 
 
 
 // -------- HSMC4_ECCPR1 : (HSMC4 Offset: 0x30) HSMC4 ECC parity Register 1 -------- 
 // -------- HSMC4_ECCSR2 : (HSMC4 Offset: 0x34) ECC Status Register 2 -------- 
-#line 747 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 747 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_ECCPR2 : (HSMC4 Offset: 0x38) HSMC4 ECC parity Register 2 -------- 
 // -------- HSMC4_ECCPR3 : (HSMC4 Offset: 0x3c) HSMC4 ECC parity Register 3 -------- 
 // -------- HSMC4_ECCPR4 : (HSMC4 Offset: 0x40) HSMC4 ECC parity Register 4 -------- 
@@ -3213,10 +3213,10 @@ typedef struct _AT91S_HSMC4 {
 
 
 // -------- HSMC4_WPSR : (HSMC4 Offset: 0x1e8) HSMC4 WPSR Register -------- 
-#line 778 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 778 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HSMC4_VER : (HSMC4 Offset: 0x1fc) HSMC4 VERSION Register -------- 
 // -------- HSMC4_DUMMY : (HSMC4 Offset: 0x200) HSMC4 DUMMY REGISTER -------- 
-#line 802 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 802 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR AHB Matrix2 Interface
@@ -3266,9 +3266,9 @@ typedef struct _AT91S_HMATRIX2 {
 	AT91_REG	 HMATRIX2_FEATURES; 	// HMATRIX2 FEATURES REGISTER 
 	AT91_REG	 HMATRIX2_VER; 	// HMATRIX2 VERSION REGISTER 
 } AT91S_HMATRIX2, *AT91PS_HMATRIX2;
-#line 893 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 893 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MATRIX_MCFG0 : (HMATRIX2 Offset: 0x0) Master Configuration Register ARM bus I and D -------- 
-#line 903 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 903 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MATRIX_MCFG1 : (HMATRIX2 Offset: 0x4) Master Configuration Register ARM bus S -------- 
 // -------- MATRIX_MCFG2 : (HMATRIX2 Offset: 0x8) Master Configuration Register -------- 
 // -------- MATRIX_MCFG3 : (HMATRIX2 Offset: 0xc) Master Configuration Register -------- 
@@ -3277,7 +3277,7 @@ typedef struct _AT91S_HMATRIX2 {
 // -------- MATRIX_MCFG6 : (HMATRIX2 Offset: 0x18) Master Configuration Register -------- 
 // -------- MATRIX_MCFG7 : (HMATRIX2 Offset: 0x1c) Master Configuration Register -------- 
 // -------- MATRIX_SCFG0 : (HMATRIX2 Offset: 0x40) Slave Configuration Register 0 -------- 
-#line 918 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 918 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MATRIX_SCFG1 : (HMATRIX2 Offset: 0x44) Slave Configuration Register 1 -------- 
 
 
@@ -3396,9 +3396,9 @@ typedef struct _AT91S_NVIC {
 	AT91_REG	 NVIC_CID2; 	// Component identification register b23:16
 	AT91_REG	 NVIC_CID3; 	// Component identification register b31:24
 } AT91S_NVIC, *AT91PS_NVIC;
-#line 1092 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1092 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_ICTR : (NVIC Offset: 0x4) Interrupt Controller Type Register -------- 
-#line 1110 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1110 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_STICKCSR : (NVIC Offset: 0x10) SysTick Control and Status Register -------- 
 
 
@@ -3424,20 +3424,20 @@ typedef struct _AT91S_NVIC {
 
 
 // -------- NVIC_ICSR : (NVIC Offset: 0xd04) Interrupt Control State Register -------- 
-#line 1145 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1145 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_VTOFFR : (NVIC Offset: 0xd08) Vector Table Offset Register -------- 
 
 
 
 
 // -------- NVIC_AIRCR : (NVIC Offset: 0xd0c) Application Interrupt and Reset Control Register -------- 
-#line 1162 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1162 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_SCR : (NVIC Offset: 0xd10) System Control Register -------- 
 
 
 
 // -------- NVIC_CCR : (NVIC Offset: 0xd14) Configuration Control Register -------- 
-#line 1173 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1173 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_HAND4PR : (NVIC Offset: 0xd18) System Handlers 4-7 Priority Register -------- 
 
 
@@ -3454,13 +3454,13 @@ typedef struct _AT91S_NVIC {
 
 
 // -------- NVIC_HANDCSR : (NVIC Offset: 0xd24) System Handler Control and State Register -------- 
-#line 1203 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1203 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_CFSR : (NVIC Offset: 0xd28) Configurable Fault Status Registers -------- 
 
 
 
 // -------- NVIC_BFAR : (NVIC Offset: 0xd38) Bus Fault Address Register -------- 
-#line 1214 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1214 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- NVIC_PFR0 : (NVIC Offset: 0xd40) Processor Feature register0 (ID_PFR0) -------- 
 
 
@@ -3489,7 +3489,7 @@ typedef struct _AT91S_MPU {
 	AT91_REG	 MPU_REG_BASE_ADDR3; 	// MPU Region Base Address Register alias 3
 	AT91_REG	 MPU_ATTR_SIZE3; 	// MPU  Attribute and Size Register alias 3
 } AT91S_MPU, *AT91PS_MPU;
-#line 1256 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1256 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MPU_TYPE : (MPU Offset: 0x0)  -------- 
 
 
@@ -3505,7 +3505,7 @@ typedef struct _AT91S_MPU {
 
 
 // -------- MPU_ATTR_SIZE : (MPU Offset: 0x10)  -------- 
-#line 1280 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1280 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR CORTEX_M3 Registers
@@ -3521,7 +3521,7 @@ typedef struct _AT91S_CM3 {
 	AT91_REG	 CM3_SHPR[3]; 	// System Handler Priority Register
 	AT91_REG	 CM3_SHCSR; 	// System Handler Control and State Register
 } AT91S_CM3, *AT91PS_CM3;
-#line 1306 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1306 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- CM3_CPUID : (CM3 Offset: 0x0)  -------- 
 // -------- CM3_AIRCR : (CM3 Offset: 0xc)  -------- 
 
@@ -3548,7 +3548,7 @@ typedef struct _AT91S_PDC {
 	AT91_REG	 PDC_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 PDC_PTSR; 	// PDC Transfer Status Register
 } AT91S_PDC, *AT91PS_PDC;
-#line 1345 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1345 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PDC_PTCR : (PDC Offset: 0x20) PDC Transfer Control Register -------- 
 
 
@@ -3592,13 +3592,13 @@ typedef struct _AT91S_DBGU {
 	AT91_REG	 DBGU_CIDR; 	// Chip ID Register
 	AT91_REG	 DBGU_EXID; 	// Chip ID Extension Register
 } AT91S_DBGU, *AT91PS_DBGU;
-#line 1408 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1408 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_CR : (DBGU Offset: 0x0) Debug Unit Control Register -------- 
-#line 1416 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1416 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_MR : (DBGU Offset: 0x4) Debug Unit Mode Register -------- 
-#line 1428 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1428 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_IER : (DBGU Offset: 0x8) Debug Unit Interrupt Enable Register -------- 
-#line 1441 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1441 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- DBGU_IDR : (DBGU Offset: 0xc) Debug Unit Interrupt Disable Register -------- 
 // -------- DBGU_IMR : (DBGU Offset: 0x10) Debug Unit Interrupt Mask Register -------- 
 // -------- DBGU_CSR : (DBGU Offset: 0x14) Debug Unit Channel Status Register -------- 
@@ -3676,7 +3676,7 @@ typedef struct _AT91S_PIO {
 	AT91_REG	 PIO_KKPR; 	// Keypad Controller Key Press Register
 	AT91_REG	 PIO_KKRR; 	// Keypad Controller Key Release Register
 } AT91S_PIO, *AT91PS_PIO;
-#line 1572 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1572 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PIO_KER : (PIO Offset: 0x120) Keypad Controller Enable Register -------- 
 
 // -------- PIO_KRCR : (PIO Offset: 0x124) Keypad Controller Row Column Register -------- 
@@ -3693,7 +3693,7 @@ typedef struct _AT91S_PIO {
 
 
 // -------- PIO_KKPR : (PIO Offset: 0x140) Keypad Controller Key Press Register -------- 
-#line 1596 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1596 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PIO_KKRR : (PIO Offset: 0x144) Keypad Controller Key Release Register -------- 
 
 // *****************************************************************************
@@ -3730,7 +3730,7 @@ typedef struct _AT91S_PMC {
 	AT91_REG	 PMC_FEATURES; 	// PMC FEATURES REGISTER 
 	AT91_REG	 PMC_VER; 	// APMC VERSION REGISTER
 } AT91S_PMC, *AT91PS_PMC;
-#line 1659 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1659 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_SCER : (PMC Offset: 0x0) System Clock Enable Register -------- 
 
 
@@ -3739,19 +3739,19 @@ typedef struct _AT91S_PMC {
 // -------- PMC_SCDR : (PMC Offset: 0x4) System Clock Disable Register -------- 
 // -------- PMC_SCSR : (PMC Offset: 0x8) System Clock Status Register -------- 
 // -------- CKGR_UCKR : (PMC Offset: 0x1c) UTMI Clock Configuration Register -------- 
-#line 1675 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1675 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- CKGR_MOR : (PMC Offset: 0x20) Main Oscillator Register -------- 
-#line 1685 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1685 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- CKGR_MCFR : (PMC Offset: 0x24) Main Clock Frequency Register -------- 
 
 
 // -------- CKGR_PLLAR : (PMC Offset: 0x28) PLL A Register -------- 
-#line 1700 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1700 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_MCKR : (PMC Offset: 0x30) Master Clock Register -------- 
-#line 1716 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1716 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_PCKR : (PMC Offset: 0x40) Programmable Clock Register -------- 
 // -------- PMC_IER : (PMC Offset: 0x60) PMC Interrupt Enable Register -------- 
-#line 1728 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1728 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PMC_IDR : (PMC Offset: 0x64) PMC Interrupt Disable Register -------- 
 // -------- PMC_SR : (PMC Offset: 0x68) PMC Status Register -------- 
 
@@ -3798,7 +3798,7 @@ typedef struct _AT91S_RSTC {
 	AT91_REG	 Reserved0[60]; 	// 
 	AT91_REG	 RSTC_VER; 	// Version Register
 } AT91S_RSTC, *AT91PS_RSTC;
-#line 1781 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1781 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RSTC_RCR : (RSTC Offset: 0x0) Reset Control Register -------- 
 
 
@@ -3806,7 +3806,7 @@ typedef struct _AT91S_RSTC {
 
 
 // -------- RSTC_RSR : (RSTC Offset: 0x4) Reset Status Register -------- 
-#line 1797 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1797 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RSTC_RMR : (RSTC Offset: 0x8) Reset Mode Register -------- 
 
 
@@ -3824,19 +3824,19 @@ typedef struct _AT91S_SUPC {
   AT91_REG SUPC_WUIR; // Supply Controller Wake Up Inputs Register
   AT91_REG SUPC_SR;   // Supply Controller Status Register
 } AT91S_SUPC, *AT91PS_SUPC;
-#line 1822 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1822 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_CR : (SUPC Offset: 0x00) Supply Controller Control Register --------
-#line 1830 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1830 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_SMMR : (SUPC Offset: 0x04) Supply Controller Supply Monitor Mode Register --------
-#line 1860 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1860 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_MR : (SUPC Offset: 0x08) Supply Controller Mode Register --------
-#line 1874 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1874 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_WUMR : (SUPC Offset: 0x0C) Supply Controller Wake Up Mode Register --------
-#line 1901 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1901 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_WUIR : (SUPC Offset: 0x10) Supply Controller Wake Up Inputs Register --------
-#line 1998 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 1998 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SUPC_SR : (SUPC Offset: 0x14) Supply Controller Status Register --------
-#line 2074 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2074 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR Real Time Timer Controller Interface
@@ -3848,7 +3848,7 @@ typedef struct _AT91S_RTTC {
 	AT91_REG	 RTTC_RTVR; 	// Real-time Value Register
 	AT91_REG	 RTTC_RTSR; 	// Real-time Status Register
 } AT91S_RTTC, *AT91PS_RTTC;
-#line 2092 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2092 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RTTC_RTMR : (RTTC Offset: 0x0) Real-time Mode Register -------- 
 
 
@@ -3871,12 +3871,12 @@ typedef struct _AT91S_WDTC {
 	AT91_REG	 WDTC_WDMR; 	// Watchdog Mode Register
 	AT91_REG	 WDTC_WDSR; 	// Watchdog Status Register
 } AT91S_WDTC, *AT91PS_WDTC;
-#line 2120 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2120 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- WDTC_WDCR : (WDTC Offset: 0x0) Periodic Interval Image Register -------- 
 
 
 // -------- WDTC_WDMR : (WDTC Offset: 0x4) Watchdog Mode Register -------- 
-#line 2132 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2132 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- WDTC_WDSR : (WDTC Offset: 0x8) Watchdog Status Register -------- 
 
 
@@ -3899,9 +3899,9 @@ typedef struct _AT91S_RTC {
 	AT91_REG	 RTC_IMR; 	// Interrupt Mask Register
 	AT91_REG	 RTC_VER; 	// Valid Entry Register
 } AT91S_RTC, *AT91PS_RTC;
-#line 2169 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2169 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RTC_CR : (RTC Offset: 0x0) RTC Control Register -------- 
-#line 2181 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2181 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- RTC_MR : (RTC Offset: 0x4) RTC Mode Register -------- 
 
 // -------- RTC_TIMR : (RTC Offset: 0x8) RTC Time Register -------- 
@@ -3982,18 +3982,18 @@ typedef struct _AT91S_ADC {
 	AT91_REG	 ADC_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 ADC_PTSR; 	// PDC Transfer Status Register
 } AT91S_ADC, *AT91PS_ADC;
-#line 2289 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2289 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC_CR : (ADC Offset: 0x0) ADC Control Register -------- 
 
 
 // -------- ADC_MR : (ADC Offset: 0x4) ADC Mode Register -------- 
-#line 2313 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2313 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- 	ADC_CHER : (ADC Offset: 0x10) ADC Channel Enable Register -------- 
-#line 2322 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2322 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- 	ADC_CHDR : (ADC Offset: 0x14) ADC Channel Disable Register -------- 
 // -------- 	ADC_CHSR : (ADC Offset: 0x18) ADC Channel Status Register -------- 
 // -------- ADC_SR : (ADC Offset: 0x1c) ADC Status Register -------- 
-#line 2345 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2345 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC_LCDR : (ADC Offset: 0x20) ADC Last Converted Data Register -------- 
 
 // -------- ADC_IER : (ADC Offset: 0x24) ADC Interrupt Enable Register -------- 
@@ -4009,7 +4009,7 @@ typedef struct _AT91S_ADC {
 // -------- ADC_CDR6 : (ADC Offset: 0x48) ADC Channel Data Register 6 -------- 
 // -------- ADC_CDR7 : (ADC Offset: 0x4c) ADC Channel Data Register 7 -------- 
 // -------- ADC_ACR : (ADC Offset: 0x64) ADC Analog Controler Register -------- 
-#line 2368 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2368 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC_EMR : (ADC Offset: 0x68) ADC Extended Mode Register -------- 
 
 
@@ -4038,31 +4038,31 @@ typedef struct _AT91S_ADC12B {
   AT91_REG ADC12B_ACR;    // Analog Control Register
   AT91_REG ADC12B_EMR;    // Extended Mode Register
 } AT91S_ADC12B, *AT91PS_ADC12B;
-#line 2411 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2411 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CR : (ADC12B Offset: 0x00) Control Register --------
-#line 2418 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2418 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_MR : (ADC12B Offset: 0x04) Mode Register --------
-#line 2438 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2438 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CHER : (ADC12B Offset: 0x10) Channel Enable Register --------
-#line 2463 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2463 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CHDR : (ADC12B Offset: 0x14) Channel Disable Register --------
-#line 2488 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2488 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CHSR : (ADC12B Offset: 0x18) Channel Status Register --------
-#line 2513 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2513 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_SR : (ADC12B Offset: 0x1C) Status Register --------
-#line 2574 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2574 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_LCDR : (ADC12B Offset: 0x20) Last Converted Data Register --------
 
 // -------- ADC12B_IER : (ADC12B Offset: 0x24) Interrupt Enable Register --------
-#line 2637 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2637 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_IDR : (ADC12B Offset: 0x28) Interrupt Disable Register --------
-#line 2698 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2698 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_IMR : (ADC12B Offset: 0x2C) Interrupt Mask Register --------
-#line 2759 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2759 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_CDR[8] : (ADC12B Offset: 0x30) Channel Data Register --------
 
 // -------- ADC12B_ACR : (ADC12B Offset: 0x64) Analog Control Register --------
-#line 2772 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2772 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- ADC12B_EMR : (ADC12B Offset: 0x68) Extended Mode Register --------
 
 
@@ -4086,15 +4086,15 @@ typedef struct _AT91S_TC {
 	AT91_REG	 TC_IDR; 	// Interrupt Disable Register
 	AT91_REG	 TC_IMR; 	// Interrupt Mask Register
 } AT91S_TC, *AT91PS_TC;
-#line 2808 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2808 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TC_CCR : (TC Offset: 0x0) TC Channel Control Register -------- 
 
 
 
 // -------- TC_CMR : (TC Offset: 0x4) TC Channel Mode Register: Capture Mode / Waveform Mode -------- 
-#line 2906 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2906 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TC_SR : (TC Offset: 0x20) TC Channel Status Register -------- 
-#line 2918 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2918 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TC_IER : (TC Offset: 0x24) TC Channel Interrupt Enable Register -------- 
 // -------- TC_IDR : (TC Offset: 0x28) TC Channel Interrupt Disable Register -------- 
 // -------- TC_IMR : (TC Offset: 0x2c) TC Channel Interrupt Mask Register -------- 
@@ -4119,11 +4119,11 @@ typedef struct _AT91S_TCB {
 	AT91_REG	 TCB_FEATURES; 	// TC FEATURES REGISTER 
 	AT91_REG	 TCB_VER; 	//  Version Register
 } AT91S_TCB, *AT91PS_TCB;
-#line 2952 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2952 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TCB_BCR : (TCB Offset: 0xc0) TC Block Control Register -------- 
 
 // -------- TCB_BMR : (TCB Offset: 0xc4) TC Block Mode Register -------- 
-#line 2970 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2970 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR Embedded Flash Controller 2.0
@@ -4137,11 +4137,11 @@ typedef struct _AT91S_EFC {
 	AT91_REG	 Reserved0[1]; 	// 
 	AT91_REG	 EFC_FVR; 	// EFC Flash Version Register
 } AT91S_EFC, *AT91PS_EFC;
-#line 2991 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2991 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- EFC_FMR : (EFC Offset: 0x0) EFC Flash Mode Register -------- 
-#line 2998 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 2998 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- EFC_FCR : (EFC Offset: 0x4) EFC Flash Command Register -------- 
-#line 3018 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3018 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- EFC_FSR : (EFC Offset: 0x8) EFC Flash Status Register -------- 
 
 
@@ -4193,37 +4193,37 @@ typedef struct _AT91S_MCI {
 	AT91_REG	 Reserved2[54]; 	// 
 	AT91_REG	 MCI_FIFO; 	// MCI FIFO Aperture Register
 } AT91S_MCI, *AT91PS_MCI;
-#line 3097 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3097 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_CR : (MCI Offset: 0x0) MCI Control Register -------- 
-#line 3119 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3119 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_MR : (MCI Offset: 0x4) MCI Mode Register -------- 
-#line 3136 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3136 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_DTOR : (MCI Offset: 0x8) MCI Data Timeout Register -------- 
-#line 3147 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3147 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_SDCR : (MCI Offset: 0xc) MCI SD Card Register -------- 
-#line 3157 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3157 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_CMDR : (MCI Offset: 0x14) MCI Command Register -------- 
-#line 3197 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3197 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_BLKR : (MCI Offset: 0x18) MCI Block Register -------- 
 
 // -------- MCI_CSTOR : (MCI Offset: 0x1c) MCI Completion Signal Timeout Register -------- 
-#line 3210 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3210 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_SR : (MCI Offset: 0x40) MCI Status Register -------- 
-#line 3241 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3241 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_IER : (MCI Offset: 0x44) MCI Interrupt Enable Register -------- 
 // -------- MCI_IDR : (MCI Offset: 0x48) MCI Interrupt Disable Register -------- 
 // -------- MCI_IMR : (MCI Offset: 0x4c) MCI Interrupt Mask Register -------- 
 // -------- MCI_DMA : (MCI Offset: 0x50) MCI DMA Configuration Register -------- 
-#line 3255 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3255 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_CFG : (MCI Offset: 0x54) MCI Configuration Register -------- 
-#line 3268 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3268 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_WPCR : (MCI Offset: 0xe4) Write Protection Control Register -------- 
 
 
 
 
 // -------- MCI_WPSR : (MCI Offset: 0xe8) Write Protection Status Register -------- 
-#line 3288 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3288 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- MCI_VER : (MCI Offset: 0xfc)  VERSION  Register -------- 
 
 
@@ -4261,11 +4261,11 @@ typedef struct _AT91S_TWI {
 	AT91_REG	 TWI_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 TWI_PTSR; 	// PDC Transfer Status Register
 } AT91S_TWI, *AT91PS_TWI;
-#line 3344 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3344 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_CR : (TWI Offset: 0x0) TWI Control Register -------- 
-#line 3352 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3352 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_MMR : (TWI Offset: 0x4) TWI Master Mode Register -------- 
-#line 3360 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3360 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_SMR : (TWI Offset: 0x8) TWI Slave Mode Register -------- 
 
 // -------- TWI_CWGR : (TWI Offset: 0x10) TWI Clock Waveform Generator Register -------- 
@@ -4273,7 +4273,7 @@ typedef struct _AT91S_TWI {
 
 
 // -------- TWI_SR : (TWI Offset: 0x20) TWI Status Register -------- 
-#line 3385 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3385 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- TWI_IER : (TWI Offset: 0x24) TWI Interrupt Enable Register -------- 
 // -------- TWI_IDR : (TWI Offset: 0x28) TWI Interrupt Disable Register -------- 
 // -------- TWI_IMR : (TWI Offset: 0x2c) TWI Interrupt Mask Register -------- 
@@ -4319,13 +4319,13 @@ typedef struct _AT91S_USART {
 	AT91_REG	 US_PTCR; 	// PDC Transfer Control Register
 	AT91_REG	 US_PTSR; 	// PDC Transfer Status Register
 } AT91S_USART, *AT91PS_USART;
-#line 3453 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3453 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_CR : (USART Offset: 0x0)  Control Register -------- 
-#line 3472 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3472 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_MR : (USART Offset: 0x4)  Mode Register -------- 
-#line 3522 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3522 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_IER : (USART Offset: 0x8)  Interrupt Enable Register -------- 
-#line 3542 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3542 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- US_IDR : (USART Offset: 0xc)  Interrupt Disable Register -------- 
 // -------- US_IMR : (USART Offset: 0x10)  Interrupt Mask Register -------- 
 // -------- US_CSR : (USART Offset: 0x14)  Channel Status Register -------- 
@@ -4335,7 +4335,7 @@ typedef struct _AT91S_USART {
 
 
 // -------- US_MAN : (USART Offset: 0x50) Manchester Encoder Decoder Register -------- 
-#line 3566 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3566 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR Synchronous Serial Controller Interface
@@ -4361,7 +4361,7 @@ typedef struct _AT91S_SSC {
 	AT91_REG	 SSC_IDR; 	// Interrupt Disable Register
 	AT91_REG	 SSC_IMR; 	// Interrupt Mask Register
 } AT91S_SSC, *AT91PS_SSC;
-#line 3610 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3610 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_CR : (SSC Offset: 0x0) SSC Control Register -------- 
 
 
@@ -4369,15 +4369,15 @@ typedef struct _AT91S_SSC {
 
 
 // -------- SSC_RCMR : (SSC Offset: 0x10) SSC Receive Clock Mode Register -------- 
-#line 3644 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3644 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_RFMR : (SSC Offset: 0x14) SSC Receive Frame Mode Register -------- 
-#line 3658 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3658 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_TCMR : (SSC Offset: 0x18) SSC Transmit Clock Mode Register -------- 
 // -------- SSC_TFMR : (SSC Offset: 0x1c) SSC Transmit Frame Mode Register -------- 
 
 
 // -------- SSC_SR : (SSC Offset: 0x40) SSC Status Register -------- 
-#line 3677 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3677 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SSC_IER : (SSC Offset: 0x44) SSC Interrupt Enable Register -------- 
 // -------- SSC_IDR : (SSC Offset: 0x48) SSC Interrupt Disable Register -------- 
 // -------- SSC_IMR : (SSC Offset: 0x4c) SSC Interrupt Mask Register -------- 
@@ -4396,9 +4396,9 @@ typedef struct _AT91S_PWMC_CH {
 	AT91_REG	 PWMC_DTR; 	// Channel Dead Time Value Register
 	AT91_REG	 PWMC_DTUPDR; 	// Channel Dead Time Update Value Register
 } AT91S_PWMC_CH, *AT91PS_PWMC_CH;
-#line 3706 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3706 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CMR : (PWMC_CH Offset: 0x0) PWMC Channel Mode Register -------- 
-#line 3727 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3727 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CDTYR : (PWMC_CH Offset: 0x4) PWMC Channel Duty Cycle Register -------- 
 
 // -------- PWMC_CDTYUPDR : (PWMC_CH Offset: 0x8) PWMC Channel Duty Cycle Update Register -------- 
@@ -4514,20 +4514,20 @@ typedef struct _AT91S_PWMC {
 	AT91_REG	 Reserved3[20]; 	// 
 	AT91S_PWMC_CH	 PWMC_CH[8]; 	// PWMC Channel 0
 } AT91S_PWMC, *AT91PS_PWMC;
-#line 3922 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3922 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_MR : (PWMC Offset: 0x0) PWMC Mode Register -------- 
-#line 3946 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3946 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_ENA : (PWMC Offset: 0x4) PWMC Enable Register -------- 
-#line 3963 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3963 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_DIS : (PWMC Offset: 0x8) PWMC Disable Register -------- 
 // -------- PWMC_SR : (PWMC Offset: 0xc) PWMC Status Register -------- 
 // -------- PWMC_IER1 : (PWMC Offset: 0x10) PWMC Interrupt Enable Register -------- 
-#line 3982 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 3982 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_IDR1 : (PWMC Offset: 0x14) PWMC Interrupt Disable Register -------- 
 // -------- PWMC_IMR1 : (PWMC Offset: 0x18) PWMC Interrupt Mask Register -------- 
 // -------- PWMC_ISR1 : (PWMC Offset: 0x1c) PWMC Interrupt Status Register -------- 
 // -------- PWMC_SYNC : (PWMC Offset: 0x20) PWMC Synchronous Channels Register -------- 
-#line 4006 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4006 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_UPCR : (PWMC Offset: 0x28) PWMC Update Control Register -------- 
 
 // -------- PWMC_SCUP : (PWMC Offset: 0x2c) PWM Update Period Register -------- 
@@ -4543,27 +4543,27 @@ typedef struct _AT91S_PWMC {
 // -------- PWMC_IDR2 : (PWMC Offset: 0x38) PWMC Interrupt Disable Register -------- 
 // -------- PWMC_IMR2 : (PWMC Offset: 0x3c) PWMC Interrupt Mask Register -------- 
 // -------- PWMC_ISR2 : (PWMC Offset: 0x40) PWMC Interrupt Status Register -------- 
-#line 4037 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4037 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OOV : (PWMC Offset: 0x44) PWM Output Override Value Register -------- 
-#line 4070 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4070 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OS : (PWMC Offset: 0x48) PWM Output Selection Register -------- 
-#line 4103 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4103 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSS : (PWMC Offset: 0x4c) PWM Output Selection Set Register -------- 
-#line 4136 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4136 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSC : (PWMC Offset: 0x50) PWM Output Selection Clear Register -------- 
-#line 4169 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4169 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSSUPD : (PWMC Offset: 0x54) Output Selection Set for PWMH / PWML output of the channel x -------- 
-#line 4202 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4202 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_OSCUPD : (PWMC Offset: 0x58) Output Selection Clear for PWMH / PWML output of the channel x -------- 
-#line 4235 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4235 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FMR : (PWMC Offset: 0x5c) PWM Fault Mode Register -------- 
-#line 4260 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4260 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FSR : (PWMC Offset: 0x60) Fault Input x Value -------- 
-#line 4277 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4277 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FCR : (PWMC Offset: 0x64) Fault y Clear -------- 
-#line 4286 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4286 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FPV : (PWMC Offset: 0x68) PWM Fault Protection Value -------- 
-#line 4303 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4303 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_FPER1 : (PWMC Offset: 0x6c) PWM Fault Protection Enable Register 1 -------- 
 
 
@@ -4585,25 +4585,25 @@ typedef struct _AT91S_PWMC {
 
 
 // -------- PWMC_EL0MR : (PWMC Offset: 0x7c) PWM Event Line 0 Mode Register -------- 
-#line 4332 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4332 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL1MR : (PWMC Offset: 0x80) PWM Event Line 1 Mode Register -------- 
-#line 4341 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4341 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL2MR : (PWMC Offset: 0x84) PWM Event line 2 Mode Register -------- 
-#line 4350 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4350 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL3MR : (PWMC Offset: 0x88) PWM Event line 3 Mode Register -------- 
-#line 4359 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4359 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL4MR : (PWMC Offset: 0x8c) PWM Event line 4 Mode Register -------- 
-#line 4368 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4368 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL5MR : (PWMC Offset: 0x90) PWM Event line 5 Mode Register -------- 
-#line 4377 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4377 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL6MR : (PWMC Offset: 0x94) PWM Event line 6 Mode Register -------- 
-#line 4386 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4386 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_EL7MR : (PWMC Offset: 0x98) PWM Event line 7 Mode Register -------- 
-#line 4395 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4395 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_WPCR : (PWMC Offset: 0xe4) PWM Write Protection Control Register -------- 
-#line 4404 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4404 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_WPVS : (PWMC Offset: 0xe8) Write Protection Status Register -------- 
-#line 4419 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4419 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CMP0V : (PWMC Offset: 0x130) PWM Comparison Value 0 Register -------- 
 
 
@@ -4611,7 +4611,7 @@ typedef struct _AT91S_PWMC {
 
 
 // -------- PWMC_CMP0M : (PWMC Offset: 0x138) PWM Comparison 0 Mode Register -------- 
-#line 4432 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4432 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- PWMC_CMP0MUPD : (PWMC Offset: 0x13c) PWM Comparison 0 Mode Update Register -------- 
 
 
@@ -4668,14 +4668,14 @@ typedef struct _AT91S_SPI {
 	AT91_REG	 SPI_FEATURES; 	// SPI FEATURES REGISTER 
 	AT91_REG	 SPI_VER; 	// Version Register
 } AT91S_SPI, *AT91PS_SPI;
-#line 4505 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4505 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SPI_CR : (SPI Offset: 0x0) SPI Control Register -------- 
 
 
 
 
 // -------- SPI_MR : (SPI Offset: 0x4) SPI Mode Register -------- 
-#line 4521 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4521 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SPI_RDR : (SPI Offset: 0x8) Receive Data Register -------- 
 
 
@@ -4683,12 +4683,12 @@ typedef struct _AT91S_SPI {
 
 
 // -------- SPI_SR : (SPI Offset: 0x10) Status Register -------- 
-#line 4539 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4539 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- SPI_IER : (SPI Offset: 0x14) Interrupt Enable Register -------- 
 // -------- SPI_IDR : (SPI Offset: 0x18) Interrupt Disable Register -------- 
 // -------- SPI_IMR : (SPI Offset: 0x1c) Interrupt Mask Register -------- 
 // -------- SPI_CSR : (SPI Offset: 0x30) Chip Select Register -------- 
-#line 4560 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4560 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR UDPHS Enpoint FIFO data register
@@ -4703,7 +4703,7 @@ typedef struct _AT91S_UDPHS_EPTFIFO {
 	AT91_REG	 UDPHS_READEPT5[16384]; 	// FIFO Endpoint Data Register 5
 	AT91_REG	 UDPHS_READEPT6[16384]; 	// FIFO Endpoint Data Register 6
 } AT91S_UDPHS_EPTFIFO, *AT91PS_UDPHS_EPTFIFO;
-#line 4584 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4584 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR UDPHS Endpoint struct
@@ -4719,11 +4719,11 @@ typedef struct _AT91S_UDPHS_EPT {
 	AT91_REG	 UDPHS_EPTCLRSTA; 	// UDPHS Endpoint Clear Status Register
 	AT91_REG	 UDPHS_EPTSTA; 	// UDPHS Endpoint Status Register
 } AT91S_UDPHS_EPT, *AT91PS_UDPHS_EPT;
-#line 4609 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4609 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_EPTCFG : (UDPHS_EPT Offset: 0x0) UDPHS Endpoint Config Register -------- 
-#line 4634 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4634 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_EPTCTLENB : (UDPHS_EPT Offset: 0x4) UDPHS Endpoint Control Enable Register -------- 
-#line 4654 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4654 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_EPTCTLDIS : (UDPHS_EPT Offset: 0x8) UDPHS Endpoint Control Disable Register -------- 
 
 // -------- UDPHS_EPTCTL : (UDPHS_EPT Offset: 0xc) UDPHS Endpoint Control Register -------- 
@@ -4733,7 +4733,7 @@ typedef struct _AT91S_UDPHS_EPT {
 // -------- UDPHS_EPTCLRSTA : (UDPHS_EPT Offset: 0x18) UDPHS Endpoint Clear Status Register -------- 
 
 // -------- UDPHS_EPTSTA : (UDPHS_EPT Offset: 0x1c) UDPHS Endpoint Status Register -------- 
-#line 4684 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4684 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR UDPHS DMA struct
@@ -4745,13 +4745,13 @@ typedef struct _AT91S_UDPHS_DMA {
 	AT91_REG	 UDPHS_DMACONTROL; 	// UDPHS DMA Channel Control Register
 	AT91_REG	 UDPHS_DMASTATUS; 	// UDPHS DMA Channel Status Register
 } AT91S_UDPHS_DMA, *AT91PS_UDPHS_DMA;
-#line 4702 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4702 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_DMANXTDSC : (UDPHS_DMA Offset: 0x0) UDPHS DMA Next Descriptor Address Register -------- 
 
 // -------- UDPHS_DMAADDRESS : (UDPHS_DMA Offset: 0x4) UDPHS DMA Channel Address Register -------- 
 
 // -------- UDPHS_DMACONTROL : (UDPHS_DMA Offset: 0x8) UDPHS DMA Channel Control Register -------- 
-#line 4716 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4716 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_DMASTATUS : (UDPHS_DMA Offset: 0xc) UDPHS DMA Channelx Status Register -------- 
 
 
@@ -4787,20 +4787,20 @@ typedef struct _AT91S_UDPHS {
 	AT91_REG	 Reserved3[72]; 	// 
 	AT91S_UDPHS_DMA	 UDPHS_DMA[6]; 	// UDPHS DMA channel struct (not use [0])
 } AT91S_UDPHS, *AT91PS_UDPHS;
-#line 4770 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4770 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_CTRL : (UDPHS Offset: 0x0) UDPHS Control Register -------- 
-#line 4777 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4777 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_FNUM : (UDPHS Offset: 0x4) UDPHS Frame Number Register -------- 
 
 
 
 // -------- UDPHS_IEN : (UDPHS Offset: 0x10) UDPHS Interrupt Enable Register -------- 
-#line 4802 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4802 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_INTSTA : (UDPHS Offset: 0x14) UDPHS Interrupt Status Register -------- 
 
 // -------- UDPHS_CLRINT : (UDPHS Offset: 0x18) UDPHS Clear Interrupt Register -------- 
 // -------- UDPHS_EPTRST : (UDPHS Offset: 0x1c) UDPHS Endpoints Reset Register -------- 
-#line 4813 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4813 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_TSTSOFCNT : (UDPHS Offset: 0xd0) UDPHS Test SOF Counter Register -------- 
 
 
@@ -4813,7 +4813,7 @@ typedef struct _AT91S_UDPHS {
 // -------- UDPHS_TSTMODREG : (UDPHS Offset: 0xdc) UDPHS Test Mode Register -------- 
 
 // -------- UDPHS_TST : (UDPHS Offset: 0xe0) UDPHS Test Register -------- 
-#line 4834 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4834 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_RIPPADDRSIZE : (UDPHS Offset: 0xec) UDPHS PADDRSIZE Register -------- 
 
 // -------- UDPHS_RIPNAME1 : (UDPHS Offset: 0xf0) UDPHS Name Register -------- 
@@ -4821,7 +4821,7 @@ typedef struct _AT91S_UDPHS {
 // -------- UDPHS_RIPNAME2 : (UDPHS Offset: 0xf4) UDPHS Name Register -------- 
 
 // -------- UDPHS_IPFEATURES : (UDPHS Offset: 0xf8) UDPHS Features Register -------- 
-#line 4852 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4852 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- UDPHS_IPVERSION : (UDPHS Offset: 0xfc) UDPHS Version Register -------- 
 
 
@@ -4838,7 +4838,7 @@ typedef struct _AT91S_HDMA_CH {
 	AT91_REG	 HDMA_CTRLB; 	// HDMA Channel Control B Register
 	AT91_REG	 HDMA_CFG; 	// HDMA Channel Configuration Register
 } AT91S_HDMA_CH, *AT91PS_HDMA_CH;
-#line 4877 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4877 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_SADDR : (HDMA_CH Offset: 0x0)  -------- 
 
 // -------- HDMA_DADDR : (HDMA_CH Offset: 0x4)  -------- 
@@ -4846,11 +4846,11 @@ typedef struct _AT91S_HDMA_CH {
 // -------- HDMA_DSCR : (HDMA_CH Offset: 0x8)  -------- 
 
 // -------- HDMA_CTRLA : (HDMA_CH Offset: 0xc)  -------- 
-#line 4900 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4900 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CTRLB : (HDMA_CH Offset: 0x10)  -------- 
-#line 4921 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4921 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CFG : (HDMA_CH Offset: 0x14)  -------- 
-#line 4963 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 4963 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //              SOFTWARE API DEFINITION  FOR HDMA controller
@@ -4879,7 +4879,7 @@ typedef struct _AT91S_HDMA {
 	AT91_REG	 HDMA_FEATURES; 	// HDMA FEATURES REGISTER 
 	AT91_REG	 HDMA_VER; 	// HDMA VERSION REGISTER 
 } AT91S_HDMA, *AT91PS_HDMA;
-#line 5011 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5011 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_GCFG : (HDMA Offset: 0x0)  -------- 
 
 
@@ -4889,22 +4889,22 @@ typedef struct _AT91S_HDMA {
 
 
 // -------- HDMA_SREQ : (HDMA Offset: 0x8)  -------- 
-#line 5044 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5044 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CREQ : (HDMA Offset: 0xc)  -------- 
-#line 5069 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5069 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_LAST : (HDMA Offset: 0x10)  -------- 
-#line 5094 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5094 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_EBCIER : (HDMA Offset: 0x18) Buffer Transfer Completed/Chained Buffer Transfer Completed/Access Error Interrupt Enable Register -------- 
-#line 5119 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5119 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_EBCIDR : (HDMA Offset: 0x1c)  -------- 
 // -------- HDMA_EBCIMR : (HDMA Offset: 0x20)  -------- 
 // -------- HDMA_EBCISR : (HDMA Offset: 0x24)  -------- 
 // -------- HDMA_CHER : (HDMA Offset: 0x28)  -------- 
-#line 5195 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5195 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CHDR : (HDMA Offset: 0x2c)  -------- 
-#line 5244 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5244 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_CHSR : (HDMA Offset: 0x30)  -------- 
-#line 5293 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5293 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // -------- HDMA_VER : (HDMA Offset: 0x1fc)  -------- 
 
 // *****************************************************************************
@@ -4943,27 +4943,27 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for HSMC4 peripheral ========== 
-#line 5370 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5370 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for MATRIX peripheral ========== 
-#line 5410 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5410 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for NVIC peripheral ========== 
-#line 5464 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5464 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for MPU peripheral ========== 
-#line 5476 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5476 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for CM3 peripheral ========== 
-#line 5485 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5485 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_DBGU peripheral ========== 
-#line 5496 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5496 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for DBGU peripheral ========== 
-#line 5514 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5514 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PIOA peripheral ========== 
-#line 5566 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5566 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PIOB peripheral ========== 
-#line 5618 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5618 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PIOC peripheral ========== 
-#line 5670 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5670 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PMC peripheral ========== 
-#line 5695 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5695 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for CKGR peripheral ========== 
 
 
@@ -4975,7 +4975,7 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for SUPC peripheral ========== 
-#line 5712 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5712 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for RTTC peripheral ========== 
 
 
@@ -4986,23 +4986,23 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for RTC peripheral ========== 
-#line 5734 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5734 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for ADC0 peripheral ========== 
-#line 5760 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5760 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for ADC12B peripheral ==========
-#line 5774 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5774 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TC0 peripheral ========== 
-#line 5785 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5785 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TC1 peripheral ========== 
-#line 5796 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5796 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TC2 peripheral ========== 
-#line 5807 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5807 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TCB0 peripheral ========== 
-#line 5815 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5815 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TCB1 peripheral ========== 
-#line 5823 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5823 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TCB2 peripheral ========== 
-#line 5831 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5831 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for EFC0 peripheral ========== 
 
 
@@ -5016,65 +5016,65 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for MCI0 peripheral ========== 
-#line 5869 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5869 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_TWI0 peripheral ========== 
-#line 5880 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5880 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_TWI1 peripheral ========== 
-#line 5891 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5891 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TWI0 peripheral ========== 
-#line 5908 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5908 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for TWI1 peripheral ========== 
-#line 5925 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5925 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US0 peripheral ========== 
-#line 5936 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5936 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US0 peripheral ========== 
-#line 5957 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5957 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US1 peripheral ========== 
-#line 5968 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5968 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US1 peripheral ========== 
-#line 5989 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 5989 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US2 peripheral ========== 
-#line 6000 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6000 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US2 peripheral ========== 
-#line 6021 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6021 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_US3 peripheral ========== 
-#line 6032 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6032 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for US3 peripheral ========== 
-#line 6053 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6053 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_SSC0 peripheral ========== 
-#line 6064 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6064 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for SSC0 peripheral ========== 
-#line 6081 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6081 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PDC_PWMC peripheral ========== 
-#line 6092 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6092 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH0 peripheral ========== 
-#line 6101 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6101 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH1 peripheral ========== 
-#line 6110 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6110 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH2 peripheral ========== 
-#line 6119 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6119 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC_CH3 peripheral ========== 
-#line 6128 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6128 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for PWMC peripheral ========== 
-#line 6206 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6206 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for SPI0 peripheral ========== 
-#line 6221 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6221 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPTFIFO peripheral ========== 
-#line 6229 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6229 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_0 peripheral ========== 
-#line 6237 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6237 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_1 peripheral ========== 
-#line 6245 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6245 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_2 peripheral ========== 
-#line 6253 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6253 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_3 peripheral ========== 
-#line 6261 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6261 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_4 peripheral ========== 
-#line 6269 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6269 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_5 peripheral ========== 
-#line 6277 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6277 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_EPT_6 peripheral ========== 
-#line 6285 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6285 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for UDPHS_DMA_1 peripheral ========== 
 
 
@@ -5106,27 +5106,27 @@ typedef struct _AT91S_HDMA {
 
 
 // ========== Register definition for UDPHS peripheral ========== 
-#line 6332 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6332 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_0 peripheral ========== 
-#line 6339 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6339 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_1 peripheral ========== 
-#line 6346 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6346 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_2 peripheral ========== 
-#line 6353 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6353 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA_CH_3 peripheral ========== 
-#line 6360 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6360 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // ========== Register definition for HDMA peripheral ========== 
-#line 6378 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6378 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               PIO DEFINITIONS FOR AT91SAM3U4
 // *****************************************************************************
-#line 6652 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6652 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               PERIPHERAL ID DEFINITIONS FOR AT91SAM3U4
 // *****************************************************************************
-#line 6687 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6687 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               BASE ADDRESS DEFINITIONS FOR AT91SAM3U4
@@ -5134,7 +5134,7 @@ typedef struct _AT91S_HDMA {
 // AT91_CAST does nothing for C code, so essentially the type cast is just the generic peripheral struct AT91PS_x
 // So AT91C_BASE_X should just be an address to the starting peripheral register address 
 // *****************************************************************************
-#line 6769 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6769 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 
 // *****************************************************************************
 //               MEMORY MAPPING DEFINITIONS FOR AT91SAM3U4
@@ -5155,9 +5155,9 @@ typedef struct _AT91S_HDMA {
 
 
 // IFLASH0
-#line 6795 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6795 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // IFLASH1
-#line 6802 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
+#line 6802 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\AT91SAM3U4.h"
 // EBI_CS0
 
 
@@ -5195,8 +5195,8 @@ typedef struct _AT91S_HDMA {
 
 
 
-#line 38 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\exceptions.h"
+#line 38 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\exceptions.h"
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
@@ -5325,8 +5325,8 @@ extern __weak void HDMA_IrqHandler(void);
 // USB Device High Speed UDP_HS
 extern __weak void UDPD_IrqHandler(void);
 
-#line 39 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\interrupts.h"
+#line 39 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\interrupts.h"
 /**********************************************************************************************************************
 File: interrupts.h                                                               
 
@@ -5421,8 +5421,8 @@ Function Prototypes
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#line 40 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 40 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 /******************************************************************************
  * @file:    core_cm3.h
  * @purpose: CMSIS Cortex-M3 Core Peripheral Access Layer Header File
@@ -5507,7 +5507,7 @@ Function Prototypes
 /*lint -e751 */
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
 /* stdint.h standard header */
 /* Copyright 2003-2010 IAR Systems AB.  */
 
@@ -5517,7 +5517,7 @@ Function Prototypes
   #pragma system_include
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -5563,9 +5563,9 @@ Function Prototypes
 
 
 
-#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 11 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
+#line 11 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
 
 
 
@@ -5791,15 +5791,15 @@ typedef int __data_intptr_t; typedef unsigned int __data_uintptr_t;
 
 
 
-#line 258 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
+#line 258 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\stdint.h"
 
 /*
  * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
  * Consult your license regarding permissions and restrictions.
 V5.04:0576 */
-#line 86 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 86 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 /**************************************************
  *
  * This file declares the ARM intrinsic inline functions.
@@ -5813,7 +5813,7 @@ V5.04:0576 */
 
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 /* ycheck.h internal checking header file. */
 /* Copyright 2005-2010 IAR Systems AB. */
 
@@ -5859,9 +5859,9 @@ V5.04:0576 */
 
 
 
-#line 67 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
+#line 67 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\ycheck.h"
 
-#line 15 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 15 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 
   #pragma system_include
@@ -5914,7 +5914,7 @@ __intrinsic __nounwind void          __set_FAULTMASK(unsigned long);
 __intrinsic __nounwind unsigned long __get_BASEPRI( void );
 __intrinsic __nounwind void          __set_BASEPRI( unsigned long );
 
-#line 74 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 74 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 __intrinsic __nounwind void __disable_fiq(void);
 __intrinsic __nounwind void __enable_fiq(void);
@@ -5997,7 +5997,7 @@ __intrinsic __nounwind void __set_FPSCR( unsigned long );
 __intrinsic __nounwind unsigned char __CLZ( unsigned long );
 
 /* Architecture v5TE */
-#line 167 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 167 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 __intrinsic __nounwind int         __QCFlag( void );
 __intrinsic __nounwind void __reset_QC_flag( void );
@@ -6038,7 +6038,7 @@ __intrinsic __nounwind unsigned long __USAT     (unsigned long val,
                                       unsigned int __constrange( 0, 31 ) sat );
 
 
-#line 374 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
+#line 374 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\intrinsics.h"
 
 /* Architecture v7 instructions.... */
 __intrinsic __nounwind void __DMB(void);
@@ -6054,7 +6054,7 @@ __intrinsic __nounwind void __ISB(void);
 
 
 
-#line 89 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 89 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -6201,7 +6201,7 @@ typedef struct
 
 
 /* Memory Protection Unit */
-#line 251 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 251 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 /* Core Debug Register */
@@ -6215,9 +6215,9 @@ typedef struct
 
 
 /* Memory mapping of Cortex-M3 Hardware */
-#line 270 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 270 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 277 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 277 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -6231,7 +6231,7 @@ typedef struct
  ******************************************************************************/
 
 
-#line 298 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 298 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -6242,12 +6242,12 @@ typedef struct
 
 /* ###################  Compiler specific Intrinsics  ########################### */
 
-#line 623 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 623 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 /* IAR iccarm specific functions */
 
 
 
-#line 1 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 1 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 /**************************************************
  *
  * This file shall be included in appropriate CMSIS header
@@ -6290,7 +6290,7 @@ typedef struct
 
 
 
-#line 110 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 110 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 
 static uint32_t __get_xPSR(void)
 {
@@ -6301,7 +6301,7 @@ static uint32_t __get_xPSR(void)
 
 
 
-#line 173 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 173 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 
 
 
@@ -6312,7 +6312,7 @@ static uint32_t __get_xPSR(void)
 
 
 
-#line 206 "C:\\Program Files (x86)\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
+#line 206 "C:\\Program Files\\IAR Systems\\EWARM_7_20_1\\arm\\inc\\c\\cmsis_iar.h"
 
 
 
@@ -6373,11 +6373,11 @@ static inline uint32_t __ROR(uint32_t op1, uint32_t op2)
 #pragma diag_default=Pe940
 #pragma diag_default=Pe177
 
-#line 628 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 628 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 799 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 799 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
-#line 1048 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
+#line 1048 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\cmsis\\core_cm3.h"
 
 
 
@@ -6620,8 +6620,8 @@ static inline uint32_t ITM_SendChar (uint32_t ch)
 
 
 /*lint -restore */
-#line 41 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
+#line 41 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
 /*******************************************************************************
 File: typedefs.h                                                               
 
@@ -6674,14 +6674,14 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 
-#line 85 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
+#line 85 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\typedefs.h"
 
 
 
 
-#line 42 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 42 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\application\\main.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\application\\main.h"
 /***********************************************************************************************************************
 File: main.h
 
@@ -6717,12 +6717,12 @@ Header file for main.c.
 
 
 
-#line 45 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 45 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 
 
 
 
-#line 1 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.h"
+#line 1 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.h"
 /***********************************************************************************************************************
 File: utilities.h                                                                
 ***********************************************************************************************************************/
@@ -6795,7 +6795,7 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#line 50 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
+#line 50 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpgl1\\iar_7_20_1\\..\\..\\firmware_mpg_common\\configuration.h"
 
 
 /**********************************************************************************************************************
@@ -6818,7 +6818,7 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_);
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-#line 23 "D:\\MPG Source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
+#line 23 "D:\\MPG\\mpg_source\\Git\\Razor_Atmel\\firmware_mpg_common\\drivers\\utilities.c"
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.

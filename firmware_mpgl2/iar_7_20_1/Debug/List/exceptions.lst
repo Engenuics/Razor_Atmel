@@ -1,0 +1,727 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        04/Mar/2016  10:02:54
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\exceptions.c
+#    Command line =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\exceptions.c
+#        -D MPGL2 -D MPG2 --preprocess=cl
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\List\
+#        -lC
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\List\
+#        -o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\Obj\
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h" -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\bsp\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\drivers\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\libraries\captouch\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\cmsis\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\drivers\
+#        -On --use_c++_inline --require_prototypes -I "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\CMSIS\Include\"
+#    List file    =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\List\exceptions.lst
+#    Object file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\Obj\exceptions.o
+#
+###############################################################################
+
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\exceptions.c
+      1          /* ----------------------------------------------------------------------------
+      2           *         ATMEL Microcontroller Software Support 
+      3           * ----------------------------------------------------------------------------
+      4           * Copyright (c) 2008, Atmel Corporation
+      5           *
+      6           * All rights reserved.
+      7           *
+      8           * Redistribution and use in source and binary forms, with or without
+      9           * modification, are permitted provided that the following conditions are met:
+     10           *
+     11           * - Redistributions of source code must retain the above copyright notice,
+     12           * this list of conditions and the disclaimer below.
+     13           *
+     14           * Atmel's name may not be used to endorse or promote products derived from
+     15           * this software without specific prior written permission.
+     16           *
+     17           * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR
+     18           * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     19           * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+     20           * DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT, INDIRECT,
+     21           * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+     22           * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+     23           * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     24           * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     25           * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+     26           * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     27           * ----------------------------------------------------------------------------
+     28           */
+     29          
+     30          /*
+     31          ** This file contains the default exception handlers
+     32          ** and exception table.
+     33          */
+     34          
+     35          //------------------------------------------------------------------------------
+     36          //         Headers
+     37          //------------------------------------------------------------------------------
+     38          
+     39          #include "configuration.h"
+     40          
+     41          //------------------------------------------------------------------------------
+     42          //         Types
+     43          //------------------------------------------------------------------------------
+     44          
+     45          //------------------------------------------------------------------------------
+     46          //         Exception Handlers
+     47          //------------------------------------------------------------------------------
+     48          
+     49          
+     50          //------------------------------------------------------------------------------
+     51          // Default irq handler
+     52          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+     53          void IrqHandlerNotUsed(void)
+     54          {
+     55              while(1);
+   \                     IrqHandlerNotUsed: (+1)
+   \                     ??IrqHandlerNotUsed_0: (+1)
+   \   00000000   0xE7FE             B.N      ??IrqHandlerNotUsed_0
+     56          }
+     57          
+     58          //------------------------------------------------------------------------------
+     59          // Provide weak aliases for each Exception handler to the IrqHandlerNotUsed. 
+     60          // As they are weak aliases, any function with the same name will override 
+     61          // this definition.
+     62          //------------------------------------------------------------------------------
+     63          
+     64          //------------------------------------------------------------------------------
+     65          // System interrupt
+     66          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+     67          WEAK void NMI_Handler(void)
+     68          {   
+     69              while(1);
+   \                     NMI_Handler: (+1)
+   \                     ??NMI_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??NMI_Handler_0
+     70          }
+     71          
+     72          //------------------------------------------------------------------------------
+     73          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+     74          WEAK void HardFault_Handler(void)
+     75          {
+     76            while(1);
+   \                     HardFault_Handler: (+1)
+   \                     ??HardFault_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??HardFault_Handler_0
+     77          }
+     78          
+     79          //------------------------------------------------------------------------------
+     80          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+     81          WEAK void MemManage_Handler(void)
+     82          {
+     83              while(1);
+   \                     MemManage_Handler: (+1)
+   \                     ??MemManage_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??MemManage_Handler_0
+     84          }
+     85          
+     86          //------------------------------------------------------------------------------
+     87          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+     88          WEAK void BusFault_Handler(void)
+     89          {
+     90              while(1);
+   \                     BusFault_Handler: (+1)
+   \                     ??BusFault_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??BusFault_Handler_0
+     91          }
+     92          
+     93          //------------------------------------------------------------------------------
+     94          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+     95          WEAK void UsageFault_Handler(void)
+     96          {
+     97              while(1);
+   \                     UsageFault_Handler: (+1)
+   \                     ??UsageFault_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??UsageFault_Handler_0
+     98          }
+     99          
+    100          //------------------------------------------------------------------------------
+    101          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    102          WEAK void SVC_Handler(void)
+    103          {
+    104              while(1);
+   \                     SVC_Handler: (+1)
+   \                     ??SVC_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??SVC_Handler_0
+    105          }
+    106          
+    107          //------------------------------------------------------------------------------
+    108          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    109          WEAK void DebugMon_Handler(void)
+    110          {
+    111              while(1);
+   \                     DebugMon_Handler: (+1)
+   \                     ??DebugMon_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??DebugMon_Handler_0
+    112          }
+    113          
+    114          //------------------------------------------------------------------------------
+    115          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    116          WEAK void PendSV_Handler(void)
+    117          {
+    118              while(1);
+   \                     PendSV_Handler: (+1)
+   \                     ??PendSV_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??PendSV_Handler_0
+    119          }
+    120          
+    121          //------------------------------------------------------------------------------
+    122          // for Cortex M3
+    123          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    124          WEAK void SysTick_Handler(void)
+    125          {
+    126              while(1);
+   \                     SysTick_Handler: (+1)
+   \                     ??SysTick_Handler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??SysTick_Handler_0
+    127          }
+    128          
+    129          //------------------------------------------------------------------------------
+    130          // External interrupt
+    131          //------------------------------------------------------------------------------
+    132          
+    133          //------------------------------------------------------------------------------
+    134          // for SAM7/9
+    135          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    136          void SYS_IrqHandler( void )
+    137          {
+    138              while(1);
+   \                     SYS_IrqHandler: (+1)
+   \                     ??SYS_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??SYS_IrqHandler_0
+    139          }
+    140          
+    141          //------------------------------------------------------------------------------
+    142          // SUPPLY CONTROLLER
+    143          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    144          WEAK void SUPC_IrqHandler(void)
+    145          {
+    146              while(1);
+   \                     SUPC_IrqHandler: (+1)
+   \                     ??SUPC_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??SUPC_IrqHandler_0
+    147          }
+    148          
+    149          //------------------------------------------------------------------------------
+    150          // RESET CONTROLLER
+    151          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    152          WEAK void RSTC_IrqHandler(void)
+    153          {
+    154              while(1);
+   \                     RSTC_IrqHandler: (+1)
+   \                     ??RSTC_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??RSTC_IrqHandler_0
+    155          }
+    156          
+    157          //------------------------------------------------------------------------------
+    158          // REAL TIME CLOCK
+    159          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    160          WEAK void RTC_IrqHandler(void)
+    161          {
+    162              while(1);
+   \                     RTC_IrqHandler: (+1)
+   \                     ??RTC_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??RTC_IrqHandler_0
+    163          }
+    164          
+    165          //------------------------------------------------------------------------------
+    166          // REAL TIME TIMER
+    167          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    168          WEAK void RTT_IrqHandler(void)
+    169          {
+    170              while(1);
+   \                     RTT_IrqHandler: (+1)
+   \                     ??RTT_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??RTT_IrqHandler_0
+    171          }
+    172          
+    173          //------------------------------------------------------------------------------
+    174          // WATCHDOG TIMER
+    175          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    176          WEAK void WDT_IrqHandler(void)
+    177          {
+    178              while(1);
+   \                     WDT_IrqHandler: (+1)
+   \                     ??WDT_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??WDT_IrqHandler_0
+    179          }
+    180          
+    181          //------------------------------------------------------------------------------
+    182          // PMC
+    183          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    184          WEAK void PMC_IrqHandler(void)
+    185          {
+    186              while(1);
+   \                     PMC_IrqHandler: (+1)
+   \                     ??PMC_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??PMC_IrqHandler_0
+    187          }
+    188          
+    189          //------------------------------------------------------------------------------
+    190          // EFC0
+    191          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    192          WEAK void EFC0_IrqHandler(void)
+    193          {
+    194              while(1);
+   \                     EFC0_IrqHandler: (+1)
+   \                     ??EFC0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??EFC0_IrqHandler_0
+    195          }
+    196          
+    197          //------------------------------------------------------------------------------
+    198          // EFC1
+    199          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    200          WEAK void EFC1_IrqHandler(void)
+    201          {
+    202              while(1);
+   \                     EFC1_IrqHandler: (+1)
+   \                     ??EFC1_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??EFC1_IrqHandler_0
+    203          }
+    204          //------------------------------------------------------------------------------
+    205          // DBGU
+    206          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    207          WEAK void DBGU_IrqHandler(void)
+    208          {
+    209              while(1);
+   \                     DBGU_IrqHandler: (+1)
+   \                     ??DBGU_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??DBGU_IrqHandler_0
+    210          }
+    211          
+    212          //------------------------------------------------------------------------------
+    213          // HSMC4
+    214          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    215          WEAK void HSMC4_IrqHandler(void)
+    216          {
+    217              while(1);
+   \                     HSMC4_IrqHandler: (+1)
+   \                     ??HSMC4_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??HSMC4_IrqHandler_0
+    218          }
+    219          
+    220          //------------------------------------------------------------------------------
+    221          // Parallel IO Controller A
+    222          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    223          WEAK void PIOA_IrqHandler(void)
+    224          {
+    225              while(1);
+   \                     PIOA_IrqHandler: (+1)
+   \                     ??PIOA_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??PIOA_IrqHandler_0
+    226          }
+    227          
+    228          //------------------------------------------------------------------------------
+    229          // Parallel IO Controller B
+    230          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    231          WEAK void PIOB_IrqHandler(void)
+    232          {
+    233              while(1);
+   \                     PIOB_IrqHandler: (+1)
+   \                     ??PIOB_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??PIOB_IrqHandler_0
+    234          }
+    235          
+    236          //------------------------------------------------------------------------------
+    237          // Parallel IO Controller C
+    238          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    239          WEAK void PIOC_IrqHandler(void)
+    240          {
+    241              while(1);
+   \                     PIOC_IrqHandler: (+1)
+   \                     ??PIOC_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??PIOC_IrqHandler_0
+    242          }
+    243          
+    244          
+    245          //------------------------------------------------------------------------------
+    246          // USART 0
+    247          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    248          WEAK void USART0_IrqHandler(void)
+    249          {
+    250              while(1);
+   \                     USART0_IrqHandler: (+1)
+   \                     ??USART0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??USART0_IrqHandler_0
+    251          }
+    252          
+    253          
+    254          //------------------------------------------------------------------------------
+    255          // USART 1
+    256          //------------------------------------------------------------------------------
+    257          #if 0
+    258          WEAK void USART1_IrqHandler(void)
+    259          {
+    260              while(1);
+    261          }
+    262          #endif
+    263          
+    264          //------------------------------------------------------------------------------
+    265          // USART 2
+    266          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    267          WEAK void USART2_IrqHandler(void)
+    268          {
+    269              while(1);
+   \                     USART2_IrqHandler: (+1)
+   \                     ??USART2_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??USART2_IrqHandler_0
+    270          }
+    271          
+    272          //------------------------------------------------------------------------------
+    273          // USART 3
+    274          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    275          WEAK void USART3_IrqHandler(void)
+    276          {
+    277              while(1);
+   \                     USART3_IrqHandler: (+1)
+   \                     ??USART3_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??USART3_IrqHandler_0
+    278          }
+    279          
+    280          //------------------------------------------------------------------------------
+    281          // Multimedia Card Interface
+    282          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    283          WEAK void MCI0_IrqHandler(void)
+    284          {
+    285              while(1);
+   \                     MCI0_IrqHandler: (+1)
+   \                     ??MCI0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??MCI0_IrqHandler_0
+    286          }
+    287          
+    288          //------------------------------------------------------------------------------
+    289          // TWI 0
+    290          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    291          WEAK void TWI0_IrqHandler(void)
+    292          {
+    293              while(1);
+   \                     TWI0_IrqHandler: (+1)
+   \                     ??TWI0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??TWI0_IrqHandler_0
+    294          }
+    295          
+    296          //------------------------------------------------------------------------------
+    297          // TWI 1
+    298          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    299          WEAK void TWI1_IrqHandler(void)
+    300          {
+    301              while(1);
+   \                     TWI1_IrqHandler: (+1)
+   \                     ??TWI1_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??TWI1_IrqHandler_0
+    302          }
+    303          
+    304          //------------------------------------------------------------------------------
+    305          // Serial Peripheral Interface 0
+    306          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    307          WEAK void SPI0_IrqHandler(void)
+    308          {
+    309              while(1);
+   \                     SPI0_IrqHandler: (+1)
+   \                     ??SPI0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??SPI0_IrqHandler_0
+    310          }
+    311          
+    312          //------------------------------------------------------------------------------
+    313          // Serial Synchronous Controller 0
+    314          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    315          WEAK void SSC0_IrqHandler(void)
+    316          {
+    317              while(1);
+   \                     SSC0_IrqHandler: (+1)
+   \                     ??SSC0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??SSC0_IrqHandler_0
+    318          }
+    319          
+    320          //------------------------------------------------------------------------------
+    321          // Timer Counter 0
+    322          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    323          WEAK void TC0_IrqHandler(void)
+    324          {
+    325              while(1);
+   \                     TC0_IrqHandler: (+1)
+   \                     ??TC0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??TC0_IrqHandler_0
+    326          }
+    327          
+    328          //------------------------------------------------------------------------------
+    329          // Timer Counter 1
+    330          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    331          WEAK void TC1_IrqHandler(void)
+    332          {
+    333              while(1);
+   \                     TC1_IrqHandler: (+1)
+   \                     ??TC1_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??TC1_IrqHandler_0
+    334          }
+    335          
+    336          //------------------------------------------------------------------------------
+    337          // Timer Counter 2
+    338          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    339          WEAK void TC2_IrqHandler(void)
+    340          {
+    341              while(1);
+   \                     TC2_IrqHandler: (+1)
+   \                     ??TC2_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??TC2_IrqHandler_0
+    342          }
+    343          
+    344          //------------------------------------------------------------------------------
+    345          // PWM Controller
+    346          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    347          WEAK void PWM_IrqHandler(void)
+    348          {
+    349              while(1);
+   \                     PWM_IrqHandler: (+1)
+   \                     ??PWM_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??PWM_IrqHandler_0
+    350          }
+    351          
+    352          //------------------------------------------------------------------------------
+    353          // ADC controller0
+    354          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    355          WEAK void ADCC0_IrqHandler(void)
+    356          {
+    357              while(1);
+   \                     ADCC0_IrqHandler: (+1)
+   \                     ??ADCC0_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??ADCC0_IrqHandler_0
+    358          }
+    359          
+    360          //------------------------------------------------------------------------------
+    361          // ADC controller1
+    362          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    363          WEAK void ADCC1_IrqHandler(void)
+    364          {
+    365              while(1);
+   \                     ADCC1_IrqHandler: (+1)
+   \                     ??ADCC1_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??ADCC1_IrqHandler_0
+    366          }
+    367          
+    368          //------------------------------------------------------------------------------
+    369          // HDMA
+    370          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    371          WEAK void HDMA_IrqHandler(void)
+    372          {
+    373              while(1);
+   \                     HDMA_IrqHandler: (+1)
+   \                     ??HDMA_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??HDMA_IrqHandler_0
+    374          }
+    375          
+    376          //------------------------------------------------------------------------------
+    377          // USB Device High Speed UDP_HS
+    378          //------------------------------------------------------------------------------
+
+   \                                 In section .text, align 2, keep-with-next
+    379          WEAK void UDPD_IrqHandler(void)
+    380          {
+    381              while(1);
+   \                     UDPD_IrqHandler: (+1)
+   \                     ??UDPD_IrqHandler_0: (+1)
+   \   00000000   0xE7FE             B.N      ??UDPD_IrqHandler_0
+    382          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   ADCC0_IrqHandler
+       0   ADCC1_IrqHandler
+       0   BusFault_Handler
+       0   DBGU_IrqHandler
+       0   DebugMon_Handler
+       0   EFC0_IrqHandler
+       0   EFC1_IrqHandler
+       0   HDMA_IrqHandler
+       0   HSMC4_IrqHandler
+       0   HardFault_Handler
+       0   IrqHandlerNotUsed
+       0   MCI0_IrqHandler
+       0   MemManage_Handler
+       0   NMI_Handler
+       0   PIOA_IrqHandler
+       0   PIOB_IrqHandler
+       0   PIOC_IrqHandler
+       0   PMC_IrqHandler
+       0   PWM_IrqHandler
+       0   PendSV_Handler
+       0   RSTC_IrqHandler
+       0   RTC_IrqHandler
+       0   RTT_IrqHandler
+       0   SPI0_IrqHandler
+       0   SSC0_IrqHandler
+       0   SUPC_IrqHandler
+       0   SVC_Handler
+       0   SYS_IrqHandler
+       0   SysTick_Handler
+       0   TC0_IrqHandler
+       0   TC1_IrqHandler
+       0   TC2_IrqHandler
+       0   TWI0_IrqHandler
+       0   TWI1_IrqHandler
+       0   UDPD_IrqHandler
+       0   USART0_IrqHandler
+       0   USART2_IrqHandler
+       0   USART3_IrqHandler
+       0   UsageFault_Handler
+       0   WDT_IrqHandler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ADCC0_IrqHandler
+       2  ADCC1_IrqHandler
+       2  BusFault_Handler
+       2  DBGU_IrqHandler
+       2  DebugMon_Handler
+       2  EFC0_IrqHandler
+       2  EFC1_IrqHandler
+       2  HDMA_IrqHandler
+       2  HSMC4_IrqHandler
+       2  HardFault_Handler
+       2  IrqHandlerNotUsed
+       2  MCI0_IrqHandler
+       2  MemManage_Handler
+       2  NMI_Handler
+       2  PIOA_IrqHandler
+       2  PIOB_IrqHandler
+       2  PIOC_IrqHandler
+       2  PMC_IrqHandler
+       2  PWM_IrqHandler
+       2  PendSV_Handler
+       2  RSTC_IrqHandler
+       2  RTC_IrqHandler
+       2  RTT_IrqHandler
+       2  SPI0_IrqHandler
+       2  SSC0_IrqHandler
+       2  SUPC_IrqHandler
+       2  SVC_Handler
+       2  SYS_IrqHandler
+       2  SysTick_Handler
+       2  TC0_IrqHandler
+       2  TC1_IrqHandler
+       2  TC2_IrqHandler
+       2  TWI0_IrqHandler
+       2  TWI1_IrqHandler
+       2  UDPD_IrqHandler
+       2  USART0_IrqHandler
+       2  USART2_IrqHandler
+       2  USART3_IrqHandler
+       2  UsageFault_Handler
+       2  WDT_IrqHandler
+
+ 
+ 80 bytes in section .text
+ 
+ 80 bytes of CODE memory
+
+Errors: none
+Warnings: none
