@@ -88,7 +88,35 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+#ifdef MPG1
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
+#endif /* MPG 1 */
   
+#ifdef MPG2
+  LedOff(RED0);
+  LedOff(BLUE0);
+  LedOff(GREEN0);
+
+  LedOff(RED1);
+  LedOff(BLUE1);
+  LedOff(GREEN1);
+
+  LedOff(RED2);
+  LedOff(BLUE2);
+  LedOff(GREEN2);
+
+  LedOff(RED3);
+  LedOff(BLUE3);
+  LedOff(GREEN3);
+#endif /* MPG2 */
+
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -137,7 +165,179 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
-    
+  static LedRateType aeBlinkRate[] = {LED_1HZ, LED_2HZ, LED_4HZ, LED_8HZ};
+  static u8 u8BlinkRateIndex = 0;
+  static bool bLedBlink = FALSE;
+  
+#ifdef MPG1
+  /* BUTTON0 functionality */
+  if( IsButtonPressed(BUTTON0) )
+  {
+    /* The button is currently pressed, so make sure the LED is on */
+    LedOn(WHITE);
+  }
+  else
+  {
+    /* The button is not pressed, so make sure the LED is off */
+    LedOff(WHITE);
+  }
+  
+  if( IsButtonHeld(BUTTON0, BUTTON0_HOLD_TIME) )
+  {
+    LedOn(GREEN);
+  }
+  else
+  {
+    LedOff(GREEN);
+  }
+
+  /* BUTTON1 functionality */
+  if( IsButtonPressed(BUTTON1) )
+  {
+    LedOn(PURPLE);
+  }
+  else
+  {
+    LedOff(PURPLE);
+  }
+
+  if( WasButtonPressed(BUTTON1) )
+  {
+    /* Be sure to acknowledge the button press */
+    ButtonAcknowledge(BUTTON1);
+
+    /* If the LED is already blinking, toggle it off */
+    if(bLedBlink)
+    {
+      bLedBlink = FALSE;
+      LedOff(YELLOW);
+    }
+    /* else start blinking the LED at the current rate */
+    else
+    {
+      bLedBlink = TRUE;
+      LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+    }
+  }
+ 
+  /* BUTTON2 functionality */
+  if( IsButtonPressed(BUTTON2) )
+  {
+    LedOn(BLUE);
+  }
+  else
+  {
+    LedOff(BLUE);
+  }
+
+  /* Check to see if we need to update the blink rate */
+  if( WasButtonPressed(BUTTON2) )
+  {
+    /* Be sure to acknowledge the button press */
+    ButtonAcknowledge(BUTTON2);
+
+    /* Update the blink rate and handle overflow only if the LED is currently blinking */
+    if(bLedBlink)
+    {
+      u8BlinkRateIndex++;
+      if(u8BlinkRateIndex == 4)
+      {
+        u8BlinkRateIndex = 0;
+      }
+      
+      /* Request the rate udpate */
+      LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+    }
+  }
+
+  /* BUTTON3 functionality */
+  if( IsButtonHeld(BUTTON3, 2000) )
+  {
+    LedOn(CYAN);
+  }
+  else
+  {
+    LedOff(CYAN);
+  }
+#endif /* MPG1 */
+
+#ifdef MPG2
+  if( IsButtonPressed(BUTTON0) )
+  {
+    /* The button is currently pressed, so make sure the LED is on */
+    LedOn(BLUE0 );
+  }
+  else
+  {
+    /* The button is not pressed, so make sure the LED is off */
+    LedOff(BLUE0 );
+  }
+
+  /* Check to see if we need to update the blink rate */
+  if( WasButtonPressed(BUTTON0) )
+  {
+    /* Be sure to acknowledge the button press */
+    ButtonAcknowledge(BUTTON0);
+
+    /* Update the blink rate and handle overflow only if the LED is currently blinking */
+    if(bLedBlink)
+    {
+      u8BlinkRateIndex++;
+      if(u8BlinkRateIndex == 4)
+      {
+        u8BlinkRateIndex = 0;
+      }
+      
+      /* Request the rate udpate */
+      LedBlink(GREEN3, aeBlinkRate[u8BlinkRateIndex]);
+    }
+  }
+  
+  if( IsButtonPressed(BUTTON1) )
+  {
+    /* The button is currently pressed, so make sure the LED is on */
+    LedOn(RED1);
+  }
+  else
+  {
+    /* The button is not pressed, so make sure the LED is off */
+    LedOff(RED1);
+  }
+
+  /* Toggle blinking on/off of the GREEN3 LED when BUTTON1 has been pressed.  
+  ButtonAcknowledge must be called after WasButtonPressed() */
+  if( WasButtonPressed(BUTTON1) )
+  {
+    /* Be sure to acknowledge the button press */
+    ButtonAcknowledge(BUTTON1);
+
+    /* If the LED is already blinking, toggle it off */
+    if(bLedBlink)
+    {
+      bLedBlink = FALSE;
+      LedOff(GREEN3);
+    }
+    else
+    {
+     /* start blinking the LED at the current rate */
+      bLedBlink = TRUE;
+      LedBlink(GREEN3, aeBlinkRate[u8BlinkRateIndex]);
+    }
+  }
+
+  /* Turn on the RED2 and GREEN2 LEDs after BUTTON1 has been held for 2 seconds */
+  if( IsButtonHeld(BUTTON1, 2000) )
+  {
+    LedOn(RED2);
+    LedOn(GREEN2);
+  }
+  else
+  {
+    LedOff(RED2);
+    LedOff(GREEN2);
+  }
+#endif /* MPG2 */  
+
 } /* end UserAppSM_Idle() */
      
 
