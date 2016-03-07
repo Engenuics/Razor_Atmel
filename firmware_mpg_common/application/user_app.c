@@ -52,7 +52,9 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
+#ifdef MPG2
 extern PixelBlockType G_sLcdClearLine7;                /* From lcd_NHD-C12864LZ.c */
+#endif /* MPG2 */
 
 
 /***********************************************************************************************************************
@@ -90,7 +92,8 @@ Promises:
 */
 void UserAppInitialize(void)
 {
-  const u8 au8SongTitle[] = "Heart and Soul";
+  u8 au8SongTitle[] = "Heart and Soul";
+  
 #ifdef MPGL1
   LCDCommand(LCD_CLEAR_CMD);
   LCDMessage(LINE1_START_ADDR, au8SongTitle);

@@ -46,7 +46,7 @@ Definitions for musical notes
 #define NOTE_A3                   (u16)220
 #define NOTE_A3_SHARP             (u16)233
 #define NOTE_B3                   (u16)245
-#define NOTE_C4                   (u16)262
+#define NOTE_C4                   (u16)262 /* Middle C */
 #define NOTE_C4_SHARP             (u16)277
 #define NOTE_D4                   (u16)294
 #define NOTE_D4_SHARP             (u16)311
