@@ -179,27 +179,24 @@ static void UserAppSM_Idle(void)
   static u16 au16NotesRight[]    = {F5, F5, F5, F5, F5, E5, D5, E5, F5, G5, A5, A5, A5, A5, A5, G5, F5, G5, A5, A5S, C6, F5, F5, D6, C6, A5S, A5, G5, F5, NO, NO};
   static u16 au16DurationRight[] = {QN, QN, HN, EN, EN, EN, EN, EN, EN, QN, QN, QN, HN, EN, EN, EN, EN, EN, EN, QN,  HN, HN, EN, EN, EN, EN, QN,  QN, HN, HN, FN};
   static u16 au16NoteTypeRight[] = {RT, RT, HT, RT, RT, RT, RT, RT, RT, RT, RT, RT, HT, RT, RT, RT, RT, RT, RT, RT,  RT, HT, RT, RT, RT, RT, RT,  RT, RT, HT, HT};
+  static u8 u8IndexRight = 0;
   static u32 u32RightTimer = 0;
   static u16 u16CurrentDurationRight = 0;
-  static u8 u8IndexRight = 0;
-  static bool bNoteActiveNextRight = TRUE;
   static u16 u16NoteSilentDurationRight = 0;
+  static bool bNoteActiveNextRight = TRUE;
   
-  static u16 au16NotesLeft[]     = {F4, F4, A4, A4, D4, D4, F4, F4, A3S, A3S, D4, D4, C4, C4, E4, E4};
-  static u16 au16DurationLeft[]  = {EN, EN, EN, EN, EN, EN, EN, EN, EN,  EN,  EN, EN, EN, EN, EN, EN};
-  static u16 au16NoteTypeLeft[]  = {RT, RT, RT, RT, RT, RT, RT, RT, RT,  RT,  RT, RT, RT, RT, RT, RT};
+  static u16 au16NotesLeft[]    = {F4, F4, A4, A4, D4, D4, F4, F4, A3S, A3S, D4, D4, C4, C4, E4, E4};
+  static u16 au16DurationLeft[] = {EN, EN, EN, EN, EN, EN, EN, EN, EN,  EN,  EN, EN, EN, EN, EN, EN};
+  static u16 au16NoteTypeLeft[] = {RT, RT, RT, RT, RT, RT, RT, RT, RT,  RT,  RT, RT, RT, RT, RT, RT};
+  static u8 u8IndexLeft = 0;
   static u32 u32LeftTimer = 0;
   static u16 u16CurrentDurationLeft = 0;
-  static u8 u8IndexLeft = 0;
-  static bool bNoteActiveNextLeft = TRUE;
   static u16 u16NoteSilentDurationLeft = 0;
+  static bool bNoteActiveNextLeft = TRUE;
   
   u8 u8CurrentIndex;
   static u32 u32CycleCounter = 0;
-  
-  /* Light - related variable definitions */
-
-  
+   
   
 #ifdef BUZZER1_ON
   /* Right Hand */
@@ -214,16 +211,16 @@ static void UserAppSM_Idle(void)
       if(au16NoteTypeRight[u8CurrentIndex] == RT)
       {
         u16CurrentDurationRight = au16DurationRight[u8CurrentIndex] - REGULAR_NOTE_ADJUSTMENT;
-        u16NoteSilentDurationRight = au16NoteTypeRight[u8CurrentIndex];
+        u16NoteSilentDurationRight = REGULAR_NOTE_ADJUSTMENT;
         bNoteActiveNextRight = FALSE;
-      }
+      } /* end RT case */
     
       else if(au16NoteTypeRight[u8CurrentIndex] == ST)
       {
         u16CurrentDurationRight = STACCATO_NOTE_TIME;
         u16NoteSilentDurationRight = au16DurationRight[u8CurrentIndex] - STACCATO_NOTE_TIME;
         bNoteActiveNextRight = FALSE;
-      }
+      } /* end ST case */
 
       else if(au16NoteTypeRight[u8CurrentIndex] == HT)
       {
@@ -236,7 +233,7 @@ static void UserAppSM_Idle(void)
         {
           u8IndexRight = 0;
         }
-      }
+      } /* end HT case */
 
       /* Set the buzzer frequency and LED for the note (handle NO special case) */
       if(au16NotesRight[u8CurrentIndex] != NO)
@@ -300,9 +297,10 @@ static void UserAppSM_Idle(void)
         LedOff(RED);
 #endif /* MPG1 */
       }
-    }
+    } /* end if(bNoteActiveNextRight) */
     else
     {
+      /* No active note */
       PWMAudioOff(BUZZER1);
       u32RightTimer = G_u32SystemTime1ms;
       u16CurrentDurationRight = u16NoteSilentDurationRight;
@@ -323,8 +321,8 @@ static void UserAppSM_Idle(void)
       {
         u8IndexRight = 0;
       }
-    }
-  }
+    } /* end else if(bNoteActiveNextRight) */
+  } /* end if(IsTimeUp(&u32RightTimer, (u32)u16CurrentDurationRight)) */
 #endif /* BUZZER1_ON */
 
 #ifdef BUZZER2_ON
@@ -424,9 +422,10 @@ static void UserAppSM_Idle(void)
       {                
         PWMAudioOff(BUZZER2);
       }
-    }
+    } /* end if(bNoteActiveNextLeft) */
     else
     {
+      /* The note is not active */
       PWMAudioOff(BUZZER2);
       u32LeftTimer = G_u32SystemTime1ms;
       u16CurrentDurationLeft = u16NoteSilentDurationLeft;
@@ -437,57 +436,57 @@ static void UserAppSM_Idle(void)
       {
         u8IndexLeft = 0;
 
-          LedOff(LCD_RED);
-          LedOff(LCD_GREEN);
-          LedOff(LCD_BLUE);
-          u32CycleCounter++;
+        LedOff(LCD_RED);
+        LedOff(LCD_GREEN);
+        LedOff(LCD_BLUE);
+        u32CycleCounter++;
 
-          switch (u32CycleCounter % 8)
-          {
-            case 0:
-              LedOn(LCD_RED);
-              LedOn(LCD_GREEN);
-              LedOn(LCD_BLUE);
-              break;
+        switch (u32CycleCounter % 8)
+        {
+          case 0:
+            LedOn(LCD_RED);
+            LedOn(LCD_GREEN);
+            LedOn(LCD_BLUE);
+            break;
+          
+          case 1:
+            LedPWM(LCD_RED, LED_PWM_50);
+            LedOn(LCD_BLUE);
+            break;
+
+          case 2:
+            LedOn(LCD_BLUE);
+            break;
+
+          case 3:
+            LedOn(LCD_GREEN);
+            LedOn(LCD_BLUE);
+            break;
+
+          case 4:
+            LedOn(LCD_GREEN);
+            break;
+
+          case 5:
+            LedOn(LCD_RED);
+            LedOn(LCD_GREEN);
+            break;
+
+          case 6:
+            LedOn(LCD_RED);
+            LedPWM(LCD_GREEN, LED_PWM_25);
+            break;
+
+          case 7:
+            LedOn(LCD_RED);
+            break;
             
-            case 1:
-              LedPWM(LCD_RED, LED_PWM_50);
-              LedOn(LCD_BLUE);
-              break;
-
-            case 2:
-              LedOn(LCD_BLUE);
-              break;
-
-            case 3:
-              LedOn(LCD_GREEN);
-              LedOn(LCD_BLUE);
-              break;
-
-            case 4:
-              LedOn(LCD_GREEN);
-              break;
-
-            case 5:
-              LedOn(LCD_RED);
-              LedOn(LCD_GREEN);
-              break;
-
-            case 6:
-              LedOn(LCD_RED);
-              LedPWM(LCD_GREEN, LED_PWM_25);
-              break;
-
-            case 7:
-              LedOn(LCD_RED);
-              break;
-              
-            default:
-              break;
-          }
+          default:
+            break;
+        }
       }
-    }
-  }
+    } /* end else if(bNoteActiveNextLeft) */
+  } /* end if(IsTimeUp(&u32LeftTimer, (u32)u16CurrentDurationLeft)) */
 #endif /* BUZZER2_ON */
     
 } /* end UserAppSM_Idle() */
