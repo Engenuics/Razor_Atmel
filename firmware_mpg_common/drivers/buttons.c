@@ -12,7 +12,7 @@ MPG1: The argument u32Button_ is either BUTTON0 or BUTTON1.
 
 Public:
 bool IsButtonPressed(u32 u32Button_)
-Returns TRUE if Button_aeCurrentState[eButton_] is currently pressed (and debounced).
+Returns TRUE if a particular button is currently pressed (and debounced).
 
 bool WasButtonPressed(u32 u32Button_)
 Returns TRUE if a particular button was pressed since last time it was checked even if it is no longer pressed.
@@ -124,10 +124,10 @@ to return TRUE.
 
 Requires:
   - u32Button_ is a valid button index
-  - Button_aeCurrentState[u32Button_] is valid
+  - Button_aeCurrentState[u32Button_] is a valid index
  
 Promises:
-  - Returns TRUE if Button_aeCurrentState[eButton_] is pressed; otherwise returns FALSE
+  - Returns TRUE if Button_aeCurrentState[u32Button_] is pressed; otherwise returns FALSE
 */
 bool IsButtonPressed(u32 u32Button_)
 {
@@ -183,7 +183,7 @@ Requires:
   - u32Button_ is a valid button index
  
 Promises:
-  - The flag at Button_abNewPress[eButton_] is set to FALSE
+  - The flag at Button_abNewPress[u32Button_] is set to FALSE
 */
 void ButtonAcknowledge(u32 u32Button_)
 {
