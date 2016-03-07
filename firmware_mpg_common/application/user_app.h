@@ -28,7 +28,11 @@ Type Definitions
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
+#define  BUZZER1_ON  /* Right "hand" plays */
 
+#ifdef MPGL1
+#define  BUZZER2_ON   /* Left "hand" plays */
+#endif /* MPGL1 */
 
 /**********************************************************************************************************************
 Function Declarations
@@ -54,8 +58,7 @@ void UserAppRunActiveState(void);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-static void UserAppSM_Idle(void);    
-
+static void UserAppSM_Idle(void);             
 static void UserAppSM_Error(void);         
 static void UserAppSM_FailedInit(void);        
 
