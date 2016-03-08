@@ -42,10 +42,9 @@ the 1ms period.
 void main(void)
 {
   G_u32SystemFlags |= _SYSTEM_INITIALIZING;
-  // Check for watch dog restarts
 
   /* Low level initialization */
-  WatchDogSetup(); /* During development, set to not reset processor if timeout */
+  WatchDogSetup(); /* During development, does not reset processor if timeout */
   GpioSetup();
   ClockSetup();
   InterruptSetup();
@@ -68,8 +67,6 @@ void main(void)
   SdCardInitialize();
 
   /* Application initialization */
-//  BoardTestInitialize();
-//  AudioTestInitialize();
     UserAppInitialize();
   
   /* Exit initialization */
@@ -94,8 +91,6 @@ void main(void)
     SdCardRunActiveState();
 
     /* Applications */
-    //BoardTestRunActiveState();
-    //AudioTestRunActiveState();
     UserAppRunActiveState();
     
     /* System sleep*/
