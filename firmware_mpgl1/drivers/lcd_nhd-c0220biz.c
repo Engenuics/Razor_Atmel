@@ -11,8 +11,8 @@ The displayable area of the screen is 20 characters x 2 lines, though the LCD RA
 Each character has a 1-byte address. Nmemonics are defined for the main locations
 
 Line #      Left most address             Last printed char           Right most address
-  1       0x00 (LINE1_START_ADDR)         0x13 (LINE1_END)          0x27 (LINE1_END_ABSOLUTE)      
-  2       0x40 (LINE2_START_ADDR)         0x53 (LINE2_END)          0x67 (LINE2_END_ABSOLUTE)      
+  1       0x00 (LINE1_START_ADDR)       0x13 (LINE1_END_ADDR)      0x27 (LINE1_END_ABSOLUTE)      
+  2       0x40 (LINE2_START_ADDR)       0x53 (LINE2_END_ADDR)      0x67 (LINE2_END_ABSOLUTE)      
 
 ------------------------------------------------------------------------------------------------------------------------
 API
@@ -112,7 +112,7 @@ void LCDCommand(u8 u8Command_)
   /* Add a delay during initialization to let the command send properly */
   if(G_u32SystemFlags & _SYSTEM_INITIALIZING )
   {
-    for(u32 i = 0; i < 500000; i++);
+    for(u32 i = 0; i < 100000; i++);
   }
   
 } /* end LCDCommand() */
