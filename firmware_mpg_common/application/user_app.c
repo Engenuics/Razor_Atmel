@@ -88,6 +88,30 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+  /* Start with red LED on 100%, green and blue off */
+#ifdef MPG1
+  LedPWM(LCD_RED, LED_PWM_100);
+  LedPWM(LCD_GREEN, LED_PWM_0);
+  LedPWM(LCD_BLUE, LED_PWM_0);
+#endif /* MPG 1 */
+  
+#ifdef MPG2
+  LedPWM(RED0,   LED_PWM_100);
+  LedPWM(GREEN0, LED_PWM_0);
+  LedPWM(BLUE0,  LED_PWM_0);
+
+  LedPWM(RED1,   LED_PWM_100);
+  LedPWM(GREEN1, LED_PWM_0);
+  LedPWM(BLUE1,  LED_PWM_0);
+
+  LedPWM(RED2,   LED_PWM_100);
+  LedPWM(GREEN2, LED_PWM_0);
+  LedPWM(BLUE2,  LED_PWM_0);
+
+  LedPWM(RED3,   LED_PWM_100);
+  LedPWM(GREEN3, LED_PWM_0);
+  LedPWM(BLUE3,  LED_PWM_0);
+#endif /* MPG2 */
   
   /* If good initialization, set state to Idle */
   if( 1 )
@@ -137,7 +161,81 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
+#ifdef MPG1
+  static LedNumberType aeCurrentLed[]  = {LCD_GREEN, LCD_RED, LCD_BLUE, LCD_GREEN, LCD_RED, LCD_BLUE};
+#endif /* MPG 1 */
+
+#ifdef MPG2
+  static LedNumberType aeCurrentLed[]  = {GREEN0, RED0, BLUE0, GREEN0, RED0, BLUE0};
+  static LedNumberType aeCurrentLed1[] = {GREEN1, RED1, BLUE1, GREEN1, RED1, BLUE1};
+  static LedNumberType aeCurrentLed2[] = {GREEN2, RED2, BLUE2, GREEN2, RED2, BLUE2};
+  static LedNumberType aeCurrentLed3[] = {GREEN3, RED3, BLUE3, GREEN3, RED3, BLUE3};
+#endif /* MPG2 */
+  
+  static bool abLedRateIncreasing[]    = {TRUE,      FALSE,   TRUE,     FALSE,     TRUE,    FALSE};
+  static u8 u8CurrentLedIndex  = 0;
+  static u8 u8LedCurrentLevel  = 0;
+  static u8 u8DutyCycleCounter = 0;
+  static u16 u16Counter = COLOR_CYCLE_TIME;
+  static bool bCyclingOn = TRUE;
+
+  /* Advance the cycle only if bCyclingOn */
+  if(bCyclingOn)
+  {
+    u16Counter--;
+  }
+
+  /* Check for update color every COLOR_CYCLE_TIME ms */  
+  if(u16Counter == 0)
+  {
+		u16Counter = COLOR_CYCLE_TIME;
     
+    /* Update the current level based on which way it's headed */
+    if( abLedRateIncreasing[u8CurrentLedIndex] )
+    {
+      u8LedCurrentLevel++;
+    }
+    else
+    {
+      u8LedCurrentLevel--;
+    }
+
+    /* Change direction once we're at the end */
+    if(u8DutyCycleCounter++ == 20)
+    {
+      u8DutyCycleCounter = 0;
+      
+      /* Watch for the indexing variable to reset */
+      u8CurrentLedIndex++;
+      if(u8CurrentLedIndex == sizeof(aeCurrentLed))
+      {
+        u8CurrentLedIndex = 0;
+      }
+      
+      /* Set the current level based on what direction we're now going */
+      u8LedCurrentLevel = 20;
+      if(abLedRateIncreasing[u8CurrentLedIndex])
+      {
+         u8LedCurrentLevel = 0;
+      }
+    } 
+
+    /* Update the value to the current LED */
+    LedPWM( (LedNumberType)aeCurrentLed[u8CurrentLedIndex], (LedRateType)u8LedCurrentLevel );
+#ifdef MPG2
+    LedPWM( (LedNumberType)aeCurrentLed1[u8CurrentLedIndex], (LedRateType)u8LedCurrentLevel );
+    LedPWM( (LedNumberType)aeCurrentLed2[u8CurrentLedIndex], (LedRateType)u8LedCurrentLevel );
+    LedPWM( (LedNumberType)aeCurrentLed3[u8CurrentLedIndex], (LedRateType)u8LedCurrentLevel );
+#endif /* MPG2 */
+  } 
+
+  /* Toggle cycling on and off */
+  if( WasButtonPressed(BUTTON0) )
+  {
+    ButtonAcknowledge(BUTTON0);
+    bCyclingOn = (bool)!bCyclingOn;
+  }
+  
 } /* end UserAppSM_Idle() */
      
 
