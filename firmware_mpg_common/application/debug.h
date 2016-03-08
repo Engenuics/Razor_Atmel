@@ -11,6 +11,7 @@ File: debug.h
 ***********************************************************************************************************************/
 #define DEBUG_RX_BUFFER_SIZE           (u32)128             /* Size of debug buffer for incoming messages */
 #define DEBUG_CMD_BUFFER_SIZE          (u32)64              /* Size of debug buffer for a command */
+#define DEBUG_SCANF_BUFFER_SIZE        (u8)128              /* Size of buffer for scanf messages */
 
 /* G_u32DebugFlags */
 #define _DEBUG_LED_TEST_ENABLE         (u32)0x00000001      /* Flag if LED test is enabled */
@@ -43,7 +44,7 @@ typedef struct
 ***********************************************************************************************************************/
 #define DEBUG_CMD_PREFIX_LENGTH   (u8)4              /* Size of command list prefix "00: " */
 #define DEBUG_CMD_NAME_LENGTH     (u8)32             /* Max size for command name */
-#define DEBUG_CMD_POSTFIX_LENGTH  (u8)2              /* Size of command list postfix "<CR><LF>" */
+#define DEBUG_CMD_POSTFIX_LENGTH  (u8)3              /* Size of command list postfix "<CR><LF>\0" */
 
 /* New commands must update the definitions below. Valid commands are in the range
 00 - 99.  Command name string is a maximum of DEBUG_CMD_NAME_LENGTH characters. */
@@ -93,6 +94,7 @@ typedef struct
 u32 DebugPrintf(u8* u8String_);
 void DebugLineFeed(void);       
 void DebugPrintNumber(u32 u32Number_);
+u8 DebugScanf(u8* au8Buffer_);
 
 void SystemStatusReport(void);
 
