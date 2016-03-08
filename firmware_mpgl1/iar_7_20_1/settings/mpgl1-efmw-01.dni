@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=117419477
+Checksum=128146830
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -38,19 +38,13 @@ UseAuto=0
 TypeViolation=1
 UnspecRange=1
 ActionState=1
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\mpgl1_board_test.c}.382.5" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c}.93.3" 0 0 1 "" 0 "" 0
-Count=2
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
 Category=_ 0
-[Aliases]
-Count=0
-SuppressDialog=0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
 [CallStackLog]
 Enabled=0
 [DriverProfiling]
@@ -59,6 +53,12 @@ Mode=0
 Graph=0
 Symbiont=0
 Exclusions=
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\mpgl1_board_test.c}.382.5" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c}.97.3" 0 0 1 "" 0 "" 0
+Count=2
+[Aliases]
+Count=0
+SuppressDialog=0
