@@ -189,7 +189,7 @@ void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_)
   }
       
   /* Queue the message */
-  TWI0WriteData(LCD_ADDRESS, u8Index, au8LCDMessage, STOP);
+  TWI0WriteData(LCD_ADDRESS, u8CharactersToClear_ + 1, au8LCDMessage, STOP);
       	
 } /* end LCDClearChars() */
 
