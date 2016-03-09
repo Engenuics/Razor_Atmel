@@ -15,7 +15,7 @@ File: debug.h
 
 /* G_u32DebugFlags */
 #define _DEBUG_LED_TEST_ENABLE         (u32)0x00000001      /* Flag if LED test is enabled */
-#define _DEBUG_TIME_WARNING_ENABLE     (u32)0x00000001      /* Flag if system time check is enabled */
+#define _DEBUG_TIME_WARNING_ENABLE     (u32)0x00000002      /* Flag if system time check is enabled */
 
 #ifdef MPGL1 /* MPGL1-specific G_u32DebugFlags flags */
 #endif /* MPGL1 */

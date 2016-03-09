@@ -50,7 +50,7 @@ DebugPrintNumber(u32Number);
 
 u8 DebugScanf(u8* au8Buffer_)
 Copies the current input buffer to au8Buffer_ and returns the number of new characters.
-Everytime DebugScanf is called, the 
+When DebugScanf is called, the G_au8DebugScanfBuffer buffer is cleared and G_u8DebugScanfCharCount is 0.
 e.g.
 u8 u8MyBuffer[SCANF_BUFFER_SIZE]
 u8 u8NumChars;
