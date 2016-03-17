@@ -247,6 +247,8 @@ extern const u8 aau8EngenuicsLogoBlackQ2[LCD_IMAGE_ROW_SIZE_25PX][LCD_IMAGE_COL_
 extern const u8 aau8EngenuicsLogoBlackQ3[LCD_IMAGE_ROW_SIZE_25PX][LCD_IMAGE_COL_BYTES_25PX]; /* From lcd_bitmaps.c */
 extern const u8 aau8EngenuicsLogoBlackQ4[LCD_IMAGE_ROW_SIZE_25PX][LCD_IMAGE_COL_BYTES_25PX]; /* From lcd_bitmaps.c */
 
+extern const u8 aau8Clover[LCD_IMAGE_ROW_SIZE_50PX][LCD_IMAGE_COL_BYTES_50PX];               /* From lcd_bitmaps.c */
+
 extern volatile fnCode_type G_SspStateMachine;         /* From sam3u_ssp.c */
 
 
@@ -277,7 +279,7 @@ static PixelBlockType Lcd_sCurrentUpdateArea;                     /* Area of LCD
 
 static u8 Lcd_au8MessageInit[]  = "LCD Ready\r\n";
 static u8 Lcd_au8MessageWelcome[] = "SAM3U2 DOT MATRIX";
-//static u8 Lcd_au8MessageWelcome[] = "MPG LEVEL 2";
+static u8 Lcd_au8MessagePatrick[] = "HAPPY ST.PATTY'S DAY!";
                                  
 static  u8 Lcd_au8SetupArray[] = {LCD_BIAS_LOW, LCD_ADC_SELECT_NORMAL, LCD_COMMON_MODE1, LCD_COMMON_MODE0, LCD_DISPLAY_LINE_SETx,
                                   LCD_VOLTAGTE_REG_SETx | SET_BIT0 | SET_BIT2,
@@ -816,12 +818,12 @@ void LcdInitialize(void)
   sEngenuicsImage.u16ColumnStart = 40;
   sEngenuicsImage.u16RowSize = LCD_IMAGE_ROW_SIZE_50PX;
   sEngenuicsImage.u16ColumnSize = LCD_IMAGE_COL_SIZE_50PX;
-  LcdLoadBitmap(&aau8EngenuicsLogoBlack[0][0], &sEngenuicsImage);
+  LcdLoadBitmap(&aau8Clover[0][0], &sEngenuicsImage);
 
   /* Write the MPGL2 String in the middle */
-  sStringLocation.u16PixelColumnAddress = LCD_CENTER_COLUMN - ( strlen((char const*)Lcd_au8MessageWelcome) * (LCD_SMALL_FONT_COLUMNS + LCD_SMALL_FONT_SPACE) / 2 );
+  sStringLocation.u16PixelColumnAddress = LCD_CENTER_COLUMN - ( strlen((char const*)Lcd_au8MessagePatrick) * (LCD_SMALL_FONT_COLUMNS + LCD_SMALL_FONT_SPACE) / 2 );
   sStringLocation.u16PixelRowAddress = LCD_SMALL_FONT_LINE7;
-  LcdLoadString(Lcd_au8MessageWelcome, LCD_FONT_SMALL, &sStringLocation);
+  LcdLoadString(Lcd_au8MessagePatrick, LCD_FONT_SMALL, &sStringLocation);
 
   LcdManualMode();
 #endif /* LCD_STARTUP_ANIMATION */

@@ -95,23 +95,22 @@ void main(void)
   LedPWM(GREEN3, LED_PWM_100);
 #endif
 
-#if 0  /* LED Color Testing / screen display hold */
+#if 1  /* LED Color Testing / screen display hold */
   LedOff(BLUE0);
   LedOff(RED0);
   LedOn(GREEN0);
   
-  LedOn(BLUE1);
-  LedOn(RED1);
-  LedOff(GREEN1);
+  LedOff(BLUE1);
+  LedOff(RED1);
+  LedOn(GREEN1);
 
   LedOff(BLUE2);
-  LedOn(RED2);
-  LedOff(GREEN2);
+  LedOff(RED2);
+  LedOn(GREEN2);
 
-  LedOn(BLUE3);
+  LedOff(BLUE3);
   LedOff(RED3);
-  LedOff(GREEN3);
-  //LedUpdate();
+  LedOn(GREEN3);
 
   while(1);
 #endif
