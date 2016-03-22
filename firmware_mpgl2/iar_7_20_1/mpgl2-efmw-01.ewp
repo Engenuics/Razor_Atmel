@@ -2074,6 +2074,9 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\music.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\application\pong_atmel.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.h</name>
       </file>
     </group>
@@ -2084,6 +2087,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\application\main.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\application\pong_atmel.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c</name>
