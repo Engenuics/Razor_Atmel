@@ -14,7 +14,7 @@ For high-traffic or low-power devices, you might consider flipping at the task l
 can be used (the bytes would have to be pre-flipped for transmit and post-flipped on receive).
 
 API:
-SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
+SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)  BLADE_SSP
 Request a SSP peripheral for your task.  No other tasks in the system will be able to access 
 the specific peripheral you request.
 e.g. MyTaskSsp = SspRequest(&MyTaskSspConfig);

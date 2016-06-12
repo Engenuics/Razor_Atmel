@@ -64,6 +64,7 @@ void main(void)
   LedInitialize();
   ButtonInitialize();
   AntInitialize();
+  AntApiInitialize();
   SdCardInitialize();
 
   /* Application initialization */
@@ -88,6 +89,7 @@ void main(void)
     DebugRunActiveState();
     LcdRunActiveState();
     AntRunActiveState();
+    AntApiRunActiveState();
     SdCardRunActiveState();
 
     /* Applications */

@@ -18,26 +18,54 @@ Search "####" for ANT Channel ID defaults
 
 typedef struct 
 {
-  u8 AntChannel;
-  u8 AntChannelType;
-  u8 AntNetwork;
-  u8 AntSerialLo;
-  u8 AntSerialHi;
-  u8 AntDeviceType;
-  u8 AntTransmissionType;
-  u8 AntChannelPeriodLo;
-  u8 AntChannelPeriodHi;
-  u8 AntFrequency;
-  u8 AntTxPower;
+  u8 AntChannel;                           /* The ANT channel number */
+  u8 AntChannelType;                       /* ANT channel type from antdefines.h line 75 */
+  u8 AntNetwork;                           /* Network number */
+  u8 AntSerialLo;                          /* Device ID low byte */
+  u8 AntSerialHi;                          /* Device ID high byte */
+  u8 AntDeviceType;                        /* Device type byte */
+  u8 AntTransmissionType;                  /* Transmission type byte */
+  u8 AntChannelPeriodLo;                   /* Low byte of Channel Period */
+  u8 AntChannelPeriodHi;                   /* High byte of Channel Period */
+  u8 AntFrequency;                         /* RF frequency value */
+  u8 AntTxPower;                           /* RF power level from antdefines.h line 40 */
 } AntSetupDataType;
+
+typedef struct 
+{
+  u8 AntChannel;                           /* The ANT channel number */
+  u8 AntChannelType;                       /* ANT channel type from antdefines.h line 75 */
+  u8 AntNetwork;                           /* Network number */
+  u8 AntNetworkKey[8];                     /* Network key assigned to AntNetwork number */
+  u8 AntDeviceIdLo;                        /* Device ID low byte */
+  u8 AntDeviceIdHi;                        /* Device ID high byte */
+  u8 AntDeviceType;                        /* Device type byte */
+  u8 AntTransmissionType;                  /* Transmission type byte */
+  u8 AntChannelPeriodLo;                   /* Low byte of Channel Period */
+  u8 AntChannelPeriodHi;                   /* High byte of Channel Period */
+  u8 AntFrequency;                         /* RF frequency value */
+  u8 AntTxPower;                           /* RF power level from antdefines.h line 40 */
+} AntAssignChannelInfoType;
 
 /* Message struct for outgoing data messages */
 typedef struct
 {
-  u32 u32TimeStamp;                     /* Current G_u32SystemTime1s */
-  u8 au8MessageData[MESG_MAX_SIZE];     /* Array for message data */
-  void *psNextMessage;                  /* Pointer to AntDataMessageStructType */
-} AntOutgoingMessageListType;
+  u32 u32TimeStamp;                        /* Current G_u32SystemTime1s */
+  u8 au8MessageData[MESG_MAX_SIZE];        /* Array for message data */
+  void *psNextMessage;                     /* Pointer to AntDataMessageStructType */
+} AntOutgoingMessageListType;   
+
+/* Data struct for extended data information */
+typedef struct
+{
+  u8 u8Channel = 0;                        /* Channel number */
+  u16 u16DeviceID;                         /* Device ID from the received message */
+  u8 u8DeviceType;                         /* Device Type from the received message */
+  u8 u8TransType;                          /* Transmission Type from the received message */
+  u8 u8Flags;                              /* Extended data flags from the received message */
+  s8 s8RSSI;                               /* RSSI from the received message */
+} AntExtendedDataType;
+
 
 
 /*******************************************************************************
@@ -56,7 +84,18 @@ typedef struct
 
 #define ANT_TX_TIMEOUT            (u32)100      /* Time in ms max to wait for Tx to ANT */
 
-#if 1
+/* Network number */
+#define ANT_NETWORK_NUMBER_BYTES  (u8)8
+#define ANT_DEFAULT_NETWORK_KEY   (u8)0
+#define N_0                       (u8)0         
+#define N_1                       (u8)0         
+#define N_2                       (u8)0         
+#define N_3                       (u8)0         
+#define N_4                       (u8)0         
+#define N_5                       (u8)0         
+#define N_6                       (u8)0         
+#define N_7                       (u8)0         
+
 /* Symbols for bytes in messages to help readability */
 #define CH                        (u8)0         /* Channel */
 #define D_0                       (u8)0         /* Data */
@@ -68,7 +107,6 @@ typedef struct
 #define D_6                       (u8)0         /* Data */
 #define D_7                       (u8)0         /* Data */
 #define CS                        (u8)0         /* Checksum */
-#endif
 
 
 /*******************************************************************************
@@ -120,6 +158,8 @@ typedef struct
 /* Default Channel ID parameters */
 #define	ANT_SERIAL_LO_DEFAULT			        (u8)0xFF
 #define ANT_SERIAL_HI_DEFAULT			        (u8)0xFF
+#define	ANT_DEVICE_ID_LO_DEFAULT		      (u8)0xFF
+#define ANT_DEVICE_ID_HI_DEFAULT			    (u8)0xFF
 #define	ANT_DEVICE_TYPE_DEFAULT					  (u8)0x01
 #define	ANT_TRANSMISSION_TYPE_DEFAULT		  (u8)0x10
 

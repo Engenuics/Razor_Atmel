@@ -12,13 +12,30 @@
 /**********************************************************************************************************************
 Constants
 **********************************************************************************************************************/
+#define ANT_API_LEGACY   /* Define to support non-channel specific legacy commands */
+
 #define ANT_OUTGOING_MESSAGE_BUFFER_SIZE    (u32)32
 #define ANT_APPLICATION_MESSAGE_BUFFER_SIZE (u32)32
 #define ANT_APPLICATION_MESSAGE_BYTES       (u8)8
+#define ANT_APPLICATION_EXTENDED_BYTES      (u8)8
 #define ANT_DATA_BYTES                      (u8)8
+//#define ANT_NETWORK_NUMBER_BYTES            (u8)8
 
 /* Device Types */
-#define	DEVICE_TYPE_BOARDTEST		              (u8)0x60
+#define	DEVICE_TYPE_BOARDTEST		            (u8)0x60
+
+
+/* ANT Channels */
+#define ANT_CHANNELS                        (u8)8
+#define ANT_CHANNEL_0                       (u8)0
+#define ANT_CHANNEL_1                       (u8)1
+#define ANT_CHANNEL_2                       (u8)2
+#define ANT_CHANNEL_3                       (u8)3
+#define ANT_CHANNEL_4                       (u8)4
+#define ANT_CHANNEL_5                       (u8)5
+#define ANT_CHANNEL_6                       (u8)6
+#define ANT_CHANNEL_7                       (u8)7
+#define ANT_CHANNEL_SCANNING                (u8)0xff
 
 
 /**********************************************************************************************************************
@@ -26,12 +43,16 @@ Type definitions
 **********************************************************************************************************************/
 typedef enum {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED} AntChannelStatusType;
 typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
+typedef enum {ANT_READY_FOR_MESSAGE, ANT_GENERIC_MSG_BUSY, ANT_GENERIC_MSG_OK, ANT_GENERIC_MSG_FAIL};
+
 
 typedef struct
 {
   u32 u32TimeStamp;                                  /* Current G_u32SystemTime1s */
   AntApplicationMessageType eMessageType;            /* Type of data */
+  u8 u8Channel;                                      /* Channel to which the data applies */
   u8 au8MessageData[ANT_APPLICATION_MESSAGE_BYTES];  /* Array for message data */
+  AntExtendedDataType sExtendedData;                 /* Array of extended message data */
   void *psNextMessage;                               /* Pointer to AntDataMessageStructType */
 } AntApplicationMsgListType;
 
@@ -59,9 +80,11 @@ ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
 
 
 #define   MESSAGE_ANT_TICK                        (u8)0xFF
-
 #define   ANT_TICK_MSG_ID_INDEX                   (u8)0
-#define   ANT_TICK_MSG_EVENT_CODE_INDEX           (u8)1
+#define   ANT_TICK_MSG_CHANNEL_INDEX              (u8)1
+#define   ANT_TICK_MSG_RESPONSE_TYPE_INDEX        (u8)2
+#define   ANT_TICK_MSG_EVENT_CODE_INDEX           (u8)3
+#define   ANT_TICK_MSG_RESPONSE_CODE_INDEX        (u8)3
 #define   ANT_TICK_MSG_SENTINEL1_INDEX            (u8)2
 #define   ANT_TICK_MSG_SENTINEL2_INDEX            (u8)3
 #define   ANT_TICK_MSG_SENTINEL3_INDEX            (u8)4
@@ -69,22 +92,61 @@ ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
 #define   ANT_TICK_MSG_MISSED_MID_BYTE_INDEX      (u8)6
 #define   ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX      (u8)7
 
+#ifdef ANT_API_LEGACY
+
+#endif /* ANT_API_LEGACY */
 
 
 /**********************************************************************************************************************
 Function prototypes
 **********************************************************************************************************************/
 
-/* ANT public Interface-layer Functions */
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Public functions                                                                                                   */
+/*--------------------------------------------------------------------------------------------------------------------*/
+#ifdef ANT_API_LEGACY
 bool AntChannelConfig(bool);
 bool AntOpenChannel(void);
 bool AntCloseChannel(void);
 bool AntUnassignChannel(void);
+
 AntChannelStatusType AntRadioStatus(void);
 
 bool AntQueueBroadcastMessage(u8 *pu8Data_);
 bool AntQueueAcknowledgedMessage(u8 *pu8Data_);
-bool AntReadData(void);
+#endif /* ANT_API_LEGACY */
 
+bool AntAssignChannel(AntSetupDataType* psAntSetupInfo_);
+bool AntUnassignChannelNumber(u8 u8Channel_);
+
+bool AntOpenChannelNumber(u8 u8Channel_);
+bool AntCloseChannelNumber(u8 u8Channel_);
+
+AntChannelStatusType AntRadioStatus(u8 u8Channel_);
+
+bool AntQueueBroadcastMessage(u8 *pu8Data_);
+bool AntQueueAcknowledgedMessage(u8 *pu8Data_);
+
+bool AntReadAppMessageBuffer(void);
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Protected functions                                                                                                */
+/*--------------------------------------------------------------------------------------------------------------------*/
+void AntApiInitialize(void);
+void AntApiRunActiveState(void);
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Private functions                                                                                                  */
+/*--------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/***********************************************************************************************************************
+State Machine Declarations
+***********************************************************************************************************************/
+static void AntApiSM_Idle(void);    
+
+static void AntApiSM_Error(void);         
+static void AntApiSM_FailedInit(void);        
 
 #endif /* __ANT_API_H */
