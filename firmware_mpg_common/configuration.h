@@ -53,8 +53,8 @@ Includes
 /* Common driver header files */
 #include "antmessage.h"
 #include "antdefines.h"
-#include "ant_api.h"
 #include "ant.h"
+#include "ant_api.h"
 #include "buttons.h"
 #include "leds.h" 
 #include "messaging.h"

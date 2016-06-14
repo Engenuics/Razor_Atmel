@@ -88,18 +88,24 @@ Promises:
 */
 void UserAppInitialize(void)
 {
-  
+  LCDCommand(LCD_CLEAR_CMD);
+  LCDMessage(LINE1_START_ADDR, "ANT MULTICHAN DEMO");
+  LCDMessage(LINE2_START_ADDR, "CH0   CH1   CH2  OPN");
+  UserApp_StateMachine = UserAppSM_Idle;
+//  UserApp_StateMachine = UserAppSM_ChannelSetup;
+
   /* If good initialization, set state to Idle */
   if( 1 )
   {
-    UserApp_StateMachine = UserAppSM_Idle;
+    DebugPrintf("User app ready\n\r");
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
     UserApp_StateMachine = UserAppSM_FailedInit;
+    DebugPrintf("User app setup failed\n\r");
   }
-
+  
 } /* end UserAppInitialize() */
 
 
@@ -135,9 +141,180 @@ State Machine Function Definitions
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a message to be queued */
+static void UserAppSM_ChannelSetup(void)
+{
+  bool bSetupOk = TRUE;
+  
+  AntAssignChannelInfoType sChannelInfo;
+  
+  /* Setup channel 0 */
+  sChannelInfo.AntChannel = 0;
+  sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+  sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+  sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+  
+  sChannelInfo.AntDeviceIdHi = 0x00;
+  sChannelInfo.AntDeviceIdLo = 0x03;
+  sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+  sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+  
+  sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+  sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+  
+  sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+  {
+    sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+  }
+    
+  if(!AntAssignChannel(&sChannelInfo))
+  {
+    bSetupOk = FALSE;
+  }
+
+  if( bSetupOk )
+  {
+    UserApp_StateMachine = UserAppSM_Idle;
+    DebugPrintf("User app ready\n\r");
+  }
+  else
+  {
+    /* The task isn't properly initialized, so shut it down and don't run */
+    UserApp_StateMachine = UserAppSM_FailedInit;
+    DebugPrintf("User app setup failed\n\r");
+  }
+  
+} /* end UserAppSM_ChannelSetup */
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Process Idle functions */
 static void UserAppSM_Idle(void)
 {
+  AntAssignChannelInfoType sChannelInfo;
+
+  if(AntReadAppMessageBuffer())
+  {
+  }
+  
+  if(WasButtonPressed(BUTTON0))
+  {
+    ButtonAcknowledge(BUTTON0);
+    if(AntRadioStatusChannel(0) == ANT_UNCONFIGURED)
+    {
+      /* Setup channel 0 */
+      sChannelInfo.AntChannel = 0;
+      sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+      sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+      sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+      
+      sChannelInfo.AntDeviceIdHi = 0x00;
+      sChannelInfo.AntDeviceIdLo = 0x01;
+      sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+      sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+      
+      sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+      sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+      
+      sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+      for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+      {
+        sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+      }
+      
+      AntAssignChannel(&sChannelInfo);
+    }
+    else
+    {
+      AntUnassignChannelNumber(0);
+    }
+  } /* end BUTTON0 */
     
+  if(WasButtonPressed(BUTTON1))
+  {
+    ButtonAcknowledge(BUTTON1);
+    if(AntRadioStatusChannel(1) == ANT_UNCONFIGURED)
+    {
+      /* Setup channel 1 */
+      sChannelInfo.AntChannel = 1;
+      sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+      sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+      sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+      
+      sChannelInfo.AntDeviceIdHi = 0x11;
+      sChannelInfo.AntDeviceIdLo = 0x11;
+      sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+      sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+      
+      sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+      sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+      
+      sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+      for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+      {
+        sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+      }
+      
+      AntAssignChannel(&sChannelInfo);
+    }
+    else
+    {
+      AntUnassignChannelNumber(1);
+    }
+  } /* end BUTTON1 */
+
+  if(WasButtonPressed(BUTTON2))
+  {
+    ButtonAcknowledge(BUTTON2);
+    if(AntRadioStatusChannel(2) == ANT_UNCONFIGURED)
+    {
+      /* Setup channel 0 */
+      sChannelInfo.AntChannel = 2;
+      sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+      sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+      sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+      
+      sChannelInfo.AntDeviceIdHi = 0x22;
+      sChannelInfo.AntDeviceIdLo = 0x22;
+      sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+      sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+      
+      sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+      sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+      
+      sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+      for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+      {
+        sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+      }
+      
+      AntAssignChannel(&sChannelInfo);
+    }
+    else
+    {
+      AntUnassignChannelNumber(2);
+    }
+  } /* end BUTTON2 */
+
+  if(WasButtonPressed(BUTTON3))
+  {
+    ButtonAcknowledge(BUTTON3);
+    
+    for(u8 i = 0; i < 3; i++)
+    {
+      /* Manage channels */
+      if(AntRadioStatusChannel(i) == ANT_CLOSED)
+      {
+        AntOpenChannelNumber(i);
+      }
+      
+      if(AntRadioStatusChannel(i) == ANT_OPEN)
+      {
+        AntCloseChannelNumber(i);
+      }
+    }
+  } /* end BUTTON3 */
+  
 } /* end UserAppSM_Idle() */
      
 

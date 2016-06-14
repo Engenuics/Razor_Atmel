@@ -2,7 +2,7 @@
 File: ant_api.c                                                               
 
 Description:
-ANT user interface.  No initialization or state machine requried.  This file exposes the source code
+ANT user interface.  No initialization or state machine required.  This file exposes the source code
 for all public functions that work with ant.c.  Seperating it keep sit a little more manageable.
 
 Once the ANT radio has been configured, all messaging from the ANT device is handled through 
@@ -26,7 +26,7 @@ extern AntApplicationMessageType G_eAntApiCurrentMessageClass;    // From ant_ap
 extern u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];  // From ant_api.c
 
 Types
-typedef enum {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPEN, ANT_CLOSED} AntChannelStatusType;
+typedef enum {ANT_UNCONFIGURED, ANT_OPEN, ANT_CLOSED} AntChannelStatusType;
 typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
 
 
@@ -236,11 +236,11 @@ extern u32 G_u32ApplicationFlags;                             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                       /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                        /* From board-specific source file */
 
-//extern volatile u32 ANT_SSP_FLAGS;                            /* From configuration.h */
-
 extern u32 G_u32AntFlags;                                     /* From ant.c */
 extern AntApplicationMsgListType *G_sAntApplicationMsgList;   /* From ant.c */
-extern AntSetupDataType G_stAntSetupData;                     /* From ant.c */
+//extern AntSetupDataType G_stAntSetupData;                     /* From ant.c */
+extern AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_CHANNELS]; /* From ant.c */
+extern AntMessageResponseType G_stMessageResponse;            /* From ant.c */
 
 extern u8 G_au8AntMessageOk[];                                /* From ant.c */
 extern u8 G_au8AntMessageFail[];                              /* From ant.c */
@@ -254,6 +254,17 @@ extern u8 G_au8AntMessageInit[];                              /* From ant.c */
 extern u8 G_au8AntMessageInitFail[];                          /* From ant.c */
 extern u8 G_au8AntMessageNoAnt[];                             /* From ant.c */
 
+extern u8 G_au8AntSetNetworkKey[];                            /* From ant.c */
+extern u8 G_au8AntAssignChannel[];                            /* From ant.c */
+extern u8 G_au8AntSetChannelID[];                             /* From ant.c */
+extern u8 G_au8AntSetChannelPeriod[];                         /* From ant.c */
+extern u8 G_au8AntSetChannelRFFreq[];                         /* From ant.c */
+extern u8 G_au8AntSetChannelPower[];                          /* From ant.c */
+extern u8 G_au8AntLibConfig[];                                /* From ant.c */
+
+extern u8 G_au8AntBroadcastDataMessage[];                     /* From ant.c */
+extern u8 G_au8AntAckDataMessage[];                           /* From ant.c */
+
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -262,9 +273,10 @@ Variable names shall start with "AntApi_<type>Name" and be declared as static.
 static fnCode_type AntApi_StateMachine;             /* The state machine function pointer */
 static u32 AntApi_u32Timeout;                       /* Timeout counter used across states */
 
-static AntAssignChannelInfoType AntApi_asChannelConfiguration[ANT_CHANNELS]; /* Keeps track of all configured ANT channels */
-//static u32 AntApi_au32AssignChannelTokens
-
+/* Message for channel assignment.  Set ANT_ASSIGN_MESSAGES for number of messages. */
+static u8* AntApi_apu8AntAssignChannel[] = {G_au8AntSetNetworkKey, G_au8AntLibConfig, G_au8AntAssignChannel, G_au8AntSetChannelID, 
+                                            G_au8AntSetChannelPeriod, G_au8AntSetChannelRFFreq, G_au8AntSetChannelPower 
+                                           }; 
 
 /***********************************************************************************************************************
 Function Definitions
@@ -274,93 +286,98 @@ Function Definitions
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-
 /*------------------------------------------------------------------------------
 Function: AntAssignChannel
 Description:
-Completely configures an ANT channel with an application's required parameters 
-for communication.
+Updates all configuration messages to completely configure an ANT channel with an application's 
+required parameters for communication.  The ANT API state machine then sends and monitors the commands
+to ensure the requested channel is setup properly.  The application should monitor AntRadioStatusChannel()
+to see if the channel is configured properly.
 
 Requires:
-  - All Global ANT configuration variables have been assigned to the application's
-    required values.
-  - An ANT channel is not currently opened.
+  - The ANT channel is not currently configured.
+  - psAntSetupInfo_ points to a complete AntAssignChannelInfoType with all the required channel information.
 
 Promises:
   - Channel, Channel ID, message period, radio frequency and radio power are configured.
-  - Returns TRUE if configuration is successful
+  - Returns TRUE if the channel is ready to be set up; all global setup messages are updated with the values
+    from psAntSetupInfo; 
 */
-bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_);
+bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_)
 {
-  u8 au8ANTSetNetworkKey[]    = {MESG_NETWORK_KEY_SIZE, MESG_NETWORK_KEY_ID, psAntSetupInfo_->AntNetwork, 
-                                 psAntSetupInfo_->AntNetworkKey[0], psAntSetupInfo_->AntNetworkKey[1], 
-                                 psAntSetupInfo_->AntNetworkKey[2], psAntSetupInfo_->AntNetworkKey[3], 
-                                 psAntSetupInfo_->AntNetworkKey[4], psAntSetupInfo_->AntNetworkKey[5], 
-                                 psAntSetupInfo_->AntNetworkKey[6], psAntSetupInfo_->AntNetworkKey[7], CS};
-  u8 au8ANTAssignChannel[]    = {MESG_ASSIGN_CHANNEL_SIZE, MESG_ASSIGN_CHANNEL_ID, psAntSetupInfo_->AntChannel, 
-                                 psAntSetupInfo_->AntChannelType, psAntSetupInfo_->AntNetwork, CS};
-  u8 au8ANTSetChannelID[]     = {MESG_CHANNEL_ID_SIZE, MESG_CHANNEL_ID_ID, psAntSetupInfo_->AntChannel, 
-                                 psAntSetupInfo_->AntDeviceIdLo, psAntSetupInfo_->AntDeviceIdHi, psAntSetupInfo_->AntDeviceType, 
-                                 psAntSetupInfo_->AntTransmissionType, CS};
-  u8 au8ANTSetChannelPeriod[] = {MESG_CHANNEL_MESG_PERIOD_SIZE, MESG_CHANNEL_MESG_PERIOD_ID, psAntSetupInfo_->AntChannel, 
-                                 psAntSetupInfo_->AntChannelPeriodLo, psAntSetupInfo_->AntChannelPeriodHi, CS};
-  u8 au8ANTSetChannelRFFreq[] = {MESG_CHANNEL_RADIO_FREQ_SIZE, MESG_CHANNEL_RADIO_FREQ_ID, psAntSetupInfo_->AntChannel, 
-                                 psAntSetupInfo_->AntFrequency, CS};           
-  u8 au8ANTSetChannelPower[]  = {MESG_RADIO_TX_POWER_SIZE, MESG_RADIO_TX_POWER_ID, psAntSetupInfo_->AntChannel, 
-                                 psAntSetupInfo_->AntTxPower, CS};        
-  u8 au8ANTLibConfig[]        = {MESG_LIB_CONFIG_SIZE, MESG_LIB_CONFIG_ID, 0, LIB_CONFIG_CHANNEL_ID_EN | LIB_CONFIG_RSSI_EN, CS};        
- 
-  u8 u8ErrorCount = 0;	
-
-  G_u32AntFlags &= ~_ANT_FLAGS_CMD_ERROR;
-
-  /* Adjust the channel type if configuration for a slave device */
-  if(!bMaster_)
+  /* Check to ensure the selected channel is available */
+  if(AntRadioStatusChannel(psAntSetupInfo_->AntChannel) != ANT_UNCONFIGURED)
   {
-    au8ANTAssignChannel0[3] = CHANNEL_TYPE_SLAVE;
-    G_stAntSetupData.AntChannelType = CHANNEL_TYPE_SLAVE;
+    DebugPrintf("AntAssignChannel error: channel is not unconfigured\n\r");
+    return FALSE;
   }
   
-  /* Assign the channel */
-  au8ANTAssignChannel0[5] = AntCalculateTxChecksum(au8ANTAssignChannel0);
-  AntTxMessage(au8ANTAssignChannel0);
-  u8ErrorCount += AntExpectResponse(MESG_ASSIGN_CHANNEL_ID, ANT_MSG_TIMEOUT_MS);
+  /* Setup the library config message (for extended data) - use defaults for now */
+  G_au8AntLibConfig[4] = AntCalculateTxChecksum(G_au8AntLibConfig);
 
-  /* Assign the channel ID */
-  au8ANTSetChannelID0[7] = AntCalculateTxChecksum(au8ANTSetChannelID0);
-  AntTxMessage(au8ANTSetChannelID0);
-  u8ErrorCount += AntExpectResponse(MESG_CHANNEL_ID_ID, ANT_MSG_TIMEOUT_MS);
+  /* Set Network key message */
+  G_au8AntSetNetworkKey[2] = psAntSetupInfo_->AntNetwork;
+  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+  {
+    G_au8AntSetNetworkKey[i + 3] = psAntSetupInfo_->AntNetworkKey[i];
+    G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntNetworkKey[i] = psAntSetupInfo_->AntNetworkKey[i];
+  }
+  G_au8AntSetNetworkKey[11] = AntCalculateTxChecksum(G_au8AntSetNetworkKey);
     
-  /* Assign the channel period */
-  au8ANTSetChannelPeriod0[5] = AntCalculateTxChecksum(au8ANTSetChannelPeriod0);
-  AntTxMessage(au8ANTSetChannelPeriod0);
-  u8ErrorCount += AntExpectResponse(MESG_CHANNEL_MESG_PERIOD_ID, ANT_MSG_TIMEOUT_MS);
-    
-  /* Assign the channel frequency */
-  au8ANTSetChannelRFFreq0[4] = AntCalculateTxChecksum(au8ANTSetChannelRFFreq0);
-  AntTxMessage(au8ANTSetChannelRFFreq0);
-  u8ErrorCount += AntExpectResponse(MESG_CHANNEL_RADIO_FREQ_ID, ANT_MSG_TIMEOUT_MS);
+  /* Setup the channel message */
+  G_au8AntAssignChannel[2] = psAntSetupInfo_->AntChannel;
+  G_au8AntAssignChannel[3] = psAntSetupInfo_->AntChannelType;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntChannelType = psAntSetupInfo_->AntChannelType;
 
-  /* Assign the channel power */
-  au8ANTSetChannelPower0[4] = AntCalculateTxChecksum(au8ANTSetChannelPower0);
-  AntTxMessage(au8ANTSetChannelPower0);
-  u8ErrorCount += AntExpectResponse(MESG_RADIO_TX_POWER_ID, ANT_MSG_TIMEOUT_MS);
-  
-  /* If any errors were collected, clear the ANT_GOOD flag */ 
-  /* Announce channel status on the debug port */
-  DebugPrintf(G_au8AntMessageSetup);
-  if(u8ErrorCount)
-  {
-    G_u32SystemFlags &= ~_APPLICATION_FLAGS_ANT;  
-    DebugPrintf(G_au8AntMessageFail);
-    return(FALSE);
-  }
-  else
-  {
-    DebugPrintf(G_au8AntMessageOk);
-    G_u32AntFlags |= _ANT_FLAGS_CHANNEL_CONFIGURED;
-    return(TRUE);
-  }
+  G_au8AntAssignChannel[4] = psAntSetupInfo_->AntNetwork;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntNetwork = psAntSetupInfo_->AntNetwork;
+
+  G_au8AntAssignChannel[5] = AntCalculateTxChecksum(G_au8AntAssignChannel);
+
+  /* Setup the channel ID message */
+  G_au8AntSetChannelID[2] = psAntSetupInfo_->AntChannel;
+  G_au8AntSetChannelID[3] = psAntSetupInfo_->AntDeviceIdLo;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntDeviceIdLo = psAntSetupInfo_->AntDeviceIdLo;
+
+  G_au8AntSetChannelID[4] = psAntSetupInfo_->AntDeviceIdHi;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntDeviceIdHi = psAntSetupInfo_->AntDeviceIdHi;
+
+  G_au8AntSetChannelID[5] = psAntSetupInfo_->AntDeviceType;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntDeviceType = psAntSetupInfo_->AntDeviceType;
+
+  G_au8AntSetChannelID[6] = psAntSetupInfo_->AntTransmissionType;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntTransmissionType = psAntSetupInfo_->AntTransmissionType;
+
+  G_au8AntSetChannelID[7] = AntCalculateTxChecksum(G_au8AntSetChannelID);
+    
+  /* Setup the channel period message */
+  G_au8AntSetChannelPeriod[2] = psAntSetupInfo_->AntChannel;
+  G_au8AntSetChannelPeriod[3] = psAntSetupInfo_->AntChannelPeriodLo;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntChannelPeriodLo = psAntSetupInfo_->AntChannelPeriodLo;
+
+  G_au8AntSetChannelPeriod[4] = psAntSetupInfo_->AntChannelPeriodHi;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntChannelPeriodHi = psAntSetupInfo_->AntChannelPeriodHi;
+
+  G_au8AntSetChannelPeriod[5] = AntCalculateTxChecksum(G_au8AntSetChannelPeriod);
+    
+  /* Setup the channel frequency message */
+  G_au8AntSetChannelRFFreq[2] = psAntSetupInfo_->AntChannel;
+  G_au8AntSetChannelRFFreq[3] = psAntSetupInfo_->AntFrequency;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntFrequency = psAntSetupInfo_->AntFrequency;
+
+  G_au8AntSetChannelRFFreq[4] = AntCalculateTxChecksum(G_au8AntSetChannelRFFreq);
+
+  /* Setup the channel power message */
+  G_au8AntSetChannelPower[2] = psAntSetupInfo_->AntChannel;
+  G_au8AntSetChannelPower[3] = psAntSetupInfo_->AntTxPower;
+  G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntTxPower = psAntSetupInfo_->AntTxPower;
+
+  G_au8AntSetChannelPower[4] = AntCalculateTxChecksum(G_au8AntSetChannelPower);
+     
+  /* Set the next state to begin transferring */
+  AntApi_u32Timeout = G_u32SystemTime1ms;
+  AntApi_StateMachine = AntApiSM_AssignChannel;
+  return TRUE;
 
 } /* end AntAssignChannel() */
 
@@ -393,7 +410,7 @@ bool AntOpenChannelNumber(u8 u8Channel_)
 
   /* Update the checksum value and queue the open channel message */
   au8AntOpenChannel[3] = AntCalculateTxChecksum(au8AntOpenChannel);
-  G_u32AntFlags |= _ANT_FLAGS_CHANNEL_OPEN_PENDING;
+  G_asAntChannelConfiguration[u8Channel_].AntFlags |= _ANT_FLAGS_CHANNEL_OPEN_PENDING;
  
   return( AntQueueOutgoingMessage(au8AntOpenChannel) );
   
@@ -429,7 +446,7 @@ bool AntCloseChannelNumber(u8 u8Channel_)
 
   /* Update the checksum value and queue the close channel message*/
   au8AntCloseChannel[3] = AntCalculateTxChecksum(au8AntCloseChannel);
-  G_u32AntFlags |= _ANT_FLAGS_CHANNEL_CLOSE_PENDING;
+  G_asAntChannelConfiguration[u8Channel_].AntFlags |= _ANT_FLAGS_CHANNEL_CLOSE_PENDING;
   
   return( AntQueueOutgoingMessage(au8AntCloseChannel) );
 
@@ -460,11 +477,48 @@ bool AntUnassignChannelNumber(u8 u8Channel_)
 
   /* Update checksum and queue the unassign channel message */
   au8AntUnassignChannel[3] = AntCalculateTxChecksum(au8AntUnassignChannel);
-  G_u32AntFlags &= ~_ANT_FLAGS_CHANNEL_CONFIGURED;
+  G_asAntChannelConfiguration[u8Channel_].AntFlags &= ~_ANT_FLAGS_CHANNEL_CONFIGURED;
   return( AntQueueOutgoingMessage(au8AntUnassignChannel) );
 
 } /* end AntUnassignChannelNumber() */
 
+
+/*------------------------------------------------------------------------------
+Function: AntRadioStatus
+
+Description:
+Returns the current radio status to the application.
+  
+Requires:
+  - G_u32AntFlags are up to date
+
+Promises:
+  - Returns one of {ANT_UNCONFIGURED, ANT_CLOSING, ANT_OPEN, ANT_CLOSED}
+
+*/
+AntChannelStatusType AntRadioStatusChannel(u8 u8Channel_)
+{
+  if(G_asAntChannelConfiguration[u8Channel_].AntFlags & _ANT_FLAGS_CHANNEL_CONFIGURED)
+  {
+    if(G_asAntChannelConfiguration[u8Channel_].AntFlags & _ANT_FLAGS_CHANNEL_CLOSE_PENDING)
+    {
+      return ANT_CLOSING;
+    }
+    else if(G_asAntChannelConfiguration[u8Channel_].AntFlags & _ANT_FLAGS_CHANNEL_OPEN)
+    {
+      return ANT_OPEN;
+    }
+    else
+    {
+      return ANT_CLOSED;
+    }
+  }
+  else
+  {
+    return ANT_UNCONFIGURED;
+  }
+   
+} /* end AntRadioStatus () */
 
 #ifdef ANT_API_LEGACY
 /*------------------------------------------------------------------------------
@@ -678,24 +732,24 @@ Description:
 Adds an ANT broadcast message to the outgoing messages list.  
 
 Requires:
+  - u8Channel_ is the channel number on which to broadcast
   - pu8Data_ is a pointer to the first element of an array of 8 data bytes
 
 Promises:
   - Returns TRUE if the entry is added successfully.
 */
-bool AntQueueBroadcastMessage(u8 *pu8Data_)
+bool AntQueueBroadcastMessage(u8 u8Channel_, u8 *pu8Data_)
 {
-  static u8 au8AntBroadcastDataMessage[] = {MESG_DATA_SIZE, MESG_BROADCAST_DATA_ID, CH, D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, CS};
-
   /* Update the dynamic message data */
-  au8AntBroadcastDataMessage[2] = G_stAntSetupData.AntChannel;
+  G_au8AntBroadcastDataMessage[2] = u8Channel_;
   for(u8 i = 0; i < ANT_DATA_BYTES; i++)
   {
-    au8AntBroadcastDataMessage[3 + i] = *(pu8Data_ + i);
+    G_au8AntBroadcastDataMessage[3 + i] = *(pu8Data_ + i);
   }
  
-  au8AntBroadcastDataMessage[11] = AntCalculateTxChecksum(au8AntBroadcastDataMessage);
-  return( AntQueueOutgoingMessage(au8AntBroadcastDataMessage) );
+  G_au8AntBroadcastDataMessage[11] = AntCalculateTxChecksum(G_au8AntBroadcastDataMessage);
+  
+  return( AntQueueOutgoingMessage(G_au8AntBroadcastDataMessage) );
 
 } /* end AntQueueBroadcastMessage */
 
@@ -707,26 +761,26 @@ Description:
 Adds an ANT Acknowledged message to the outgoing messages list.  
 
 Requires:
+  - u8Channel_ is the channel number on which to broadcast
   - pu8Data_ is a pointer to the first element of an array of 8 data bytes
 
 Promises:
   - Returns TRUE if the entry is added successfully.
 */
-bool AntQueueAcknowledgedMessage(u8 *pu8Data_)
+bool AntQueueAcknowledgedMessage(u8 u8Channel_, u8 *pu8Data_)
 {
-  static u8 au8AntAckDataMessage[] = {MESG_DATA_SIZE, MESG_ACKNOWLEDGED_DATA_ID, CH, D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, CS};
-
   /* Update the dynamic message data */
-  au8AntAckDataMessage[2] = G_stAntSetupData.AntChannel;
+  G_au8AntAckDataMessage[2] = u8Channel_;
   for(u8 i = 0; i < ANT_DATA_BYTES; i++)
   {
-    au8AntAckDataMessage[3 + i] = *(pu8Data_ + i);
+    G_au8AntAckDataMessage[3 + i] = *(pu8Data_ + i);
   }
  
-  au8AntAckDataMessage[11] = AntCalculateTxChecksum(au8AntAckDataMessage);
-  return( AntQueueOutgoingMessage(au8AntAckDataMessage) );
+  G_au8AntAckDataMessage[11] = AntCalculateTxChecksum(G_au8AntAckDataMessage);
+  return( AntQueueOutgoingMessage(G_au8AntAckDataMessage) );
  
 } /* end AntQueueAcknowledgedMessage */
+
 
 /*-----------------------------------------------------------------------------/
 Function: AntReadAppMessageBuffer
@@ -784,30 +838,10 @@ Promises:
 */
 void AntApiInitialize(void)
 {
-  /* Initialize the AntApi_asChannelConfiguration data struct */
-  for(u8 i = 0; i < ANT_CHANNELS; i++)
-  {
-    AntApi_asChannelConfiguration[i].AntChannel          = i;
-    AntApi_asChannelConfiguration[i].AntChannelType      = ANT_CHANNEL_TYPE_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntNetwork          = ANT_NETWORK_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntDeviceIdLo       = ANT_DEVICE_ID_LO_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntDeviceIdHi       = ANT_DEVICE_ID_HI_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntDeviceType       = ANT_DEVICE_TYPE_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntFrequency        = ANT_FREQUENCY_DEFAULT;
-    AntApi_asChannelConfiguration[i].AntTxPower          = ANT_TX_POWER_DEFAULT;
-    
-    for(u8 j = 0; j < ANT_NETWORK_NUMBER_BYTES; j++)
-    {
-      AntApi_asChannelConfiguration[i].AntNetworkKey[j] = ANT_DEFAULT_NETWORK_KEY;
-    }
-  }
-  
   /* If good initialization, set state to Idle */
   if( 1 )
   {
+    DebugPrintf("ANT API ready\n\r");
     AntApi_StateMachine = AntApiSM_Idle;
   }
   else
@@ -848,9 +882,73 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void AntApiSM_Idle(void)
 {
-    
+  /* Monitor requests to send generic ANT messages */
+  
 } /* end AntApiSM_Idle() */
      
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Send all configuration messages to ANT to fully assign the channel.
+The selected channel has already been verified unconfigured, and all required setup
+messages are ready to go.  */
+static void  AntApiSM_AssignChannel(void)          
+{
+  static u8 u8CurrentMessageToSend = 0;
+  static u8 u8CurrentMesssageId = 0;
+  static bool bMessageInProgress = FALSE;
+  
+  /* Queue the next message if it's time */
+  if(bMessageInProgress == FALSE)
+  {
+    u8CurrentMesssageId = *(AntApi_apu8AntAssignChannel[u8CurrentMessageToSend] + BUFFER_INDEX_MESG_ID); 
+    AntQueueOutgoingMessage(AntApi_apu8AntAssignChannel[u8CurrentMessageToSend]);
+    bMessageInProgress = TRUE;
+  }
+  
+  /* Check message status */
+  if( u8CurrentMesssageId == G_stMessageResponse.u8MessageNumber )
+  { 
+    if(G_stMessageResponse.u8ResponseCode == RESPONSE_NO_ERROR)
+    {
+      /* Increment message pointer and check if complete */
+      u8CurrentMessageToSend++;
+      if(u8CurrentMessageToSend == ANT_ASSIGN_MESSAGES)
+      {
+        /* Print OK message and update the channel flags */
+        G_au8AntMessageAssign[12] = G_stMessageResponse.u8Channel;
+        DebugPrintf(G_au8AntMessageAssign);
+        DebugPrintf(G_au8AntMessageOk);
+        G_asAntChannelConfiguration[G_stMessageResponse.u8Channel].AntFlags |= _ANT_FLAGS_CHANNEL_CONFIGURED;
+
+        /* Clean up and exit this state */
+        u8CurrentMessageToSend = 0;
+        AntApi_StateMachine = AntApiSM_Idle;
+      }
+    } 
+    else
+    {
+      /* Report the error and return.  Channel flags will remain clear for application to check. */
+      DebugPrintf(G_au8AntMessageAssign);
+      DebugPrintf(G_au8AntMessageFail);
+      AntApi_StateMachine = AntApiSM_Idle;
+    }
+
+    /* In either case, clean up the following: */
+    bMessageInProgress = FALSE;
+
+  } /* end if( u8CurrentMesssageId == G_stMessageResponse.u8MessageNumber ) */
+  
+  /* Check for timeout */
+  if(IsTimeUp(&AntApi_u32Timeout, ANT_ACTIVITY_TIME_COUNT) )
+  {
+    /* Report the error and return.  Channel flags will remain clear for application to check. */
+    DebugPrintf(G_au8AntMessageAssign);
+    DebugPrintf(G_au8AntMessageFail);
+    AntApi_StateMachine = AntApiSM_Idle;
+  }
+  
+} /* end AntApiSM_AssignChannel() */
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */

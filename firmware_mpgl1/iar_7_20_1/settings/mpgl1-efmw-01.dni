@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-794445043
+Checksum=-69605995
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -38,6 +38,24 @@ UseAuto=0
 TypeViolation=1
 UnspecRange=1
 ActionState=1
+[struct_types]
+Fmt0=struct <Unnamed 10>-u8Channel	3	0
+Fmt1=struct <Unnamed 10>-u8MessageNumber	4	0
+Fmt2=struct <Unnamed 10>-u8ResponseCode	3	0
+Fmt3=struct <Unnamed 9>-AntChannel	3	0
+Fmt4=struct <Unnamed 9>-AntChannelPeriodHi	4	0
+Fmt5=struct <Unnamed 9>-AntChannelPeriodLo	4	0
+Fmt6=struct <Unnamed 9>-AntChannelType	4	0
+Fmt7=struct <Unnamed 9>-AntDeviceIdHi	4	0
+Fmt8=struct <Unnamed 9>-AntDeviceIdLo	4	0
+Fmt9=struct <Unnamed 9>-AntDeviceType	3	0
+Fmt10=struct <Unnamed 9>-AntFlags	4	0
+Fmt11=struct <Unnamed 9>-AntFrequency	3	0
+Fmt12=struct <Unnamed 9>-AntNetwork	3	0
+Fmt13=struct <Unnamed 9>-AntTransmissionType	3	0
+Fmt14=struct <Unnamed 9>-AntTxPower	3	0
+[array_types]
+Fmt0=u8[8]	3	0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -57,7 +75,14 @@ Exclusions=
 mode=0
 [Breakpoints2]
 Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\mpgl1_board_test.c}.382.5" 0 0 1 "" 0 "" 0
-Count=1
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c}.1252.9" 0 0 1 "" 0 "" 0
+Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant_api.c}.931.7" 0 0 1 "" 0 "" 0
+Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant_api.c}.945.5" 0 0 1 "" 0 "" 0
+Bp4=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c}.384.5" 0 0 1 "" 0 "" 0
+Bp5=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c}.846.5" 0 0 1 "" 0 "" 0
+Bp6=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant_api.c}.911.5" 0 0 1 "" 0 "" 0
+Bp7=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c}.202.5" 0 0 1 "" 0 "" 0
+Count=8
 [Aliases]
 Count=0
 SuppressDialog=0
