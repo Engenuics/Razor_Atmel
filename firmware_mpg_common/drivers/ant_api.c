@@ -21,9 +21,9 @@ Globals
 extern AntSetupDataType G_stAntSetupData;                         // From ant.c
 
 // Globals for passing data from the ANT application to the API (import these to application)
-extern u32 G_u32AntApiCurrentDataTimeStamp;                       // From ant_api.c
+extern u32 G_u32AntApiCurrentMessageTimeStamp;                       // From ant_api.c
 extern AntApplicationMessageType G_eAntApiCurrentMessageClass;    // From ant_api.c
-extern u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];  // From ant_api.c
+extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];  // From ant_api.c
 
 Types
 typedef enum {ANT_UNCONFIGURED, ANT_OPEN, ANT_CLOSED} AntChannelStatusType;
@@ -174,7 +174,7 @@ AntQueueAcknowledgedMessage(u8DataToSend);
 bool AntReadMessageBuffer(void)
 Check the incoming message buffer for any message from the ANT system (either ANT_TICK or ANT_DATA).  
 If no messages are present, returns FALSE.  If a message is there, returns TRUE and application can read:
-- G_u32AntApiCurrentDataTimeStamp to see the system time stamp when the message arrived
+- G_u32AntApiCurrentMessageTimeStamp to see the system time stamp when the message arrived
 - G_eAntApiCurrentMessageClass to see what kind of message is present
 - G_asAntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES] to see the message bytes.
 
@@ -221,10 +221,10 @@ All Global variable names shall start with "G_<type>AntApi"
 ***********************************************************************************************************************/
 volatile u32 G_u32AntApiFlags;                                          /* Global state flags */
 
-u32 G_u32AntApiCurrentDataTimeStamp = 0;                                /* Current read message's G_u32SystemTime1ms */
+u32 G_u32AntApiCurrentMessageTimeStamp = 0;                             /* Current read message's G_u32SystemTime1ms */
 AntApplicationMessageType G_eAntApiCurrentMessageClass = ANT_EMPTY;     /* Type of data */
-u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES];               /* Array for message data */
-AntExtendedDataType G_stCurrentExtendedData;                            /* Extended data struct for the current message */
+u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];               /* Array for message data */
+AntExtendedDataType G_stCurrentMessageExtendedData;                     /* Extended data struct for the current message */
 
 
 /*----------------------------------------------------------------------------*/
@@ -238,7 +238,6 @@ extern volatile u32 G_u32SystemTime1s;                        /* From board-spec
 
 extern u32 G_u32AntFlags;                                     /* From ant.c */
 extern AntApplicationMsgListType *G_sAntApplicationMsgList;   /* From ant.c */
-//extern AntSetupDataType G_stAntSetupData;                     /* From ant.c */
 extern AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_CHANNELS]; /* From ant.c */
 extern AntMessageResponseType G_stMessageResponse;            /* From ant.c */
 
@@ -802,15 +801,27 @@ bool AntReadAppMessageBuffer(void)
   
   if(G_sAntApplicationMsgList != NULL)
   {
-    G_u32AntApiCurrentDataTimeStamp = G_sAntApplicationMsgList->u32TimeStamp;
+    /* Grab the single bytes */
+    G_u32AntApiCurrentMessageTimeStamp = G_sAntApplicationMsgList->u32TimeStamp;
     G_eAntApiCurrentMessageClass = G_sAntApplicationMsgList->eMessageType;
+    
+    /* Copy over all the data */
     pu8Parser = &(G_sAntApplicationMsgList->au8MessageData[0]);
     for(u8 i = 0; i < ANT_APPLICATION_MESSAGE_BYTES; i++)
     {
-      G_au8AntApiCurrentData[i] = *(pu8Parser + i);
+      G_au8AntApiCurrentMessageBytes[i] = *(pu8Parser + i);
     }
-    AntDeQueueApplicationMessage();
     
+    /* Copy over the extended data */
+    G_stCurrentMessageExtendedData.u8Channel    = G_sAntApplicationMsgList->sExtendedData.u8Channel;
+    G_stCurrentMessageExtendedData.u8Flags      = G_sAntApplicationMsgList->sExtendedData.u8Flags;
+    G_stCurrentMessageExtendedData.u16DeviceID  = G_sAntApplicationMsgList->sExtendedData.u16DeviceID;
+    G_stCurrentMessageExtendedData.u8DeviceType = G_sAntApplicationMsgList->sExtendedData.u8DeviceType;
+    G_stCurrentMessageExtendedData.u8TransType  = G_sAntApplicationMsgList->sExtendedData.u8TransType;
+    G_stCurrentMessageExtendedData.s8RSSI       = G_sAntApplicationMsgList->sExtendedData.s8RSSI;
+    
+    /* Done, so message can be removed from the buffer */
+    AntDeQueueApplicationMessage();    
     return TRUE;
   }
   

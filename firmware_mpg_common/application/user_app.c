@@ -52,6 +52,11 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
+extern u32 G_u32AntApiCurrentMessageTimeStamp;                           /* From ant_api.c */
+extern AntApplicationMessageType G_eAntApiCurrentMessageClass;           /* From ant_api.c */
+extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES]; /* From ant_api.c */
+extern AntExtendedDataType G_stCurrentMessageExtendedData;               /* From ant_api.c */
+
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -192,9 +197,70 @@ static void UserAppSM_ChannelSetup(void)
 static void UserAppSM_Idle(void)
 {
   AntAssignChannelInfoType sChannelInfo;
-
-  if(AntReadAppMessageBuffer())
+  u8 au8DataContent[] = {"ANT_DATA CHX: xx-xx-xx-xx-xx-xx-xx-xx xx-xx-xx-xx xx dBm\n\r"};
+  u8 au8TickContent[] = {"ANT_TICK CHX: xx-xx-xx-xx-xx-xx-xx-xx\n\r"};
+  u8 u8MessageIndex;
+  
+  if( AntReadAppMessageBuffer() )
   {
+    u8MessageIndex = 11;
+    if( G_eAntApiCurrentMessageClass == ANT_TICK)
+    {
+      /* Get the channel number */
+      au8TickContent[u8MessageIndex] = HexToASCIICharUpper(G_stCurrentMessageExtendedData.u8Channel);
+      u8MessageIndex = 14;
+
+      /* Read all the data bytes and convert to ASCII for the display string */
+      for(u8 i = 0; i < ANT_DATA_BYTES; i++)
+      {
+       au8TickContent[u8MessageIndex]     = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] / 16);
+       au8TickContent[u8MessageIndex + 1] = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] % 16);
+       u8MessageIndex += 3;
+      }
+      
+      DebugPrintf(au8TickContent);
+    }
+    
+    if( G_eAntApiCurrentMessageClass == ANT_DATA)
+    {
+      /* Get the channel number */
+      au8DataContent[u8MessageIndex] = HexToASCIICharUpper(G_stCurrentMessageExtendedData.u8Channel);
+      u8MessageIndex = 14;
+
+      /* Read all the data bytes and convert to ASCII for the display string */
+      for(u8 i = 0; i < ANT_DATA_BYTES; i++)
+      {
+        au8DataContent[u8MessageIndex]     = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] / 16);
+        au8DataContent[u8MessageIndex + 1] = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] % 16);
+        u8MessageIndex += 3;
+      }
+
+      /* Add the extended data bytes */
+    
+      /* Device ID */
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >>  4) & 0x000F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >>  0) & 0x000F);
+      u8MessageIndex += 2;
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >> 12) & 0x000F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >>  8) & 0x000F);
+
+      /* Device Type */
+      u8MessageIndex += 2;
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8DeviceType >> 4) & 0x0F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8DeviceType >> 0) & 0x0F);
+
+      /* Transmission Type */
+      u8MessageIndex += 2;
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8TransType >> 4) & 0x0F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8TransType >> 0) & 0x0F);
+ 
+      /* RSSI value */
+      u8MessageIndex += 3;
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.s8RSSI >> 4) & 0x0F);
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.s8RSSI >> 0) & 0x0F);
+    
+      DebugPrintf(au8DataContent);
+    }
   }
   
   if(WasButtonPressed(BUTTON0))
@@ -268,7 +334,7 @@ static void UserAppSM_Idle(void)
     ButtonAcknowledge(BUTTON2);
     if(AntRadioStatusChannel(2) == ANT_UNCONFIGURED)
     {
-      /* Setup channel 0 */
+      /* Setup channel 2 */
       sChannelInfo.AntChannel = 2;
       sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;

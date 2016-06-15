@@ -1506,7 +1506,7 @@ static void AntTickExtended(u8* pu8AntMessage_)
   au8Message[ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX]  = Ant_u8SlaveMissedMessageLow;
 
   /* Extended data is not valid for an ANT_TICK message */
-  sExtData.u8Channel    = 0xFF;
+  sExtData.u8Channel    = au8Message[ANT_TICK_MSG_CHANNEL_INDEX];
   sExtData.u16DeviceID  = 0xFF;
   sExtData.u8DeviceType = 0xFF;
   sExtData.u8TransType  = 0xFF;
