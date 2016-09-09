@@ -266,10 +266,10 @@ static void UserAppSM_Idle(void)
   if(WasButtonPressed(BUTTON0))
   {
     ButtonAcknowledge(BUTTON0);
-    if(AntRadioStatusChannel(0) == ANT_UNCONFIGURED)
+    if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
     {
       /* Setup channel 0 */
-      sChannelInfo.AntChannel = 0;
+      sChannelInfo.AntChannel = ANT_CHANNEL_0;
       sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
       sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
@@ -292,17 +292,17 @@ static void UserAppSM_Idle(void)
     }
     else
     {
-      AntUnassignChannelNumber(0);
+      AntUnassignChannelNumber(ANT_CHANNEL_0);
     }
   } /* end BUTTON0 */
     
   if(WasButtonPressed(BUTTON1))
   {
     ButtonAcknowledge(BUTTON1);
-    if(AntRadioStatusChannel(1) == ANT_UNCONFIGURED)
+    if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_UNCONFIGURED)
     {
       /* Setup channel 1 */
-      sChannelInfo.AntChannel = 1;
+      sChannelInfo.AntChannel = ANT_CHANNEL_1;
       sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
       sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
@@ -325,17 +325,17 @@ static void UserAppSM_Idle(void)
     }
     else
     {
-      AntUnassignChannelNumber(1);
+      AntUnassignChannelNumber(ANT_CHANNEL_1);
     }
   } /* end BUTTON1 */
 
   if(WasButtonPressed(BUTTON2))
   {
     ButtonAcknowledge(BUTTON2);
-    if(AntRadioStatusChannel(2) == ANT_UNCONFIGURED)
+    if(AntRadioStatusChannel(ANT_CHANNEL_2) == ANT_UNCONFIGURED)
     {
       /* Setup channel 2 */
-      sChannelInfo.AntChannel = 2;
+      sChannelInfo.AntChannel = ANT_CHANNEL_2;
       sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
       sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
@@ -358,7 +358,7 @@ static void UserAppSM_Idle(void)
     }
     else
     {
-      AntUnassignChannelNumber(2);
+      AntUnassignChannelNumber(ANT_CHANNEL_2);
     }
   } /* end BUTTON2 */
 
@@ -368,15 +368,15 @@ static void UserAppSM_Idle(void)
     
     for(u8 i = 0; i < 3; i++)
     {
-      /* Manage channels */
-      if(AntRadioStatusChannel(i) == ANT_CLOSED)
+      /* Manage channels (type cast index to AntChannelNumberType is allowed */
+      if(AntRadioStatusChannel( (AntChannelNumberType)i ) == ANT_CLOSED)
       {
-        AntOpenChannelNumber(i);
+        AntOpenChannelNumber( (AntChannelNumberType)i );
       }
       
-      if(AntRadioStatusChannel(i) == ANT_OPEN)
+      if(AntRadioStatusChannel( (AntChannelNumberType)i ) == ANT_OPEN)
       {
-        AntCloseChannelNumber(i);
+        AntCloseChannelNumber( (AntChannelNumberType)i );
       }
     }
   } /* end BUTTON3 */

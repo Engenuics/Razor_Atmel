@@ -24,8 +24,10 @@ Constants
 #define	DEVICE_TYPE_BOARDTEST		            (u8)0x60
 
 
+#define ANT_NUM_CHANNELS                    (u8)8
+
+#if 0
 /* ANT Channels */
-#define ANT_CHANNELS                        (u8)8
 #define ANT_CHANNEL_0                       (u8)0
 #define ANT_CHANNEL_1                       (u8)1
 #define ANT_CHANNEL_2                       (u8)2
@@ -35,11 +37,14 @@ Constants
 #define ANT_CHANNEL_6                       (u8)6
 #define ANT_CHANNEL_7                       (u8)7
 #define ANT_CHANNEL_SCANNING                (u8)0xff
-
+#endif
 
 /**********************************************************************************************************************
 Type definitions
 **********************************************************************************************************************/
+typedef enum {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
+              ANT_CHANNEL_4, ANT_CHANNEL_5, ANT_CHANNEL_6, ANT_CHANNEL_7,
+              ANT_CHANNEL_SCANNING = 0} AntChannelNumberType;
 
 
 /**********************************************************************************************************************
@@ -101,16 +106,16 @@ bool AntQueueBroadcastMessage(u8 *pu8Data_);
 bool AntQueueAcknowledgedMessage(u8 *pu8Data_);
 #endif /* ANT_API_LEGACY */
 
+AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_);
+
 bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_);
-bool AntUnassignChannelNumber(u8 u8Channel_);
+bool AntUnassignChannelNumber(AntChannelNumberType eChannel_);
 
-bool AntOpenChannelNumber(u8 u8Channel_);
-bool AntCloseChannelNumber(u8 u8Channel_);
+bool AntOpenChannelNumber(AntChannelNumberType eChannel_);
+bool AntCloseChannelNumber(AntChannelNumberType eChannel_);
 
-AntChannelStatusType AntRadioStatusChannel(u8 u8Channel_);
-
-bool AntQueueBroadcastMessage(u8 u8Channel_, u8 *pu8Data_);
-bool AntQueueAcknowledgedMessage(u8 u8Channel_, u8 *pu8Data_);
+bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
+bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
 
 bool AntReadAppMessageBuffer(void);
 

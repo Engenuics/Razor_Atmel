@@ -34,7 +34,7 @@ All Global variable names shall start with "G_<type>Ant"
 /* New variables */
 u32 G_u32AntFlags;                                    /* Flag bits for ANT-related information */
 //AntSetupDataType G_stAntSetupData;                    /* ANT channel configuration data */
-AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_CHANNELS]; /* Keeps track of all configured ANT channels */
+AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]; /* Keeps track of all configured ANT channels */
 AntMessageResponseType G_stMessageResponse;           /* Holds the latest message response info */
 
 AntApplicationMsgListType *G_sAntApplicationMsgList;  /* Public linked list of messages from ANT to the application */
@@ -639,7 +639,7 @@ void AntInitialize(void)
     Ant_psDataOutgoingMsgList = 0;
   
   /* Initialize the G_asAntChannelConfiguration data struct */
-  for(u8 i = 0; i < ANT_CHANNELS; i++)
+  for(u8 i = 0; i < ANT_NUM_CHANNELS; i++)
   {
     G_asAntChannelConfiguration[i].AntChannel          = i;
     G_asAntChannelConfiguration[i].AntChannelType      = 0xFF;

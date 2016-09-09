@@ -103,7 +103,7 @@ typedef struct
 
 typedef struct 
 {
-  u8 AntChannel;                           /* The ANT channel number */
+  AntChannelNumberType AntChannel;         /* The ANT channel number */
   u8 AntChannelType;                       /* ANT channel type from antdefines.h line 75 */
   u8 AntNetwork;                           /* Network number */
   u8 AntNetworkKey[8];                     /* Network key assigned to AntNetwork number */

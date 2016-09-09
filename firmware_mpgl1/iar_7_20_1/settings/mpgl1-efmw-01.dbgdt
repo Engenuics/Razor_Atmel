@@ -82,7 +82,7 @@
           
           
           
-        <item>G_u32SystemTime1ms</item><item>G_u32SystemTime1s</item><item>G_asAntChannelConfiguration</item><item>G_stMessageResponse</item><item>Ant_u32CurrentTxMessageToken</item><item></item></expressions>
+        <item>G_u32SystemTime1ms</item><item>G_u32SystemTime1s</item><item>G_asAntChannelConfiguration</item><item>G_stMessageResponse</item><item>Ant_u32CurrentTxMessageToken</item><item/></expressions>
         <col-names>
           
           
@@ -116,7 +116,7 @@
       <WATCH_3>
         <expressions>
           
-        <item>G_u32AntApiCurrentMessageTimeStamp</item><item>G_eAntApiCurrentMessageClass</item><item>G_au8AntApiCurrentMessageBytes</item><item>G_stCurrentMessageExtendedData</item><item></item></expressions>
+        <item>G_u32AntApiCurrentMessageTimeStamp</item><item>G_eAntApiCurrentMessageClass</item><item>G_au8AntApiCurrentMessageBytes</item><item>G_stCurrentMessageExtendedData</item><item/></expressions>
         <col-names>
           
           
