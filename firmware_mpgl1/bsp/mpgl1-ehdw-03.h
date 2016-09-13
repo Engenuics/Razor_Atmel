@@ -330,34 +330,34 @@ counter must be set at 1280. */
 */
 
 
-#define WDT_MR_INIT      (u32)0x10018500
+#define WDT_MR_INIT      (u32)0x1FFF0500
 /*
     31 [0] Reserved
     30 [0] "
     29 [0] WDIDLEHLT Watchdog runs when system is idle
     28 [1] WDDBGHLT Watchdog stops in debug state
 
-    27 [0] WDD Watchdog delta value
-    26 [0] "
-    25 [0] "
-    24 [0] "
+    27 [1] WDD Watchdog delta value (allow resets any time)
+    26 [1] "
+    25 [1] "
+    24 [1] "
 
-    23 [0] "
-    22 [0] "
-    21 [0] "
-    20 [0] "
+    23 [1] "
+    22 [1] "
+    21 [1] "
+    20 [1] "
 
-    19 [0] "
-    18 [0] "
-    17 [0] "
+    19 [1] "
+    18 [1] "
+    17 [1] "
     16 [1] "
 
-    15 [1] WDDIS Watchdog is disabled for now
+    15 [0] WDDIS Watchdog is enabled
     14 [0] WDRPROC watchdog reset processor off
     13 [0] WDRSTEN Watchdog reset enable off
     12 [0] WDFIEN Watchdog fault interrupt enable off
 
-    11 [0] WDV Watchdog counter value
+    11 [0] WDV Watchdog counter value: 0x500 = 1280 x (128 x 1/32768) = 5 seconds
     10 [1] "
     09 [0] "
     08 [1] "
