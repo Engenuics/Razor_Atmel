@@ -196,7 +196,14 @@ static void UserAppSM_Idle(void)
   
   u8 u8CurrentIndex;
   static u32 u32CycleCounter = 0;
+  static bool bMuteOn = FALSE;
    
+  /* Toggle MUTE state on BUTTON0 */
+  if(WasButtonPressed(BUTTON0))
+  {
+    ButtonAcknowledge(BUTTON0);
+    bMuteOn = !bMuteOn;
+  }
   
 #ifdef BUZZER1_ON
   /* Right Hand */
@@ -238,8 +245,15 @@ static void UserAppSM_Idle(void)
       /* Set the buzzer frequency and LED for the note (handle NO special case) */
       if(au16NotesRight[u8CurrentIndex] != NO)
       {
-        PWMAudioSetFrequency(BUZZER1, au16NotesRight[u8CurrentIndex]);
-        PWMAudioOn(BUZZER1);
+        if(bMuteOn)
+        {
+          PWMAudioOff(BUZZER1);
+        }
+        else
+        {
+          PWMAudioSetFrequency(BUZZER1, au16NotesRight[u8CurrentIndex]);
+          PWMAudioOn(BUZZER1);
+        }
         
         /* LED control */
 #ifdef MPG1
@@ -414,8 +428,15 @@ static void UserAppSM_Idle(void)
       /* Set the buzzer frequency for the note (handle NO special case) */
       if(au16NotesLeft[u8CurrentIndex] != NO)
       {
-        PWMAudioSetFrequency(BUZZER2, au16NotesLeft[u8CurrentIndex]);
-        PWMAudioOn(BUZZER2);
+        if(bMuteOn)
+        {
+          PWMAudioOff(BUZZER2);
+        }
+        else
+        {
+          PWMAudioSetFrequency(BUZZER2, au16NotesLeft[u8CurrentIndex]);
+          PWMAudioOn(BUZZER2);
+        }
 
       }
       else
