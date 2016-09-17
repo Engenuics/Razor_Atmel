@@ -94,6 +94,21 @@ void ClockSetup(void)
 
 
 /*----------------------------------------------------------------------------------------------------------------------
+Function: RealTimeClockSetup
+
+Description:
+Loads all registers required to set up the real time clock.
+
+Requires:
+
+Promises:
+*/
+void RealTimeClockSetup(void)
+{
+} /* end RealTimeClockSetup() */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 Function: SysTickSetup
 
 Description:
@@ -256,6 +271,95 @@ void GpioSetup(void)
   
 } /* end GpioSetup() */
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: Timer0Setup
+
+Description
+Configures the selected channel in the Timer Counter 0 (TC0) peripheral.
+
+Requires:
+  - eChannel_ indicates which of the 3 channels to configure
+  - Peripheral resources not used for any other function.
+
+Promises:
+  - Timer0 channel is fully configured (running state and interrupt state
+    determined by 
+*/
+void Timer0Setup(void)
+{
+  /* Load the block configuration register */
+  AT91C_BASE_TC0->TC_BMR = TC0_BMR_INIT;
+
+  /* Load Channel 1 settings */
+  AT91C_BASE_TC0->TC_CCR[TIMER_CHANNEL1] = TC0CH1_CCR_INIT;
+  AT91C_BASE_TC0->TC_CMR[TIMER_CHANNEL1] = TC0CH1_CMR_INIT;
+  AT91C_BASE_TC0->TC_RA[TIMER_CHANNEL1]  = TC0CH1_RA_INIT;
+  AT91C_BASE_TC0->TC_IER[TIMER_CHANNEL1] = TC0CH1_IER_INIT;
+  AT91C_BASE_TC0->TC_IDR[TIMER_CHANNEL1] = TC0CH1_IDR_INIT;
+ 
+  /* Enable TC0 interrupts */
+  NVIC_ClearPendingIRQ(IRQn_TC0);
+  NVIC_EnableIRQ(IRQn_TC0);
+}
+/* end Timer0Setup() */
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: Timer0Init
+
+Description
+Sets the designated Timer period, on/off status, and interrupt status.
+
+Requires:
+  - eTimerChannel_ is the timer to be set in TC0
+  - psTimerSettings_ points to TimerSetupType holding the period, timer state, and timer interrupt state
+  - Peripheral resources not used for any other function.
+
+Promises:
+  - Specified timer is set according to psTimerSettings_
+*/
+void TimerInit(TimerType eTimer_, TimerSetupType* psTimerSettings_)
+{
+  AT91C_BASE_TC0->TC_CMR[eChannel_] = 
+
+
+} /* end TimerInit */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: TimerStart
+
+Description
+Starts the designated Timer.
+
+Requires:
+  - eTimer_ is the timer to start
+
+Promises:
+  - Specified timer is set to run; if already running it remains running
+*/
+void TimerStart(TimerType eTimer_)
+{
+  
+} /* end TimerStart */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: TimerStop
+
+Description
+Stops the designated Timer.
+
+Requires:
+  - eTimer_ is the timer to stop
+
+Promises:
+  - Specified timer is stopped; if already stopped it remains stopped
+*/
+void TimerStop(TimerType eTimer_)
+{
+  
+} /* end TimerStop */
 
 /*----------------------------------------------------------------------------
 Function: PWMSetupAudio

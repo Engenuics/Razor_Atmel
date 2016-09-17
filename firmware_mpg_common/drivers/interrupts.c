@@ -29,7 +29,7 @@ extern volatile u32 G_au32ButtonDebounceTimeStart[TOTAL_BUTTONS];  /* From butto
 Global variable definitions with scope limited to this local application.
 Variables names shall start with "ISR_" and be declared as static.
 ***********************************************************************************************************************/
-
+static ISR_u32Timer0Counter = 0;  /* Track instances of 
 
 /**********************************************************************************************************************
 Interrupt Service Routine Definitions
@@ -265,6 +265,36 @@ void PIOB_IrqHandler(void)
   NVIC->ICPR[0] = (1 << IRQn_PIOB);
   
 } /* end PIOB_IrqHandler() */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+ISR: TC0_IrqHandler
+
+Description:
+Parses the TC0 interrupts and handles them appropriately.  Note that all TC0
+interrupts are ORed and will trigger this handler, therefore any expected interrupt that is enabled
+must be parsed out and handled.
+
+Requires:
+  - 
+
+Promises:
+  - If Channel1 RA: Timer0 Channel 0 is reset
+*/
+void TC0_IrqHandler(void)
+{
+  /* Check for RA compare interrupt - reading TC_SR clears the bit if set */
+  if(AT91C_BASE_TC0->TC_SR[TIMER_CHANNEL1] & AT91C_TC_CPAS)
+  {
+    /* Software trigger the channel to restart it */
+    AT91C_BASE_TC0->TC_CCR[TIMER_CHANNEL1] = TC0CH1_CCR_INIT;
+  }
+  
+
+  /* Clear the TC0 pending flag and exit */
+  NVIC->ICPR[0] = (1 << IRQn_TC0);
+  
+} /* end TC0_IrqHandler() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

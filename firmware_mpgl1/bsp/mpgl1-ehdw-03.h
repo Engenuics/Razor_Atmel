@@ -12,13 +12,16 @@
 Type Definitions
 ***********************************************************************************************************************/
 
+
 /***********************************************************************************************************************
 * Constants
 ***********************************************************************************************************************/
 #define OSC_VALUE                 (u32)12000000
+#define MAINCK                    OSC_VALUE
+#define MCK                       MAINCK
 #define MULA                      (u32)7
 #define DIVA                      (u32)1
-#define PLLACK_VALUE              (u32)(OSC_VALUE * (MULA + 1)) / DIVA      /* 96 MHz */
+#define PLLACK_VALUE              (u32)(MAINCK * (MULA + 1)) / DIVA         /* 96 MHz */
 #define CPU_DIVIDER               (u32)2
 #define CCLK_VALUE                PLLACK_VALUE / CPU_DIVIDER                /* 48 MHz */
 #define PERIPHERAL_DIVIDER        (u32)1
@@ -78,7 +81,7 @@ Bookmarks:
 @@@@@ Clock, Power Control, Systick and Watchdog setup values
 !!!!! GPIO pin names
 ##### GPIO initial setup values
-$$$$$ PWM setup values
+$$$$$ PWM and Timer setup values
 
 ***********************************************************************************************************************/
 
@@ -500,7 +503,7 @@ counter must be set at 1280. */
     00 [1] PA_00_TP54 PIO control enabled
 */
 
-#define PIOB_PER_INIT (u32)0x01BFFFE7
+#define PIOB_PER_INIT (u32)0x01BFFF57
 /*
     31 [0] PB_31_ PIO control not enabled
     30 [0] PB_30_ PIO control not enabled
@@ -533,7 +536,7 @@ counter must be set at 1280. */
     08 [1] PB_08_TP62 PIO control enabled
 
     07 [1] PB_07_TP60 PIO control enabled
-    06 [1] PB_06_TP58 PIO control enabled
+    06 [0] PB_06_TP58 PIO control not enabled
     05 [1] PB_05_TP56 PIO control enabled
     04 [0] PB_04_BLADE_AN1 PIO control not enabled
 
@@ -591,7 +594,7 @@ counter must be set at 1280. */
     00 [0] PA_00_TP54 not controlled by peripheral
 */
 
-#define PIOB_PDR_INIT (u32)0x00400018
+#define PIOB_PDR_INIT (u32)0x00400058
 /*
     31 [0] PB_31_ 
     30 [0] PB_30_ 
@@ -624,7 +627,7 @@ counter must be set at 1280. */
     08 [0] PB_08_TP62 not controlled by peripheral
 
     07 [0] PB_07_TP60 not controlled by peripheral
-    06 [0] PB_06_TP58 not controlled by peripheral
+    06 [1] PB_06_TP58 controlled by peripheral
     05 [0] PB_05_TP56 not controlled by peripheral
     04 [1] PB_04_BLADE_AN1 controlled by peripheral
 
@@ -1404,7 +1407,7 @@ Initial output values are stored here.
     00 [0] PA_00_TP54 pull-up enabled
 */
 
-#define PIOB_PPUDR_INIT (u32)0x01FFFE1F
+#define PIOB_PPUDR_INIT (u32)0x01FFFE5F
 /*
     31 [0] PB_31_
     30 [0] PB_30_
@@ -1437,7 +1440,7 @@ Initial output values are stored here.
     08 [0] PB_08_TP62 pull-up enabled
 
     07 [0] PB_07_TP60 pull-up enabled
-    06 [0] PB_06_TP58 pull-up enabled
+    06 [1] PB_06_TP58 no pull-up enabled
     05 [0] PB_05_TP56 pull-up enabled
     04 [1] PB_04_BLADE_AN1 no pull-up
 
@@ -1494,7 +1497,7 @@ Initial output values are stored here.
     00 [1] PA_00_TP54 pull-up enabled
 */
 
-#define PIOB_PPUER_INIT (u32)0x000001E0
+#define PIOB_PPUER_INIT (u32)0x000001C0
 /*
     31 [0] PB_31_
     30 [0] PB_30_
@@ -1527,7 +1530,7 @@ Initial output values are stored here.
     08 [1] PB_08_TP62 pull-up enabled
 
     07 [1] PB_07_TP60 pull-up enabled
-    06 [1] PB_06_TP58 pull-up enabled
+    06 [0] PB_06_TP58 no pull-up enabled
     05 [1] PB_05_TP56 pull-up enabled
     04 [0] PB_04_BLADE_AN1 no pull-up
 
@@ -2064,7 +2067,7 @@ We don't want to lock access to the GPIO registers anyway, so we won't use this 
 
 
 /***********************************************************************************************************************
-$$$$$ PWM setup values
+$$$$$ PWM and Timer setup values
 ***********************************************************************************************************************/
 #define PWM_CLK_INIT (u32)0x00010001
 /*
@@ -2229,6 +2232,142 @@ In general, the period is 6000000 / frequency and duty is always period / 2.
 #define PWM_CPRD1_INIT  (u32)1500
 #define PWM_CDTY0_INIT  (u32)(PWM_CPRD0_INIT << 1)
 #define PWM_CDTY1_INIT  (u32)(PWM_CPRD1_INIT << 1)
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+/* Generic Timer0 Setup
+Internal timer clocks sources are based on MCK (12MHz)
+TIMER_CLOCK1 = MCK/2 (167ns / tick)
+TIMER_CLOCK2 = MCK/8 (667ns / tick)
+TIMER_CLOCK3 = MCK/32 (2.67us / tick)
+TIMER_CLOCK4 = MCK/128 (10.67us / tick)
+TIMER_CLOCK5(1) SLCK
+
+/* TC0 Block Mode Register */
+#define TC0_BMR_INIT (u32)0x00100800
+/*
+    31 [0] Reserved
+    30 [0] "
+    29 [0] "
+    28 [0] "
+
+    27 [0] "
+    26 [0] "
+    25 [0] MAXFILT Filter period is 1 (not used)
+    24 [0] "
+
+    23 [0] "
+    22 [0] "
+    21 [0] "
+    20 [1] "
+
+    19 [0] FILTER IDX, PHA, PHB not filtered
+    18 [0] Reserved
+    17 [0] IDXPHB IDX pin drives TIOA1
+    16 [0] SWAP No swap between PHA and PHB
+
+    15 [0] INVIDX IDX directly drives quadrature logic
+    14 [0] INVB PHB directly drive quadrature decoder logic
+    13 [0] INVA PHA directly drive quadrature decoder logic
+    12 [0] EDGPHA Edges detected on PHA and PHB
+
+    11 [1] QDTRANS Quadrature decoding logic is inactive
+    10 [0] SPEEDEN Speed measure disabled
+    09 [0] POSEN Position measure disabled
+    08 [0] QDEN Quadrature decoder logic disabled
+
+    07 [0] Reserved
+    06 [0] "
+    05 [0] TC2XC2S TCLK1 connected to XC2
+    04 [0] "
+
+    03 [0] TC1XC1S TCLK1 connected to XC1
+    02 [0] "
+    01 [0] TC0XC0S TCLK0 connected to XC0
+    00 [0] "
+*/
+      
+/* Timer 0 Channel 1 Setup
+Timer TC0 Channel 1 is our focus and will generate 10.667us interrupts
+Note:
+PA26 Peripheral B is an open pin avaialble as external clock input TCLK2
+PB5 Peripheral A is an open pin available for TIOA1 I/O function
+PB6 Peripheral A is an open pin available for TIOB1 I/O function
+*/
+
+/* Default to longest available period */
+#define TC0CH1_RA_INIT (u32)0x0000FFFF
+
+#define TC0CH1_CCR_INIT (u32)0x00000001
+/*
+    31-04 [0] Reserved
+
+    03 [0] Reserved
+    02 [0] SWTRG No software trigger is performed yet
+    01 [0] CLKDIS Clock not disabled
+    00 [1] CLKEN Clock enabled 
+*/
+
+
+#define TC0CH1_CMR_INIT (u32)0x00000004
+/*
+    31-20 [0] Reserved
+
+    19 [0] LDRB No RB loading edge
+    18 [0] "
+    17 [0] LDRA No RA loading edge
+    16 [0] "
+
+    15 [0] WAVE Capture Mode is enabled
+    14 [0] CPCTRG RC Compare has no effect on the counter and its clock
+    13 [0] Reserved
+    12 [0] "
+
+    11 [0] "
+    10 [0] ABETRG TIOB is used as an external trigger
+    09 [0] ETRGEGDG Not gated
+    08 [0] "
+
+    07 [0] LDBDIS counter clock is not disabled when RB loading occurs
+    06 [0] LDBSTOP Counter clock not stopped on RB loading
+    05 [0] BURST Not gated
+    04 [0] "
+
+    03 [0] CLKI Counter incremented on rising edge
+    02 [1] TCCLKS TIMER_CLOCK5 (10.67us / tick)
+    01 [0] "
+    00 [0] "
+*/
+
+#define TC0CH1_IER_INIT (u32)0x00000004
+/*
+    31 -08 [0] Reserved 
+
+    07 [0] ETRGS RC Load interrupt not enabled
+    06 [0] LDRBS RB Load interrupt not enabled
+    05 [0] LDRAS RA Load interrupt not enabled
+    04 [0] CPCS RC compare interrupt not enabled
+
+    03 [0] CPBS RB compare interrupt not enabled
+    02 [1] CPAS RA Compare Interrupt enabled
+    01 [0] LOVRS Lover's bit? Load Overrun interrupt not enabled 
+    00 [0] COVFS Counter Overflow interrupt not enabled
+*/
+
+#define TC0CH1_IDR_INIT (u32)0x000000FD
+/*
+    31 -08 [0] Reserved 
+
+    07 [1] ETRGS RC Load interrupt disabled
+    06 [1] LDRBS RB Load interrupt disabled
+    05 [1] LDRAS RA Load interrupt disabled
+    04 [1] CPCS RC compare interrupt disabled
+
+    03 [1] CPBS RB compare interrupt disabled
+    02 [0] CPAS RA Compare Interrupt not disabled
+    01 [1] LOVRS Lover's bit? Load Overrun interrupt disabled 
+    00 [1] COVFS Counter Overflow interrupt disabled
+*/
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

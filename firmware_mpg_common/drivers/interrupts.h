@@ -154,7 +154,7 @@ All unused interrupt sources will be set to priority 31.
     00 [0] "
 */
 
-#define IPR1_INIT (u32)0xF0F0F040
+#define IPR1_INIT (u32)0xF0F0F000
 /* Bit Set Description
     31 [1] ( 7) // EFC1 priority 15
     30 [1] "
@@ -187,7 +187,7 @@ All unused interrupt sources will be set to priority 31.
     08 [0] "
 
     07 [0] ( 4) // WATCHDOG TIMER priority 0
-    06 [1] "
+    06 [0] "
     05 [0] "
     04 [0] "
 
