@@ -273,37 +273,44 @@ void GpioSetup(void)
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-Function: Timer0Setup
+Function: TimerSetup
 
 Description
-Configures the selected channel in the Timer Counter 0 (TC0) peripheral.
+Configures the all Timer Counter (TC) peripherals.
 
 Requires:
-  - eChannel_ indicates which of the 3 channels to configure
   - Peripheral resources not used for any other function.
 
 Promises:
-  - Timer0 channel is fully configured (running state and interrupt state
+  - Timer1 channel is fully configured (running state and interrupt state
     determined by 
 */
-void Timer0Setup(void)
+void TimerSetup(void)
 {
   /* Load the block configuration register */
-  AT91C_BASE_TC0->TC_BMR = TC0_BMR_INIT;
+  AT91C_BASE_TCB0->TCB_BMR = TCB_BMR_INIT;
 
+  /* Channel 0 settings not configured at this time */
+  
   /* Load Channel 1 settings */
-  AT91C_BASE_TC0->TC_CCR[TIMER_CHANNEL1] = TC0CH1_CCR_INIT;
-  AT91C_BASE_TC0->TC_CMR[TIMER_CHANNEL1] = TC0CH1_CMR_INIT;
-  AT91C_BASE_TC0->TC_RA[TIMER_CHANNEL1]  = TC0CH1_RA_INIT;
-  AT91C_BASE_TC0->TC_IER[TIMER_CHANNEL1] = TC0CH1_IER_INIT;
-  AT91C_BASE_TC0->TC_IDR[TIMER_CHANNEL1] = TC0CH1_IDR_INIT;
- 
-  /* Enable TC0 interrupts */
-  NVIC_ClearPendingIRQ(IRQn_TC0);
-  NVIC_EnableIRQ(IRQn_TC0);
+  AT91C_BASE_TC1->TC_CMR = TC1_CMR_INIT;
+  AT91C_BASE_TC1->TC_RC  = TC1_RC_INIT;
+  AT91C_BASE_TC1->TC_IER = TC1_IER_INIT;
+  AT91C_BASE_TC1->TC_IDR = TC1_IDR_INIT;
+  
+  /* Activate the timer clock */
+  AT91C_BASE_TC1->TC_CCR = TC1_CCR_INIT;
+
+  /* Load Channel 2 settings not configured at this time */
+
+  /* Enable required interrupts */
+  NVIC_ClearPendingIRQ(IRQn_TC1);
+  NVIC_EnableIRQ(IRQn_TC1);
 }
+
 /* end Timer0Setup() */
 
+#if 0
 /*----------------------------------------------------------------------------------------------------------------------
 Function: Timer0Init
 
@@ -324,7 +331,7 @@ void TimerInit(TimerType eTimer_, TimerSetupType* psTimerSettings_)
 
 
 } /* end TimerInit */
-
+#endif
 
 /*----------------------------------------------------------------------------------------------------------------------
 Function: TimerStart
@@ -336,12 +343,18 @@ Requires:
   - eTimer_ is the timer to start
 
 Promises:
-  - Specified timer is set to run; if already running it remains running
+  - Specified channel on Timer 0 is set to run; if already running it remains running
+  - Does NOT reset the timer value
 */
-void TimerStart(TimerType eTimer_)
+void TimerStart(TimerChannelType eTimerChannel_)
 {
+  u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
+  u32TimerBaseAddress += (u32)eTimerChannel_;
+
+  /* Ensure clock is enabled */
+  (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CCR = (AT91C_TC_CLKEN | AT91C_TC_SWTRG);
   
-} /* end TimerStart */
+} /* end TimerStart() */
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -355,11 +368,19 @@ Requires:
 
 Promises:
   - Specified timer is stopped; if already stopped it remains stopped
+  - Does NOT reset the timer value
 */
-void TimerStop(TimerType eTimer_)
+void TimerStop(TimerChannelType eTimerChannel_)
 {
+  u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
+  u32TimerBaseAddress += (u32)eTimerChannel_;
+  
+  /* Ensure clock is disabled */
+  (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CCR = AT91C_TC_CLKDIS;
   
 } /* end TimerStop */
+
+
 
 /*----------------------------------------------------------------------------
 Function: PWMSetupAudio

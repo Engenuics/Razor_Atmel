@@ -35,8 +35,9 @@ Type Definitions
 typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
 
 //typedef enum {TIMER0 = 0x40080000, TIMER1 = 0x40080040, TIMER2 = 0x40080080} TimerPeripheralType;
-typedef enum {TIMER_CHANNEL0 = 0, TIMER_CHANNEL1 = 1, TIMER_CHANNEL2 = 2} TimerChannelType;
+typedef enum {TIMER_CHANNEL0 = 0, TIMER_CHANNEL1 = 0x40, TIMER_CHANNEL2 = 0x80} TimerChannelType;
 
+#if 0
 typedef struct
 {
 //  TimerPeripheralType eTimerPeripheral; /* Timer peripheral number: TIMER0, TIMER1, or TIMER2 *//
@@ -45,7 +46,7 @@ typedef struct
   bool bTimerOn;        /* TRUE if timer should be running */
   bool bTimerIntEnable; /* TRUE if timer interrupt is active */
 } TimerSetupType;
-
+#endif
 
 /**********************************************************************************************************************
 Includes

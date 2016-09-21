@@ -29,7 +29,8 @@ extern volatile u32 G_au32ButtonDebounceTimeStart[TOTAL_BUTTONS];  /* From butto
 Global variable definitions with scope limited to this local application.
 Variables names shall start with "ISR_" and be declared as static.
 ***********************************************************************************************************************/
-static ISR_u32Timer0Counter = 0;  /* Track instances of 
+static u32 ISR_u32TimerCounter = 0;  /* Track instances of The TC0 interrupt handler */
+
 
 /**********************************************************************************************************************
 Interrupt Service Routine Definitions
@@ -268,33 +269,32 @@ void PIOB_IrqHandler(void)
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-ISR: TC0_IrqHandler
+ISR: TC1_IrqHandler
 
 Description:
-Parses the TC0 interrupts and handles them appropriately.  Note that all TC0
-interrupts are ORed and will trigger this handler, therefore any expected interrupt that is enabled
-must be parsed out and handled.
+Parses the TC1 interrupts and handles them appropriately.  Note that all TC1
+interrupts are ORed and will trigger this handler, therefore any expected interrupt 
+that is enabled must be parsed out and handled.
 
 Requires:
   - 
 
 Promises:
-  - If Channel1 RA: Timer0 Channel 0 is reset
+  - If Channel1 RC: Timer Channel 1 is reset
 */
-void TC0_IrqHandler(void)
+void TC1_IrqHandler(void)
 {
-  /* Check for RA compare interrupt - reading TC_SR clears the bit if set */
-  if(AT91C_BASE_TC0->TC_SR[TIMER_CHANNEL1] & AT91C_TC_CPAS)
+  /* Check for RC compare interrupt - reading TC_SR clears the bit if set */
+  if(AT91C_BASE_TC1->TC_SR & AT91C_TC_CPCS)
   {
-    /* Software trigger the channel to restart it */
-    AT91C_BASE_TC0->TC_CCR[TIMER_CHANNEL1] = TC0CH1_CCR_INIT;
+    ISR_u32TimerCounter++;
+    Timer1CallBack();
   }
-  
 
   /* Clear the TC0 pending flag and exit */
-  NVIC->ICPR[0] = (1 << IRQn_TC0);
+  NVIC->ICPR[0] = (1 << IRQn_TC1);
   
-} /* end TC0_IrqHandler() */
+} /* end TC1_IrqHandler() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
