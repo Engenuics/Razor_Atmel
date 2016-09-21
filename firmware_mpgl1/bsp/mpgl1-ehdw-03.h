@@ -18,12 +18,12 @@ Type Definitions
 ***********************************************************************************************************************/
 #define OSC_VALUE                 (u32)12000000
 #define MAINCK                    OSC_VALUE
-#define MCK                       MAINCK
 #define MULA                      (u32)7
 #define DIVA                      (u32)1
 #define PLLACK_VALUE              (u32)(MAINCK * (MULA + 1)) / DIVA         /* 96 MHz */
 #define CPU_DIVIDER               (u32)2
 #define CCLK_VALUE                PLLACK_VALUE / CPU_DIVIDER                /* 48 MHz */
+#define MCK                       CCLK_VALUE
 #define PERIPHERAL_DIVIDER        (u32)1
 #define PCLK_VALUE                CCLK_VALUE / PERIPHERAL_DIVIDER           /* 48 MHz */
 #define SYSTICK_DIVIDER           (u32)8
@@ -56,9 +56,10 @@ Should be 6000 for 48MHz CCLK. */
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public Functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
-void SystemStatusReport(void);
+void TimerStart(TimerChannelType eTimerChannel_);
+void TimerStop(TimerChannelType eTimerChannel_);
 
-void PWMSetupAudio(void);
+
 void PWMAudioSetFrequency(u32 u32Channel_, u16 u16Frequency_);
 void PWMAudioOn(u32 u32Channel_);
 void PWMAudioOff(u32 u32Channel_);
@@ -68,10 +69,14 @@ void PWMAudioOff(u32 u32Channel_);
 /* Protected Functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
 void ClockSetup(void);
+void RealTimeClockSetup(void);
 void SysTickSetup(void);
 void SystemSleep(void);
 void WatchDogSetup(void);
 void GpioSetup(void);
+
+void PWMSetupAudio(void);
+void TimerSetup(void);
 
 
 /***********************************************************************************************************************
@@ -2235,16 +2240,17 @@ In general, the period is 6000000 / frequency and duty is always period / 2.
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-/* Generic Timer0 Setup
-Internal timer clocks sources are based on MCK (12MHz)
-TIMER_CLOCK1 = MCK/2 (167ns / tick)
-TIMER_CLOCK2 = MCK/8 (667ns / tick)
-TIMER_CLOCK3 = MCK/32 (2.67us / tick)
-TIMER_CLOCK4 = MCK/128 (10.67us / tick)
+Generic Timer Setup
+Internal timer clocks sources are based on MCK (48MHz)
+TIMER_CLOCK1 = MCK/2 (41.7ns / tick)
+TIMER_CLOCK2 = MCK/8 (167ns / tick)
+TIMER_CLOCK3 = MCK/32 (667ns / tick)
+TIMER_CLOCK4 = MCK/128 (2.67us / tick)
 TIMER_CLOCK5(1) SLCK
+*/
 
-/* TC0 Block Mode Register */
-#define TC0_BMR_INIT (u32)0x00100800
+/* TC Block Mode Register */
+#define TCB_BMR_INIT (u32)0x00100800
 /*
     31 [0] Reserved
     30 [0] "
@@ -2287,85 +2293,98 @@ TIMER_CLOCK5(1) SLCK
     00 [0] "
 */
       
-/* Timer 0 Channel 1 Setup
-Timer TC0 Channel 1 is our focus and will generate 10.667us interrupts
+/* Timer Channel 1 Setup
+Timer Channel 1  will generate 10.667us interrupts
 Note:
 PA26 Peripheral B is an open pin avaialble as external clock input TCLK2
 PB5 Peripheral A is an open pin available for TIOA1 I/O function
 PB6 Peripheral A is an open pin available for TIOB1 I/O function
 */
 
-/* Default to longest available period */
-#define TC0CH1_RA_INIT (u32)0x0000FFFF
+/* Timer 1 interrupt period (1 tick = 2.67us); max 65535 */
+#define TC1_RC_INIT (u32)4
 
-#define TC0CH1_CCR_INIT (u32)0x00000001
+#define TC1_CCR_INIT (u32)0x00000002
 /*
     31-04 [0] Reserved
 
     03 [0] Reserved
-    02 [0] SWTRG No software trigger is performed yet
-    01 [0] CLKDIS Clock not disabled
-    00 [1] CLKEN Clock enabled 
+    02 [0] SWTRG no software trigger
+    01 [1] CLKDIS Clock disabled to start
+    00 [0] CLKEN Clock not enabled 
 */
 
 
-#define TC0CH1_CMR_INIT (u32)0x00000004
+#define TC1_CMR_INIT (u32)0x000CC403
 /*
-    31-20 [0] Reserved
+    31 [0] BSWTRG no software trigger effect on TIOB
+    30 [0] "
+    29 [0] BEEVT no external event effect on TIOB
+    28 [0] "
 
-    19 [0] LDRB No RB loading edge
-    18 [0] "
-    17 [0] LDRA No RA loading edge
+    27 [0] BCPC no RC compare effect on TIOB
+    26 [0] "
+    25 [0] BCPB no RB compare effect on TIOB
+    24 [0] "
+
+    23 [0] ASWTRG no TIOA software trigger effect
+    22 [0] "
+    21 [0] AEEVT no TIOA effect on external compare
+    20 [0] "
+
+    19 [1] ACPC Toggle TIOA on RC compare
+    18 [1] "
+    17 [0] ACPA No RA compare effect on TIOA
     16 [0] "
 
-    15 [0] WAVE Capture Mode is enabled
-    14 [0] CPCTRG RC Compare has no effect on the counter and its clock
-    13 [0] Reserved
-    12 [0] "
+    15 [1] WAVE Waveform Mode is enabled
+    14 [1] WAVSEL Up to RC mode
+    13 [0] "
+    12 [0] ENETRG external event has no effect
 
-    11 [0] "
-    10 [0] ABETRG TIOB is used as an external trigger
-    09 [0] ETRGEGDG Not gated
+    11 [0] EEVT external event assigned to XC0
+    10 [1] "
+    09 [0] EEVTEDG no external event trigger
     08 [0] "
 
-    07 [0] LDBDIS counter clock is not disabled when RB loading occurs
-    06 [0] LDBSTOP Counter clock not stopped on RB loading
-    05 [0] BURST Not gated
+    07 [0] CPCDIS clock is NOT disabled when reaches RC
+    06 [0] CPCSTOP clock is NOT stopped when reaches RC
+    05 [0] BURST not gated
     04 [0] "
 
     03 [0] CLKI Counter incremented on rising edge
-    02 [1] TCCLKS TIMER_CLOCK5 (10.67us / tick)
-    01 [0] "
-    00 [0] "
+    02 [0] TCCLKS TIMER_CLOCK4 (MCK/128 = 10.67us / tick)
+    01 [1] "
+    00 [1] "
 */
 
-#define TC0CH1_IER_INIT (u32)0x00000004
+#define TC1_IER_INIT (u32)0x00000010
 /*
     31 -08 [0] Reserved 
 
     07 [0] ETRGS RC Load interrupt not enabled
     06 [0] LDRBS RB Load interrupt not enabled
     05 [0] LDRAS RA Load interrupt not enabled
-    04 [0] CPCS RC compare interrupt not enabled
+    04 [1] CPCS RC compare interrupt is enabled
 
     03 [0] CPBS RB compare interrupt not enabled
-    02 [1] CPAS RA Compare Interrupt enabled
+    02 [0] CPAS RA Compare Interrupt enabled
     01 [0] LOVRS Lover's bit? Load Overrun interrupt not enabled 
     00 [0] COVFS Counter Overflow interrupt not enabled
 */
 
-#define TC0CH1_IDR_INIT (u32)0x000000FD
+#define TC1_IDR_INIT (u32)0x000000EF
 /*
-    31 -08 [0] Reserved 
+    31-08 [0] Reserved 
 
     07 [1] ETRGS RC Load interrupt disabled
     06 [1] LDRBS RB Load interrupt disabled
     05 [1] LDRAS RA Load interrupt disabled
-    04 [1] CPCS RC compare interrupt disabled
+    04 [0] CPCS RC compare interrupt not disabled
 
     03 [1] CPBS RB compare interrupt disabled
-    02 [0] CPAS RA Compare Interrupt not disabled
-    01 [1] LOVRS Lover's bit? Load Overrun interrupt disabled 
+    02 [1] CPAS RA Compare Interrupt not disabled
+    01 [1] LOVRS Lover's bit?!? Load Overrun interrupt disabled 
     00 [1] COVFS Counter Overflow interrupt disabled
 */
 
