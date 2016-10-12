@@ -61,6 +61,9 @@ Search "####" for ANT Channel ID defaults
 typedef enum {ANT_UNCONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED} AntChannelStatusType;
 typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
 typedef enum {ANT_GENERIC_MSG_READY, ANT_GENERIC_MSG_BUSY, ANT_GENERIC_MSG_OK, ANT_GENERIC_MSG_FAIL} AntApplicationGenericMsgStatus;
+typedef enum {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
+              ANT_CHANNEL_4, ANT_CHANNEL_5, ANT_CHANNEL_6, ANT_CHANNEL_7,
+              ANT_CHANNEL_SCANNING = 0} AntChannelNumberType;
 
 /* Data struct for extended data information */
 typedef struct

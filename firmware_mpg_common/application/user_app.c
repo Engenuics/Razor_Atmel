@@ -153,7 +153,7 @@ static void UserAppSM_ChannelSetup(void)
   AntAssignChannelInfoType sChannelInfo;
   
   /* Setup channel 0 */
-  sChannelInfo.AntChannel = 0;
+  sChannelInfo.AntChannel = ANT_CHANNEL_0;
   sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
   sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
   sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
