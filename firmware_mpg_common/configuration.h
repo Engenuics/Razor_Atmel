@@ -26,6 +26,7 @@ Runtime switches
 
 #define DEBUG_MODE                /* Define to enable certain debugging code */
 //#define STARTUP_SOUND              /* Define to include buzzer sound on startup */
+//#define PRODUCTION_MODE           /* Define to run a faster start-up sequence for production */
 
 //#define USE_SIMPLE_USART0   /* Define to use USART0 as a very simple byte-wise UART for debug purposes */
 

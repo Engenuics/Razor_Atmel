@@ -332,9 +332,86 @@ void LedInitialize(void)
 
   static u8 au8LedStartupMsg[] = "LED functions ready\n\r";
 
+#ifndef PRODUCTION_MODE
+  
+  /* Turn all LEDs on full, then fade them out over a few seconds */
+  for(u8 i = 20; i > 0; i--)
+  {    
+#if STARTUP_SOUND
+    /* Configure Buzzers to provide some audio during start up */
+    PWMAudioSetFrequency(BUZZER1, u32Buzzer1Frequency);
+    PWMAudioOn(BUZZER1);
+#ifdef  MPGL1
+    PWMAudioSetFrequency(BUZZER2, u32Buzzer2Frequency);
+    PWMAudioOn(BUZZER2);
+#endif /* MPGL1 */
+#endif /* STARTUP_SOUND */
+    
+    /* Spend 40ms in each level of intensity */
+/*
+    for(u16 j = 40; j > 0; j--)
+    {
+      u32Timer = G_u32SystemTime1ms;
+      while( !IsTimeUp(&u32Timer, 1) );
+      LedUpdate();
+    }
+*/
+    LedUpdate();
+    u32Timer = G_u32SystemTime1ms;
+    while( !IsTimeUp(&u32Timer, 40) );
+
+    /* Pause for a bit on the first iteration to show the LEDs on for little while */
+    if(i == 20)
+    {
+      while( !IsTimeUp(&u32Timer, 1500) );
+    }
+ 
+    /* Set the LED intensity for the next iteration */
+    for(u16 j = 0; j < TOTAL_LEDS; j++)
+    {
+      Leds_asLedArray[j].eMode = LED_PWM_MODE;
+      Leds_asLedArray[j].eRate = (LedRateType)(i - 1);
+    	Leds_asLedArray[j].u16Count = (i - 1);
+    }
+    
+    /* Set the buzzer frequency for the next iteration */
+    u32Buzzer1Frequency -= u32StepSize;
+    u32Buzzer2Frequency += u32StepSize;
+  }
+
+  /* Final update to set last state, hold for a short period */
+  LedUpdate();
+  while( !IsTimeUp(&u32Timer, 200) );
+ 
+  /* Return all LEDs to NORMAL mode */
+  for(u8 j = 0; j < TOTAL_LEDS; j++)
+  {
+    Leds_asLedArray[j].eMode = LED_NORMAL_MODE;
+  }
+
+#if STARTUP_SOUND
+  /* Turn off the buzzers */
+  PWMAudioOff(BUZZER1);
+#ifdef  MPGL1
+  PWMAudioOff(BUZZER2);
+#endif /* MPGL1 */
+  
+#endif /* STARTUP_SOUND */
+
+  
+#else /* PRODUCTION_MODE */
+#if MPGL1
+  LedOn(RED);
+  LedOn(ORANGE);
+  LedOn(YELLOW);
+  LedOn(GREEN);
+  LedOn(CYAN);
+  LedOn(BLUE);
+  LedOn(PURPLE);
+  LedOn(WHITE);
+#endif /* MPGL1 */
+
 #if MPGL2
-  /* Test code for checking LEDs */
-#if 0
   LedOn(RED0);
   LedOn(RED1);
   LedOn(RED2);
@@ -347,60 +424,23 @@ void LedInitialize(void)
   LedOn(GREEN1);
   LedOn(GREEN2);
   LedOn(GREEN3);
-#endif
-
 #endif /* MPGL2 */
   
-  /* Turn all LEDs on full, then fade them out over a few seconds */
-  for(u8 i = 20; i > 0; i--)
-  {
-#if STARTUP_SOUND
-    /* Configure Buzzers to provide some audio during start up */
-    PWMAudioSetFrequency(BUZZER1, u32Buzzer1Frequency);
-    PWMAudioOn(BUZZER1);
-#ifdef  MPGL1
-    PWMAudioSetFrequency(BUZZER2, u32Buzzer2Frequency);
-    PWMAudioOn(BUZZER2);
-#endif /* MPGL1 */
-#endif /* STARTUP_SOUND */
-    
-    /* Spend 40ms in each level of intensity */
-    for(u16 j = 40; j > 0; j--)
-    {
-      u32Timer = G_u32SystemTime1ms;
-      while( !IsTimeUp(&u32Timer, 1) );
-      LedUpdate();
-    }
-    /* Pause for a bit on the first iteration to show the LEDs on for little while */
-    if(i == 20)
-    {
-      while( !IsTimeUp(&u32Timer, 1500) );
-    }
-    
-    /* Set the LED intensity for the next iteration */
-    for(u8 j = 0; j < TOTAL_LEDS; j++)
-    {
-      Leds_asLedArray[j].eRate = (LedRateType)(i - 1);
-    }
-    
-    /* Set the buzzer frequency for the next iteration */
-    u32Buzzer1Frequency -= u32StepSize;
-    u32Buzzer2Frequency += u32StepSize;
-  }
-
-  /* Final update to set last state, hold for a short period */
-  LedUpdate();
-  while( !IsTimeUp(&u32Timer, 200) );
-  
-#if STARTUP_SOUND
-  /* Turn off the buzzers */
+  PWMAudioSetFrequency(BUZZER1, 300);
+  PWMAudioOn(BUZZER1);
+  u32Timer = G_u32SystemTime1ms;
+  while( !IsTimeUp(&u32Timer, 1000) );
   PWMAudioOff(BUZZER1);
+
 #ifdef  MPGL1
+  PWMAudioSetFrequency(BUZZER2, 1000);
+  PWMAudioOn(BUZZER2);
+  u32Timer = G_u32SystemTime1ms;
+  while( !IsTimeUp(&u32Timer, 1000) );
   PWMAudioOff(BUZZER2);
 #endif /* MPGL1 */
-  
-#endif /* STARTUP_SOUND */
 
+#endif /* PRODUCTION_MODE */
  
   /* Exit with the backlight on (white) */
 #ifdef MPGL1
