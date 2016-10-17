@@ -19,6 +19,6 @@
 @REM 
 
 
-"C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\common\bin\cspybat" "C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\bin\armproc.dll" "C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\bin\armsim2.dll"  %1 --plugin "C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\bin\armbat.dll" --device_macro "C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\config\debugger\Atmel\SAM3U.dmac" --backend -B "--endian=little" "--cpu=Cortex-M3" "--fpu=None" "-p" "C:\Program Files (x86)\IAR Systems\EWARM_7_20_1\arm\CONFIG\debugger\Atmel\ATSAM3U2C.ddf" "--semihosting" "--device=ATSAM3U2C" "--multicore_nr_of_cores=1" 
+"C:\Program Files\IAR Systems\EWARM_7_20_1\common\bin\cspybat" "C:\Program Files\IAR Systems\EWARM_7_20_1\arm\bin\armproc.dll" "C:\Program Files\IAR Systems\EWARM_7_20_1\arm\bin\armsim2.dll"  %1 --plugin "C:\Program Files\IAR Systems\EWARM_7_20_1\arm\bin\armbat.dll" --device_macro "C:\Program Files\IAR Systems\EWARM_7_20_1\arm\config\debugger\Atmel\SAM3U.dmac" --backend -B "--endian=little" "--cpu=Cortex-M3" "--fpu=None" "-p" "C:\Program Files\IAR Systems\EWARM_7_20_1\arm\CONFIG\debugger\Atmel\ATSAM3U2C.ddf" "--semihosting" "--device=ATSAM3U2C" "--multicore_nr_of_cores=1" 
 
 

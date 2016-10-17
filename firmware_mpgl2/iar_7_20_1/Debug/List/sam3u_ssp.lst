@@ -1,0 +1,2502 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.1.7305/W32 for ARM        04/Mar/2016  10:02:56
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\sam3u_ssp.c
+#    Command line =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\sam3u_ssp.c
+#        -D MPGL2 -D MPG2 --preprocess=cl
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\List\
+#        -lC
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\List\
+#        -o
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\Obj\
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\INC\c\DLib_Config_Normal.h" -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\bsp\ -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\drivers\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\libraries\captouch\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\application\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\cmsis\
+#        -I
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\..\..\firmware_mpg_common\drivers\
+#        -On --use_c++_inline --require_prototypes -I "C:\Program Files\IAR
+#        Systems\EWARM_7_20_1\arm\CMSIS\Include\"
+#    List file    =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\List\sam3u_ssp.lst
+#    Object file  =  
+#        D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpgl2\iar_7_20_1\Debug\Obj\sam3u_ssp.o
+#
+###############################################################################
+
+D:\MPG\mpg_source\Git\Razor_Atmel\firmware_mpg_common\drivers\sam3u_ssp.c
+      1          /**********************************************************************************************************************
+      2          File: sam3u_ssp.c                                                                
+      3          
+      4          Description:
+      5          Provides a driver to use a USART peripheral in SPI/SSP mode to send and receive data using interrupts and peripheral DMA.
+      6          Note that Master SPI devices keep !CS as a GPIO so it can be managed manually to more easily work with 
+      7          the multitude of variants in slave device !CS requirements.
+      8          
+      9          This driver should work for SPI slaves with or without flow control, though you may need to make adjustments
+     10          to how data is timed.  A slave with flow control requires callback functions to manage flow control lines.
+     11          
+     12          If LSB first transmission is required, we can't use the DMA if we let the SSP task manage the bit flipping.
+     13          For high-traffic or low-power devices, you might consider flipping at the task level so that DMA
+     14          can be used (the bytes would have to be pre-flipped for transmit and post-flipped on receive).
+     15          
+     16          API:
+     17          SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
+     18          Request a SSP peripheral for your task.  No other tasks in the system will be able to access 
+     19          the specific peripheral you request.
+     20          e.g. MyTaskSsp = SspRequest(&MyTaskSspConfig);
+     21          
+     22          void SspRelease(SspPeripheralType* psSspPeripheral_)
+     23          If your task is done using the SSP it requested, call this function to "give it back" to the system.
+     24          e.g. SspRelease(&MyTaskSsp);
+     25          
+     26          u32 SspWriteByte(SspPeripheralType* psSspPeripheral_, u8 u8Byte_)
+     27          Write a single byte to the SSP.  A token corresponding to the message is returned if you want to monitor
+     28          if the byte sends correctly.
+     29          e.g u32CurrentMessageToken = SspWriteByte(&MyTaskSsp, u8ByteToWRite);
+     30          
+     31          u32 SspWriteData(SspPeripheralType* psSspPeripheral_, u32 u32Size_, u8* u8Data_)
+     32          Write an array of bytes to the SSP.  Returns the message token for monitoring the status of the message.
+     33          e.g. 
+     34          u8 au8SData[] = {1, 2, 3, 4, 5, 6};
+     35          u32CurrentMessageToken = SspWriteData(&MyTaskSsp, sizeof(au8SData), au8Sting);
+     36          
+     37          Master mode only:
+     38          u32 SspReadByte(SspPeripheralType* psSspPeripheral_)
+     39          Creates a dummy byte message of 1 byte to subsequently receive a byte. Returns the message token that can be monitored
+     40          to see when the message has been sent, and thus when the received byte should be in the pre-configured receive buffer.
+     41          e.g. u32CurrentMessageToken = SspReadByte(&MyTaskSsp);
+     42          
+     43          u32 SspReadData(SspPeripheralType* psSspPeripheral_, u32 u32Size_)
+     44          Creates a dummy byte array to subsequently receive u32Size_ bytes. Returns the message token that can be monitored
+     45          to see when the message has been sent, and thus when the received data should be in the pre-configured receive buffer.
+     46          e.g. u32CurrentMessageToken = SspReadData(&MyTaskSsp, 10);
+     47          
+     48          
+     49          INITIALIZATION (should take place in application's initialization function):
+     50          1. Create a variable of SspConfigurationType in your application and initialize it to the desired SSP peripheral,
+     51          and the size & address of the receive buffer in the application.
+     52          
+     53          2. Call SspRequest() with pointer to the configuration variable created in step 1.  The returned pointer is the
+     54          SspPeripheralType object created that will be used by your application.
+     55          
+     56          3. If the application no longer needs the SSP resource, call SspRelease().  
+     57          Note: if multiple slaves share an SSP resource, SspRequest() and SspRelease() must be used frequently to
+     58          allow traffic to both devices. 
+     59          
+     60          MASTER MODE DATA TRANSFER:
+     61          Transmitted data is queued using one of two functions, SspWriteByte() and SspWriteData() which both return a message
+     62          token unique to the data.  Once the data is queued, it is sent by the SSP as soon as possible.  Different SSP resources may 
+     63          transmit and receive data simultaneously.  Regardless, the SPI protocol always receives a byte with every transmitted
+     64          byte.  This may be a defined dummy byte, or it may be 0xFF or 0x00 depending on the idle state of the MISO line.
+     65          Your application must process the received bytes and determine if they are dummy bytes or useful data.
+     66          
+     67          Received bytes on the allocated peripheral will be dropped into the application's designated receive
+     68          buffer.  The buffer is written circularly, with no provision to monitor bytes that are overwritten.  The 
+     69          application is responsible for processing all received data.  The application must provide its own parsing
+     70          pointer to read the receive buffer and properly wrap around.  This pointer will not be impacted by the interrupt
+     71          service routine that may add additional characters at any time.
+     72          
+     73          SSP traffic is always full duplex, but protocols are typically half duplex.  To receive
+     74          data requested from an SSP slave, call SspReadByte() for a single byte or SspReadData() for multiple
+     75          bytes.  These functions will automatically queue SSP_DUMMY bytes to transmit and activate the clock
+     76          to receive data into your application's receive buffer.
+     77          
+     78          
+     79          SLAVE MODE DATA TRANSFER:
+     80          In Slave mode, the peripheral is always ready to receive bytes from the Master.  
+     81          Received bytes on the allocated peripheral will be dropped into the receive
+     82          buffer that the application specifies upon requesting the SPI peripheral.  The buffer 
+     83          is written circularly, with no provision to monitor bytes that are overwritten.  The 
+     84          application is responsible for processing all received data.  The application must 
+     85          provide its own parsing pointer to read the receive buffer and properly wrap around.  
+     86          This pointer will not be impacted by the interrupt service routine that may add additional 
+     87          characters at any time.
+     88          
+     89          Transmitted data is queued using one of two functions, SspWriteByte() and SspWriteData().  Once the data
+     90          is queued, it is sent as soon as possible.  Different SSP resources may transmit and receive data simultaneously.  
+     91          Per the SPI protocol, a receive byte is always read with every transmit byte.  Your application must process the received bytes
+     92          and determine if they are dummy bytes or useful data.
+     93          
+     94          
+     95          **********************************************************************************************************************/
+     96          
+     97          #include "configuration.h"
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void NVIC_EnableIRQ(IRQn_Type)
+   \                     NVIC_EnableIRQ: (+1)
+   \   00000000   0x2101             MOVS     R1,#+1
+   \   00000002   0xF010 0x021F      ANDS     R2,R0,#0x1F
+   \   00000006   0x4091             LSLS     R1,R1,R2
+   \   00000008   0x.... 0x....      LDR.W    R2,??DataTable17  ;; 0xe000e100
+   \   0000000C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000000E   0x0943             LSRS     R3,R0,#+5
+   \   00000010   0xF842 0x1023      STR      R1,[R2, R3, LSL #+2]
+   \   00000014   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void NVIC_DisableIRQ(IRQn_Type)
+   \                     NVIC_DisableIRQ: (+1)
+   \   00000000   0x2101             MOVS     R1,#+1
+   \   00000002   0xF010 0x021F      ANDS     R2,R0,#0x1F
+   \   00000006   0x4091             LSLS     R1,R1,R2
+   \   00000008   0x.... 0x....      LDR.W    R2,??DataTable17_1  ;; 0xe000e180
+   \   0000000C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000000E   0x0943             LSRS     R3,R0,#+5
+   \   00000010   0xF842 0x1023      STR      R1,[R2, R3, LSL #+2]
+   \   00000014   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void NVIC_ClearPendingIRQ(IRQn_Type)
+   \                     NVIC_ClearPendingIRQ: (+1)
+   \   00000000   0x2101             MOVS     R1,#+1
+   \   00000002   0xF010 0x021F      ANDS     R2,R0,#0x1F
+   \   00000006   0x4091             LSLS     R1,R1,R2
+   \   00000008   0x.... 0x....      LDR.W    R2,??DataTable17_2  ;; 0xe000e280
+   \   0000000C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000000E   0x0943             LSRS     R3,R0,#+5
+   \   00000010   0xF842 0x1023      STR      R1,[R2, R3, LSL #+2]
+   \   00000014   0x4770             BX       LR               ;; return
+     98          
+     99          /***********************************************************************************************************************
+    100          Global variable definitions with scope across entire project.
+    101          All Global variable names shall start with "G_<type>Ssp"
+    102          ***********************************************************************************************************************/
+    103          /* New variables */
+
+   \                                 In section .bss, align 4
+    104          u32 G_u32Ssp0ApplicationFlags;                   /* Status flags meant for application using this SSP peripheral */
+   \                     G_u32Ssp0ApplicationFlags:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    105          u32 G_u32Ssp1ApplicationFlags;                   /* Status flags meant for application using this SSP peripheral */
+   \                     G_u32Ssp1ApplicationFlags:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    106          u32 G_u32Ssp2ApplicationFlags;                   /* Status flags meant for application using this SSP peripheral */
+   \                     G_u32Ssp2ApplicationFlags:
+   \   00000000                      DS8 4
+    107          
+    108          
+    109          /*--------------------------------------------------------------------------------------------------------------------*/
+    110          /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
+    111          extern volatile u32 G_u32SystemTime1ms;          /* From board-specific source file */
+    112          extern volatile u32 G_u32SystemTime1s;           /* From board-specific source file */
+    113          
+    114          extern volatile u32 G_u32SystemFlags;            /* From main.c */
+    115          extern volatile u32 G_u32ApplicationFlags;       /* From main.c */
+    116          
+    117          
+    118          /***********************************************************************************************************************
+    119          Global variable definitions with scope limited to this local application.
+    120          Variable names shall start with "SSP_" and be declared as static.
+    121          ***********************************************************************************************************************/
+
+   \                                 In section .bss, align 4
+    122          static fnCode_type Ssp_pfnStateMachine;          /* The SSP application state machine */
+   \                     Ssp_pfnStateMachine:
+   \   00000000                      DS8 4
+    123          
+
+   \                                 In section .bss, align 4
+    124          static u32 SSP_u32Timer;                         /* Timeout counter used across states */
+   \                     SSP_u32Timer:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    125          static u32 SSP_u32Flags;                         /* Application flags for SSP */
+   \                     SSP_u32Flags:
+   \   00000000                      DS8 4
+    126          
+
+   \                                 In section .bss, align 4
+    127          static SspPeripheralType SSP_Peripheral0;        /* SSP0 peripheral object */
+   \                     SSP_Peripheral0:
+   \   00000000                      DS8 52
+
+   \                                 In section .bss, align 4
+    128          static SspPeripheralType SSP_Peripheral1;        /* SSP1 peripheral object */
+   \                     SSP_Peripheral1:
+   \   00000000                      DS8 52
+
+   \                                 In section .bss, align 4
+    129          static SspPeripheralType SSP_Peripheral2;        /* SSP2 peripheral object */
+   \                     SSP_Peripheral2:
+   \   00000000                      DS8 52
+    130          
+
+   \                                 In section .bss, align 4
+    131          static SspPeripheralType* SSP_psCurrentSsp;      /* Current SSP peripheral being processed task */
+   \                     SSP_psCurrentSsp:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    132          static SspPeripheralType* SSP_psCurrentISR;      /* Current SSP peripheral being processed in ISR */
+   \                     SSP_psCurrentISR:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    133          static u32* SSP_pu32SspApplicationFlagsISR;      /* Current SSP application status flags in ISR */
+   \                     SSP_pu32SspApplicationFlagsISR:
+   \   00000000                      DS8 4
+    134          
+
+   \                                 In section .bss, align 4
+    135          static u8 SSP_au8Dummies[MAX_TX_MESSAGE_LENGTH]; /* Array of dummy bytes sent to receive bytes from a slave */
+   \                     SSP_au8Dummies:
+   \   00000000                      DS8 128
+    136          
+
+   \                                 In section .bss, align 4
+    137          static u32 SSP_u32Int0Count = 0;                 /* Debug counter for SSP0 interrupts */
+   \                     SSP_u32Int0Count:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    138          static u32 SSP_u32Int1Count = 0;                 /* Debug counter for SSP1 interrupts */
+   \                     SSP_u32Int1Count:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    139          static u32 SSP_u32Int2Count = 0;                 /* Debug counter for SSP2 interrupts */
+   \                     SSP_u32Int2Count:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+    140          static u32 SSP_u32AntCounter = 0;                /* Debug counter */
+   \                     SSP_u32AntCounter:
+   \   00000000                      DS8 4
+    141          
+    142          
+    143          /***********************************************************************************************************************
+    144          Function Definitions
+    145          ***********************************************************************************************************************/
+    146          /*--------------------------------------------------------------------------------------------------------------------*/
+    147          /* Public Functions */
+    148          /*--------------------------------------------------------------------------------------------------------------------*/
+    149          
+    150          /*----------------------------------------------------------------------------------------------------------------------
+    151          Function: SspRequest
+    152          
+    153          Description:
+    154          Requests access to an SSP resource.  If the resource is available, the transmit and receive parameters are set up
+    155          and the peripheral is made ready to use in the application. The peripheral will be configured in different ways
+    156          for different SSP modes.  The following modes are supported:
+    157          SPI_MASTER: transmit and receive using peripheral DMA controller; transmit occurs through the Message API
+    158          SPI_SLAVE: transmit through Message Task; receive set up per-byte using current and next DMA pointers and managed into circular buffer.
+    159          SPI_SLAVE_FLOW_CONTROL:
+    160          
+    161          Requires:
+    162            - SSP peripheral register initialization values in configuration.h must be set correctly; currently this does not support
+    163              different SSP configurations for multiple slaves on the same bus - all peripherals on the bus must work with
+    164              the same setup.
+    165            - psSspConfig_ has the SSP peripheral number, address of the RxBuffer and the RxBuffer size
+    166            - the calling application is ready to start using the peripheral
+    167          
+    168          Promises:
+    169            - Returns a pointer to the requested SSP peripheral object if the resource is available; otherwise returns NULL
+    170            - Peripheral is enabled
+    171            - Peripheral interrupts are enabled.
+    172          */
+
+   \                                 In section .text, align 2, keep-with-next
+    173          SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
+    174          {
+   \                     SspRequest: (+1)
+   \   00000000   0xE92D 0x47F0      PUSH     {R4-R10,LR}
+   \   00000004   0x0004             MOVS     R4,R0
+    175            SspPeripheralType* psRequestedSsp; 
+    176            u32 u32TargetCR, u32TargetMR, u32TargetIER, u32TargetIDR, u32TargetBRGR;
+    177          
+    178            /* Set the peripheral pointer to the correct resource */
+    179            switch(psSspConfig_->SspPeripheral)
+   \   00000006   0x7820             LDRB     R0,[R4, #+0]
+   \   00000008   0x2802             CMP      R0,#+2
+   \   0000000A   0xD004             BEQ.N    ??SspRequest_0
+   \   0000000C   0xD334             BCC.N    ??SspRequest_1
+   \   0000000E   0x2804             CMP      R0,#+4
+   \   00000010   0xD021             BEQ.N    ??SspRequest_2
+   \   00000012   0xD310             BCC.N    ??SspRequest_3
+   \   00000014   0xE030             B.N      ??SspRequest_1
+    180            {
+    181              case USART0:
+    182              {
+    183                psRequestedSsp = &SSP_Peripheral0;
+   \                     ??SspRequest_0: (+1)
+   \   00000016   0x.... 0x....      LDR.W    R0,??DataTable17_3
+   \   0000001A   0x0005             MOVS     R5,R0
+    184                
+    185                u32TargetCR   = USART0_US_CR_INIT;
+   \   0000001C   0x2050             MOVS     R0,#+80
+   \   0000001E   0x0006             MOVS     R6,R0
+    186                u32TargetMR   = USART0_US_MR_INIT; 
+   \   00000020   0x.... 0x....      LDR.W    R0,??DataTable17_4  ;; 0x4008c0
+   \   00000024   0x0007             MOVS     R7,R0
+    187                u32TargetIER  = USART0_US_IER_INIT; 
+   \   00000026   0x2008             MOVS     R0,#+8
+   \   00000028   0x4680             MOV      R8,R0
+    188                u32TargetIDR  = USART0_US_IDR_INIT;
+   \   0000002A   0xF07F 0x0008      MVNS     R0,#+8
+   \   0000002E   0x4681             MOV      R9,R0
+    189                u32TargetBRGR = USART0_US_BRGR_INIT;
+   \   00000030   0x201A             MOVS     R0,#+26
+   \   00000032   0x4682             MOV      R10,R0
+    190                break;
+   \   00000034   0xE022             B.N      ??SspRequest_4
+    191              }
+    192              case USART1:
+    193              {
+    194                psRequestedSsp = &SSP_Peripheral1;
+   \                     ??SspRequest_3: (+1)
+   \   00000036   0x.... 0x....      LDR.W    R0,??DataTable17_5
+   \   0000003A   0x0005             MOVS     R5,R0
+    195                
+    196                u32TargetCR   = USART1_US_CR_INIT;
+   \   0000003C   0x2060             MOVS     R0,#+96
+   \   0000003E   0x0006             MOVS     R6,R0
+    197                u32TargetMR   = USART1_US_MR_INIT; 
+   \   00000040   0x.... 0x....      LDR.W    R0,??DataTable17_6  ;; 0x4518ce
+   \   00000044   0x0007             MOVS     R7,R0
+    198                u32TargetIER  = USART1_US_IER_INIT; 
+   \   00000046   0x2000             MOVS     R0,#+0
+   \   00000048   0x4680             MOV      R8,R0
+    199                u32TargetIDR  = USART1_US_IDR_INIT;
+   \   0000004A   0xF05F 0x30FF      MOVS     R0,#-1
+   \   0000004E   0x4681             MOV      R9,R0
+    200                u32TargetBRGR = USART1_US_BRGR_INIT;
+   \   00000050   0x2030             MOVS     R0,#+48
+   \   00000052   0x4682             MOV      R10,R0
+    201                break;
+   \   00000054   0xE012             B.N      ??SspRequest_4
+    202              }
+    203              case USART2:
+    204              {
+    205                psRequestedSsp = &SSP_Peripheral2;
+   \                     ??SspRequest_2: (+1)
+   \   00000056   0x.... 0x....      LDR.W    R0,??DataTable17_7
+   \   0000005A   0x0005             MOVS     R5,R0
+    206                
+    207                u32TargetCR   = USART2_US_CR_INIT;
+   \   0000005C   0x2050             MOVS     R0,#+80
+   \   0000005E   0x0006             MOVS     R6,R0
+    208                u32TargetMR   = USART2_US_MR_INIT; 
+   \   00000060   0x.... 0x....      LDR.W    R0,??DataTable17_8  ;; 0x4118ff
+   \   00000064   0x0007             MOVS     R7,R0
+    209                u32TargetIER  = USART2_US_IER_INIT; 
+   \   00000066   0xF45F 0x2000      MOVS     R0,#+524288
+   \   0000006A   0x4680             MOV      R8,R0
+    210                u32TargetIDR  = USART2_US_IDR_INIT;
+   \   0000006C   0xF05F 0x30FF      MOVS     R0,#-1
+   \   00000070   0x4681             MOV      R9,R0
+    211                u32TargetBRGR = USART2_US_BRGR_INIT;
+   \   00000072   0x2000             MOVS     R0,#+0
+   \   00000074   0x4682             MOV      R10,R0
+    212                break;
+   \   00000076   0xE001             B.N      ??SspRequest_4
+    213              }
+    214              
+    215              default:
+    216              {
+    217                return(NULL);
+   \                     ??SspRequest_1: (+1)
+   \   00000078   0x2000             MOVS     R0,#+0
+   \   0000007A   0xE063             B.N      ??SspRequest_5
+    218              }
+    219            } /* end switch */
+    220            
+    221            /* If the requested peripheral is already assigned, return NULL now */
+    222            if(psRequestedSsp->u32PrivateFlags & _SSP_PERIPHERAL_ASSIGNED)
+   \                     ??SspRequest_4: (+1)
+   \   0000007C   0x6928             LDR      R0,[R5, #+16]
+   \   0000007E   0x02C0             LSLS     R0,R0,#+11
+   \   00000080   0xD501             BPL.N    ??SspRequest_6
+    223            {
+    224              return(NULL);
+   \   00000082   0x2000             MOVS     R0,#+0
+   \   00000084   0xE05E             B.N      ??SspRequest_5
+    225            }
+    226          
+    227            /* Activate and configure the peripheral */
+    228            AT91C_BASE_PMC->PMC_PCER |= (1 << psRequestedSsp->u8PeripheralId);
+   \                     ??SspRequest_6: (+1)
+   \   00000086   0x.... 0x....      LDR.W    R0,??DataTable17_9  ;; 0x400e0410
+   \   0000008A   0x6800             LDR      R0,[R0, #+0]
+   \   0000008C   0x2101             MOVS     R1,#+1
+   \   0000008E   0xF995 0x2026      LDRSB    R2,[R5, #+38]
+   \   00000092   0x4091             LSLS     R1,R1,R2
+   \   00000094   0x4308             ORRS     R0,R1,R0
+   \   00000096   0x.... 0x....      LDR.W    R1,??DataTable17_9  ;; 0x400e0410
+   \   0000009A   0x6008             STR      R0,[R1, #+0]
+    229            
+    230            psRequestedSsp->pCsGpioAddress  = psSspConfig_->pCsGpioAddress;
+   \   0000009C   0x6860             LDR      R0,[R4, #+4]
+   \   0000009E   0x6068             STR      R0,[R5, #+4]
+    231            psRequestedSsp->u32CsPin        = psSspConfig_->u32CsPin;
+   \   000000A0   0x68A0             LDR      R0,[R4, #+8]
+   \   000000A2   0x60A8             STR      R0,[R5, #+8]
+    232            psRequestedSsp->BitOrder        = psSspConfig_->BitOrder;
+   \   000000A4   0x7B20             LDRB     R0,[R4, #+12]
+   \   000000A6   0x7328             STRB     R0,[R5, #+12]
+    233            psRequestedSsp->SpiMode         = psSspConfig_->SpiMode;
+   \   000000A8   0x7B60             LDRB     R0,[R4, #+13]
+   \   000000AA   0x7368             STRB     R0,[R5, #+13]
+    234            psRequestedSsp->fnSlaveTxFlowCallback = psSspConfig_->fnSlaveTxFlowCallback;
+   \   000000AC   0x6920             LDR      R0,[R4, #+16]
+   \   000000AE   0x6168             STR      R0,[R5, #+20]
+    235            psRequestedSsp->fnSlaveRxFlowCallback = psSspConfig_->fnSlaveRxFlowCallback;
+   \   000000B0   0x6960             LDR      R0,[R4, #+20]
+   \   000000B2   0x61A8             STR      R0,[R5, #+24]
+    236            psRequestedSsp->pu8RxBuffer     = psSspConfig_->pu8RxBufferAddress;
+   \   000000B4   0x69A0             LDR      R0,[R4, #+24]
+   \   000000B6   0x61E8             STR      R0,[R5, #+28]
+    237            psRequestedSsp->ppu8RxNextByte  = psSspConfig_->ppu8RxNextByte;
+   \   000000B8   0x69E0             LDR      R0,[R4, #+28]
+   \   000000BA   0x6228             STR      R0,[R5, #+32]
+    238            psRequestedSsp->u16RxBufferSize = psSspConfig_->u16RxBufferSize;
+   \   000000BC   0x8C20             LDRH     R0,[R4, #+32]
+   \   000000BE   0x84A8             STRH     R0,[R5, #+36]
+    239            psRequestedSsp->u32PrivateFlags |= _SSP_PERIPHERAL_ASSIGNED;
+   \   000000C0   0x6928             LDR      R0,[R5, #+16]
+   \   000000C2   0xF450 0x1080      ORRS     R0,R0,#0x100000
+   \   000000C6   0x6128             STR      R0,[R5, #+16]
+    240             
+    241            psRequestedSsp->pBaseAddress->US_CR   = u32TargetCR;
+   \   000000C8   0x6828             LDR      R0,[R5, #+0]
+   \   000000CA   0x6006             STR      R6,[R0, #+0]
+    242            psRequestedSsp->pBaseAddress->US_MR   = u32TargetMR;
+   \   000000CC   0x6828             LDR      R0,[R5, #+0]
+   \   000000CE   0x6047             STR      R7,[R0, #+4]
+    243            psRequestedSsp->pBaseAddress->US_IER  = u32TargetIER;
+   \   000000D0   0x6828             LDR      R0,[R5, #+0]
+   \   000000D2   0xF8C0 0x8008      STR      R8,[R0, #+8]
+    244            psRequestedSsp->pBaseAddress->US_IDR  = u32TargetIDR;
+   \   000000D6   0x6828             LDR      R0,[R5, #+0]
+   \   000000D8   0xF8C0 0x900C      STR      R9,[R0, #+12]
+    245            psRequestedSsp->pBaseAddress->US_BRGR = u32TargetBRGR;
+   \   000000DC   0x6828             LDR      R0,[R5, #+0]
+   \   000000DE   0xF8C0 0xA020      STR      R10,[R0, #+32]
+    246            
+    247            if(psRequestedSsp->SpiMode == SPI_SLAVE)
+   \   000000E2   0x7B68             LDRB     R0,[R5, #+13]
+   \   000000E4   0x2801             CMP      R0,#+1
+   \   000000E6   0xD11B             BNE.N    ??SspRequest_7
+    248            {
+    249              /* Preset the PDC pointers and counters; the receive buffer must be starting from [0] and be at least 2 bytes long)*/
+    250              psRequestedSsp->pBaseAddress->US_RPR  = (u32)psSspConfig_->pu8RxBufferAddress;
+   \   000000E8   0x69A0             LDR      R0,[R4, #+24]
+   \   000000EA   0x6829             LDR      R1,[R5, #+0]
+   \   000000EC   0xF8C1 0x0100      STR      R0,[R1, #+256]
+    251              psRequestedSsp->pBaseAddress->US_RNPR = (u32)(psSspConfig_->pu8RxBufferAddress + 1);
+   \   000000F0   0x69A0             LDR      R0,[R4, #+24]
+   \   000000F2   0x1C40             ADDS     R0,R0,#+1
+   \   000000F4   0x6829             LDR      R1,[R5, #+0]
+   \   000000F6   0xF8C1 0x0110      STR      R0,[R1, #+272]
+    252              psRequestedSsp->pBaseAddress->US_RCR  = 1;
+   \   000000FA   0x2001             MOVS     R0,#+1
+   \   000000FC   0x6829             LDR      R1,[R5, #+0]
+   \   000000FE   0xF8C1 0x0104      STR      R0,[R1, #+260]
+    253              psRequestedSsp->pBaseAddress->US_RNCR = 1;
+   \   00000102   0x2001             MOVS     R0,#+1
+   \   00000104   0x6829             LDR      R1,[R5, #+0]
+   \   00000106   0xF8C1 0x0114      STR      R0,[R1, #+276]
+    254              psRequestedSsp->ppu8RxNextByte = NULL; /* not used for SPI_SLAVE */
+   \   0000010A   0x2000             MOVS     R0,#+0
+   \   0000010C   0x6228             STR      R0,[R5, #+32]
+    255          
+    256              /* Enable the receiver and transmitter requests so they are ready to go if the Master starts clocking */
+    257              psRequestedSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+   \   0000010E   0xF240 0x1001      MOVW     R0,#+257
+   \   00000112   0x6829             LDR      R1,[R5, #+0]
+   \   00000114   0xF8C1 0x0120      STR      R0,[R1, #+288]
+    258              psRequestedSsp->pBaseAddress->US_IER = AT91C_US_CTSIC;
+   \   00000118   0xF45F 0x2000      MOVS     R0,#+524288
+   \   0000011C   0x6829             LDR      R1,[R5, #+0]
+   \   0000011E   0x6088             STR      R0,[R1, #+8]
+    259            }
+    260          
+    261            if(psRequestedSsp->SpiMode == SPI_SLAVE_FLOW_CONTROL)
+   \                     ??SspRequest_7: (+1)
+   \   00000120   0x7B68             LDRB     R0,[R5, #+13]
+   \   00000122   0x2802             CMP      R0,#+2
+   \   00000124   0xD103             BNE.N    ??SspRequest_8
+    262            {
+    263              /* Enable the CS and receiver requests so they are ready to go if the Master starts clocking */
+    264              psRequestedSsp->pBaseAddress->US_IER = (AT91C_US_CTSIC | AT91C_US_RXRDY);
+   \   00000126   0x.... 0x....      LDR.W    R0,??DataTable17_10  ;; 0x80001
+   \   0000012A   0x6829             LDR      R1,[R5, #+0]
+   \   0000012C   0x6088             STR      R0,[R1, #+8]
+    265            }
+    266            
+    267            /* Enable SSP interrupts */
+    268            NVIC_ClearPendingIRQ( (IRQn_Type)psRequestedSsp->u8PeripheralId );
+   \                     ??SspRequest_8: (+1)
+   \   0000012E   0xF995 0x0026      LDRSB    R0,[R5, #+38]
+   \   00000132   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   00000134   0x.... 0x....      BL       NVIC_ClearPendingIRQ
+    269            NVIC_EnableIRQ( (IRQn_Type)psRequestedSsp->u8PeripheralId );
+   \   00000138   0xF995 0x0026      LDRSB    R0,[R5, #+38]
+   \   0000013C   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000013E   0x.... 0x....      BL       NVIC_EnableIRQ
+    270            
+    271            return(psRequestedSsp);
+   \   00000142   0x0028             MOVS     R0,R5
+   \                     ??SspRequest_5: (+1)
+   \   00000144   0xE8BD 0x87F0      POP      {R4-R10,PC}      ;; return
+    272            
+    273          } /* end SspRequest() */
+    274          
+    275          
+    276          /*----------------------------------------------------------------------------------------------------------------------
+    277          Function: SspRelease
+    278          
+    279          Description:
+    280          Releases an SSP resource.  
+    281          
+    282          Requires:
+    283            - psSspPeripheral_ has the SSP peripheral number, address of the RxBuffer, and the RxBuffer size and the calling
+    284              application is ready to start using the peripheral.
+    285          
+    286          Promises:
+    287            - Resets peripheral object's pointers and data to safe values
+    288            - Peripheral is disabled
+    289            - Peripheral interrupts are disabled.
+    290          */
+
+   \                                 In section .text, align 2, keep-with-next
+    291          void SspRelease(SspPeripheralType* psSspPeripheral_)
+    292          {
+   \                     SspRelease: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+    293            /* Check to see if the peripheral is already released */
+    294            if(psSspPeripheral_->pu8RxBuffer == NULL)
+   \   00000004   0x69E0             LDR      R0,[R4, #+28]
+   \   00000006   0x2800             CMP      R0,#+0
+   \   00000008   0xD027             BEQ.N    ??SspRelease_0
+    295            {
+    296              return;
+    297            }
+    298            
+    299            /* First disable the interrupts */
+    300            NVIC_DisableIRQ( (IRQn_Type)(psSspPeripheral_->u8PeripheralId) );
+   \                     ??SspRelease_1: (+1)
+   \   0000000A   0xF994 0x0026      LDRSB    R0,[R4, #+38]
+   \   0000000E   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   00000010   0x.... 0x....      BL       NVIC_DisableIRQ
+    301            NVIC_ClearPendingIRQ( (IRQn_Type)(psSspPeripheral_->u8PeripheralId) );
+   \   00000014   0xF994 0x0026      LDRSB    R0,[R4, #+38]
+   \   00000018   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   0000001A   0x.... 0x....      BL       NVIC_ClearPendingIRQ
+    302           
+    303            /* Now it's safe to release all of the resources in the target peripheral */
+    304            psSspPeripheral_->pCsGpioAddress = NULL;
+   \   0000001E   0x2000             MOVS     R0,#+0
+   \   00000020   0x6060             STR      R0,[R4, #+4]
+    305            psSspPeripheral_->pu8RxBuffer    = NULL;
+   \   00000022   0x2000             MOVS     R0,#+0
+   \   00000024   0x61E0             STR      R0,[R4, #+28]
+    306            psSspPeripheral_->ppu8RxNextByte  = NULL;
+   \   00000026   0x2000             MOVS     R0,#+0
+   \   00000028   0x6220             STR      R0,[R4, #+32]
+    307            psSspPeripheral_->u32PrivateFlags = 0;
+   \   0000002A   0x2000             MOVS     R0,#+0
+   \   0000002C   0x6120             STR      R0,[R4, #+16]
+    308            psSspPeripheral_->fnSlaveTxFlowCallback = NULL;
+   \   0000002E   0x2000             MOVS     R0,#+0
+   \   00000030   0x6160             STR      R0,[R4, #+20]
+    309            psSspPeripheral_->fnSlaveRxFlowCallback = NULL;
+   \   00000032   0x2000             MOVS     R0,#+0
+   \   00000034   0x61A0             STR      R0,[R4, #+24]
+    310          
+    311            /* Empty the transmit buffer if there were leftover messages */
+    312            while(psSspPeripheral_->psTransmitBuffer != NULL)
+   \                     ??SspRelease_2: (+1)
+   \   00000036   0x6AA0             LDR      R0,[R4, #+40]
+   \   00000038   0x2800             CMP      R0,#+0
+   \   0000003A   0xD009             BEQ.N    ??SspRelease_3
+    313            {
+    314              UpdateMessageStatus(psSspPeripheral_->psTransmitBuffer->u32Token, ABANDONED);
+   \   0000003C   0x2106             MOVS     R1,#+6
+   \   0000003E   0x6AA0             LDR      R0,[R4, #+40]
+   \   00000040   0x6800             LDR      R0,[R0, #+0]
+   \   00000042   0x.... 0x....      BL       UpdateMessageStatus
+    315              DeQueueMessage(&psSspPeripheral_->psTransmitBuffer);
+   \   00000046   0xF114 0x0028      ADDS     R0,R4,#+40
+   \   0000004A   0x.... 0x....      BL       DeQueueMessage
+   \   0000004E   0xE7F2             B.N      ??SspRelease_2
+    316            }
+    317            
+    318            /* Ensure the SM is in the Idle state */
+    319            Ssp_pfnStateMachine = SspSM_Idle;
+   \                     ??SspRelease_3: (+1)
+   \   00000050   0x.... 0x....      ADR.W    R0,SspSM_Idle
+   \   00000054   0x.... 0x....      LDR.W    R1,??DataTable17_11
+   \   00000058   0x6008             STR      R0,[R1, #+0]
+    320            
+    321          } /* end SspRelease() */
+   \                     ??SspRelease_0: (+1)
+   \   0000005A   0xBD10             POP      {R4,PC}          ;; return
+    322          
+    323          
+    324          /*----------------------------------------------------------------------------------------------------------------------
+    325          Function: SspWriteByte
+    326          
+    327          Description:
+    328          Queues a single byte for transfer on the target SSP peripheral.  
+    329          
+    330          Requires:
+    331            - psSspPeripheral_ has been requested.
+    332            - The chip select line of the SSP device should be asserted
+    333          
+    334          Promises:
+    335            - Creates a 1-byte message at psSspPeripheral_->psTransmitBuffer that will be sent by the SSP application
+    336              when it is available.
+    337            - Returns the message token assigned to the message
+    338          */
+
+   \                                 In section .text, align 2, keep-with-next
+    339          u32 SspWriteByte(SspPeripheralType* psSspPeripheral_, u8 u8Byte_)
+    340          {
+   \                     SspWriteByte: (+1)
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+   \   00000002   0xB082             SUB      SP,SP,#+8
+   \   00000004   0x0004             MOVS     R4,R0
+   \   00000006   0x000D             MOVS     R5,R1
+    341            u32 u32Token;
+    342            u8 u8Data = u8Byte_;
+   \   00000008   0xF88D 0x5000      STRB     R5,[SP, #+0]
+    343            
+    344            u32Token = QueueMessage(&psSspPeripheral_->psTransmitBuffer, 1, &u8Data);
+   \   0000000C   0xAA00             ADD      R2,SP,#+0
+   \   0000000E   0x2101             MOVS     R1,#+1
+   \   00000010   0xF114 0x0028      ADDS     R0,R4,#+40
+   \   00000014   0x.... 0x....      BL       QueueMessage
+   \   00000018   0x0006             MOVS     R6,R0
+    345            if( u32Token != 0 )
+   \   0000001A   0x2E00             CMP      R6,#+0
+   \   0000001C   0xD006             BEQ.N    ??SspWriteByte_0
+    346            {
+    347              /* If the system is initializing, we want to manually cycle the SSP task through one iteration
+    348              to send the message */
+    349              if(G_u32SystemFlags & _SYSTEM_INITIALIZING)
+   \   0000001E   0x.... 0x....      LDR.W    R0,??DataTable17_12
+   \   00000022   0x6800             LDR      R0,[R0, #+0]
+   \   00000024   0x2800             CMP      R0,#+0
+   \   00000026   0xD501             BPL.N    ??SspWriteByte_0
+    350              {
+    351                SspManualMode();
+   \   00000028   0x.... 0x....      BL       SspManualMode
+    352              }
+    353            }
+    354            
+    355            return(u32Token);
+   \                     ??SspWriteByte_0: (+1)
+   \   0000002C   0x0030             MOVS     R0,R6
+   \   0000002E   0xBD76             POP      {R1,R2,R4-R6,PC}  ;; return
+    356            
+    357          } /* end SspWriteByte() */
+    358          
+    359          
+    360          /*----------------------------------------------------------------------------------------------------------------------
+    361          Function: SspWriteData
+    362          
+    363          Description:
+    364          Queues a data array for transfer on the target SSP peripheral.  
+    365          
+    366          Requires:
+    367            - psSspPeripheral_ has been requested and holds a valid pointer to a transmit buffer; even if a transmission is
+    368              in progress, the node in the buffer that is currently being sent will not be destroyed during this function.
+    369            - The chip select line of the SSP device should be asserted
+    370            - u32Size_ is the number of bytes in the data array
+    371            - u8Data_ points to the first byte of the data array
+    372          
+    373          Promises:
+    374            - adds the data message at psSspPeripheral_->psTransmitBuffer that will be sent by the SSP application
+    375              when it is available.
+    376            - Returns the message token assigned to the message; 0 is returned if the message cannot be queued in which case
+    377              G_u32MessagingFlags can be checked for the reason
+    378          */
+
+   \                                 In section .text, align 2, keep-with-next
+    379          u32 SspWriteData(SspPeripheralType* psSspPeripheral_, u32 u32Size_, u8* pu8Data_)
+    380          {
+   \                     SspWriteData: (+1)
+   \   00000000   0xB5F8             PUSH     {R3-R7,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+   \   00000004   0x000D             MOVS     R5,R1
+   \   00000006   0x0016             MOVS     R6,R2
+    381            u32 u32Token;
+    382          
+    383            u32Token = QueueMessage(&psSspPeripheral_->psTransmitBuffer, u32Size_, pu8Data_);
+   \   00000008   0x0032             MOVS     R2,R6
+   \   0000000A   0x0029             MOVS     R1,R5
+   \   0000000C   0xF114 0x0028      ADDS     R0,R4,#+40
+   \   00000010   0x.... 0x....      BL       QueueMessage
+   \   00000014   0x0007             MOVS     R7,R0
+    384            if( u32Token == 0 )
+   \   00000016   0x2F00             CMP      R7,#+0
+   \   00000018   0xD101             BNE.N    ??SspWriteData_0
+    385            {
+    386              return(0);
+   \   0000001A   0x2000             MOVS     R0,#+0
+   \   0000001C   0xE007             B.N      ??SspWriteData_1
+    387            }
+    388            
+    389            /* If the system is initializing, manually cycle the SSP task through one iteration to send the message */
+    390            if(G_u32SystemFlags & _SYSTEM_INITIALIZING)
+   \                     ??SspWriteData_0: (+1)
+   \   0000001E   0x.... 0x....      LDR.W    R0,??DataTable17_12
+   \   00000022   0x6800             LDR      R0,[R0, #+0]
+   \   00000024   0x2800             CMP      R0,#+0
+   \   00000026   0xD501             BPL.N    ??SspWriteData_2
+    391            {
+    392              SspManualMode();
+   \   00000028   0x.... 0x....      BL       SspManualMode
+    393            }
+    394          
+    395            return(u32Token);
+   \                     ??SspWriteData_2: (+1)
+   \   0000002C   0x0038             MOVS     R0,R7
+   \                     ??SspWriteData_1: (+1)
+   \   0000002E   0xBDF2             POP      {R1,R4-R7,PC}    ;; return
+    396          
+    397          } /* end SspWriteData() */
+    398          
+    399          
+    400          /*----------------------------------------------------------------------------------------------------------------------
+    401          Function: SspReadByte
+    402          
+    403          Description:
+    404          Master mode only.  Gets a single byte from the slave on the target SSP peripheral.  
+    405          
+    406          Requires:
+    407            - psSspPeripheral_ has been requested.
+    408            - The chip select line of the SSP device should be asserted
+    409            - 
+    410          
+    411          Promises:
+    412            - Creates a message with one SSP_DUMMY_BYTE at psSspPeripheral_->psTransmitBuffer that will be sent by the SSP application
+    413              when it is available and thus clock in a received byte to the target receive buffer.
+    414            - Returns the Token of the transmitted dummy message used to read data.
+    415          
+    416          */
+
+   \                                 In section .text, align 2, keep-with-next
+    417          u32 SspReadByte(SspPeripheralType* psSspPeripheral_)
+    418          {
+   \                     SspReadByte: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+   \   00000002   0x0004             MOVS     R4,R0
+    419            return( QueueMessage(&psSspPeripheral_->psTransmitBuffer, 1, &SSP_au8Dummies[0]) );
+   \   00000004   0x.... 0x....      LDR.W    R2,??DataTable17_13
+   \   00000008   0x2101             MOVS     R1,#+1
+   \   0000000A   0xF114 0x0028      ADDS     R0,R4,#+40
+   \   0000000E   0x.... 0x....      BL       QueueMessage
+   \   00000012   0xBD10             POP      {R4,PC}          ;; return
+    420          
+    421          } /* end SspReadByte() */
+    422          
+    423          
+    424          /*----------------------------------------------------------------------------------------------------------------------
+    425          Function: SspReadData
+    426          
+    427          Description:
+    428          Gets multiple bytes from the slave on the target SSP peripheral.  
+    429          
+    430          Requires:
+    431            - psSspPeripheral_ has been requested and holds a valid pointer to a transmit buffer; even if a transmission is
+    432              in progress, the node in the buffer that is currently being sent will not be destroyed during this function.
+    433            - The chip select line of the SSP device should be asserted
+    434            - u32Size_ is the number of bytes in the data array
+    435          
+    436          Promises:
+    437            - Adds a dummy byte message at psSspPeripheral_->psTransmitBuffer that will be sent by the SSP application
+    438              when it is available and thus clock in the received bytes to the designated Rx buffer.
+    439            - Returns the message token of the dummy message used to read data
+    440            - If the peripheral is busy reading data already, then returns 0.
+    441          */
+
+   \                                 In section .text, align 2, keep-with-next
+    442          u32 SspReadData(SspPeripheralType* psSspPeripheral_, u32 u32Size_)
+    443          {
+   \                     SspReadData: (+1)
+   \   00000000   0xB530             PUSH     {R4,R5,LR}
+   \   00000002   0xB087             SUB      SP,SP,#+28
+   \   00000004   0x0004             MOVS     R4,R0
+   \   00000006   0x000D             MOVS     R5,R1
+    444            u8 au8MsgTooBig[] = "\r\nSSP message to large\n\r";
+   \   00000008   0xA800             ADD      R0,SP,#+0
+   \   0000000A   0x.... 0x....      LDR.W    R1,??DataTable17_14
+   \   0000000E   0x2219             MOVS     R2,#+25
+   \   00000010   0x.... 0x....      BL       __aeabi_memcpy
+    445            
+    446            /* Disallow if requested size is too large */
+    447            if(u32Size_ > MAX_TX_MESSAGE_LENGTH)
+   \   00000014   0x2D81             CMP      R5,#+129
+   \   00000016   0xD304             BCC.N    ??SspReadData_0
+    448            {
+    449              DebugPrintf(au8MsgTooBig);
+   \   00000018   0xA800             ADD      R0,SP,#+0
+   \   0000001A   0x.... 0x....      BL       DebugPrintf
+    450              return 0;
+   \   0000001E   0x2000             MOVS     R0,#+0
+   \   00000020   0xE006             B.N      ??SspReadData_1
+    451            }
+    452            
+    453            return( QueueMessage(&psSspPeripheral_->psTransmitBuffer, u32Size_, &SSP_au8Dummies[0]) );
+   \                     ??SspReadData_0: (+1)
+   \   00000022   0x.... 0x....      LDR.W    R2,??DataTable17_13
+   \   00000026   0x0029             MOVS     R1,R5
+   \   00000028   0xF114 0x0028      ADDS     R0,R4,#+40
+   \   0000002C   0x.... 0x....      BL       QueueMessage
+   \                     ??SspReadData_1: (+1)
+   \   00000030   0xB007             ADD      SP,SP,#+28
+   \   00000032   0xBD30             POP      {R4,R5,PC}       ;; return
+    454              
+    455          } /* end SspReadData() */
+    456          
+    457          
+    458          /*--------------------------------------------------------------------------------------------------------------------*/
+    459          /* Protected Functions */
+    460          /*--------------------------------------------------------------------------------------------------------------------*/
+    461          
+    462          /*----------------------------------------------------------------------------------------------------------------------
+    463          Function: SspInitialize
+    464          
+    465          Description:
+    466          Initializes the SSP application and its variables.  The peripherals themselves are not configured until
+    467          requested by a calling application.
+    468          
+    469          Requires:
+    470            - 
+    471          
+    472          Promises:
+    473            - SSP peripheral objects are ready 
+    474            - SSP application set to Idle
+    475          */
+
+   \                                 In section .text, align 2, keep-with-next
+    476          void SspInitialize(void)
+    477          {
+   \                     SspInitialize: (+1)
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+    478            static u8 au8SspStartupMessage[] = "SSP Peripherals Ready\n\r";
+    479            
+    480            /* Initialize the SSP peripheral structures */
+    481            SSP_Peripheral0.pBaseAddress     = AT91C_BASE_US0;
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable17_15  ;; 0x40090000
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   0000000A   0x6008             STR      R0,[R1, #+0]
+    482            SSP_Peripheral0.pCsGpioAddress   = NULL;
+   \   0000000C   0x2000             MOVS     R0,#+0
+   \   0000000E   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   00000012   0x6048             STR      R0,[R1, #+4]
+    483            SSP_Peripheral0.psTransmitBuffer = NULL;
+   \   00000014   0x2000             MOVS     R0,#+0
+   \   00000016   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   0000001A   0x6288             STR      R0,[R1, #+40]
+    484            SSP_Peripheral0.pu8RxBuffer      = NULL;
+   \   0000001C   0x2000             MOVS     R0,#+0
+   \   0000001E   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   00000022   0x61C8             STR      R0,[R1, #+28]
+    485            SSP_Peripheral0.u16RxBufferSize  = 0;
+   \   00000024   0x2000             MOVS     R0,#+0
+   \   00000026   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   0000002A   0x8488             STRH     R0,[R1, #+36]
+    486            SSP_Peripheral0.ppu8RxNextByte    = NULL;
+   \   0000002C   0x2000             MOVS     R0,#+0
+   \   0000002E   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   00000032   0x6208             STR      R0,[R1, #+32]
+    487            SSP_Peripheral0.u32PrivateFlags  = 0;
+   \   00000034   0x2000             MOVS     R0,#+0
+   \   00000036   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   0000003A   0x6108             STR      R0,[R1, #+16]
+    488            SSP_Peripheral0.u8PeripheralId   = AT91C_ID_US0;
+   \   0000003C   0x200D             MOVS     R0,#+13
+   \   0000003E   0x.... 0x....      LDR.W    R1,??DataTable17_3
+   \   00000042   0xF881 0x0026      STRB     R0,[R1, #+38]
+    489            
+    490            SSP_Peripheral1.pBaseAddress     = AT91C_BASE_US1;
+   \   00000046   0x.... 0x....      LDR.W    R0,??DataTable17_16  ;; 0x40094000
+   \   0000004A   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   0000004E   0x6008             STR      R0,[R1, #+0]
+    491            SSP_Peripheral1.pCsGpioAddress   = NULL;
+   \   00000050   0x2000             MOVS     R0,#+0
+   \   00000052   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   00000056   0x6048             STR      R0,[R1, #+4]
+    492            SSP_Peripheral1.psTransmitBuffer = NULL;
+   \   00000058   0x2000             MOVS     R0,#+0
+   \   0000005A   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   0000005E   0x6288             STR      R0,[R1, #+40]
+    493            SSP_Peripheral1.pu8RxBuffer      = NULL;
+   \   00000060   0x2000             MOVS     R0,#+0
+   \   00000062   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   00000066   0x61C8             STR      R0,[R1, #+28]
+    494            SSP_Peripheral1.u16RxBufferSize  = 0;
+   \   00000068   0x2000             MOVS     R0,#+0
+   \   0000006A   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   0000006E   0x8488             STRH     R0,[R1, #+36]
+    495            SSP_Peripheral1.ppu8RxNextByte    = NULL;
+   \   00000070   0x2000             MOVS     R0,#+0
+   \   00000072   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   00000076   0x6208             STR      R0,[R1, #+32]
+    496            SSP_Peripheral1.u32PrivateFlags  = 0;
+   \   00000078   0x2000             MOVS     R0,#+0
+   \   0000007A   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   0000007E   0x6108             STR      R0,[R1, #+16]
+    497            SSP_Peripheral1.u8PeripheralId   = AT91C_ID_US1;
+   \   00000080   0x200E             MOVS     R0,#+14
+   \   00000082   0x.... 0x....      LDR.W    R1,??DataTable17_5
+   \   00000086   0xF881 0x0026      STRB     R0,[R1, #+38]
+    498          
+    499            SSP_Peripheral2.pBaseAddress     = AT91C_BASE_US2;
+   \   0000008A   0x.... 0x....      LDR.W    R0,??DataTable17_17  ;; 0x40098000
+   \   0000008E   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   00000092   0x6008             STR      R0,[R1, #+0]
+    500            SSP_Peripheral2.pCsGpioAddress   = NULL;
+   \   00000094   0x2000             MOVS     R0,#+0
+   \   00000096   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   0000009A   0x6048             STR      R0,[R1, #+4]
+    501            SSP_Peripheral2.psTransmitBuffer = NULL;
+   \   0000009C   0x2000             MOVS     R0,#+0
+   \   0000009E   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   000000A2   0x6288             STR      R0,[R1, #+40]
+    502            SSP_Peripheral2.pu8RxBuffer      = NULL;
+   \   000000A4   0x2000             MOVS     R0,#+0
+   \   000000A6   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   000000AA   0x61C8             STR      R0,[R1, #+28]
+    503            SSP_Peripheral2.u16RxBufferSize  = 0;
+   \   000000AC   0x2000             MOVS     R0,#+0
+   \   000000AE   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   000000B2   0x8488             STRH     R0,[R1, #+36]
+    504            SSP_Peripheral2.ppu8RxNextByte    = NULL;
+   \   000000B4   0x2000             MOVS     R0,#+0
+   \   000000B6   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   000000BA   0x6208             STR      R0,[R1, #+32]
+    505            SSP_Peripheral2.u32PrivateFlags  = 0;
+   \   000000BC   0x2000             MOVS     R0,#+0
+   \   000000BE   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   000000C2   0x6108             STR      R0,[R1, #+16]
+    506            SSP_Peripheral2.u8PeripheralId   = AT91C_ID_US2;
+   \   000000C4   0x200F             MOVS     R0,#+15
+   \   000000C6   0x.... 0x....      LDR.W    R1,??DataTable17_7
+   \   000000CA   0xF881 0x0026      STRB     R0,[R1, #+38]
+    507          
+    508            SSP_psCurrentSsp                = &SSP_Peripheral0;
+   \   000000CE   0x.... 0x....      LDR.W    R0,??DataTable17_3
+   \   000000D2   0x.... 0x....      LDR.W    R1,??DataTable17_18
+   \   000000D6   0x6008             STR      R0,[R1, #+0]
+    509            
+    510            /* Fill the dummy array with SSP_DUMMY bytes */
+    511            memset(SSP_au8Dummies, SSP_DUMMY_BYTE, MAX_TX_MESSAGE_LENGTH);
+   \   000000D8   0x2480             MOVS     R4,#+128
+   \   000000DA   0x25FF             MOVS     R5,#+255
+   \   000000DC   0x.... 0x....      LDR.W    R6,??DataTable17_13
+   \   000000E0   0x002A             MOVS     R2,R5
+   \   000000E2   0x0021             MOVS     R1,R4
+   \   000000E4   0x0030             MOVS     R0,R6
+   \   000000E6   0x.... 0x....      BL       __aeabi_memset
+    512          
+    513            /* Set application pointer */
+    514            Ssp_pfnStateMachine = SspSM_Idle;
+   \   000000EA   0x.... 0x....      ADR.W    R0,SspSM_Idle
+   \   000000EE   0x.... 0x....      LDR.W    R1,??DataTable17_11
+   \   000000F2   0x6008             STR      R0,[R1, #+0]
+    515            DebugPrintf(au8SspStartupMessage);
+   \   000000F4   0x.... 0x....      LDR.W    R0,??DataTable17_19
+   \   000000F8   0x.... 0x....      BL       DebugPrintf
+    516          
+    517          } /* end SspInitialize() */
+   \   000000FC   0xBD70             POP      {R4-R6,PC}       ;; return
+
+   \                                 In section .data, align 4
+   \                     ??au8SspStartupMessage:
+   \   00000000   0x53 0x53          DC8 "SSP Peripherals Ready\012\015"
+   \              0x50 0x20    
+   \              0x50 0x65    
+   \              0x72 0x69    
+   \              0x70 0x68    
+   \              0x65 0x72    
+   \              0x61 0x6C    
+   \              0x73 0x20    
+   \              0x52 0x65    
+   \              0x61 0x64    
+   \              0x79 0x0A    
+   \              0x0D 0x00    
+    518          
+    519          
+    520          /*----------------------------------------------------------------------------------------------------------------------
+    521          Function SspRunActiveState()
+    522          
+    523          Description:
+    524          Selects and runs one iteration of the current state in the state machine.
+    525          All state machines have a TOTAL of 1ms to execute, so on average n state machines
+    526          may take 1ms / n to execute.
+    527          
+    528          Requires:
+    529            - State machine function pointer points at current state
+    530          
+    531          Promises:
+    532            - Calls the function to pointed by the state machine function pointer
+    533          */
+
+   \                                 In section .text, align 2, keep-with-next
+    534          void SspRunActiveState(void)
+    535          {
+   \                     SspRunActiveState: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    536            Ssp_pfnStateMachine();
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable17_11
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0x4780             BLX      R0
+    537          
+    538          } /* end SspRunActiveState */
+   \   0000000A   0xBD01             POP      {R0,PC}          ;; return
+    539          
+    540          
+    541          /*----------------------------------------------------------------------------------------------------------------------
+    542          Function: SspManualMode
+    543          
+    544          Description:
+    545          Runs a transmit cycle of the SSP application to clock out a message.  This function is used only during
+    546          initialization.
+    547          
+    548          Requires:
+    549            - SSP application has been initialized.
+    550          
+    551          Promises:
+    552            - All bytes currently in the SSP Tx FIFO are sent out and thus all the expected received bytes
+    553              are read into the application receive circular buffer.
+    554          */
+
+   \                                 In section .text, align 2, keep-with-next
+    555          void SspManualMode(void)
+    556          {
+   \                     SspManualMode: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    557            /* Set up for manual mode */
+    558            SSP_u32Flags |= _SSP_MANUAL_MODE;
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable17_20
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   0000000C   0x.... 0x....      LDR.W    R1,??DataTable17_20
+   \   00000010   0x6008             STR      R0,[R1, #+0]
+    559            SSP_psCurrentSsp = &SSP_Peripheral0;
+   \   00000012   0x.... 0x....      LDR.W    R0,??DataTable17_3
+   \   00000016   0x.... 0x....      LDR.W    R1,??DataTable17_18
+   \   0000001A   0x6008             STR      R0,[R1, #+0]
+    560          
+    561            /* Run a full cycle of the SSP state machine so all SSP peripherals send their current message */  
+    562            while(SSP_u32Flags & _SSP_MANUAL_MODE)
+   \                     ??SspManualMode_0: (+1)
+   \   0000001C   0x.... 0x....      LDR.W    R0,??DataTable17_20
+   \   00000020   0x7800             LDRB     R0,[R0, #+0]
+   \   00000022   0x07C0             LSLS     R0,R0,#+31
+   \   00000024   0xD50F             BPL.N    ??SspManualMode_1
+    563            {
+    564              Ssp_pfnStateMachine();
+   \   00000026   0x.... 0x....      LDR.W    R0,??DataTable17_11
+   \   0000002A   0x6800             LDR      R0,[R0, #+0]
+   \   0000002C   0x4780             BLX      R0
+    565              
+    566              SSP_u32Timer = G_u32SystemTime1ms;
+   \   0000002E   0x.... 0x....      LDR.W    R0,??DataTable17_21
+   \   00000032   0x6800             LDR      R0,[R0, #+0]
+   \   00000034   0x.... 0x....      LDR.W    R1,??DataTable17_22
+   \   00000038   0x6008             STR      R0,[R1, #+0]
+    567              IsTimeUp(&SSP_u32Timer, 1);
+   \   0000003A   0x2101             MOVS     R1,#+1
+   \   0000003C   0x.... 0x....      LDR.W    R0,??DataTable17_22
+   \   00000040   0x.... 0x....      BL       IsTimeUp
+   \   00000044   0xE7EA             B.N      ??SspManualMode_0
+    568            }
+    569                
+    570          } /* end SspManualMode() */
+   \                     ??SspManualMode_1: (+1)
+   \   00000046   0xBD01             POP      {R0,PC}          ;; return
+    571          
+    572          
+    573          /*--------------------------------------------------------------------------------------------------------------------*/
+    574          /* Private functions */
+    575          /*--------------------------------------------------------------------------------------------------------------------*/
+    576          
+    577          
+    578          /*----------------------------------------------------------------------------------------------------------------------
+    579          Interrupt Service Routine: SSP0_IRQHandler
+    580          
+    581          Description:
+    582          Handles the enabled SSP0 interrupts. 
+    583          
+    584          Transmit: An End Transmit interrupt will occur when the PDC has finished sending all of the bytes.
+    585          Receive: An End Receive interrupt will occur when the PDC has finished receiving all of the expected bytes.
+    586          
+    587          Requires:
+    588            - ISRs cannot require anything
+    589          
+    590          Promises:
+    591            - Status of message that has completed transferring will be set to COMPLETE.
+    592            - Peripheral CS line is cleared and the PDC is disabled
+    593            - _SSP_PERIPHERAL_RX/TX is cleared
+    594          */
+
+   \                                 In section .text, align 2, keep-with-next
+    595          void SSP0_IRQHandler(void)
+    596          {
+   \                     SSP0_IRQHandler: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    597            /* Set the current ISR pointers to SSP0 targets */
+    598            SSP_psCurrentISR = &SSP_Peripheral0;                         /* Current SSP ISR */
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable17_3
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   0000000A   0x6008             STR      R0,[R1, #+0]
+    599            SSP_pu32SspApplicationFlagsISR = &G_u32Ssp0ApplicationFlags; /* Current SSP application status flags */
+   \   0000000C   0x.... 0x....      LDR.W    R0,??DataTable17_24
+   \   00000010   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   00000014   0x6008             STR      R0,[R1, #+0]
+    600            SSP_u32Int0Count++;
+   \   00000016   0x.... 0x....      LDR.W    R0,??DataTable17_26
+   \   0000001A   0x6800             LDR      R0,[R0, #+0]
+   \   0000001C   0x1C40             ADDS     R0,R0,#+1
+   \   0000001E   0x.... 0x....      LDR.W    R1,??DataTable17_26
+   \   00000022   0x6008             STR      R0,[R1, #+0]
+    601          
+    602            /* Go to common SSP interrupt using psCurrentSspISR since the SSP cannot interrupt itself */
+    603            SspGenericHandler();
+   \   00000024   0x.... 0x....      BL       SspGenericHandler
+    604            
+    605          } /* end SSP0_IRQHandler() */
+   \   00000028   0xBD01             POP      {R0,PC}          ;; return
+    606          
+    607          
+    608          /*----------------------------------------------------------------------------------------------------------------------
+    609          Interrupt Service Routine: SSP1_IRQHandler
+    610          
+    611          Description:
+    612          Sets up to handles the enabled SSP1 interrupts. 
+    613          
+    614          Requires:
+    615            - ISRs cannot require anything
+    616          
+    617          Promises:
+    618            - See GenericSspHandler
+    619          */
+
+   \                                 In section .text, align 2, keep-with-next
+    620          void SSP1_IRQHandler(void)
+    621          {
+   \                     USART1_IrqHandler: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    622            /* Set the current ISR pointers to SSP1 targets */
+    623            SSP_psCurrentISR = &SSP_Peripheral1;                      /* Current SSP ISR */
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable17_5
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   0000000A   0x6008             STR      R0,[R1, #+0]
+    624            SSP_pu32SspApplicationFlagsISR = &G_u32Ssp1ApplicationFlags; /* Current SSP application status flags */
+   \   0000000C   0x.... 0x....      LDR.W    R0,??DataTable17_27
+   \   00000010   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   00000014   0x6008             STR      R0,[R1, #+0]
+    625            SSP_u32Int1Count++;
+   \   00000016   0x.... 0x....      LDR.W    R0,??DataTable17_28
+   \   0000001A   0x6800             LDR      R0,[R0, #+0]
+   \   0000001C   0x1C40             ADDS     R0,R0,#+1
+   \   0000001E   0x.... 0x....      LDR.W    R1,??DataTable17_28
+   \   00000022   0x6008             STR      R0,[R1, #+0]
+    626          
+    627            /* Go to common SSP interrupt using psCurrentSspISR since the SSP cannot interrupt itself */
+    628            SspGenericHandler();
+   \   00000024   0x.... 0x....      BL       SspGenericHandler
+    629            
+    630          } /* end SSP1_IRQHandler() */
+   \   00000028   0xBD01             POP      {R0,PC}          ;; return
+    631          
+    632          
+    633          /*----------------------------------------------------------------------------------------------------------------------
+    634          Interrupt Service Routine: SSP2_IRQHandler
+    635          
+    636          Description:
+    637          Handles the enabled SSP2 interrupts. 
+    638          
+    639          */
+
+   \                                 In section .text, align 2, keep-with-next
+    640          void SSP2_IRQHandler(void)
+    641          {
+   \                     USART2_IrqHandler: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+    642            /* Set the current ISR pointers to SSP2 targets */
+    643            SSP_psCurrentISR = &SSP_Peripheral2;                      /* Current SSP ISR */
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable17_7
+   \   00000006   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   0000000A   0x6008             STR      R0,[R1, #+0]
+    644            SSP_pu32SspApplicationFlagsISR = &G_u32Ssp2ApplicationFlags; /* Current SSP application status flags */
+   \   0000000C   0x.... 0x....      LDR.W    R0,??DataTable17_29
+   \   00000010   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   00000014   0x6008             STR      R0,[R1, #+0]
+    645            SSP_u32Int2Count++;
+   \   00000016   0x.... 0x....      LDR.W    R0,??DataTable17_30
+   \   0000001A   0x6800             LDR      R0,[R0, #+0]
+   \   0000001C   0x1C40             ADDS     R0,R0,#+1
+   \   0000001E   0x.... 0x....      LDR.W    R1,??DataTable17_30
+   \   00000022   0x6008             STR      R0,[R1, #+0]
+    646          
+    647            /* Go to common SSP interrupt using psCurrentSspISR since the SSP cannot interrupt itself */
+    648            SspGenericHandler();
+   \   00000024   0x.... 0x....      BL       SspGenericHandler
+    649           
+    650          } /* end SSP2_IRQHandler() */
+   \   00000028   0xBD01             POP      {R0,PC}          ;; return
+    651          
+    652          
+    653          /*----------------------------------------------------------------------------------------------------------------------
+    654          Generic Interrupt Service Routine
+    655          
+    656          Description:
+    657          Handles the enabled interrupts for the current SSP. 
+    658          
+    659          Chip select: only enabled for SLAVE peripherals.  A Slave peripheral needs this signal to know it is communicating.  
+    660          If it is supposed to be transmitting and does not have any flow control, the data should already be ready.
+    661          Transmit: An End Transmit interrupt will occur when the PDC has finished sending all of the bytes for Master or Slave.
+    662          Receive: An End Receive interrupt will occur when the PDC has finished receiving all of the expected bytes for Master or a single byte for Slave.
+    663          Receive RXBUFF: An Rx Buffer empty interrupt occurs on a Slave when both the current and next send counters are 0.
+    664          
+    665          Requires:
+    666            - SSP_psCurrentISR points to the SSP peripheral who has triggered the interrupt
+    667            - SSP_pu32SspApplicationFlagsISR points to the application flags from the SSP peripheral that triggered the interrupt
+    668            - A different SSP peripheral cannot interrupt this ISR
+    669          
+    670          Promises:
+    671            - Status of message that has completed transferring will be set to COMPLETE.
+    672            - For Master peripherals, the CS line is cleared and the PDC is disabled
+    673            - _SSP_PERIPHERAL_RX/TX is cleared
+    674          */
+
+   \                                 In section .text, align 2, keep-with-next
+    675          void SspGenericHandler(void)
+    676          {
+   \                     SspGenericHandler: (+1)
+   \   00000000   0xB570             PUSH     {R4-R6,LR}
+    677            u32 u32Byte;
+    678            u32 u32Timeout;
+    679            u32 u32Current_CSR;
+    680            
+    681            /* Get a copy of CSR because reading it changes it */
+    682            u32Current_CSR = SSP_psCurrentISR->pBaseAddress->US_CSR;
+   \   00000002   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000006   0x6800             LDR      R0,[R0, #+0]
+   \   00000008   0x6800             LDR      R0,[R0, #+0]
+   \   0000000A   0x6940             LDR      R0,[R0, #+20]
+   \   0000000C   0x0006             MOVS     R6,R0
+    683          
+    684            /* Check for CS change state interrupt - only enabled on Slave SSP peripherals */
+    685            if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_CTSIC) && 
+    686                (u32Current_CSR & AT91C_US_CTSIC) )
+   \   0000000E   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000012   0x6800             LDR      R0,[R0, #+0]
+   \   00000014   0x6800             LDR      R0,[R0, #+0]
+   \   00000016   0x6900             LDR      R0,[R0, #+16]
+   \   00000018   0x0300             LSLS     R0,R0,#+12
+   \   0000001A   0xD538             BPL.N    ??SspGenericHandler_0
+   \   0000001C   0x0330             LSLS     R0,R6,#+12
+   \   0000001E   0xD536             BPL.N    ??SspGenericHandler_0
+    687            {
+    688              /* Is the CS pin asserted now? */
+    689              if( (SSP_psCurrentISR->pCsGpioAddress->PIO_PDSR & SSP_psCurrentISR->u32CsPin) == 0)
+   \   00000020   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000024   0x6800             LDR      R0,[R0, #+0]
+   \   00000026   0x6840             LDR      R0,[R0, #+4]
+   \   00000028   0x6BC0             LDR      R0,[R0, #+60]
+   \   0000002A   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   0000002E   0x6809             LDR      R1,[R1, #+0]
+   \   00000030   0x6889             LDR      R1,[R1, #+8]
+   \   00000032   0x4208             TST      R0,R1
+   \   00000034   0xD114             BNE.N    ??SspGenericHandler_1
+    690              {
+    691                /* Flag that CS is asserted */
+    692                *SSP_pu32SspApplicationFlagsISR |= _SSP_CS_ASSERTED;
+   \   00000036   0x.... 0x....      LDR.W    R0,??DataTable17_25
+   \   0000003A   0x6800             LDR      R0,[R0, #+0]
+   \   0000003C   0x6800             LDR      R0,[R0, #+0]
+   \   0000003E   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   00000042   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   00000046   0x6809             LDR      R1,[R1, #+0]
+   \   00000048   0x6008             STR      R0,[R1, #+0]
+    693                *SSP_pu32SspApplicationFlagsISR &= ~(_SSP_TX_COMPLETE | _SSP_RX_COMPLETE);
+   \   0000004A   0x.... 0x....      LDR.W    R0,??DataTable17_25
+   \   0000004E   0x6800             LDR      R0,[R0, #+0]
+   \   00000050   0x6800             LDR      R0,[R0, #+0]
+   \   00000052   0xF030 0x0006      BICS     R0,R0,#0x6
+   \   00000056   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   0000005A   0x6809             LDR      R1,[R1, #+0]
+   \   0000005C   0x6008             STR      R0,[R1, #+0]
+   \   0000005E   0xE016             B.N      ??SspGenericHandler_0
+    694              }
+    695              else
+    696              {
+    697                /* Flag that CS is deasserted */
+    698                *SSP_pu32SspApplicationFlagsISR &= ~_SSP_CS_ASSERTED;
+   \                     ??SspGenericHandler_1: (+1)
+   \   00000060   0x.... 0x....      LDR.W    R0,??DataTable17_25
+   \   00000064   0x6800             LDR      R0,[R0, #+0]
+   \   00000066   0x6800             LDR      R0,[R0, #+0]
+   \   00000068   0x0840             LSRS     R0,R0,#+1
+   \   0000006A   0x0040             LSLS     R0,R0,#+1
+   \   0000006C   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   00000070   0x6809             LDR      R1,[R1, #+0]
+   \   00000072   0x6008             STR      R0,[R1, #+0]
+    699               
+    700                /* Make sure RCR is 1 for next transmission on Slave - no flow control devices only */
+    701                if(SSP_psCurrentISR->SpiMode == SPI_SLAVE)
+   \   00000074   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000078   0x6800             LDR      R0,[R0, #+0]
+   \   0000007A   0x7B40             LDRB     R0,[R0, #+13]
+   \   0000007C   0x2801             CMP      R0,#+1
+   \   0000007E   0xD106             BNE.N    ??SspGenericHandler_0
+    702                {
+    703                  SSP_psCurrentISR->pBaseAddress->US_RCR  = 1;
+   \   00000080   0x2001             MOVS     R0,#+1
+   \   00000082   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   00000086   0x6809             LDR      R1,[R1, #+0]
+   \   00000088   0x6809             LDR      R1,[R1, #+0]
+   \   0000008A   0xF8C1 0x0104      STR      R0,[R1, #+260]
+    704                }
+    705              }
+    706            } /* end CS change state interrupt */
+    707          
+    708            /*** SSP ISR transmit handling for flow-control devices that do not use DMA ***/
+    709            if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_TXEMPTY) && 
+    710                (u32Current_CSR & AT91C_US_TXEMPTY) )
+   \                     ??SspGenericHandler_0: (+1)
+   \   0000008E   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000092   0x6800             LDR      R0,[R0, #+0]
+   \   00000094   0x6800             LDR      R0,[R0, #+0]
+   \   00000096   0x6900             LDR      R0,[R0, #+16]
+   \   00000098   0x0580             LSLS     R0,R0,#+22
+   \   0000009A   0xD570             BPL.N    ??SspGenericHandler_2
+   \   0000009C   0x05B0             LSLS     R0,R6,#+22
+   \   0000009E   0xD56E             BPL.N    ??SspGenericHandler_2
+    711            {
+    712              /* Decrement counter and read the dummy byte so the SSP peripheral doesn't oveerrun */
+    713              SSP_psCurrentISR->u32CurrentTxBytesRemaining--;
+   \   000000A0   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000000A4   0x6800             LDR      R0,[R0, #+0]
+   \   000000A6   0x6AC0             LDR      R0,[R0, #+44]
+   \   000000A8   0x1E40             SUBS     R0,R0,#+1
+   \   000000AA   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   000000AE   0x6809             LDR      R1,[R1, #+0]
+   \   000000B0   0x62C8             STR      R0,[R1, #+44]
+    714              u32Byte = SSP_psCurrentISR->pBaseAddress->US_RHR;
+   \   000000B2   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000000B6   0x6800             LDR      R0,[R0, #+0]
+   \   000000B8   0x6800             LDR      R0,[R0, #+0]
+   \   000000BA   0x6980             LDR      R0,[R0, #+24]
+   \   000000BC   0x0004             MOVS     R4,R0
+    715              
+    716              if(SSP_psCurrentISR->u32CurrentTxBytesRemaining != 0)
+   \   000000BE   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000000C2   0x6800             LDR      R0,[R0, #+0]
+   \   000000C4   0x6AC0             LDR      R0,[R0, #+44]
+   \   000000C6   0x2800             CMP      R0,#+0
+   \   000000C8   0xD025             BEQ.N    ??SspGenericHandler_3
+    717              {
+    718                /* Advance the pointer (non-circular buffer), load the next byte and use the callback */
+    719                SSP_psCurrentISR->pu8CurrentTxData++;
+   \   000000CA   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000000CE   0x6800             LDR      R0,[R0, #+0]
+   \   000000D0   0x6B00             LDR      R0,[R0, #+48]
+   \   000000D2   0x1C40             ADDS     R0,R0,#+1
+   \   000000D4   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   000000D8   0x6809             LDR      R1,[R1, #+0]
+   \   000000DA   0x6308             STR      R0,[R1, #+48]
+    720                u32Byte = 0x000000FF & *SSP_psCurrentISR->pu8CurrentTxData;
+   \   000000DC   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000000E0   0x6800             LDR      R0,[R0, #+0]
+   \   000000E2   0x6B00             LDR      R0,[R0, #+48]
+   \   000000E4   0x7800             LDRB     R0,[R0, #+0]
+   \   000000E6   0x0004             MOVS     R4,R0
+    721          
+    722                /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
+    723                if(SSP_psCurrentISR->BitOrder == LSB_FIRST)
+   \   000000E8   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000000EC   0x6800             LDR      R0,[R0, #+0]
+   \   000000EE   0x7B00             LDRB     R0,[R0, #+12]
+   \   000000F0   0x2801             CMP      R0,#+1
+   \   000000F2   0xD103             BNE.N    ??SspGenericHandler_4
+    724                {
+    725                  u32Byte = __RBIT(u32Byte)>>24;
+   \   000000F4   0xFA94 0xF0A4      RBIT     R0,R4
+   \   000000F8   0x0E00             LSRS     R0,R0,#+24
+   \   000000FA   0x0004             MOVS     R4,R0
+    726                }
+    727              
+    728                SSP_psCurrentISR->pBaseAddress->US_THR = (u8)u32Byte; /* Clears interrupt flag */
+   \                     ??SspGenericHandler_4: (+1)
+   \   000000FC   0x0020             MOVS     R0,R4
+   \   000000FE   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000100   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   00000104   0x6809             LDR      R1,[R1, #+0]
+   \   00000106   0x6809             LDR      R1,[R1, #+0]
+   \   00000108   0x61C8             STR      R0,[R1, #+28]
+    729                SSP_psCurrentISR->fnSlaveTxFlowCallback();
+   \   0000010A   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   0000010E   0x6800             LDR      R0,[R0, #+0]
+   \   00000110   0x6940             LDR      R0,[R0, #+20]
+   \   00000112   0x4780             BLX      R0
+   \   00000114   0xE033             B.N      ??SspGenericHandler_2
+    730              }
+    731              else
+    732              {
+    733                /* Done! Disable TX interrupt */
+    734                SSP_psCurrentISR->pBaseAddress->US_IDR = AT91C_US_TXEMPTY;
+   \                     ??SspGenericHandler_3: (+1)
+   \   00000116   0xF44F 0x7000      MOV      R0,#+512
+   \   0000011A   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   0000011E   0x6809             LDR      R1,[R1, #+0]
+   \   00000120   0x6809             LDR      R1,[R1, #+0]
+   \   00000122   0x60C8             STR      R0,[R1, #+12]
+    735                
+    736                /* Clean up the message status and flags */
+    737                SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_TX;  
+   \   00000124   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000128   0x6800             LDR      R0,[R0, #+0]
+   \   0000012A   0x6900             LDR      R0,[R0, #+16]
+   \   0000012C   0xF430 0x1000      BICS     R0,R0,#0x200000
+   \   00000130   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   00000134   0x6809             LDR      R1,[R1, #+0]
+   \   00000136   0x6108             STR      R0,[R1, #+16]
+    738                UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
+   \   00000138   0x2104             MOVS     R1,#+4
+   \   0000013A   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   0000013E   0x6800             LDR      R0,[R0, #+0]
+   \   00000140   0x6A80             LDR      R0,[R0, #+40]
+   \   00000142   0x6800             LDR      R0,[R0, #+0]
+   \   00000144   0x.... 0x....      BL       UpdateMessageStatus
+    739                DeQueueMessage(&SSP_psCurrentISR->psTransmitBuffer);
+   \   00000148   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   0000014C   0x6800             LDR      R0,[R0, #+0]
+   \   0000014E   0x3028             ADDS     R0,R0,#+40
+   \   00000150   0x.... 0x....      BL       DeQueueMessage
+    740           
+    741                /* Re-enable Rx interrupt and clean-up the operation */    
+    742                SSP_psCurrentISR->pBaseAddress->US_IER = AT91C_US_RXRDY;
+   \   00000154   0x2001             MOVS     R0,#+1
+   \   00000156   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   0000015A   0x6809             LDR      R1,[R1, #+0]
+   \   0000015C   0x6809             LDR      R1,[R1, #+0]
+   \   0000015E   0x6088             STR      R0,[R1, #+8]
+    743                *SSP_pu32SspApplicationFlagsISR |= _SSP_TX_COMPLETE; 
+   \   00000160   0x.... 0x....      LDR.W    R0,??DataTable17_25
+   \   00000164   0x6800             LDR      R0,[R0, #+0]
+   \   00000166   0x6800             LDR      R0,[R0, #+0]
+   \   00000168   0xF050 0x0002      ORRS     R0,R0,#0x2
+   \   0000016C   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   00000170   0x6809             LDR      R1,[R1, #+0]
+   \   00000172   0x6008             STR      R0,[R1, #+0]
+    744                SSP_psCurrentISR->fnSlaveTxFlowCallback();
+   \   00000174   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000178   0x6800             LDR      R0,[R0, #+0]
+   \   0000017A   0x6940             LDR      R0,[R0, #+20]
+   \   0000017C   0x4780             BLX      R0
+    745              }
+    746            } /* end AT91C_US_TXEMPTY */
+    747            
+    748            /* SSP ISR handling for Slave Rx with flow control (no DMA) */
+    749            if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_RXRDY) && 
+    750                (SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_RXRDY) )
+   \                     ??SspGenericHandler_2: (+1)
+   \   0000017E   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000182   0x6800             LDR      R0,[R0, #+0]
+   \   00000184   0x6800             LDR      R0,[R0, #+0]
+   \   00000186   0x6900             LDR      R0,[R0, #+16]
+   \   00000188   0x07C0             LSLS     R0,R0,#+31
+   \   0000018A   0xD537             BPL.N    ??SspGenericHandler_5
+   \   0000018C   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000190   0x6800             LDR      R0,[R0, #+0]
+   \   00000192   0x6800             LDR      R0,[R0, #+0]
+   \   00000194   0x6940             LDR      R0,[R0, #+20]
+   \   00000196   0x07C0             LSLS     R0,R0,#+31
+   \   00000198   0xD530             BPL.N    ??SspGenericHandler_5
+    751            {
+    752              /* Pull the byte out of the receive register into the Rx buffer */
+    753              u32Byte = 0x000000FF & SSP_psCurrentISR->pBaseAddress->US_RHR;
+   \   0000019A   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   0000019E   0x6800             LDR      R0,[R0, #+0]
+   \   000001A0   0x6800             LDR      R0,[R0, #+0]
+   \   000001A2   0x6980             LDR      R0,[R0, #+24]
+   \   000001A4   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   000001A6   0x0004             MOVS     R4,R0
+    754          
+    755              /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
+    756              if(SSP_psCurrentISR->BitOrder == LSB_FIRST)
+   \   000001A8   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000001AC   0x6800             LDR      R0,[R0, #+0]
+   \   000001AE   0x7B00             LDRB     R0,[R0, #+12]
+   \   000001B0   0x2801             CMP      R0,#+1
+   \   000001B2   0xD103             BNE.N    ??SspGenericHandler_6
+    757              {
+    758                u32Byte = __RBIT(u32Byte)>>24;
+   \   000001B4   0xFA94 0xF0A4      RBIT     R0,R4
+   \   000001B8   0x0E00             LSRS     R0,R0,#+24
+   \   000001BA   0x0004             MOVS     R4,R0
+    759              }
+    760              
+    761              /* DEBUG */
+    762              if((u8)u32Byte == 0xff)
+   \                     ??SspGenericHandler_6: (+1)
+   \   000001BC   0x0020             MOVS     R0,R4
+   \   000001BE   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   000001C0   0x28FF             CMP      R0,#+255
+   \   000001C2   0xD106             BNE.N    ??SspGenericHandler_7
+    763              {
+    764                SSP_u32AntCounter++;
+   \   000001C4   0x.... 0x....      LDR.W    R0,??DataTable17_31
+   \   000001C8   0x6800             LDR      R0,[R0, #+0]
+   \   000001CA   0x1C40             ADDS     R0,R0,#+1
+   \   000001CC   0x.... 0x....      LDR.W    R1,??DataTable17_31
+   \   000001D0   0x6008             STR      R0,[R1, #+0]
+    765              }
+    766              /* Send the byte to the Rx buffer; since we only do one byte at a time in this mode, then _SSP_RX_COMPLETE */
+    767              **(SSP_psCurrentISR->ppu8RxNextByte) = (u8)u32Byte;
+   \                     ??SspGenericHandler_7: (+1)
+   \   000001D2   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000001D6   0x6800             LDR      R0,[R0, #+0]
+   \   000001D8   0x6A00             LDR      R0,[R0, #+32]
+   \   000001DA   0x6800             LDR      R0,[R0, #+0]
+   \   000001DC   0x7004             STRB     R4,[R0, #+0]
+    768              *SSP_pu32SspApplicationFlagsISR |= _SSP_RX_COMPLETE;
+   \   000001DE   0x.... 0x....      LDR.W    R0,??DataTable17_25
+   \   000001E2   0x6800             LDR      R0,[R0, #+0]
+   \   000001E4   0x6800             LDR      R0,[R0, #+0]
+   \   000001E6   0xF050 0x0004      ORRS     R0,R0,#0x4
+   \   000001EA   0x.... 0x....      LDR.W    R1,??DataTable17_25
+   \   000001EE   0x6809             LDR      R1,[R1, #+0]
+   \   000001F0   0x6008             STR      R0,[R1, #+0]
+    769          
+    770              /* Invoke callback */
+    771              SSP_psCurrentISR->fnSlaveRxFlowCallback();
+   \   000001F2   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   000001F6   0x6800             LDR      R0,[R0, #+0]
+   \   000001F8   0x6980             LDR      R0,[R0, #+24]
+   \   000001FA   0x4780             BLX      R0
+    772            }
+    773          
+    774            
+    775            /*** SSP ISR responses for non-flow-control devices that use DMA (master or slave) ***/
+    776              
+    777            /* ENDRX Interrupt when all requested bytes have been received */
+    778            if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_ENDRX) && 
+    779                (u32Current_CSR & AT91C_US_ENDRX) )
+   \                     ??SspGenericHandler_5: (+1)
+   \   000001FC   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000200   0x6800             LDR      R0,[R0, #+0]
+   \   00000202   0x6800             LDR      R0,[R0, #+0]
+   \   00000204   0x6900             LDR      R0,[R0, #+16]
+   \   00000206   0x0700             LSLS     R0,R0,#+28
+   \   00000208   0xD562             BPL.N    ??SspGenericHandler_8
+   \   0000020A   0x0730             LSLS     R0,R6,#+28
+   \   0000020C   0xD560             BPL.N    ??SspGenericHandler_8
+    780            {
+    781              /* Master mode and Slave mode operate differently */
+    782              if(SSP_psCurrentISR->SpiMode == SPI_MASTER)
+   \   0000020E   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000212   0x6800             LDR      R0,[R0, #+0]
+   \   00000214   0x7B40             LDRB     R0,[R0, #+13]
+   \   00000216   0x2800             CMP      R0,#+0
+   \   00000218   0xD12B             BNE.N    ??SspGenericHandler_9
+    783              {
+    784                /* Update this message token status and then DeQueue it */
+    785                UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
+   \   0000021A   0x2104             MOVS     R1,#+4
+   \   0000021C   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   00000220   0x6800             LDR      R0,[R0, #+0]
+   \   00000222   0x6A80             LDR      R0,[R0, #+40]
+   \   00000224   0x6800             LDR      R0,[R0, #+0]
+   \   00000226   0x.... 0x....      BL       UpdateMessageStatus
+    786                DeQueueMessage( &SSP_psCurrentISR->psTransmitBuffer );
+   \   0000022A   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   0000022E   0x6800             LDR      R0,[R0, #+0]
+   \   00000230   0x3028             ADDS     R0,R0,#+40
+   \   00000232   0x.... 0x....      BL       DeQueueMessage
+    787                SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_RX;
+   \   00000236   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   0000023A   0x6800             LDR      R0,[R0, #+0]
+   \   0000023C   0x6900             LDR      R0,[R0, #+16]
+   \   0000023E   0xF430 0x0080      BICS     R0,R0,#0x400000
+   \   00000242   0x.... 0x....      LDR.W    R1,??DataTable17_23
+   \   00000246   0x6809             LDR      R1,[R1, #+0]
+   \   00000248   0x6108             STR      R0,[R1, #+16]
+    788              
+    789                /* Shut down hardware */
+    790                SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
+   \   0000024A   0x.... 0x....      LDR.W    R0,??DataTable17_23
+   \   0000024E   0x6800             LDR      R0,[R0, #+0]
+   \   00000250   0x6880             LDR      R0,[R0, #+8]
+   \   00000252   0x....             LDR.N    R1,??DataTable17_23
+   \   00000254   0x6809             LDR      R1,[R1, #+0]
+   \   00000256   0x6849             LDR      R1,[R1, #+4]
+   \   00000258   0x6308             STR      R0,[R1, #+48]
+    791                
+    792                /* Disable the receiver */
+    793                SSP_psCurrentISR->pBaseAddress->US_PTCR = AT91C_PDC_RXTDIS;
+   \   0000025A   0x2002             MOVS     R0,#+2
+   \   0000025C   0x....             LDR.N    R1,??DataTable17_23
+   \   0000025E   0x6809             LDR      R1,[R1, #+0]
+   \   00000260   0x6809             LDR      R1,[R1, #+0]
+   \   00000262   0xF8C1 0x0120      STR      R0,[R1, #+288]
+    794                SSP_psCurrentISR->pBaseAddress->US_IDR  = AT91C_US_ENDRX;
+   \   00000266   0x2008             MOVS     R0,#+8
+   \   00000268   0x....             LDR.N    R1,??DataTable17_23
+   \   0000026A   0x6809             LDR      R1,[R1, #+0]
+   \   0000026C   0x6809             LDR      R1,[R1, #+0]
+   \   0000026E   0x60C8             STR      R0,[R1, #+12]
+   \   00000270   0xE02E             B.N      ??SspGenericHandler_8
+    795              }
+    796              /* Otherwise the peripheral is a Slave that just received a byte */
+    797              /* ENDRX Interrupt when a byte has been received (RNCR is moved to RCR; RNPR is copied to RPR))*/
+    798              else
+    799              {
+    800                /* Flag that a byte has arrived */
+    801                *SSP_pu32SspApplicationFlagsISR |= _SSP_RX_COMPLETE;
+   \                     ??SspGenericHandler_9: (+1)
+   \   00000272   0x....             LDR.N    R0,??DataTable17_25
+   \   00000274   0x6800             LDR      R0,[R0, #+0]
+   \   00000276   0x6800             LDR      R0,[R0, #+0]
+   \   00000278   0xF050 0x0004      ORRS     R0,R0,#0x4
+   \   0000027C   0x....             LDR.N    R1,??DataTable17_25
+   \   0000027E   0x6809             LDR      R1,[R1, #+0]
+   \   00000280   0x6008             STR      R0,[R1, #+0]
+    802          
+    803                /* Update the pointer to the next valid Rx location (always leap-frogs the immediate next byte since it will be filled by the other DMA proces */
+    804                SSP_psCurrentISR->pBaseAddress->US_RNPR ++;
+   \   00000282   0x....             LDR.N    R0,??DataTable17_23
+   \   00000284   0x6800             LDR      R0,[R0, #+0]
+   \   00000286   0x6800             LDR      R0,[R0, #+0]
+   \   00000288   0xF8D0 0x0110      LDR      R0,[R0, #+272]
+   \   0000028C   0x1C40             ADDS     R0,R0,#+1
+   \   0000028E   0x....             LDR.N    R1,??DataTable17_23
+   \   00000290   0x6809             LDR      R1,[R1, #+0]
+   \   00000292   0x6809             LDR      R1,[R1, #+0]
+   \   00000294   0xF8C1 0x0110      STR      R0,[R1, #+272]
+    805                if(SSP_psCurrentISR->pBaseAddress->US_RPR == (u32)(SSP_psCurrentISR->pu8RxBuffer + (u32)SSP_psCurrentISR->u16RxBufferSize) )
+   \   00000298   0x....             LDR.N    R0,??DataTable17_23
+   \   0000029A   0x6800             LDR      R0,[R0, #+0]
+   \   0000029C   0x6800             LDR      R0,[R0, #+0]
+   \   0000029E   0xF8D0 0x0100      LDR      R0,[R0, #+256]
+   \   000002A2   0x....             LDR.N    R1,??DataTable17_23
+   \   000002A4   0x6809             LDR      R1,[R1, #+0]
+   \   000002A6   0x69C9             LDR      R1,[R1, #+28]
+   \   000002A8   0x....             LDR.N    R2,??DataTable17_23
+   \   000002AA   0x6812             LDR      R2,[R2, #+0]
+   \   000002AC   0x8C92             LDRH     R2,[R2, #+36]
+   \   000002AE   0x1851             ADDS     R1,R2,R1
+   \   000002B0   0x4288             CMP      R0,R1
+   \   000002B2   0xD107             BNE.N    ??SspGenericHandler_10
+    806                {
+    807                  SSP_psCurrentISR->pBaseAddress->US_RPR = (u32)SSP_psCurrentISR->pu8RxBuffer;  /* !!!!! CHECK */
+   \   000002B4   0x....             LDR.N    R0,??DataTable17_23
+   \   000002B6   0x6800             LDR      R0,[R0, #+0]
+   \   000002B8   0x69C0             LDR      R0,[R0, #+28]
+   \   000002BA   0x....             LDR.N    R1,??DataTable17_23
+   \   000002BC   0x6809             LDR      R1,[R1, #+0]
+   \   000002BE   0x6809             LDR      R1,[R1, #+0]
+   \   000002C0   0xF8C1 0x0100      STR      R0,[R1, #+256]
+    808                }
+    809                
+    810                /* Write RNCR to 1 to clear the ENDRX flag */
+    811                SSP_psCurrentISR->pBaseAddress->US_RNCR = 1;
+   \                     ??SspGenericHandler_10: (+1)
+   \   000002C4   0x2001             MOVS     R0,#+1
+   \   000002C6   0x....             LDR.N    R1,??DataTable17_23
+   \   000002C8   0x6809             LDR      R1,[R1, #+0]
+   \   000002CA   0x6809             LDR      R1,[R1, #+0]
+   \   000002CC   0xF8C1 0x0114      STR      R0,[R1, #+276]
+    812              }  
+    813            } /* end ENDRX handling */
+    814          
+    815          
+    816            /* ENDTX Interrupt when all requested transmit bytes have been sent (if enabled) */
+    817            if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_ENDTX) && 
+    818                (u32Current_CSR & AT91C_US_ENDTX) )
+   \                     ??SspGenericHandler_8: (+1)
+   \   000002D0   0x....             LDR.N    R0,??DataTable17_23
+   \   000002D2   0x6800             LDR      R0,[R0, #+0]
+   \   000002D4   0x6800             LDR      R0,[R0, #+0]
+   \   000002D6   0x6900             LDR      R0,[R0, #+16]
+   \   000002D8   0x06C0             LSLS     R0,R0,#+27
+   \   000002DA   0xD539             BPL.N    ??SspGenericHandler_11
+   \   000002DC   0x06F0             LSLS     R0,R6,#+27
+   \   000002DE   0xD537             BPL.N    ??SspGenericHandler_11
+    819            {
+    820              /* Update this message token status and then DeQueue it */
+    821              UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
+   \   000002E0   0x2104             MOVS     R1,#+4
+   \   000002E2   0x....             LDR.N    R0,??DataTable17_23
+   \   000002E4   0x6800             LDR      R0,[R0, #+0]
+   \   000002E6   0x6A80             LDR      R0,[R0, #+40]
+   \   000002E8   0x6800             LDR      R0,[R0, #+0]
+   \   000002EA   0x.... 0x....      BL       UpdateMessageStatus
+    822              DeQueueMessage( &SSP_psCurrentISR->psTransmitBuffer );
+   \   000002EE   0x....             LDR.N    R0,??DataTable17_23
+   \   000002F0   0x6800             LDR      R0,[R0, #+0]
+   \   000002F2   0x3028             ADDS     R0,R0,#+40
+   \   000002F4   0x.... 0x....      BL       DeQueueMessage
+    823              SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_TX;
+   \   000002F8   0x....             LDR.N    R0,??DataTable17_23
+   \   000002FA   0x6800             LDR      R0,[R0, #+0]
+   \   000002FC   0x6900             LDR      R0,[R0, #+16]
+   \   000002FE   0xF430 0x1000      BICS     R0,R0,#0x200000
+   \   00000302   0x....             LDR.N    R1,??DataTable17_23
+   \   00000304   0x6809             LDR      R1,[R1, #+0]
+   \   00000306   0x6108             STR      R0,[R1, #+16]
+    824                  
+    825              /* Disable the transmitter and interrupt source */
+    826              SSP_psCurrentISR->pBaseAddress->US_PTCR = AT91C_PDC_TXTDIS;
+   \   00000308   0xF44F 0x7000      MOV      R0,#+512
+   \   0000030C   0x....             LDR.N    R1,??DataTable17_23
+   \   0000030E   0x6809             LDR      R1,[R1, #+0]
+   \   00000310   0x6809             LDR      R1,[R1, #+0]
+   \   00000312   0xF8C1 0x0120      STR      R0,[R1, #+288]
+    827              SSP_psCurrentISR->pBaseAddress->US_IDR  = AT91C_US_ENDTX;
+   \   00000316   0x2010             MOVS     R0,#+16
+   \   00000318   0x....             LDR.N    R1,??DataTable17_23
+   \   0000031A   0x6809             LDR      R1,[R1, #+0]
+   \   0000031C   0x6809             LDR      R1,[R1, #+0]
+   \   0000031E   0x60C8             STR      R0,[R1, #+12]
+    828          
+    829              /* Allow the peripheral to finish clocking out the Tx byte */
+    830              u32Timeout = 0;
+   \   00000320   0x2000             MOVS     R0,#+0
+   \   00000322   0x0005             MOVS     R5,R0
+    831              while ( !(SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_TXEMPTY) && 
+    832                      u32Timeout < SSP_TXEMPTY_TIMEOUT)
+   \                     ??SspGenericHandler_12: (+1)
+   \   00000324   0x....             LDR.N    R0,??DataTable17_23
+   \   00000326   0x6800             LDR      R0,[R0, #+0]
+   \   00000328   0x6800             LDR      R0,[R0, #+0]
+   \   0000032A   0x6940             LDR      R0,[R0, #+20]
+   \   0000032C   0x0580             LSLS     R0,R0,#+22
+   \   0000032E   0xD403             BMI.N    ??SspGenericHandler_13
+   \   00000330   0x2D64             CMP      R5,#+100
+   \   00000332   0xD201             BCS.N    ??SspGenericHandler_13
+    833              {
+    834                u32Timeout++;
+   \   00000334   0x1C6D             ADDS     R5,R5,#+1
+   \   00000336   0xE7F5             B.N      ??SspGenericHandler_12
+    835              } 
+    836              
+    837              if(SSP_psCurrentISR->SpiMode == SPI_MASTER)
+   \                     ??SspGenericHandler_13: (+1)
+   \   00000338   0x....             LDR.N    R0,??DataTable17_23
+   \   0000033A   0x6800             LDR      R0,[R0, #+0]
+   \   0000033C   0x7B40             LDRB     R0,[R0, #+13]
+   \   0000033E   0x2800             CMP      R0,#+0
+   \   00000340   0xD106             BNE.N    ??SspGenericHandler_11
+    838              {
+    839                /* Deassert chip select when the buffer and shift register are totally empty */
+    840                SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
+   \   00000342   0x....             LDR.N    R0,??DataTable17_23
+   \   00000344   0x6800             LDR      R0,[R0, #+0]
+   \   00000346   0x6880             LDR      R0,[R0, #+8]
+   \   00000348   0x....             LDR.N    R1,??DataTable17_23
+   \   0000034A   0x6809             LDR      R1,[R1, #+0]
+   \   0000034C   0x6849             LDR      R1,[R1, #+4]
+   \   0000034E   0x6308             STR      R0,[R1, #+48]
+    841              }
+    842            } /* end ENDTX interrupt handling */
+    843          
+    844            
+    845          } /* end SspGenericHandler() */
+   \                     ??SspGenericHandler_11: (+1)
+   \   00000350   0xBD70             POP      {R4-R6,PC}       ;; return
+    846          
+    847          
+    848          /***********************************************************************************************************************
+    849          State Machine Function Definitions
+    850          
+    851          The SSP state machine monitors messaging activity on the available SSP Master peripherals.  It manages all SSP outgoing messages and will
+    852          transmit any message that has been queued.  All configured SSP peripherals can be transmitting and receiving
+    853          simultaneously.
+    854          
+    855          ***********************************************************************************************************************/
+    856          
+    857          /*-------------------------------------------------------------------------------------------------------------------*/
+    858          /* Wait for a transmit message to be queued -- this can include a dummy transmission to receive bytes.
+    859          Half duplex transmissions are always assumed. Check one peripheral per iteration. */
+
+   \                                 In section .text, align 4, keep-with-next
+    860          void SspSM_Idle(void)
+    861          {
+   \                     SspSM_Idle: (+1)
+   \   00000000   0xB510             PUSH     {R4,LR}
+    862           static u8 au8SspErrorInvalidSsp[] = "Invalid SSP attempt\r\n";
+    863           u32 u32Byte;
+    864            
+    865            /* Check all SPI/SSP peripherals for message activity or skip the current peripheral if it is already busy.
+    866            Slave devices receive outside of the state machine
+    867            For SSP SPI Master mode, the peripheral will have a message queued regardless of whether the intent is send or receive.
+    868            For Master devices sending a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to the application transmit buffer
+    869            For Master devices receiving a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to SSP_au8Dummies */
+    870            if( (SSP_psCurrentSsp->psTransmitBuffer != NULL) && 
+    871               !(SSP_psCurrentSsp->u32PrivateFlags & (_SSP_PERIPHERAL_TX | _SSP_PERIPHERAL_RX) ) )
+   \   00000002   0x....             LDR.N    R0,??DataTable17_18
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0x6A80             LDR      R0,[R0, #+40]
+   \   00000008   0x2800             CMP      R0,#+0
+   \   0000000A   0xF000 0x80B5      BEQ.W    ??SspSM_Idle_0
+   \   0000000E   0x....             LDR.N    R0,??DataTable17_18
+   \   00000010   0x6800             LDR      R0,[R0, #+0]
+   \   00000012   0x6900             LDR      R0,[R0, #+16]
+   \   00000014   0xF410 0x0FC0      TST      R0,#0x600000
+   \   00000018   0xF040 0x80AE      BNE.W    ??SspSM_Idle_0
+    872            {
+    873              /* For a Master device, start by asserting chip select */
+    874              if(SSP_psCurrentSsp->SpiMode == SPI_MASTER)
+   \   0000001C   0x....             LDR.N    R0,??DataTable17_18
+   \   0000001E   0x6800             LDR      R0,[R0, #+0]
+   \   00000020   0x7B40             LDRB     R0,[R0, #+13]
+   \   00000022   0x2800             CMP      R0,#+0
+   \   00000024   0xD106             BNE.N    ??SspSM_Idle_1
+    875              {
+    876                SSP_psCurrentSsp->pCsGpioAddress->PIO_CODR = SSP_psCurrentSsp->u32CsPin;
+   \   00000026   0x....             LDR.N    R0,??DataTable17_18
+   \   00000028   0x6800             LDR      R0,[R0, #+0]
+   \   0000002A   0x6880             LDR      R0,[R0, #+8]
+   \   0000002C   0x....             LDR.N    R1,??DataTable17_18
+   \   0000002E   0x6809             LDR      R1,[R1, #+0]
+   \   00000030   0x6849             LDR      R1,[R1, #+4]
+   \   00000032   0x6348             STR      R0,[R1, #+52]
+    877              }
+    878                 
+    879              /* Check if the message is receiving based on what psTransmitBuffer is pointing to */
+    880              if(SSP_psCurrentSsp->psTransmitBuffer->pu8Message == &SSP_au8Dummies[0])
+   \                     ??SspSM_Idle_1: (+1)
+   \   00000034   0x....             LDR.N    R0,??DataTable17_18
+   \   00000036   0x6800             LDR      R0,[R0, #+0]
+   \   00000038   0x6A80             LDR      R0,[R0, #+40]
+   \   0000003A   0x3008             ADDS     R0,R0,#+8
+   \   0000003C   0x....             LDR.N    R1,??DataTable17_13
+   \   0000003E   0x4288             CMP      R0,R1
+   \   00000040   0xD12C             BNE.N    ??SspSM_Idle_2
+    881              {
+    882                /* Receiving: update the message's status and flag that the peripheral is now busy */
+    883                UpdateMessageStatus(SSP_psCurrentSsp->psTransmitBuffer->u32Token, RECEIVING);
+   \   00000042   0x2103             MOVS     R1,#+3
+   \   00000044   0x....             LDR.N    R0,??DataTable17_18
+   \   00000046   0x6800             LDR      R0,[R0, #+0]
+   \   00000048   0x6A80             LDR      R0,[R0, #+40]
+   \   0000004A   0x6800             LDR      R0,[R0, #+0]
+   \   0000004C   0x.... 0x....      BL       UpdateMessageStatus
+    884                SSP_psCurrentSsp->u32PrivateFlags |= _SSP_PERIPHERAL_RX;    
+   \   00000050   0x....             LDR.N    R0,??DataTable17_18
+   \   00000052   0x6800             LDR      R0,[R0, #+0]
+   \   00000054   0x6900             LDR      R0,[R0, #+16]
+   \   00000056   0xF450 0x0080      ORRS     R0,R0,#0x400000
+   \   0000005A   0x....             LDR.N    R1,??DataTable17_18
+   \   0000005C   0x6809             LDR      R1,[R1, #+0]
+   \   0000005E   0x6108             STR      R0,[R1, #+16]
+    885                
+    886                /* Load the PDC counter and pointer registers */
+    887                SSP_psCurrentSsp->pBaseAddress->US_RPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
+   \   00000060   0x....             LDR.N    R0,??DataTable17_18
+   \   00000062   0x6800             LDR      R0,[R0, #+0]
+   \   00000064   0x6A80             LDR      R0,[R0, #+40]
+   \   00000066   0x3008             ADDS     R0,R0,#+8
+   \   00000068   0x....             LDR.N    R1,??DataTable17_18
+   \   0000006A   0x6809             LDR      R1,[R1, #+0]
+   \   0000006C   0x6809             LDR      R1,[R1, #+0]
+   \   0000006E   0xF8C1 0x0100      STR      R0,[R1, #+256]
+    888                SSP_psCurrentSsp->pBaseAddress->US_RCR = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
+   \   00000072   0x....             LDR.N    R0,??DataTable17_18
+   \   00000074   0x6800             LDR      R0,[R0, #+0]
+   \   00000076   0x6A80             LDR      R0,[R0, #+40]
+   \   00000078   0x6840             LDR      R0,[R0, #+4]
+   \   0000007A   0x....             LDR.N    R1,??DataTable17_18
+   \   0000007C   0x6809             LDR      R1,[R1, #+0]
+   \   0000007E   0x6809             LDR      R1,[R1, #+0]
+   \   00000080   0xF8C1 0x0104      STR      R0,[R1, #+260]
+    889                
+    890                /* When RCR is loaded, the ENDRX flag is cleared so it is safe to enable the interrupt */
+    891                SSP_psCurrentSsp->pBaseAddress->US_IER = AT91C_US_ENDRX;
+   \   00000084   0x2008             MOVS     R0,#+8
+   \   00000086   0x....             LDR.N    R1,??DataTable17_18
+   \   00000088   0x6809             LDR      R1,[R1, #+0]
+   \   0000008A   0x6809             LDR      R1,[R1, #+0]
+   \   0000008C   0x6088             STR      R0,[R1, #+8]
+    892                
+    893                /* Enable the receiver to start the transfer */
+    894                SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN;
+   \   0000008E   0x2001             MOVS     R0,#+1
+   \   00000090   0x....             LDR.N    R1,??DataTable17_18
+   \   00000092   0x6809             LDR      R1,[R1, #+0]
+   \   00000094   0x6809             LDR      R1,[R1, #+0]
+   \   00000096   0xF8C1 0x0120      STR      R0,[R1, #+288]
+   \   0000009A   0xE06D             B.N      ??SspSM_Idle_0
+    895              }
+    896              else
+    897              {
+    898                /* Transmitting: update the message's status and flag that the peripheral is now busy */
+    899                UpdateMessageStatus(SSP_psCurrentSsp->psTransmitBuffer->u32Token, SENDING);
+   \                     ??SspSM_Idle_2: (+1)
+   \   0000009C   0x2102             MOVS     R1,#+2
+   \   0000009E   0x....             LDR.N    R0,??DataTable17_18
+   \   000000A0   0x6800             LDR      R0,[R0, #+0]
+   \   000000A2   0x6A80             LDR      R0,[R0, #+40]
+   \   000000A4   0x6800             LDR      R0,[R0, #+0]
+   \   000000A6   0x.... 0x....      BL       UpdateMessageStatus
+    900                SSP_psCurrentSsp->u32PrivateFlags |= _SSP_PERIPHERAL_TX;    
+   \   000000AA   0x....             LDR.N    R0,??DataTable17_18
+   \   000000AC   0x6800             LDR      R0,[R0, #+0]
+   \   000000AE   0x6900             LDR      R0,[R0, #+16]
+   \   000000B0   0xF450 0x1000      ORRS     R0,R0,#0x200000
+   \   000000B4   0x....             LDR.N    R1,??DataTable17_18
+   \   000000B6   0x6809             LDR      R1,[R1, #+0]
+   \   000000B8   0x6108             STR      R0,[R1, #+16]
+    901                
+    902                /* A Slave device with flow control uses interrupt-driven single byte transfers */
+    903                if(SSP_psCurrentSsp->SpiMode == SPI_SLAVE_FLOW_CONTROL)
+   \   000000BA   0x....             LDR.N    R0,??DataTable17_18
+   \   000000BC   0x6800             LDR      R0,[R0, #+0]
+   \   000000BE   0x7B40             LDRB     R0,[R0, #+13]
+   \   000000C0   0x2802             CMP      R0,#+2
+   \   000000C2   0xD13B             BNE.N    ??SspSM_Idle_3
+    904                {
+    905                  /* At this point, CS is asserted and the master is waiting for flow control.
+    906                  Load in the message parameters. */
+    907                  SSP_psCurrentSsp->u32CurrentTxBytesRemaining = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
+   \   000000C4   0x....             LDR.N    R0,??DataTable17_18
+   \   000000C6   0x6800             LDR      R0,[R0, #+0]
+   \   000000C8   0x6A80             LDR      R0,[R0, #+40]
+   \   000000CA   0x6840             LDR      R0,[R0, #+4]
+   \   000000CC   0x....             LDR.N    R1,??DataTable17_18
+   \   000000CE   0x6809             LDR      R1,[R1, #+0]
+   \   000000D0   0x62C8             STR      R0,[R1, #+44]
+    908                  SSP_psCurrentSsp->pu8CurrentTxData = SSP_psCurrentSsp->psTransmitBuffer->pu8Message;
+   \   000000D2   0x....             LDR.N    R0,??DataTable17_18
+   \   000000D4   0x6800             LDR      R0,[R0, #+0]
+   \   000000D6   0x6A80             LDR      R0,[R0, #+40]
+   \   000000D8   0x3008             ADDS     R0,R0,#+8
+   \   000000DA   0x....             LDR.N    R1,??DataTable17_18
+   \   000000DC   0x6809             LDR      R1,[R1, #+0]
+   \   000000DE   0x6308             STR      R0,[R1, #+48]
+    909          
+    910                  /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
+    911                  u32Byte = 0x000000FF & *SSP_psCurrentSsp->pu8CurrentTxData;
+   \   000000E0   0x....             LDR.N    R0,??DataTable17_18
+   \   000000E2   0x6800             LDR      R0,[R0, #+0]
+   \   000000E4   0x6B00             LDR      R0,[R0, #+48]
+   \   000000E6   0x7800             LDRB     R0,[R0, #+0]
+   \   000000E8   0x0004             MOVS     R4,R0
+    912                  if(SSP_psCurrentSsp->BitOrder == LSB_FIRST)
+   \   000000EA   0x....             LDR.N    R0,??DataTable17_18
+   \   000000EC   0x6800             LDR      R0,[R0, #+0]
+   \   000000EE   0x7B00             LDRB     R0,[R0, #+12]
+   \   000000F0   0x2801             CMP      R0,#+1
+   \   000000F2   0xD103             BNE.N    ??SspSM_Idle_4
+    913                  {
+    914                    u32Byte = __RBIT(u32Byte)>>24;
+   \   000000F4   0xFA94 0xF0A4      RBIT     R0,R4
+   \   000000F8   0x0E00             LSRS     R0,R0,#+24
+   \   000000FA   0x0004             MOVS     R4,R0
+    915                  }
+    916                  
+    917                  /* Reset the transmitter since we have not been managing dummy bytes and it tends to be
+    918                  in the middle of a transmission or something that causes the wrong byte to get sent (at least on startup). */
+    919                  SSP_psCurrentSsp->pBaseAddress->US_CR = (AT91C_US_RSTTX);
+   \                     ??SspSM_Idle_4: (+1)
+   \   000000FC   0x2008             MOVS     R0,#+8
+   \   000000FE   0x....             LDR.N    R1,??DataTable17_18
+   \   00000100   0x6809             LDR      R1,[R1, #+0]
+   \   00000102   0x6809             LDR      R1,[R1, #+0]
+   \   00000104   0x6008             STR      R0,[R1, #+0]
+    920                  SSP_psCurrentSsp->pBaseAddress->US_CR = (AT91C_US_TXEN);
+   \   00000106   0x2040             MOVS     R0,#+64
+   \   00000108   0x....             LDR.N    R1,??DataTable17_18
+   \   0000010A   0x6809             LDR      R1,[R1, #+0]
+   \   0000010C   0x6809             LDR      R1,[R1, #+0]
+   \   0000010E   0x6008             STR      R0,[R1, #+0]
+    921                  SSP_psCurrentSsp->pBaseAddress->US_THR = (u8)u32Byte;
+   \   00000110   0x0020             MOVS     R0,R4
+   \   00000112   0xB2C0             UXTB     R0,R0            ;; ZeroExt  R0,R0,#+24,#+24
+   \   00000114   0x....             LDR.N    R1,??DataTable17_18
+   \   00000116   0x6809             LDR      R1,[R1, #+0]
+   \   00000118   0x6809             LDR      R1,[R1, #+0]
+   \   0000011A   0x61C8             STR      R0,[R1, #+28]
+    922                  SSP_psCurrentSsp->pBaseAddress->US_IDR = AT91C_US_RXRDY;
+   \   0000011C   0x2001             MOVS     R0,#+1
+   \   0000011E   0x....             LDR.N    R1,??DataTable17_18
+   \   00000120   0x6809             LDR      R1,[R1, #+0]
+   \   00000122   0x6809             LDR      R1,[R1, #+0]
+   \   00000124   0x60C8             STR      R0,[R1, #+12]
+    923                  SSP_psCurrentSsp->pBaseAddress->US_IER = AT91C_US_TXEMPTY;
+   \   00000126   0xF44F 0x7000      MOV      R0,#+512
+   \   0000012A   0x....             LDR.N    R1,??DataTable17_18
+   \   0000012C   0x6809             LDR      R1,[R1, #+0]
+   \   0000012E   0x6809             LDR      R1,[R1, #+0]
+   \   00000130   0x6088             STR      R0,[R1, #+8]
+    924                  SSP_psCurrentSsp->fnSlaveTxFlowCallback();
+   \   00000132   0x....             LDR.N    R0,??DataTable17_18
+   \   00000134   0x6800             LDR      R0,[R0, #+0]
+   \   00000136   0x6940             LDR      R0,[R0, #+20]
+   \   00000138   0x4780             BLX      R0
+   \   0000013A   0xE01D             B.N      ??SspSM_Idle_0
+    925                }
+    926                /* A Master or Slave device without flow control uses the PDC */
+    927                else
+    928                {
+    929                  /* Load the PDC counter and pointer registers */
+    930                  SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
+   \                     ??SspSM_Idle_3: (+1)
+   \   0000013C   0x....             LDR.N    R0,??DataTable17_18
+   \   0000013E   0x6800             LDR      R0,[R0, #+0]
+   \   00000140   0x6A80             LDR      R0,[R0, #+40]
+   \   00000142   0x3008             ADDS     R0,R0,#+8
+   \   00000144   0x....             LDR.N    R1,??DataTable17_18
+   \   00000146   0x6809             LDR      R1,[R1, #+0]
+   \   00000148   0x6809             LDR      R1,[R1, #+0]
+   \   0000014A   0xF8C1 0x0108      STR      R0,[R1, #+264]
+    931                  SSP_psCurrentSsp->pBaseAddress->US_TCR = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
+   \   0000014E   0x....             LDR.N    R0,??DataTable17_18
+   \   00000150   0x6800             LDR      R0,[R0, #+0]
+   \   00000152   0x6A80             LDR      R0,[R0, #+40]
+   \   00000154   0x6840             LDR      R0,[R0, #+4]
+   \   00000156   0x....             LDR.N    R1,??DataTable17_18
+   \   00000158   0x6809             LDR      R1,[R1, #+0]
+   \   0000015A   0x6809             LDR      R1,[R1, #+0]
+   \   0000015C   0xF8C1 0x010C      STR      R0,[R1, #+268]
+    932             
+    933                  /* When TCR is loaded, the ENDTX flag is cleared so it is safe to enable the interrupt */
+    934                  SSP_psCurrentSsp->pBaseAddress->US_IER = AT91C_US_ENDTX;
+   \   00000160   0x2010             MOVS     R0,#+16
+   \   00000162   0x....             LDR.N    R1,??DataTable17_18
+   \   00000164   0x6809             LDR      R1,[R1, #+0]
+   \   00000166   0x6809             LDR      R1,[R1, #+0]
+   \   00000168   0x6088             STR      R0,[R1, #+8]
+    935                  
+    936                  /* Enable the transmitter to start the transfer */
+    937                  SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_TXTEN;
+   \   0000016A   0xF44F 0x7080      MOV      R0,#+256
+   \   0000016E   0x....             LDR.N    R1,??DataTable17_18
+   \   00000170   0x6809             LDR      R1,[R1, #+0]
+   \   00000172   0x6809             LDR      R1,[R1, #+0]
+   \   00000174   0xF8C1 0x0120      STR      R0,[R1, #+288]
+    938                }
+    939              }
+    940            }
+    941            
+    942            /* Adjust to check the next peripheral next time through */
+    943            switch (SSP_psCurrentSsp->u8PeripheralId)
+   \                     ??SspSM_Idle_0: (+1)
+   \   00000178   0x....             LDR.N    R0,??DataTable17_18
+   \   0000017A   0x6800             LDR      R0,[R0, #+0]
+   \   0000017C   0xF890 0x0026      LDRB     R0,[R0, #+38]
+   \   00000180   0x280D             CMP      R0,#+13
+   \   00000182   0xD004             BEQ.N    ??SspSM_Idle_5
+   \   00000184   0xD315             BCC.N    ??SspSM_Idle_6
+   \   00000186   0x280F             CMP      R0,#+15
+   \   00000188   0xD009             BEQ.N    ??SspSM_Idle_7
+   \   0000018A   0xD304             BCC.N    ??SspSM_Idle_8
+   \   0000018C   0xE011             B.N      ??SspSM_Idle_6
+    944            {
+    945              case AT91C_ID_US0:
+    946                SSP_psCurrentSsp = &SSP_Peripheral1;
+   \                     ??SspSM_Idle_5: (+1)
+   \   0000018E   0x....             LDR.N    R0,??DataTable17_5
+   \   00000190   0x....             LDR.N    R1,??DataTable17_18
+   \   00000192   0x6008             STR      R0,[R1, #+0]
+    947                break;
+   \   00000194   0xE013             B.N      ??SspSM_Idle_9
+    948          
+    949              case AT91C_ID_US1:
+    950                SSP_psCurrentSsp = &SSP_Peripheral2;
+   \                     ??SspSM_Idle_8: (+1)
+   \   00000196   0x....             LDR.N    R0,??DataTable17_7
+   \   00000198   0x....             LDR.N    R1,??DataTable17_18
+   \   0000019A   0x6008             STR      R0,[R1, #+0]
+    951                break;
+   \   0000019C   0xE00F             B.N      ??SspSM_Idle_9
+    952          
+    953              case AT91C_ID_US2:
+    954                SSP_psCurrentSsp = &SSP_Peripheral0;
+   \                     ??SspSM_Idle_7: (+1)
+   \   0000019E   0x....             LDR.N    R0,??DataTable17_3
+   \   000001A0   0x....             LDR.N    R1,??DataTable17_18
+   \   000001A2   0x6008             STR      R0,[R1, #+0]
+    955                SSP_u32Flags &= ~_SSP_MANUAL_MODE;
+   \   000001A4   0x....             LDR.N    R0,??DataTable17_20
+   \   000001A6   0x6800             LDR      R0,[R0, #+0]
+   \   000001A8   0x0840             LSRS     R0,R0,#+1
+   \   000001AA   0x0040             LSLS     R0,R0,#+1
+   \   000001AC   0x....             LDR.N    R1,??DataTable17_20
+   \   000001AE   0x6008             STR      R0,[R1, #+0]
+    956                break;
+   \   000001B0   0xE005             B.N      ??SspSM_Idle_9
+    957          
+    958              default:
+    959                DebugPrintf(au8SspErrorInvalidSsp);
+   \                     ??SspSM_Idle_6: (+1)
+   \   000001B2   0x....             LDR.N    R0,??DataTable17_32
+   \   000001B4   0x.... 0x....      BL       DebugPrintf
+    960                SSP_psCurrentSsp = &SSP_Peripheral0;
+   \   000001B8   0x....             LDR.N    R0,??DataTable17_3
+   \   000001BA   0x....             LDR.N    R1,??DataTable17_18
+   \   000001BC   0x6008             STR      R0,[R1, #+0]
+    961                break;
+    962            } /* end switch */
+    963            
+    964          } /* end SspSM_Idle() */
+   \                     ??SspSM_Idle_9: (+1)
+   \   000001BE   0xBD10             POP      {R4,PC}          ;; return
+
+   \                                 In section .data, align 4
+   \                     ??au8SspErrorInvalidSsp:
+   \   00000000   0x49 0x6E          DC8 "Invalid SSP attempt\015\012"
+   \              0x76 0x61    
+   \              0x6C 0x69    
+   \              0x64 0x20    
+   \              0x53 0x53    
+   \              0x50 0x20    
+   \              0x61 0x74    
+   \              0x74 0x65    
+   \              0x6D 0x70    
+   \              0x74 0x0D    
+   \              0x0A 0x00    
+   \   00000016   0x00 0x00          DC8 0, 0
+    965          
+    966          
+    967          /*-------------------------------------------------------------------------------------------------------------------*/
+    968          /* Handle an error (!!!!!FUTURE) */
+
+   \                                 In section .text, align 2, keep-with-next
+    969          void SspSM_Error(void)          
+    970          {
+    971            Ssp_pfnStateMachine = SspSM_Idle;
+   \                     SspSM_Error: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable17_33
+   \   00000002   0x....             LDR.N    R1,??DataTable17_11
+   \   00000004   0x6008             STR      R0,[R1, #+0]
+    972            
+    973          } /* end SspSM_Error() */
+   \   00000006   0x4770             BX       LR               ;; return
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17:
+   \   00000000   0xE000E100         DC32     0xe000e100
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_1:
+   \   00000000   0xE000E180         DC32     0xe000e180
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_2:
+   \   00000000   0xE000E280         DC32     0xe000e280
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_3:
+   \   00000000   0x........         DC32     SSP_Peripheral0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_4:
+   \   00000000   0x004008C0         DC32     0x4008c0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_5:
+   \   00000000   0x........         DC32     SSP_Peripheral1
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_6:
+   \   00000000   0x004518CE         DC32     0x4518ce
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_7:
+   \   00000000   0x........         DC32     SSP_Peripheral2
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_8:
+   \   00000000   0x004118FF         DC32     0x4118ff
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_9:
+   \   00000000   0x400E0410         DC32     0x400e0410
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_10:
+   \   00000000   0x00080001         DC32     0x80001
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_11:
+   \   00000000   0x........         DC32     Ssp_pfnStateMachine
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_12:
+   \   00000000   0x........         DC32     G_u32SystemFlags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_13:
+   \   00000000   0x........         DC32     SSP_au8Dummies
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_14:
+   \   00000000   0x........         DC32     ?_0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_15:
+   \   00000000   0x40090000         DC32     0x40090000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_16:
+   \   00000000   0x40094000         DC32     0x40094000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_17:
+   \   00000000   0x40098000         DC32     0x40098000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_18:
+   \   00000000   0x........         DC32     SSP_psCurrentSsp
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_19:
+   \   00000000   0x........         DC32     ??au8SspStartupMessage
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_20:
+   \   00000000   0x........         DC32     SSP_u32Flags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_21:
+   \   00000000   0x........         DC32     G_u32SystemTime1ms
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_22:
+   \   00000000   0x........         DC32     SSP_u32Timer
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_23:
+   \   00000000   0x........         DC32     SSP_psCurrentISR
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_24:
+   \   00000000   0x........         DC32     G_u32Ssp0ApplicationFlags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_25:
+   \   00000000   0x........         DC32     SSP_pu32SspApplicationFlagsISR
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_26:
+   \   00000000   0x........         DC32     SSP_u32Int0Count
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_27:
+   \   00000000   0x........         DC32     G_u32Ssp1ApplicationFlags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_28:
+   \   00000000   0x........         DC32     SSP_u32Int1Count
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_29:
+   \   00000000   0x........         DC32     G_u32Ssp2ApplicationFlags
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_30:
+   \   00000000   0x........         DC32     SSP_u32Int2Count
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_31:
+   \   00000000   0x........         DC32     SSP_u32AntCounter
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_32:
+   \   00000000   0x........         DC32     ??au8SspErrorInvalidSsp
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable17_33:
+   \   00000000   0x........         DC32     SspSM_Idle
+
+   \                                 In section .rodata, align 4
+   \                     ?_0:
+   \   00000000   0x0D 0x0A          DC8 "\015\012SSP message to large\012\015"
+   \              0x53 0x53    
+   \              0x50 0x20    
+   \              0x6D 0x65    
+   \              0x73 0x73    
+   \              0x61 0x67    
+   \              0x65 0x20    
+   \              0x74 0x6F    
+   \              0x20 0x6C    
+   \              0x61 0x72    
+   \              0x67 0x65    
+   \              0x0A 0x0D    
+   \              0x00         
+   \   00000019   0x00 0x00          DC8 0, 0, 0
+   \              0x00         
+    974          
+    975                  
+    976          /*--------------------------------------------------------------------------------------------------------------------*/
+    977          /* End of File */
+    978          /*--------------------------------------------------------------------------------------------------------------------*/
+    979          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   NVIC_ClearPendingIRQ
+       0   NVIC_DisableIRQ
+       0   NVIC_EnableIRQ
+       8   SSP0_IRQHandler
+         8   -> SspGenericHandler
+      16   SspGenericHandler
+        16   -- Indirect call
+        16   -> DeQueueMessage
+        16   -> UpdateMessageStatus
+      16   SspInitialize
+        16   -> DebugPrintf
+        16   -> __aeabi_memset
+       8   SspManualMode
+         8   -- Indirect call
+         8   -> IsTimeUp
+       8   SspReadByte
+         8   -> QueueMessage
+      40   SspReadData
+        40   -> DebugPrintf
+        40   -> QueueMessage
+        40   -> __aeabi_memcpy
+       8   SspRelease
+         8   -> DeQueueMessage
+         8   -> NVIC_ClearPendingIRQ
+         8   -> NVIC_DisableIRQ
+         8   -> UpdateMessageStatus
+      32   SspRequest
+        32   -> NVIC_ClearPendingIRQ
+        32   -> NVIC_EnableIRQ
+       8   SspRunActiveState
+         8   -- Indirect call
+       0   SspSM_Error
+       8   SspSM_Idle
+         8   -- Indirect call
+         8   -> DebugPrintf
+         8   -> UpdateMessageStatus
+      24   SspWriteByte
+        24   -> QueueMessage
+        24   -> SspManualMode
+      24   SspWriteData
+        24   -> QueueMessage
+        24   -> SspManualMode
+       8   USART1_IrqHandler
+         8   -> SspGenericHandler
+       8   USART2_IrqHandler
+         8   -> SspGenericHandler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable17
+       4  ??DataTable17_1
+       4  ??DataTable17_10
+       4  ??DataTable17_11
+       4  ??DataTable17_12
+       4  ??DataTable17_13
+       4  ??DataTable17_14
+       4  ??DataTable17_15
+       4  ??DataTable17_16
+       4  ??DataTable17_17
+       4  ??DataTable17_18
+       4  ??DataTable17_19
+       4  ??DataTable17_2
+       4  ??DataTable17_20
+       4  ??DataTable17_21
+       4  ??DataTable17_22
+       4  ??DataTable17_23
+       4  ??DataTable17_24
+       4  ??DataTable17_25
+       4  ??DataTable17_26
+       4  ??DataTable17_27
+       4  ??DataTable17_28
+       4  ??DataTable17_29
+       4  ??DataTable17_3
+       4  ??DataTable17_30
+       4  ??DataTable17_31
+       4  ??DataTable17_32
+       4  ??DataTable17_33
+       4  ??DataTable17_4
+       4  ??DataTable17_5
+       4  ??DataTable17_6
+       4  ??DataTable17_7
+       4  ??DataTable17_8
+       4  ??DataTable17_9
+      28  ?_0
+       4  G_u32Ssp0ApplicationFlags
+       4  G_u32Ssp1ApplicationFlags
+       4  G_u32Ssp2ApplicationFlags
+      22  NVIC_ClearPendingIRQ
+      22  NVIC_DisableIRQ
+      22  NVIC_EnableIRQ
+      42  SSP0_IRQHandler
+      52  SSP_Peripheral0
+      52  SSP_Peripheral1
+      52  SSP_Peripheral2
+     128  SSP_au8Dummies
+       4  SSP_psCurrentISR
+       4  SSP_psCurrentSsp
+       4  SSP_pu32SspApplicationFlagsISR
+       4  SSP_u32AntCounter
+       4  SSP_u32Flags
+       4  SSP_u32Int0Count
+       4  SSP_u32Int1Count
+       4  SSP_u32Int2Count
+       4  SSP_u32Timer
+     850  SspGenericHandler
+     254  SspInitialize
+      72  SspManualMode
+      20  SspReadByte
+      52  SspReadData
+      92  SspRelease
+     328  SspRequest
+      12  SspRunActiveState
+       8  SspSM_Error
+     448  SspSM_Idle
+      48  SspWriteByte
+      48  SspWriteData
+       4  Ssp_pfnStateMachine
+      42  USART1_IrqHandler
+      42  USART2_IrqHandler
+      24  au8SspErrorInvalidSsp
+      24  au8SspStartupMessage
+
+ 
+   336 bytes in section .bss
+    48 bytes in section .data
+    28 bytes in section .rodata
+ 2 560 bytes in section .text
+ 
+ 2 560 bytes of CODE  memory
+    28 bytes of CONST memory
+   384 bytes of DATA  memory
+
+Errors: none
+Warnings: none

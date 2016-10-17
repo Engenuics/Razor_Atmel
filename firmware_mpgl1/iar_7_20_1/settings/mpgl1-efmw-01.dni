@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-831776706
+Checksum=2068877050
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -31,14 +31,25 @@ UnspecRange=1
 ActionState=1
 [CodeCoverage]
 Enabled=_ 0
-[struct_types]
-Fmt0=ServerType-u8ServerNumber	3	0
 [array_types]
 Fmt0=u8[3]	3	0
 [watch_formats]
 Fmt0={W}1:u8CurrentServer	3	0
-Fmt1={W}3:pu8Example	4	0
-Fmt2={W}3:u8Test	4	0
+[CallStackLog]
+Enabled=0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[DriverProfiling]
+Enabled=0
+Mode=1
+Graph=0
+Symbiont=0
+Exclusions=
 [InterruptLog]
 LogEnabled=0
 SumEnabled=0
@@ -55,9 +66,11 @@ ShowTimeSum=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.62.3" 0 0 1 "" 0 ""
-Bp1=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.35.7" 0 0 1 "" 0 ""
-Count=2
+Bp0=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.69.7" 0 0 1 "" 0 ""
+Bp1=_ 0 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.90.7" 0 0 1 "" 0 ""
+Bp2=_ 1 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.139.7" 0 0 1 "" 0 ""
+Bp3=_ 1 "STD_CODE2" "{$PROJ_DIR$\..\application\main_solution.c}.212.7" 0 0 1 "" 0 ""
+Count=4
 [Interrupts]
 Enabled=1
 [MemConfig]
@@ -69,24 +82,9 @@ Stop=1
 [Trace1]
 Enabled=0
 ShowSource=1
-[CallStackLog]
-Enabled=0
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Aliases]
 Count=0
 SuppressDialog=0
 [Simulator]
 Freq=10000000
 MultiCoreRunAll=1
-[DriverProfiling]
-Enabled=0
-Mode=1
-Graph=0
-Symbiont=0
-Exclusions=
