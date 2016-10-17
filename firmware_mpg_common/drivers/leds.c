@@ -348,17 +348,12 @@ void LedInitialize(void)
 #endif /* STARTUP_SOUND */
     
     /* Spend 40ms in each level of intensity */
-/*
     for(u16 j = 40; j > 0; j--)
     {
       u32Timer = G_u32SystemTime1ms;
       while( !IsTimeUp(&u32Timer, 1) );
       LedUpdate();
     }
-*/
-    LedUpdate();
-    u32Timer = G_u32SystemTime1ms;
-    while( !IsTimeUp(&u32Timer, 40) );
 
     /* Pause for a bit on the first iteration to show the LEDs on for little while */
     if(i == 20)
