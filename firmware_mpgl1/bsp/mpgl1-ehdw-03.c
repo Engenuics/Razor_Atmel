@@ -276,7 +276,7 @@ void GpioSetup(void)
 Function: TimerSetup
 
 Description
-Configures the all Timer Counter (TC) peripherals.
+Configures Timer Counter (TC) peripherals.
 
 Requires:
   - Peripheral resources not used for any other function.
@@ -301,7 +301,7 @@ void TimerSetup(void)
   /* Activate the timer clock */
   AT91C_BASE_TC1->TC_CCR = TC1_CCR_INIT;
 
-  /* Load Channel 2 settings not configured at this time */
+  /* Channel 2 settings not configured at this time */
 
   /* Enable required interrupts */
   NVIC_ClearPendingIRQ(IRQn_TC1);
