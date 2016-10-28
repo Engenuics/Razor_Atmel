@@ -34,19 +34,6 @@ Type Definitions
 **********************************************************************************************************************/
 typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
 
-//typedef enum {TIMER0 = 0x40080000, TIMER1 = 0x40080040, TIMER2 = 0x40080080} TimerPeripheralType;
-typedef enum {TIMER_CHANNEL0 = 0, TIMER_CHANNEL1 = 0x40, TIMER_CHANNEL2 = 0x80} TimerChannelType;
-
-#if 0
-typedef struct
-{
-//  TimerPeripheralType eTimerPeripheral; /* Timer peripheral number: TIMER0, TIMER1, or TIMER2 *//
-//  TimerChannelType eTimerChannel;       /* Channel in selected timer peripheral */
-  u32 u32Period_us;     /* Desired period in microseconds with resolution 10.6667us */
-  bool bTimerOn;        /* TRUE if timer should be running */
-  bool bTimerIntEnable; /* TRUE if timer interrupt is active */
-} TimerSetupType;
-#endif
 
 /**********************************************************************************************************************
 Includes
@@ -70,6 +57,7 @@ Includes
 #include "buttons.h"
 #include "leds.h" 
 #include "messaging.h"
+#include "timer.h" //***********
 
 #include "sam3u_i2c.h"
 #include "sam3u_ssp.h"

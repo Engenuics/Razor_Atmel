@@ -253,6 +253,9 @@
         <name>$PROJ_DIR$\..\drivers\sdcard.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\timer.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\utilities.h</name>
       </file>
     </group>
@@ -293,6 +296,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\drivers\sdcard.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\timer.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\utilities.c</name>
