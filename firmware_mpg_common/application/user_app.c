@@ -88,8 +88,12 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+  LedOff(BLUE);
+  
+  TimerSet(TIMER_CHANNEL1, 0xffff);
+  TimerAssignCallback(TIMER_CHANNEL1, UserAppCallBack);
+  
   TimerStart(TIMER_CHANNEL1);
-  LedOn(BLUE);
   
   /* If good initialization, set state to Idle */
   if( 1 )
@@ -130,6 +134,23 @@ void UserAppRunActiveState(void)
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
+/*----------------------------------------------------------------------------------------------------------------------
+Function UserAppCallBack()
+
+Description:
+Function that executes whenever timer 1 expires
+
+Requires:
+  - 
+
+Promises:
+  - Toggles BLUE LED
+*/
+void UserAppCallBack(void)
+{
+  LedToggle(BLUE);
+  
+} /* end UserAppCallBack */
 
 /**********************************************************************************************************************
 State Machine Function Definitions

@@ -8,6 +8,30 @@ Provide easy access to setting up and running the Timer Counter (TC) Peripheral.
 API:
 
 Public functions:
+void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
+e.g. 
+TimerSet(TIMER_CHANNEL1, 0xFFFF);
+
+void TimerStart(TimerChannelType eTimerChannel_)
+e.g.
+TimeStart(TIMER_CHANNEL1);
+
+void TimerStop(TimerChannelType eTimerChannel_)
+e.g.
+TimerStop(TIMER_CHANNEL1);
+
+u16 TimerGetTime(TimerChannelType eTimerChannel_)
+e.g.
+u16 u16Timer1CurrentValue;
+u16Timer1CurrentValue = TimerGetTime(TIMER_CHANNEL1);
+
+void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallBack_)
+e.g.
+TimerAssignCallback(TIMER_CHANNEL1, UserAppCallBack);
+where UserAppCallBack is defined in a user task:
+void UserAppCallBack(void)
+Note: any callback should execute as quickly as possible since it runs during
+the timer interrupt handler.
 
 
 Protected System functions:
@@ -27,7 +51,7 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32TimerFlags;                       /* Global state flags */
+volatile u32 G_u32TimerFlags;                          /* Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -44,11 +68,11 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "Timer_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type Timer_StateMachine;            /* The state machine function pointer */
-static fnCode_type fpTimerCallback;               /* The ISR callback function pointer */
+static fnCode_type fpTimer1Callback;              /* Timer1 ISR callback function pointer */
 
 static u32 Timer_u32Timeout;                      /* Timeout counter used across states */
 
-static u32 Timer_u32TimerCounter = 0;             /* Track instances of The TC0 interrupt handler */
+static u32 Timer_u32Timer1Counter = 0;            /* Track instances of The TC1 interrupt handler */
 
 
 /**********************************************************************************************************************
@@ -60,17 +84,29 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------------------------------------------------
-Function: TimerSetTime
+Function: TimerSet
 
 Description
 Sets the timer tick period (interrupt rate).
 
 Requires:
-  - u32TimerCountx x in ticks or us????
+  - eTimerChannel_ holds a valid channel
+  - u16TimerValue_ x in ticks
 
 Promises:
-  - Update config (running or stopped?)
+  - Updates TC_RC value with u16TimerValue_
 */
+void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
+{
+  /* Build the offset to the selected peripheral */
+  u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
+  u32TimerBaseAddress += (u32)eTimerChannel_;
+
+  /* Load the new timer value */
+  (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_RC = (u32)(u16TimerValue_ & 0x0000FFFF);
+
+} /* end TimerSet() */
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 Function: TimerStart
@@ -79,7 +115,7 @@ Description
 Starts the designated Timer.
 
 Requires:
-  - eTimer_ is the timer to start
+  - eTimerChannel_ is the timer to start
 
 Promises:
   - Specified channel on Timer is set to run; if already running it remains running
@@ -87,11 +123,12 @@ Promises:
 */
 void TimerStart(TimerChannelType eTimerChannel_)
 {
+  /* Build the offset to the selected peripheral */
   u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
   u32TimerBaseAddress += (u32)eTimerChannel_;
 
-  /* Ensure clock is enabled */
-  (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CCR = (AT91C_TC_CLKEN | AT91C_TC_SWTRG);
+  /* Ensure clock is enabled and triggered */
+  (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CCR |= (AT91C_TC_CLKEN | AT91C_TC_SWTRG);
   
 } /* end TimerStart() */
 
@@ -103,7 +140,7 @@ Description
 Stops the designated Timer.
 
 Requires:
-  - eTimer_ is the timer to stop
+  - eTimerChannel_ is the timer to stop
 
 Promises:
   - Specified timer is stopped; if already stopped it remains stopped
@@ -111,13 +148,42 @@ Promises:
 */
 void TimerStop(TimerChannelType eTimerChannel_)
 {
+  /* Build the offset to the selected peripheral */
   u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
   u32TimerBaseAddress += (u32)eTimerChannel_;
   
   /* Ensure clock is disabled */
-  (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CCR = AT91C_TC_CLKDIS;
+  (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CCR |= AT91C_TC_CLKDIS;
   
 } /* end TimerStop */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: TimerGetTime
+
+Description
+Returns the current count.
+
+Requires:
+  - eTimerChannel_ is the timer to query
+
+Promises:
+  - Current 16 bit timer value is returned
+*/
+u16 TimerGetTime(TimerChannelType eTimerChannel_)
+{
+  u16 u16TimerValue;
+  
+  /* Build the offset to the selected peripheral */
+  u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
+  u32TimerBaseAddress += (u32)eTimerChannel_;
+  
+  /* Read and format the timer count */
+  u16TimerValue = (u16)( (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CV & 0x0000FFFF);
+
+  return u16TimerValue;
+  
+} /* end TimerGetTime */
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -133,6 +199,30 @@ Promises:
   - Specified timer is stopped; if already stopped it remains stopped
   - Does NOT reset the timer value
 */
+void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallBack_)
+{
+  switch(eTimerChannel_)
+  {
+    case TIMER_CHANNEL0:
+    {
+      break;
+    }
+    case TIMER_CHANNEL1:
+    {
+      fpTimer1Callback = fpUserCallBack_;
+      break;
+    }
+    case TIMER_CHANNEL2:
+    {
+      break;
+    }
+  default:
+    {
+      DebugPrintf("Invalid channel\n\r");
+    }
+  } /* end switch(eTimerChannel_) */
+  
+} /* end TimerAssignCallback */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -149,7 +239,7 @@ Requires:
   -
 
 Promises:
-  - 
+  - Timer 1 is configured per timer.h INIT settings
 */
 void TimerInitialize(void)
 {
@@ -160,18 +250,16 @@ void TimerInitialize(void)
   /* Load the block configuration register */
   AT91C_BASE_TCB1->TCB_BMR = TCB_BMR_INIT;
  
-  /* Load Channel 1 settings */
+  /* Load Channel 1 settings and set the default callback */
   AT91C_BASE_TC1->TC_CMR = TC1_CMR_INIT;
   AT91C_BASE_TC1->TC_RC  = TC1_RC_INIT;
   AT91C_BASE_TC1->TC_IER = TC1_IER_INIT;
   AT91C_BASE_TC1->TC_IDR = TC1_IDR_INIT;
-  
-  /* Set the default callback and activate the timer clock */
-  fpTimerCallback = TimerDefaultCallback;
   AT91C_BASE_TC1->TC_CCR = TC1_CCR_INIT;
+ 
+  fpTimer1Callback = TimerDefaultCallback;
 
   /* Channel 2 settings not configured at this time */
-
   
   /* If good initialization, set state to Idle */
   if( 1 )
@@ -253,8 +341,8 @@ void TC1_IrqHandler(void)
   /* Check for RC compare interrupt - reading TC_SR clears the bit if set */
   if(AT91C_BASE_TC1->TC_SR & AT91C_TC_CPCS)
   {
-    Timer_u32TimerCounter++;
-    fpTimerCallback();
+    Timer_u32Timer1Counter++;
+    fpTimer1Callback();
   }
 
   /* Clear the TC0 pending flag and exit */

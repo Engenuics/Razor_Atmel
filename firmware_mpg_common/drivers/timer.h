@@ -75,13 +75,13 @@ TIMER_CLOCK5(1) SLCK
 
 /* Timer Channel 1 Setup
 Note:
-PA26 Peripheral B is an open pin avaialble as external clock input TCLK2
-PB5 Peripheral A is an open pin available for TIOA1 I/O function
-PB6 Peripheral A is an open pin available for TIOB1 I/O function
+PA26 is an open pin avaialble as external clock input TCLK2 if set for Peripheral B function 
+PB5 is an open pin available for TIOA1 I/O function if set for Peripheral A 
+PB6 is an open pin available for TIOB1 I/O function if set for Peripheral A 
 */
 
-/* Timer 1 interrupt period (1 tick = 2.67us); max 65535 */
-#define TC1_RC_INIT (u32)4
+/* Default Timer 1 interrupt period of just about 100us (1 tick = 2.67us); max 65535 */
+#define TC1_RC_INIT (u32)37
 
 #define TC1_CCR_INIT (u32)0x00000002
 /*
@@ -92,7 +92,6 @@ PB6 Peripheral A is an open pin available for TIOB1 I/O function
     01 [1] CLKDIS Clock disabled to start
     00 [0] CLKEN Clock not enabled 
 */
-
 
 #define TC1_CMR_INIT (u32)0x000CC403
 /*
@@ -175,8 +174,11 @@ Function Declarations
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
+void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_);
 void TimerStart(TimerChannelType eTimerChannel_);
 void TimerStop(TimerChannelType eTimerChannel_);
+u16 TimerGetTime(TimerChannelType eTimerChannel_);
+void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallBack_);
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
