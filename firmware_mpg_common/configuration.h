@@ -33,7 +33,8 @@ Runtime switches
 Type Definitions
 **********************************************************************************************************************/
 typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
-
+typedef enum {ADC12_CH0 = 0, ADC12_CH1 = 1, ADC12_CH2 = 2, ADC12_CH3 = 3, 
+              ADC12_CH4 = 4, ADC12_CH5 = 5, ADC12_CH6 = 6, ADC12_CH7 = 7} Adc12ChannelType;
 
 /**********************************************************************************************************************
 Includes
@@ -61,6 +62,7 @@ Includes
 #include "sam3u_i2c.h"
 #include "sam3u_ssp.h"
 #include "sam3u_uart.h"
+#include "adc12.h"
 
 /* MPGL1-specific header files */
 #ifdef MPGL1

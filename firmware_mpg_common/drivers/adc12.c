@@ -1,22 +1,8 @@
 /**********************************************************************************************************************
-File: user_app.c                                                                
-
-----------------------------------------------------------------------------------------------------------------------
-To start a new task using this user_app as a template:
- 1. Copy both user_app.c and user_app.h to the Application directory
- 2. Rename the files yournewtaskname.c and yournewtaskname.h
- 3. Add yournewtaskname.c and yournewtaskname.h to the Application Include and Source groups in the IAR project
- 4. Use ctrl-h (make sure "Match Case" is checked) to find and replace all instances of "user_app" with "yournewtaskname"
- 5. Use ctrl-h to find and replace all instances of "UserApp" with "YourNewTaskName"
- 6. Use ctrl-h to find and replace all instances of "USER_APP" with "YOUR_NEW_TASK_NAME"
- 7. Add a call to YourNewTaskNameInitialize() in the init section of main
- 8. Add a call to YourNewTaskNameRunActiveState() in the Super Loop section of main
- 9. Update yournewtaskname.h per the instructions at the top of yournewtaskname.h
-10. Delete this text (between the dashed lines) and update the Description below to describe your task
-----------------------------------------------------------------------------------------------------------------------
+File: adc12.c                                                                
 
 Description:
-This is a user_app.c file template 
+This is a adc12.c file template 
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
@@ -25,10 +11,10 @@ Public functions:
 
 
 Protected System functions:
-void UserAppInitialize(void)
+void Adc12Initialize(void)
 Runs required initialzation for the task.  Should only be called once in main init section.
 
-void UserAppRunActiveState(void)
+void Adc12RunActiveState(void)
 Runs current task state.  Should only be called once in main loop.
 
 
@@ -41,7 +27,7 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32UserAppFlags;                       /* Global state flags */
+volatile u32 G_u32Adc12Flags;                       /* Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -55,10 +41,10 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "UserApp_" and be declared as static.
+Variable names shall start with "Adc12_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
-static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
+static fnCode_type Adc12_StateMachine;            /* The state machine function pointer */
+static u32 Adc12_u32Timeout;                      /* Timeout counter used across states */
 
 
 /**********************************************************************************************************************
@@ -75,7 +61,7 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------------------------------------------
-Function: UserAppInitialize
+Function: Adc12Initialize
 
 Description:
 Initializes the State Machine and its variables.
@@ -86,44 +72,25 @@ Requires:
 Promises:
   - 
 */
-void UserAppInitialize(void)
+void Adc12Initialize(void)
 {
-#if 0  /* Comment out this section of code by setting to 0 */
-  LedOn(RED); /* This style of comment is ok */
-  LedOff(BLUE);  // This style of comment is ok
-  LedOn(LCD_RED);
-  LedOn(LCD_GREEN);
-  LedOn(LCD_BLUE);
-#endif
-  
-#ifdef PART1
-  LedOn(RED);
-  LedOn(GREEN);
-  LedOn(BLUE);
-#endif /* PART1 */
-  
-#ifdef PART2
-  LedOn(LCD_RED);
-  LedOn(LCD_GREEN);
-  LedOn(LCD_BLUE);
-#endif /* PART2 */
   
   /* If good initialization, set state to Idle */
   if( 1 )
   {
-    UserApp_StateMachine = UserAppSM_Idle;
+    Adc12_StateMachine = Adc12SM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp_StateMachine = UserAppSM_FailedInit;
+    Adc12_StateMachine = Adc12SM_FailedInit;
   }
 
-} /* end UserAppInitialize() */
+} /* end Adc12Initialize() */
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-Function UserAppRunActiveState()
+Function Adc12RunActiveState()
 
 Description:
 Selects and runs one iteration of the current state in the state machine.
@@ -136,11 +103,11 @@ Requires:
 Promises:
   - Calls the function to pointed by the state machine function pointer
 */
-void UserAppRunActiveState(void)
+void Adc12RunActiveState(void)
 {
-  UserApp_StateMachine();
+  Adc12_StateMachine();
 
-} /* end UserAppRunActiveState */
+} /* end Adc12RunActiveState */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -154,26 +121,26 @@ State Machine Function Definitions
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a message to be queued */
-static void UserAppSM_Idle(void)
+static void Adc12SM_Idle(void)
 {
     
-} /* end UserAppSM_Idle() */
+} /* end Adc12SM_Idle() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-static void UserAppSM_Error(void)          
+static void Adc12SM_Error(void)          
 {
   
-} /* end UserAppSM_Error() */
+} /* end Adc12SM_Error() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* State to sit in if init failed */
-static void UserAppSM_FailedInit(void)          
+static void Adc12SM_FailedInit(void)          
 {
     
-} /* end UserAppSM_FailedInit() */
+} /* end Adc12SM_FailedInit() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

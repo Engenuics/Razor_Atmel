@@ -1940,6 +1940,9 @@
     <group>
       <name>Include</name>
       <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\adc12.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.h</name>
       </file>
       <file>
@@ -1987,6 +1990,9 @@
     </group>
     <group>
       <name>Source</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\adc12.c</name>
+      </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c</name>
       </file>

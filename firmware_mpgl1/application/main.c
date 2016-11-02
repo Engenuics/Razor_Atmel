@@ -59,7 +59,8 @@ void main(void)
 
   SspInitialize();
   TWIInitialize();
-
+  Adc12Initialize();
+  
   LcdInitialize();
   LedInitialize();
   ButtonInitialize();
@@ -84,6 +85,7 @@ void main(void)
     UartRunActiveState();
     SspRunActiveState();
     TWIRunActiveState();
+    Adc12RunActiveState();
     MessagingRunActiveState();
     DebugRunActiveState();
     LcdRunActiveState();
