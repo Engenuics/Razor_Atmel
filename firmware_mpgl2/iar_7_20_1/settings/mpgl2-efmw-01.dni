@@ -25,12 +25,15 @@ TypeViolation=1
 UnspecRange=1
 ActionState=1
 [DebugChecksum]
-Checksum=1373201942
+Checksum=2092884567
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
 Watch0=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
 Watch1=_ 0 "" 0 "" 0 "" 0 "" 0 0 0 0
+TraceBufferSize=0x00010000
+TraceStallIfFIFOFull=0x00000000
+TracePortSize=0x00000000
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -41,6 +44,8 @@ MixedMode=1
 [SfrWindow]
 Show=1 1
 Sort=4 0
+[CodeCoverage]
+Enabled=_ 0
 [struct_types]
 Fmt0=UartPeripheralType-u8PeripheralId	3	0
 [watch_formats]
@@ -75,7 +80,7 @@ LogFile=_ ""
 Enabled=0
 [DriverProfiling]
 Enabled=0
-Mode=0
+Mode=1
 Graph=0
 Symbiont=0
 Exclusions=
