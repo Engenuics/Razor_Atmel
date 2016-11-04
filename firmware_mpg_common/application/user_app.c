@@ -58,7 +58,7 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
-static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
+//static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
 
 
 /**********************************************************************************************************************
@@ -176,13 +176,14 @@ static void UserAppSM_Idle(void)
     
 } /* end UserAppSM_Idle() */
      
-
+#if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void UserAppSM_Error(void)          
 {
   
 } /* end UserAppSM_Error() */
+#endif
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/

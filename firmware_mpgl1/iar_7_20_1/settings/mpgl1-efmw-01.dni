@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=2008919299
+Checksum=-281171405
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -66,8 +66,7 @@ Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\interrupts.c}
 Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\main.c}.63.3" 0 0 1 "" 0 "" 0
 Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c}.91.3" 0 0 1 "" 0 "" 0
 Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c}.151.3" 0 0 1 "" 0 "" 0
-Bp5=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\timer.c}.246.6" 0 0 1 "" 0 "" 0
-Count=6
+Count=5
 [Aliases]
 Count=0
 SuppressDialog=0

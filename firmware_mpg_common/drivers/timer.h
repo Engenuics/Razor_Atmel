@@ -2,7 +2,7 @@
 File: timer.h                                                                
 
 Description:
-Header file for yournewtaskname.c
+Header file for timer.c
 
 **********************************************************************************************************************/
 

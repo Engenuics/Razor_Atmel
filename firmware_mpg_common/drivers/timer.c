@@ -2,7 +2,7 @@
 File: timer.c                                                                
 
 Description:
-Provide easy access to setting up and running the Timer Counter (TC) Peripheral.
+Provide easy access to setting up and running the Timer Counter (TC) Peripherals.
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
@@ -25,9 +25,9 @@ e.g.
 u16 u16Timer1CurrentValue;
 u16Timer1CurrentValue = TimerGetTime(TIMER_CHANNEL1);
 
-void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallBack_)
+void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallback_)
 e.g.
-TimerAssignCallback(TIMER_CHANNEL1, UserAppCallBack);
+TimerAssignCallback(TIMER_CHANNEL1, UserAppCallback);
 where UserAppCallBack is defined in a user task:
 void UserAppCallBack(void)
 Note: any callback should execute as quickly as possible since it runs during
@@ -70,7 +70,7 @@ Variable names shall start with "Timer_" and be declared as static.
 static fnCode_type Timer_StateMachine;            /* The state machine function pointer */
 static fnCode_type fpTimer1Callback;              /* Timer1 ISR callback function pointer */
 
-static u32 Timer_u32Timeout;                      /* Timeout counter used across states */
+//static u32 Timer_u32Timeout;                      /* Timeout counter used across states */
 
 static u32 Timer_u32Timer1Counter = 0;            /* Track instances of The TC1 interrupt handler */
 
@@ -172,16 +172,13 @@ Promises:
 */
 u16 TimerGetTime(TimerChannelType eTimerChannel_)
 {
-  u16 u16TimerValue;
-  
+ 
   /* Build the offset to the selected peripheral */
   u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
   u32TimerBaseAddress += (u32)eTimerChannel_;
   
   /* Read and format the timer count */
-  u16TimerValue = (u16)( (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CV & 0x0000FFFF);
-
-  return u16TimerValue;
+  return ((u16)( (AT91_CAST(AT91PS_TC)u32TimerBaseAddress)->TC_CV & 0x0000FFFF));
   
 } /* end TimerGetTime */
 
@@ -193,13 +190,13 @@ Description
 Allows user to specify a custom callback function for when the Timer interrupt occurs.
 
 Requires:
-  - eTimer_ is the timer to stop
+  - eTimerChannel_ is the channel to which the callback will be assigned
+  - fpUserCallback_ is the function address (name) for the user's callback
 
 Promises:
-  - Specified timer is stopped; if already stopped it remains stopped
-  - Does NOT reset the timer value
+  - fpTimerxCallback loaded with fpUserCallback_
 */
-void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallBack_)
+void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallback_)
 {
   switch(eTimerChannel_)
   {
@@ -209,14 +206,14 @@ void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCall
     }
     case TIMER_CHANNEL1:
     {
-      fpTimer1Callback = fpUserCallBack_;
+      fpTimer1Callback = fpUserCallback_;
       break;
     }
     case TIMER_CHANNEL2:
     {
       break;
     }
-  default:
+    default:
     {
       DebugPrintf("Invalid channel\n\r");
     }
@@ -363,13 +360,14 @@ static void TimerSM_Idle(void)
 } /* end TimerSM_Idle() */
      
 
+#if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void TimerSM_Error(void)          
 {
   
 } /* end TimerSM_Error() */
-
+#endif
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* State to sit in if init failed */
