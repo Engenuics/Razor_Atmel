@@ -1,8 +1,7 @@
 Debug/
-settings/
-*.TMP
 *.dep
 *.bat
 *.wsdt
+*.TMP
 *.wspos
 *.dbgdt
