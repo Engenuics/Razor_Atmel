@@ -65,6 +65,8 @@
       <file>$PROJ_DIR$\Debug\Obj\board_cstartup_iar.o</file>
       <file>$PROJ_DIR$\Debug\List\mpgl1-ehdw-03.i</file>
       <file>$PROJ_DIR$\Debug\Obj\debug.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\mpgl1-efmw-01.pbd</file>
+      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
       <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
       <file>$PROJ_DIR$\Debug\Obj\mpgl1-efmw-01.pbd</file>
       <file>$PROJ_DIR$\Debug\Obj\exceptions.o</file>
@@ -162,6 +164,7 @@
         <tool>
           <name>ILINK</name>
           <file> 70 101 15</file>
+
         </tool>
       </outputs>
     </file>
