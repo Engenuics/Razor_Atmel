@@ -136,19 +136,6 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
-  if(WasButtonPressed(BUTTON0))
-  {
-    ButtonAcknowledge(BUTTON0);
-    TimerStart(TIMER_CHANNEL1);
-    LedOn(BLUE);
-  }
-  
-  if(WasButtonPressed(BUTTON1))
-  {
-    ButtonAcknowledge(BUTTON1);
-    TimerStop(TIMER_CHANNEL1);
-    LedOff(BLUE);
-  }
     
 } /* end UserAppSM_Idle() */
      
