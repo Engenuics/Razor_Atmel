@@ -75,91 +75,100 @@ Constants / Definitions
     00 [1] CH0 disabled
 */
 
-#define TEMPLATE_INIT (u32)0x00000000
+#define ADC12B_ACR_INIT (u32)0x00000101
 /*
-    31 [0] 
-    30 [0] 
-    29 [0] 
-    28 [0] 
+    31 [0] Reserved 
+    30 [0] "
+    29 [0] "
+    28 [0] "
 
-    27 [0] 
-    26 [0] 
-    25 [0] 
-    24 [0] 
+    27 [0] "
+    26 [0] "
+    25 [0] "
+    24 [0] "
 
-    23 [0] 
-    22 [0] 
-    21 [0] 
-    20 [0] 
+    23 [0] "
+    22 [0] "
+    21 [0] "
+    20 [0] "
 
-    19 [0] 
-    18 [0] 
-    17 [0] 
-    16 [0] 
+    19 [0] "
+    18 [0] "
+    17 [0] OFFSET Vrefin/2G
+    16 [0] DIFF Single ended mode
 
-    15 [0] 
-    14 [0] 
-    13 [0] 
-    12 [0] 
+    15 [0] Reserved
+    14 [0] "
+    13 [0] "
+    12 [0] "
 
-    11 [0] 
-    10 [0] 
-    09 [0] 
-    08 [0] 
+    11 [0] "
+    10 [0] "
+    09 [0] IBCTL Bias current control typical
+    08 [1] 
 
-    07 [0] 
-    06 [0] 
-    05 [0] 
-    04 [0] 
+    07 [0] Reserved
+    06 [0] "
+    05 [0] "
+    04 [0] "
 
-    03 [0] 
-    02 [0] 
-    01 [0] 
-    00 [0] 
+    03 [0] "
+    02 [0] "
+    01 [0] GAIN 1
+    00 [1] 
 */
 
 
-#define TEMPLATE_INIT (u32)0x00000000
+#define ADC12B_EMR_INIT (u32)0x00040001
 /*
-    31 [0] 
-    30 [0] 
-    29 [0] 
-    28 [0] 
+    31-24 [0] Reserved
 
-    27 [0] 
-    26 [0] 
-    25 [0] 
-    24 [0] 
+    23 [0] OFF_MODE_STARTUP_TIME target 40us
+    22 [0] (4 + 1)*8/1MHz = 40us
+    21 [0] "
+    20 [0] "
 
-    23 [0] 
-    22 [0] 
-    21 [0] 
-    20 [0] 
+    19 [0] "
+    18 [1] "
+    17 [0] "
+    16 [0] "
 
-    19 [0] 
-    18 [0] 
-    17 [0] 
-    16 [0] 
+    15-4 [0] Reserved
 
-    15 [0] 
-    14 [0] 
-    13 [0] 
-    12 [0] 
+    03 [0] Reserved
+    02 [0] "
+    01 [0] "
+    00 [1] OFFMODES Use off mode
+*/
 
-    11 [0] 
-    10 [0] 
-    09 [0] 
-    08 [0] 
+#define ADC12B_IDR_INIT (u32)0x000FFFFF
+/*
+    31 - 20 [0] Reserved
 
-    07 [0] 
-    06 [0] 
-    05 [0] 
-    04 [0] 
+    19 [1] RXBUFF: Receive Buffer Full Interrupt Disabled
+    18 [1] ENDRX: End of Receive Buffer Interrupt Disabled
+    17 [1] GOVRE: General Overrun Error Interrupt Disabled
+    16 [1] DRDY: Data Ready Interrupt Disabled
 
-    03 [0] 
-    02 [0] 
-    01 [0] 
-    00 [0] 
+    15 [1] OVRE7: Overrun Error Interrupt Disabled
+    14 [1] OVRE6: Overrun Error Interrupt Disabled
+    13 [1] OVRE5: Overrun Error Interrupt Disabled
+    12 [1] OVRE4: Overrun Error Interrupt Disabled
+
+    11 [1] OVRE3: Overrun Error Interrupt Disabled
+    10 [1] OVRE2: Overrun Error Interrupt Disabled
+    09 [1] OVRE1: Overrun Error Interrupt Disabled
+    08 [1] OVRE0: Overrun Error Interrupt Disabled
+
+    07 [1] EOC7: End of Conversion Interrupt Disabled
+    06 [1] EOC6: End of Conversion Interrupt Disabled
+    05 [1] EOC5: End of Conversion Interrupt Disabled
+    04 [1] EOC4: End of Conversion Interrupt Disabled
+
+    03 [1] EOC3: End of Conversion Interrupt Disabled
+    02 [1] EOC2: End of Conversion Interrupt Disabled
+    01 [1] EOC1: End of Conversion Interrupt Disabled
+    00 [1] EOC0: End of Conversion Interrupt Disabled
 */
 
 /**********************************************************************************************************************

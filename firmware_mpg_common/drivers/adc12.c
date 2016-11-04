@@ -74,6 +74,12 @@ Promises:
 */
 void Adc12Initialize(void)
 {
+  /* Initialize peripheral registers. ADC starts totally disabled. */
+  AT91C_BASE_ADC12B->ADC12B_MR  = ADC12B_MR_INIT;
+  AT91C_BASE_ADC12B->ADC12B_CDR = ADC12B_CDR_INIT;
+  AT91C_BASE_ADC12B->ADC12B_ACR = ADC12B_ACR_INIT;
+  AT91C_BASE_ADC12B->ADC12B_EMR = ADC12B_EMR_INIT;
+  AT91C_BASE_ADC12B->ADC12B_IDR = ADC12B_IDR_INIT;
   
   /* If good initialization, set state to Idle */
   if( 1 )

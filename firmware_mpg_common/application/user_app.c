@@ -88,25 +88,6 @@ Promises:
 */
 void UserAppInitialize(void)
 {
-#if 0  /* Comment out this section of code by setting to 0 */
-  LedOn(RED); /* This style of comment is ok */
-  LedOff(BLUE);  // This style of comment is ok
-  LedOn(LCD_RED);
-  LedOn(LCD_GREEN);
-  LedOn(LCD_BLUE);
-#endif
-  
-#ifdef PART1
-  LedOn(RED);
-  LedOn(GREEN);
-  LedOn(BLUE);
-#endif /* PART1 */
-  
-#ifdef PART2
-  LedOn(LCD_RED);
-  LedOn(LCD_GREEN);
-  LedOn(LCD_BLUE);
-#endif /* PART2 */
   
   /* If good initialization, set state to Idle */
   if( 1 )
