@@ -1,1 +1,2 @@
-* text eol=crlf
+*.c text eol=crlf
+*.h text eol=crlf

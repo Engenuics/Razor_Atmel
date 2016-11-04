@@ -12,15 +12,18 @@
 Type Definitions
 ***********************************************************************************************************************/
 
+
 /***********************************************************************************************************************
 * Constants
 ***********************************************************************************************************************/
 #define OSC_VALUE                 (u32)12000000
+#define MAINCK                    OSC_VALUE
 #define MULA                      (u32)7
 #define DIVA                      (u32)1
-#define PLLACK_VALUE              (u32)(OSC_VALUE * (MULA + 1)) / DIVA      /* 96 MHz */
+#define PLLACK_VALUE              (u32)(MAINCK * (MULA + 1)) / DIVA         /* 96 MHz */
 #define CPU_DIVIDER               (u32)2
 #define CCLK_VALUE                PLLACK_VALUE / CPU_DIVIDER                /* 48 MHz */
+#define MCK                       CCLK_VALUE
 #define PERIPHERAL_DIVIDER        (u32)1
 #define PCLK_VALUE                CCLK_VALUE / PERIPHERAL_DIVIDER           /* 48 MHz */
 #define SYSTICK_DIVIDER           (u32)8
@@ -53,9 +56,6 @@ Should be 6000 for 48MHz CCLK. */
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public Functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
-void SystemStatusReport(void);
-
-void PWMSetupAudio(void);
 void PWMAudioSetFrequency(u32 u32Channel_, u16 u16Frequency_);
 void PWMAudioOn(u32 u32Channel_);
 void PWMAudioOff(u32 u32Channel_);
@@ -65,10 +65,13 @@ void PWMAudioOff(u32 u32Channel_);
 /* Protected Functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
 void ClockSetup(void);
+void RealTimeClockSetup(void);
 void SysTickSetup(void);
 void SystemSleep(void);
 void WatchDogSetup(void);
 void GpioSetup(void);
+
+void PWMSetupAudio(void);
 
 
 /***********************************************************************************************************************
@@ -78,7 +81,7 @@ Bookmarks:
 @@@@@ Clock, Power Control, Systick and Watchdog setup values
 !!!!! GPIO pin names
 ##### GPIO initial setup values
-$$$$$ PWM setup values
+$$$$$ PWM and Timer setup values
 
 ***********************************************************************************************************************/
 
@@ -330,34 +333,34 @@ counter must be set at 1280. */
 */
 
 
-#define WDT_MR_INIT      (u32)0x10018500
+#define WDT_MR_INIT      (u32)0x1FFF0500
 /*
     31 [0] Reserved
     30 [0] "
     29 [0] WDIDLEHLT Watchdog runs when system is idle
     28 [1] WDDBGHLT Watchdog stops in debug state
 
-    27 [0] WDD Watchdog delta value
-    26 [0] "
-    25 [0] "
-    24 [0] "
+    27 [1] WDD Watchdog delta value (allow resets any time)
+    26 [1] "
+    25 [1] "
+    24 [1] "
 
-    23 [0] "
-    22 [0] "
-    21 [0] "
-    20 [0] "
+    23 [1] "
+    22 [1] "
+    21 [1] "
+    20 [1] "
 
-    19 [0] "
-    18 [0] "
-    17 [0] "
+    19 [1] "
+    18 [1] "
+    17 [1] "
     16 [1] "
 
-    15 [1] WDDIS Watchdog is disabled for now
+    15 [0] WDDIS Watchdog is enabled
     14 [0] WDRPROC watchdog reset processor off
     13 [0] WDRSTEN Watchdog reset enable off
     12 [0] WDFIEN Watchdog fault interrupt enable off
 
-    11 [0] WDV Watchdog counter value
+    11 [0] WDV Watchdog counter value: 0x500 = 1280 x (128 x 1/32768) = 5 seconds
     10 [1] "
     09 [0] "
     08 [1] "
@@ -500,7 +503,7 @@ counter must be set at 1280. */
     00 [1] PA_00_TP54 PIO control enabled
 */
 
-#define PIOB_PER_INIT (u32)0x01BFFFE7
+#define PIOB_PER_INIT (u32)0x01BFFF57
 /*
     31 [0] PB_31_ PIO control not enabled
     30 [0] PB_30_ PIO control not enabled
@@ -533,7 +536,7 @@ counter must be set at 1280. */
     08 [1] PB_08_TP62 PIO control enabled
 
     07 [1] PB_07_TP60 PIO control enabled
-    06 [1] PB_06_TP58 PIO control enabled
+    06 [0] PB_06_TP58 PIO control not enabled
     05 [1] PB_05_TP56 PIO control enabled
     04 [0] PB_04_BLADE_AN1 PIO control not enabled
 
@@ -591,7 +594,7 @@ counter must be set at 1280. */
     00 [0] PA_00_TP54 not controlled by peripheral
 */
 
-#define PIOB_PDR_INIT (u32)0x00400018
+#define PIOB_PDR_INIT (u32)0x00400058
 /*
     31 [0] PB_31_ 
     30 [0] PB_30_ 
@@ -624,7 +627,7 @@ counter must be set at 1280. */
     08 [0] PB_08_TP62 not controlled by peripheral
 
     07 [0] PB_07_TP60 not controlled by peripheral
-    06 [0] PB_06_TP58 not controlled by peripheral
+    06 [1] PB_06_TP58 controlled by peripheral
     05 [0] PB_05_TP56 not controlled by peripheral
     04 [1] PB_04_BLADE_AN1 controlled by peripheral
 
@@ -1404,7 +1407,7 @@ Initial output values are stored here.
     00 [0] PA_00_TP54 pull-up enabled
 */
 
-#define PIOB_PPUDR_INIT (u32)0x01FFFE1F
+#define PIOB_PPUDR_INIT (u32)0x01FFFE5F
 /*
     31 [0] PB_31_
     30 [0] PB_30_
@@ -1437,7 +1440,7 @@ Initial output values are stored here.
     08 [0] PB_08_TP62 pull-up enabled
 
     07 [0] PB_07_TP60 pull-up enabled
-    06 [0] PB_06_TP58 pull-up enabled
+    06 [1] PB_06_TP58 no pull-up enabled
     05 [0] PB_05_TP56 pull-up enabled
     04 [1] PB_04_BLADE_AN1 no pull-up
 
@@ -1494,7 +1497,7 @@ Initial output values are stored here.
     00 [1] PA_00_TP54 pull-up enabled
 */
 
-#define PIOB_PPUER_INIT (u32)0x000001E0
+#define PIOB_PPUER_INIT (u32)0x000001C0
 /*
     31 [0] PB_31_
     30 [0] PB_30_
@@ -1527,7 +1530,7 @@ Initial output values are stored here.
     08 [1] PB_08_TP62 pull-up enabled
 
     07 [1] PB_07_TP60 pull-up enabled
-    06 [1] PB_06_TP58 pull-up enabled
+    06 [0] PB_06_TP58 no pull-up enabled
     05 [1] PB_05_TP56 pull-up enabled
     04 [0] PB_04_BLADE_AN1 no pull-up
 
@@ -2064,7 +2067,7 @@ We don't want to lock access to the GPIO registers anyway, so we won't use this 
 
 
 /***********************************************************************************************************************
-$$$$$ PWM setup values
+$$$$$ PWM and Timer setup values
 ***********************************************************************************************************************/
 #define PWM_CLK_INIT (u32)0x00010001
 /*
@@ -2229,6 +2232,7 @@ In general, the period is 6000000 / frequency and duty is always period / 2.
 #define PWM_CPRD1_INIT  (u32)1500
 #define PWM_CDTY0_INIT  (u32)(PWM_CPRD0_INIT << 1)
 #define PWM_CDTY1_INIT  (u32)(PWM_CPRD1_INIT << 1)
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
