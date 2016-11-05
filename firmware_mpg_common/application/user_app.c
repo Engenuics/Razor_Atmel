@@ -60,6 +60,9 @@ Variable names shall start with "UserApp_" and be declared as static.
 static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
 //static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
 
+static u32 UserApp_u32AdcResultAccumulator;         /* Storage for ADC results as they come in */
+static u8 UserApp_u8AdcResultCount;                 /* Counter to track ADC results as they come in */
+
 
 /**********************************************************************************************************************
 Function Definitions
@@ -68,7 +71,29 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+Function AdcCallback()
 
+Description:
+Function called to receive ADC result
+
+Requires:
+  - 
+
+Promises:
+  - 
+*/
+void AdcCallback(u16 u16Result_)
+{
+  UserApp_u32AdcResultAccumulator += (u32)(u16Result_ & 0x0000FFFF);
+  UserApp_u8AdcResultCount++;
+  
+  DebugPrintNumber(UserApp_u8AdcResultCount);
+  DebugPrintf(". Counts = ");
+  DebugPrintNumber(u16Result_);
+  DebugLineFeed();
+  
+} /* End AdcCallback() */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -88,6 +113,13 @@ Promises:
 */
 void UserAppInitialize(void)
 {
+  /* Initialize result variables */
+  UserApp_u32AdcResultAccumulator = 0;
+  UserApp_u8AdcResultCount = 0;
+  
+  /* Set the callback function for the ADC results */
+  Adc12AssignCallback(ADC12_CH1, AdcCallback);
+  
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -136,7 +168,25 @@ State Machine Function Definitions
 /* Wait for a message to be queued */
 static void UserAppSM_Idle(void)
 {
-    
+#ifdef PART1
+  if(WasButtonPressed(BUTTON0))
+  {
+    if(Adc12StartConversion(ADC12_CH1))
+    {
+      DebugPrintf("ADC requested\n\r");
+    }
+    else
+    {
+      DebugPrintf("ADC busy\n\r");
+    }
+    ButtonAcknowledge(BUTTON0);
+  }
+#endif /* PART1 */
+  
+#ifdef PART2
+  
+#endif /* PART2 */
+  
 } /* end UserAppSM_Idle() */
      
 #if 0

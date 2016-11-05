@@ -28,8 +28,24 @@ Type Definitions
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
-#define PART1
-//#define PART2
+//#define PART1
+#define PART2
+
+/* Values for calculating the voltage displayed 
+Voltage(mV) = Counts x mV/Count = Counts x VREF / ADC_RESOLUTION
+Note maximum accumulator value is 2^32 / 2^12 = 2^20.  To minimize error, this value will be multiplied
+first by VREF so could be as high as 2^20 x 3270.  Therefore maximum samples is 320.
+*/
+#define VREF              (u32)3270     /* Reference value in mV */
+#define ADC_RESOLUTION    (u32)4096     /* ADC full scale counts (12-bits) */
+#define SCALE_FACTOR      (u32)1        /* External scale factor (e.g. a resistor divider on the channel */
+
+/* Values for managing the averaging rate and display rate */
+#define NUM_AVERAGES      (u16)16        /* MUST BE POWER OF 2!!!  Max 256.  Number of samples averaged per displayed reading; sample rate increases with this number */
+#define DISPLAY_RATE      (u16)512       /* MUST BE POWER OF 2!!!  LCD refresh rate for readings */
+#define SAMPLE_RATE       (DISPLAY_RATE / NUM_AVERAGES)
+
+
 
 /**********************************************************************************************************************
 Function Declarations
@@ -45,6 +61,8 @@ Function Declarations
 /*--------------------------------------------------------------------------------------------------------------------*/
 void UserAppInitialize(void);
 void UserAppRunActiveState(void);
+
+void AdcCallback(u16 u16Result_);
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

@@ -8,8 +8,6 @@
 #define __TYPEDEFS_H
 
 
-typedef void(*fnCode_type)(void);
-
 /* CHAR/SHORT/LONG types here for legacy code compatibility */
 typedef char CHAR;              /* Signed 8-bits */
 typedef unsigned char UCHAR;    /* Unsigned 8-bits */
@@ -36,6 +34,9 @@ typedef UCHAR  u8;
 typedef const ULONG uc32;  /*!< Read Only */
 typedef const USHORT uc16;  /*!< Read Only */
 typedef const USHORT uc8;   /*!< Read Only */
+
+typedef void(*fnCode_type)(void);
+typedef void(*fnCode_u16_type)(u16 x);
 
 
 #ifndef __cplusplus
