@@ -28,8 +28,8 @@ Type Definitions
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
-//#define PART1
-#define PART2
+#define PART1
+//#define PART2
 
 /* Values for calculating the voltage displayed 
 Voltage(mV) = Counts x mV/Count = Counts x VREF / ADC_RESOLUTION
