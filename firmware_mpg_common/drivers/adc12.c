@@ -177,8 +177,6 @@ bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
   
     /* Start the conversion and exit */
     AT91C_BASE_ADC12B->ADC12B_CR |= AT91C_ADC12B_CR_START;
-    while(!(AT91C_BASE_ADC12B->ADC12B_SR & (1 << ADC12_CH1)));
-    // read result register
     return TRUE;
   }
   

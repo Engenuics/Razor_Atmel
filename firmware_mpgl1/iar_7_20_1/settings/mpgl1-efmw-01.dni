@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=458294741
+Checksum=-2101001215
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -63,10 +63,9 @@ Exclusions=
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\adc12.c}.314.5" 0 0 1 "" 0 "" 0
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\adc12.c}.316.3" 0 0 1 "" 0 "" 0
 Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\main.c}.75.3" 0 0 1 "" 0 "" 0
-Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\adc12.c}.172.5" 0 0 1 "" 0 "" 0
-Count=3
+Count=2
 [Aliases]
 Count=0
 SuppressDialog=0
