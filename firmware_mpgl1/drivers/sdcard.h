@@ -25,6 +25,10 @@ Constants / Definitions
 #define _SD_TYPE_SD2		          (u32)0x00000010		   /* SD ver 2 */
 #define _SD_TYPE_MMC		          (u32)0x00000020	     /* SD ver 3 */
 #define _SD_TYPE_BLOCK		        (u32)0x00000040		   /* Block addressing */
+#define _SD_TYPE_SDSC             (u32)0x00000000      /* Standard Capacity SD Memory Card (SDSC): Up to and including 2 GB */
+#define _SD_TYPE_SDHC             (u32)0x00000000      /* High Capacity SD Memory Card (SDHC): More than 2GB and up to and including 32GB */
+#define _SD_TYPE_SDXC             (u32)0x00000000      /* Extended Capacity SD Memory Card (SDXC): More than 32GB and up to and including 2TB */
+/* end of SD_u32Flags */
 
 #define SD_CLEAR_CARD_TYPE_BITS  ~(_SD_CARD_HC | _SD_TYPE_MMC | _SD_TYPE_SD1 | _SD_TYPE_SD2 |_SD_TYPE_BLOCK)
 #define _SD_TYPE_SDC		          (_SD_TYPE_SD1 | _SD_TYPE_SD2)	
@@ -114,8 +118,6 @@ Constants / Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Macros */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#define SD_POWER_ON()             (LPC_GPIO0->FIOCLR = P0_26_SD_PWR)
-#define SD_POWER_OFF()            (LPC_GPIO0->FIOSET = P0_26_SD_PWR)  /* Must be open drain with pull-up */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

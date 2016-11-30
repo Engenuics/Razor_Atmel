@@ -61,7 +61,7 @@ static u8* SD_NextCommand;                         /* Saved command to be execut
 
 //static LedSetType SD_CardStatusLed;                /* LED to show card insert detected */
 
-static SspConfigurationType SD_sSspConfig;        /* Configuration information for SSP peripheral */
+static SspConfigurationType SD_sSspConfig;         /* Configuration information for SSP peripheral */
 static SspPeripheralType* SD_Ssp;                  /* Pointer to SSP peripheral object */
 
 static u8 SD_au8RxBuffer[SDCARD_RX_BUFFER_SIZE];   /* Space for incoming bytes from the SD card */
@@ -72,6 +72,8 @@ static u32 SD_u32Timeout;                          /* Timeout counter used acros
 static u32 SD_u32CurrentMsgToken;                  /* Token of message currently being sent */
 static u32 SD_u32Address;                          /* Current read/write sector address */
 
+static u8 SD_au8CardInMessage[]    = "SdCard Inserted\n\r";
+static u8 SD_au8SspRequestFailed[] = "SdCard denied SSP\n\r";
 static u8 SD_au8SspRequestFailed[] = "SdCard denied SSP\n\r";
 static u8 SD_au8CardReady[]        = "SD ready\n\r";
 static u8 SD_au8CardError[]        = "SD error: ";
@@ -270,8 +272,10 @@ Promises:
 */
 void SdCardInitialize(void)
 {
-  u8 au8SdCardStarted[] = "SdCard task disabled\n\r";
-//  u8 au8SdCardStarted[] = "SdCard task initialized\n\r";
+  //u8 au8SdCardStarted[] = "SdCard task disabled\n\r";
+  u8 au8SdCardStarted[] = "SdCard task ready\n\r";
+  u8 au8SdCardStarted[] = "SdCard task ready\n\r";
+  u8 au8SdCardStarted[] = "SdCard task ready\n\r";
 
   /* Clear the receive buffer */
   for (u16 i = 0; i < SDCARD_RX_BUFFER_SIZE; i++)
@@ -305,6 +309,10 @@ void SdCardInitialize(void)
   
   /* Power on and advance to Idle */
 //SD_POWER_ON();
+  if( SD_DETECT() == SD_CARD_INSERTED )
+  {
+    DebugPrintf(SD_au8CardInMessage);
+    
   SD_pfnStateMachine = SdIdleNoCard;
   DebugPrintf(au8SdCardStarted);
   G_u32ApplicationFlags |= _APPLICATION_FLAGS_SDCARD;
