@@ -2,7 +2,7 @@
 File: main.c                                                                
 
 Description:
-Container for the MPG firmware.  
+Container for the EiE firmware.  
 ***********************************************************************************************************************/
 
 #include "configuration.h"
