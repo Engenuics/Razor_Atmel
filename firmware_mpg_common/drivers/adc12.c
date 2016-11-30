@@ -166,9 +166,8 @@ bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
 {
   if(Adc12_bAdcAvailable)
   {
-    /* Take the semaphore so we have the ADC resource.  Since this is a binary
-    semaphore that is only cleared in the ISR, it is safe to do this with interrupts
-    enabled */
+    /* Take the semaphore so we have the ADC resource.  Since this is a binary semaphore 
+    that is only cleared in the ISR, it is safe to do this with interrupts enabled */
     Adc12_bAdcAvailable = FALSE;
    
     /* Enable the channel and its interrupt */
