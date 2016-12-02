@@ -345,7 +345,7 @@ Requires:
   - pau8Command_ is a pointer to the first byte of the command byte array
 
 Promises:
-  - Requested command is queued
+  - Requested command is queued to the SSP peripheral
   - SD_u32CurrentMsgToken updated with the corresponding message token
   - SD_pu8RxBufferParser is positioned to point to where the response byte from the command will be once the
     commmand has been sent from by SSP task (a bit dangerous...)
@@ -497,7 +497,7 @@ static void SdCardSM_IdleNoCard(void)
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Send dummies to wake up card */
+/* Wait for the dummies to be sent to wake up card */
 static void SdCardSM_Dummies(void)
 {
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
@@ -505,7 +505,7 @@ static void SdCardSM_Dummies(void)
     /* Advance the buffer parser past the dummy read byte responses since we don't care about them */
     AdvanceSD_pu8RxBufferParser(SD_WAKEUP_BYTES);
 
-    /* Queue CMD0 to be sent. The message token from here will be used to  */
+    /* Queue CMD0 to be sent. SdCommand sets SD_pfStateMachine for the next state. */
     SdCommand(&SD_au8CMD0[0]);
     SD_pfWaitReturnState = SdCardSM_ResponseCMD0;
   }
@@ -514,6 +514,8 @@ static void SdCardSM_Dummies(void)
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Check the response to CMD0. SD_pu8RxBufferParser is pointing to the RxBuffer where a response R1 is sitting */
+/* This is not a state but more a call-back after CMD0 */
+
 static void SdCardSM_ResponseCMD0(void)
 {
   /* Process the received byte */
@@ -561,7 +563,7 @@ static void SdCardSM_ResponseCMD8(void)
   else
   {
     /* The card does not support CMD8 so go directly to ACMD41 */
-    SdCommand(&SD_au8CMD55[0]);
+    SdCommand(&SD_au8ACMD41[0]);
     SD_pfWaitReturnState = SdCardSM_ACMD41;
   }
     
@@ -606,10 +608,10 @@ static void SdCardSM_ReadCMD8(void)
 
      
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Check the response to CMD55. SD_pu8RxBufferParser is pointing to the RxBuffer where a response R1 is sitting */
+/* Check the response to ACMD41. SD_pu8RxBufferParser is pointing to the RxBuffer where a response R1 is sitting */
 static void SdCardSM_ACMD41(void)
 {
-  /* Process the received byte from CMD55*/
+  /* Process the received byte from ACMD41*/
   if(*SD_pu8RxBufferParser == SD_STATUS_IDLE)
   {
     /* Card is ready for ACMD */
@@ -829,7 +831,7 @@ static void SdCardSM_WaitCommand(void)
 {
   static u8 u8Retries = SD_CMD_RETRIES;
   
-  /* Check to see if the SSP peripheral has sent the command */
+  /* Check to see if the SSP peripheral has sent the command (and received the response) */
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
   {
     /* If no response but retries left, queue another read */

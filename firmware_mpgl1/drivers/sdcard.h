@@ -87,28 +87,34 @@ Constants / Definitions
 #define SD_R7_LEN	                (u8)(SD_R1_LEN + 4)
 
 /* Card type flags (CardType) */
-#define SD_CT_MMC		              (u8)0x01		/* SD ver 3 */
-#define SD_CT_SD1		              (u8)0x02		/* SD ver 1 */
-#define SD_CT_SD2		              (u8)0x04		/* SD ver 2 */
+#define SD_CT_MMC		              (u8)0x01  	  /* SD ver 3 */
+#define SD_CT_SD1		              (u8)0x02		  /* SD ver 1 */
+#define SD_CT_SD2		              (u8)0x04		  /* SD ver 2 */
 #define SD_CT_SDC		              (u8)(SD_CT_SD1 | SD_CT_SD2)	/* SD */
-#define SD_CT_BLOCK		            (u8)0x08		/* Block addressing */
+#define SD_CT_BLOCK		            (u8)0x08		  /* Block addressing */
 
-/* Card status */
-#define SD_STATUS_IDLE            (u8)0x01     /* Response R1 when card is IDLE */
-#define SD_STATUS_READY           (u8)0x00     /* Response R1 when card is READY */
+/* Card status bits (in Response R1) */
+#define SD_STATUS_READY           (u8)0x00      /* Response R1 when card is READY */
+#define SD_STATUS_IDLE            (u8)0x01      /* Response R1 when card is IDLE */
+#define SD_STATUS_ERASE_RESET     (u8)0x02      /* Response bit in R1 */
+#define SD_STATUS_ILLEGAL_CMD     (u8)0x04      /* Response bit in R1 */
+#define SD_STATUS_COM_CRC_ERR     (u8)0x08      /* Response bit in R1 */
+#define SD_STATUS_ERASE_SEQ_ERR   (u8)0x10      /* Response bit in R1 */
+#define SD_STATUS_ADDRESS_ERR     (u8)0x20      /* Response bit in R1 */
+#define SD_STATUS_PARAMETER_ERR   (u8)0x40      /* Response bit in R1 */
 
 /* Data tokens */
-#define TOKEN_START_BLOCK         (u8)0xFE    /* First byte of a single block read or write, or multiple block read */
-#define TOKEN_START_BLOCK_MULT    (u8)0xFC    /* First byte of each block in multiple block write */
-#define TOKEN_STOP_BLOCK_MULT     (u8)0xFD    /* Stop transmission request token for multi-block write */
+#define TOKEN_START_BLOCK         (u8)0xFE      /* First byte of a single block read or write, or multiple block read */
+#define TOKEN_START_BLOCK_MULT    (u8)0xFC      /* First byte of each block in multiple block write */
+#define TOKEN_STOP_BLOCK_MULT     (u8)0xFD      /* Stop transmission request token for multi-block write */
 
 /* SD Error Codes */
-#define SD_ERROR_NONE             (u8)0x00    /* No error */
-#define SD_ERROR_TIMEOUT          (u8)0x01    /* SSP application did not deliver expected response */
-#define SD_ERROR_CARD_VOLTAGE     (u8)0x02    /* Card voltage not supported */
-#define SD_ERROR_BAD_RESPONSE     (u8)0x03    /* Unexpected or no response to a command */
-#define SD_ERROR_NO_TOKEN         (u8)0x04    /* Got '0' for a message token => message task is broken */
-#define SD_ERROR_NO_SD_TOKEN      (u8)0x05    /* Expected a token from the SD card but didn't get it */
+#define SD_ERROR_NONE             (u8)0x00      /* No error */
+#define SD_ERROR_TIMEOUT          (u8)0x01      /* SSP application did not deliver expected response */
+#define SD_ERROR_CARD_VOLTAGE     (u8)0x02      /* Card voltage not supported */
+#define SD_ERROR_BAD_RESPONSE     (u8)0x03      /* Unexpected or no response to a command */
+#define SD_ERROR_NO_TOKEN         (u8)0x04      /* Got '0' for a message token => message task is broken */
+#define SD_ERROR_NO_SD_TOKEN      (u8)0x05      /* Expected a token from the SD card but didn't get it */
 
 
 /**********************************************************************************************************************
