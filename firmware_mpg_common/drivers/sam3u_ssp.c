@@ -405,8 +405,6 @@ Master mode only.  Gets a single byte from the slave on the target SSP periphera
 
 Requires:
   - psSspPeripheral_ has been requested.
-  - The chip select line of the SSP device should be asserted
-  - 
 
 Promises:
   - Creates a message with one SSP_DUMMY_BYTE at psSspPeripheral_->psTransmitBuffer that will be sent by the SSP application

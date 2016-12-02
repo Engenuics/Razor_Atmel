@@ -43,11 +43,11 @@ Should be 6000 for 48MHz CCLK. */
 /***********************************************************************************************************************
 * Macros
 ***********************************************************************************************************************/
-#define WATCHDOG_BONE()  (AT91C_BASE_WDTC->WDTC_WDCR = WDT_CR_FEED) /* resets the watch dog countdown timer.*/
-#define HEARTBEAT_ON()   (AT91C_BASE_PIOA->PIO_CODR = PA_31_HEARTBEAT) /* Turns on Heartbeat LED */
-#define HEARTBEAT_OFF()  (AT91C_BASE_PIOA->PIO_SODR = PA_31_HEARTBEAT) /* Turns off Heartbeat LED */
+#define WATCHDOG_BONE()     (AT91C_BASE_WDTC->WDTC_WDCR = WDT_CR_FEED)        /* Resets the watch dog countdown timer */
+#define HEARTBEAT_ON()      (AT91C_BASE_PIOA->PIO_CODR = PA_31_HEARTBEAT)     /* Turns on Heartbeat LED */
+#define HEARTBEAT_OFF()     (AT91C_BASE_PIOA->PIO_SODR = PA_31_HEARTBEAT)     /* Turns off Heartbeat LED */
 
-#define SD_DETECT()      (AT91C_BASE_PIOA->PIO_PDSR & PA_02_SD_DETECT) /* SD detect switch asserted */
+#define SD_CARD_INSERTED()  (!(AT91C_BASE_PIOA->PIO_PDSR & PA_02_SD_DETECT))  /* SD detect switch asserted */
 
 
 /***********************************************************************************************************************

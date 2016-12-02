@@ -150,28 +150,28 @@ static void FlushSdRxBuffer(void);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-static void SdIdleNoCard(void);     
-static void SdCardDummies(void);
-static void SdCardResponseCMD0(void);
-static void SdCardResponseCMD8(void);
-static void SdCardReadCMD8(void);
-static void SdCardACMD41(void);
-static void SdCardResponseACMD41(void);
-static void SdCardResponseCMD58(void);
-static void SdCardResponseCMD16(void);
-static void SdCardReadCMD58(void);
+static void SdCardSM_IdleNoCard(void);     
+static void SdCardSM_Dummies(void);
+static void SdCardSM_ResponseCMD0(void);
+static void SdCardSM_ResponseCMD8(void);
+static void SdCardSM_ReadCMD8(void);
+static void SdCardSM_ACMD41(void);
+static void SdCardSM_ResponseACMD41(void);
+static void SdCardSM_ResponseCMD58(void);
+static void SdCardSM_ResponseCMD16(void);
+static void SdCardSM_ReadCMD58(void);
 
-static void SdCardReadyIdle(void);          
-static void SdCardResponseCMD17(void);
-static void SdCardWaitStartToken(void);          
-static void SdCardDataTransfer(void);
-static void SdFailedDataTransfer(void);
+static void SdCardSM_ReadyIdle(void);          
+static void SdCardSM_ResponseCMD17(void);
+static void SdCardSM_WaitStartToken(void);          
+static void SdCardSM_DataTransfer(void);
+static void SdCardSM_FailedDataTransfer(void);
 
-static void SdCardWaitReady(void);
-static void SdCardWaitCommand(void);
-static void SdCardWaitSSP(void);
+static void SdCardSM_WaitReady(void);
+static void SdCardSM_WaitCommand(void);
+static void SdCardSM_WaitSSP(void);
 
-static void SdError(void);         
+static void SdCardSM_Error(void);         
 
 
 #endif /* __SDCARD_H */

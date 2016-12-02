@@ -50,16 +50,14 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "SD_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type SD_pfnStateMachine;             /* The Debug state machine function pointer */
+static fnCode_type SD_pfStateMachine;              /* The Debug state machine function pointer */
 
 static u32 SD_u32Flags;                            /* Application flags for SD card */
 static SdCardStateType SD_CardState;               /* Card state variable */
 
 static u8  SD_u8ErrorCode;                         /* Error code */
-static fnCode_type SD_WaitReturnState;             /* The saved state to return after a wait period */
+static fnCode_type SD_pfWaitReturnState;           /* The saved state to return after a wait period */
 static u8* SD_NextCommand;                         /* Saved command to be executed next */
-
-//static LedSetType SD_CardStatusLed;                /* LED to show card insert detected */
 
 static SspConfigurationType SD_sSspConfig;         /* Configuration information for SSP peripheral */
 static SspPeripheralType* SD_Ssp;                  /* Pointer to SSP peripheral object */
@@ -73,7 +71,6 @@ static u32 SD_u32CurrentMsgToken;                  /* Token of message currently
 static u32 SD_u32Address;                          /* Current read/write sector address */
 
 static u8 SD_au8CardInMessage[]    = "SdCard Inserted\n\r";
-static u8 SD_au8SspRequestFailed[] = "SdCard denied SSP\n\r";
 static u8 SD_au8SspRequestFailed[] = "SdCard denied SSP\n\r";
 static u8 SD_au8CardReady[]        = "SD ready\n\r";
 static u8 SD_au8CardError[]        = "SD error: ";
@@ -107,19 +104,18 @@ Function Definitions
 Function: SdIsCardInserted
 
 Description:
-Indicates whether or not an SD card is currently inserted.
+Updates and indicates whether or not an SD card is currently inserted.
 
 Requires:
   - 
 
 Promises:
-  - Returns TRUE if card is inserted and SD_CardStatusLed is requested; otherwise returns FALSE and
-    SD_CardStatusLed is released
-  - _SD_CARD_INSERTED is updated (set if card is in)
+  - Returns TRUE if card is inserted; otherwise returns FALSE 
+  - _SD_CARD_INSERTED is updated (SET if card is in)
 */
 bool SdIsCardInserted(void)
 {
-  if( !SD_DETECT() )
+  if( SdIsCardInserted() )
   {
     SD_u32Flags &= ~_SD_CARD_INSERTED;
     SD_CardState = SD_NO_CARD;
@@ -273,9 +269,8 @@ Promises:
 void SdCardInitialize(void)
 {
   //u8 au8SdCardStarted[] = "SdCard task disabled\n\r";
-  u8 au8SdCardStarted[] = "SdCard task ready\n\r";
-  u8 au8SdCardStarted[] = "SdCard task ready\n\r";
-  u8 au8SdCardStarted[] = "SdCard task ready\n\r";
+  u8 au8SdCardStartedMsg[] = "SdCard task ready\n\r";
+  u8 au8SdCardWaitInitMsg[] = "Waiting for card to initalize...\n\r";
 
   /* Clear the receive buffer */
   for (u16 i = 0; i < SDCARD_RX_BUFFER_SIZE; i++)
@@ -296,27 +291,19 @@ void SdCardInitialize(void)
   SD_sSspConfig.u16RxBufferSize    = SDCARD_RX_BUFFER_SIZE;
   SD_sSspConfig.BitOrder           = MSB_FIRST;
   SD_sSspConfig.SpiMode            = SPI_MASTER;
-
-  SD_Ssp = SspRequest(&SD_sSspConfig);
-
-  /* Initialize the LED used by the SD card */
-#if 0
-  SD_CardStatusLed.u32Led       = LED_YLW;
-  SD_CardStatusLed.eRequesterID = LED_REQUESTER_SDCARD;
-  SD_CardStatusLed.eBlinkRate   = LED_OFF;
-  LedRequest(&SD_CardStatusLed);
-#endif
   
-  /* Power on and advance to Idle */
-//SD_POWER_ON();
-  if( SD_DETECT() == SD_CARD_INSERTED )
+  /* Always start in SdCardSM_IdleNoCard but display different message if card is already in */
+  SD_pfStateMachine = SdCardSM_IdleNoCard;
+  DebugPrintf(au8SdCardStartedMsg);
+
+  if( SdIsCardInserted() )
   {
     DebugPrintf(SD_au8CardInMessage);
-    
-  SD_pfnStateMachine = SdIdleNoCard;
-  DebugPrintf(au8SdCardStarted);
-  G_u32ApplicationFlags |= _APPLICATION_FLAGS_SDCARD;
+    DebugPrintf(au8SdCardWaitInitMsg);
+  }
 
+  G_u32ApplicationFlags |= _APPLICATION_FLAGS_SDCARD;
+  
 } /* end SdCardInitialize() */
 
 
@@ -336,7 +323,7 @@ Promises:
 */
 void SdCardRunActiveState(void)
 {
-  SD_pfnStateMachine();
+  SD_pfStateMachine();
 
 } /* end SdCardRunActiveState */
 
@@ -369,25 +356,24 @@ void SdCommand(u8* pau8Command_)
 {
   /* Save the desired command */
   SD_NextCommand = pau8Command_;
-#if 0  
-  /* DeAssert the chip select line and queue a dummy read to query the card */
-  SspDeAssertCS(SD_Ssp);
+  
+  /* Queue a dummy read to query the card */
+  //SspDeAssertCS(SD_Ssp);
   SD_u32Timeout = G_u32SystemTime1ms;
   SD_u32CurrentMsgToken = SspReadByte(SD_Ssp);
   if(SD_u32CurrentMsgToken)
   {
-    SD_pfnStateMachine = SdCardWaitReady;
+    SD_pfStateMachine = SdCardSM_WaitReady;
     
     /* Assert CS to start the command process */
-    SspAssertCS(SD_Ssp);
+    //SspAssertCS(SD_Ssp);
   }
   else
   {
     /* We didn't get a return token, so abort */
     SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
-#endif
   
 } /* end SdCommand() */
 
@@ -405,14 +391,14 @@ Requires:
   - SD_u32Timeout is the reference time
 
 Promises:
-  - if the timeout has occured, sets the erorr code and directs the SM to SdError state
+  - if the timeout has occured, sets the erorr code and directs the SM to SdCardSM_Error state
 */
 void CheckTimeout(u32 u32Time_)
 {
   if( IsTimeUp(&SD_u32Timeout, u32Time_) )
   {
     SD_u8ErrorCode = SD_ERROR_TIMEOUT;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
 
 } /* end CheckTimeout() */
@@ -469,9 +455,9 @@ State Machine Function Definitions
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a card to be inserted */
-static void SdIdleNoCard(void)
+static void SdCardSM_IdleNoCard(void)
 {
-#if 0
+
   if( SdIsCardInserted() )
   {
     /* Request the SSP resource to talk to the card */
@@ -479,10 +465,10 @@ static void SdIdleNoCard(void)
     if(SD_Ssp == NULL)
     {
       /* Go to wait state if SSP is not available */
-      DebugPrintf(sizeof(SD_au8SspRequestFailed) - 1, &SD_au8SspRequestFailed[0]);
+      DebugPrintf(SD_au8SspRequestFailed);
       SD_u32Timeout = G_u32SystemTime1ms;
-      SD_WaitReturnState = SdIdleNoCard;
-      SD_pfnStateMachine = SdCardWaitSSP;
+      SD_pfWaitReturnState = SdCardSM_IdleNoCard;
+      SD_pfStateMachine = SdCardSM_WaitSSP;
     }
     else
     {
@@ -491,32 +477,28 @@ static void SdIdleNoCard(void)
       SD_u32Flags &= SD_CLEAR_CARD_TYPE_BITS;
       FlushSdRxBuffer();
       
-      SD_CardStatusLed.eBlinkRate = LED_1HZ;
-      LedRequest(&SD_CardStatusLed);
-
       /* Queue up a set of dummy transfers to make sure the card is awake; */
       SD_u32CurrentMsgToken = SspReadData(SD_Ssp, SD_WAKEUP_BYTES);
       if(SD_u32CurrentMsgToken)
       {
-        SspAssertCS(SD_Ssp);
-        SD_pfnStateMachine = SdCardDummies;
+        //SspAssertCS(SD_Ssp);
+        SD_pfStateMachine = SdCardSM_Dummies;
       }
       else
       {
         /* We didn't get a return token, so abort */
         SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
-        SD_pfnStateMachine = SdError;
+        SD_pfStateMachine = SdCardSM_Error;
       }
     }
   }  
-#endif
   
-} /* end SdIdleNoCard() */
+} /* end SdCardSM_IdleNoCard() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Send dummies to wake up card */
-static void SdCardDummies(void)
+static void SdCardSM_Dummies(void)
 {
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
   { 
@@ -525,38 +507,38 @@ static void SdCardDummies(void)
 
     /* Queue CMD0 to be sent. The message token from here will be used to  */
     SdCommand(&SD_au8CMD0[0]);
-    SD_WaitReturnState = SdCardResponseCMD0;
+    SD_pfWaitReturnState = SdCardSM_ResponseCMD0;
   }
-} /* end SdCardDummies() */
+} /* end SdCardSM_Dummies() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Check the response to CMD0. SD_pu8RxBufferParser is pointing to the RxBuffer where a response R1 is sitting */
-static void SdCardResponseCMD0(void)
+static void SdCardSM_ResponseCMD0(void)
 {
   /* Process the received byte */
   if(*SD_pu8RxBufferParser == SD_STATUS_IDLE)
   {
     /* Card is in Idle state, so issue CMD8 */
     SdCommand(&SD_au8CMD8[0]);
-    SD_WaitReturnState = SdCardResponseCMD8;
+    SD_pfWaitReturnState = SdCardSM_ResponseCMD8;
   }
   else
   {
     /* Unexpected response, go to error */
     SD_u8ErrorCode = SD_ERROR_BAD_RESPONSE;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
   
   /* In any case, advance the buffer pointer */
   AdvanceSD_pu8RxBufferParser(1);
        
-} /* end SdCardResponseCMD0() */
+} /* end SdCardSM_ResponseCMD0() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Queue a read to get the CMD8 data. */
-static void SdCardResponseCMD8(void)
+static void SdCardSM_ResponseCMD8(void)
 {
   /* Check the response byte (response R1) */
   if(*SD_pu8RxBufferParser == SD_STATUS_IDLE)
@@ -566,13 +548,13 @@ static void SdCardResponseCMD8(void)
     SD_u32CurrentMsgToken = SspReadData(SD_Ssp, 4);
     if(SD_u32CurrentMsgToken)
     {
-      SD_pfnStateMachine = SdCardReadCMD8;
+      SD_pfStateMachine = SdCardSM_ReadCMD8;
     }
     else
     {
       /* We didn't get a return token, so abort */
       SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
-      SD_pfnStateMachine = SdError;
+      SD_pfStateMachine = SdCardSM_Error;
     }
   }
   /* CMD8 not supported => not SDv2 */
@@ -580,18 +562,18 @@ static void SdCardResponseCMD8(void)
   {
     /* The card does not support CMD8 so go directly to ACMD41 */
     SdCommand(&SD_au8CMD55[0]);
-    SD_WaitReturnState = SdCardACMD41;
+    SD_pfWaitReturnState = SdCardSM_ACMD41;
   }
     
   /* In either case, advance the buffer pointer */
   AdvanceSD_pu8RxBufferParser(1);
    
-} /* end SdCardResponseCMD8() */
+} /* end SdCardSM_ResponseCMD8() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a response to CMD8. */
-static void SdCardReadCMD8(void)
+static void SdCardSM_ReadCMD8(void)
 {
   /* Check to see if the SSP peripheral has sent the data request */
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
@@ -605,7 +587,7 @@ static void SdCardReadCMD8(void)
       {
         /* Card supports VCC 2.7 - 3.6V so we're good to go */
         SdCommand(&SD_au8CMD55[0]);
-        SD_WaitReturnState = SdCardACMD41;
+        SD_pfWaitReturnState = SdCardSM_ACMD41;
       }
       AdvanceSD_pu8RxBufferParser(1);
     }
@@ -613,19 +595,19 @@ static void SdCardReadCMD8(void)
     {
       /* The card does not support the voltage range so is not usable */
       SD_u8ErrorCode = SD_ERROR_CARD_VOLTAGE;
-      SD_pfnStateMachine = SdError;
+      SD_pfStateMachine = SdCardSM_Error;
     }
   }
   
   /* Watch for SSP timeout */
   CheckTimeout(SD_SPI_WAIT_TIME_MS);
      
-} /* end SdCardReadCMD8() */
+} /* end SdCardSM_ReadCMD8() */
 
      
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Check the response to CMD55. SD_pu8RxBufferParser is pointing to the RxBuffer where a response R1 is sitting */
-static void SdCardACMD41(void)
+static void SdCardSM_ACMD41(void)
 {
   /* Process the received byte from CMD55*/
   if(*SD_pu8RxBufferParser == SD_STATUS_IDLE)
@@ -636,25 +618,25 @@ static void SdCardACMD41(void)
       SD_au8ACMD41[1] |= BIT6;
     }
     SdCommand(&SD_au8ACMD41[0]);
-    SD_WaitReturnState = SdCardResponseACMD41;
+    SD_pfWaitReturnState = SdCardSM_ResponseACMD41;
   }
   else
   {
     /* Unexpected response, go to error */
     SD_u8ErrorCode = SD_ERROR_BAD_RESPONSE;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
   
   /* In any case, advance the buffer pointer */
   AdvanceSD_pu8RxBufferParser(1);
        
-} /* end SdCardACMD41() */
+} /* end SdCardSM_ACMD41() */
      
      
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Check the response to ACMD41 which is waiting for the card to NOT be in idle (repeat CMD55 + ACMD41 sequence.
 Once the card is ready, can send CMD58.  The next step is different for version 1 and version 2 cards.  MMC will not be supported. */
-static void SdCardResponseACMD41(void)
+static void SdCardSM_ResponseACMD41(void)
 {
   /* Process the received byte based on card type */
   if(*SD_pu8RxBufferParser == SD_STATUS_READY)
@@ -664,7 +646,7 @@ static void SdCardResponseACMD41(void)
     {
       /* SDv2 cards use CMD58 */
       SdCommand(&SD_au8CMD58[0]);
-      SD_WaitReturnState = SdCardResponseCMD58;
+      SD_pfWaitReturnState = SdCardSM_ResponseCMD58;
     }
     else
     {
@@ -673,25 +655,25 @@ static void SdCardResponseACMD41(void)
       
       /* SDv1 cards are always low capacity, but can have variable block access.   Set to 512 to match SDv2. */
       SdCommand(&SD_au8CMD16[0]);
-      SD_WaitReturnState = SdCardResponseCMD16;
+      SD_pfWaitReturnState = SdCardSM_ResponseCMD16;
     }
   }
   else 
   {
     /* Card is not idle yet, so repeat */
     SdCommand(&SD_au8CMD55[0]);
-    SD_WaitReturnState = SdCardACMD41;
+    SD_pfWaitReturnState = SdCardSM_ACMD41;
   }
   
   /* In any case, advance the buffer pointer */
   AdvanceSD_pu8RxBufferParser(1);
        
-} /* end SdCardACMD41() */     
+} /* end SdCardSM_ACMD41() */     
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Queue a read to get the CMD58 data. RxBuffer pointer is on R1 response byte. */
-static void SdCardResponseCMD58(void)
+static void SdCardSM_ResponseCMD58(void)
 {
   /* Check the response byte (response R1) */
   if(*SD_pu8RxBufferParser == SD_STATUS_READY)
@@ -700,36 +682,36 @@ static void SdCardResponseCMD58(void)
     SD_u32CurrentMsgToken = SspReadData(SD_Ssp, 4);
     if(SD_u32CurrentMsgToken)
     {
-      SD_pfnStateMachine = SdCardReadCMD58;
+      SD_pfStateMachine = SdCardSM_ReadCMD58;
     }
     else
     {
       /* We didn't get a return token, so abort */
       SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
-      SD_pfnStateMachine = SdError;
+      SD_pfStateMachine = SdCardSM_Error;
     }
   }
   else
   {
     SD_u8ErrorCode = SD_ERROR_BAD_RESPONSE;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
     
   /* In either case, advance the buffer pointer */
   AdvanceSD_pu8RxBufferParser(1);
        
-} /* end SdCardResponseCMD8() */
+} /* end SdCardSM_ResponseCMD8() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Process response to CMD16. */
-static void SdCardResponseCMD16(void)
+static void SdCardSM_ResponseCMD16(void)
 {
   /* Check the response byte (response R1) */
   if(*SD_pu8RxBufferParser == SD_STATUS_READY)
   {
     /* Success! Card is ready for read/write operations */
-    SspDeAssertCS(SD_Ssp);
+    //SspDeAssertCS(SD_Ssp);
     SspRelease(SD_Ssp);
 
     SD_CardState = SD_IDLE;
@@ -737,23 +719,23 @@ static void SdCardResponseCMD16(void)
     //LedRequest(&SD_CardStatusLed);
     DebugPrintf(SD_au8CardReady);
 
-    SD_pfnStateMachine = SdCardReadyIdle;
+    SD_pfStateMachine = SdCardSM_ReadyIdle;
   }
   else
   {
     SD_u8ErrorCode = SD_ERROR_BAD_RESPONSE;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
     
   /* In either case, advance the buffer pointer */
   AdvanceSD_pu8RxBufferParser(1);
        
-} /* end SdCardResponseCMD8() */
+} /* end SdCardSM_ResponseCMD8() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a data for CMD58. RxBuffer pointer is at first of four response bytes when SSP is complete. */
-static void SdCardReadCMD58(void)
+static void SdCardSM_ReadCMD58(void)
 {
   /* Check to see if the SSP peripheral has sent the command */
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
@@ -765,7 +747,7 @@ static void SdCardReadCMD58(void)
       SD_u32Flags |= _SD_CARD_HC;
       
       /* Success! Card is ready for read/write operations */
-      SspDeAssertCS(SD_Ssp);
+      //SspDeAssertCS(SD_Ssp);
       SspRelease(SD_Ssp);
   
       SD_CardState = SD_IDLE;
@@ -773,13 +755,13 @@ static void SdCardReadCMD58(void)
       //LedRequest(&SD_CardStatusLed);
       DebugPrintf(SD_au8CardReady);
     
-      SD_pfnStateMachine = SdCardReadyIdle;
+      SD_pfStateMachine = SdCardSM_ReadyIdle;
     }
     /* For standard capacity, make sure block size is 512 */
     else
     {
       SdCommand(&SD_au8CMD16[0]);
-      SD_WaitReturnState = SdCardResponseCMD16;
+      SD_pfWaitReturnState = SdCardSM_ResponseCMD16;
     }
     
     /* Ignore the other 3 response bytes */
@@ -789,7 +771,7 @@ static void SdCardReadCMD58(void)
   /* Watch for SSP timeout */
   CheckTimeout(SD_SPI_WAIT_TIME_MS);
      
-} /* end SdCardReadCMD58() */
+} /* end SdCardSM_ReadCMD58() */
            
      
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -797,7 +779,7 @@ static void SdCardReadCMD58(void)
 Each time this function is entered, the RxBufferParser pointer will be pointing to the
 response byte. */
      
-static void SdCardWaitReady(void)
+static void SdCardSM_WaitReady(void)
 {
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
   {  
@@ -808,7 +790,7 @@ static void SdCardWaitReady(void)
       {
         /* We didn't get a return token, so abort */
         SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
-        SD_pfnStateMachine = SdError;
+        SD_pfStateMachine = SdCardSM_Error;
       }
 
       AdvanceSD_pu8RxBufferParser(1);
@@ -823,14 +805,14 @@ static void SdCardWaitReady(void)
     
       /* Set up time-outs and next state */
       SD_u32Timeout = G_u32SystemTime1ms;
-      SD_pfnStateMachine = SdCardWaitCommand;
+      SD_pfStateMachine = SdCardSM_WaitCommand;
     }
   }
   
   /* Watch for SSP timeout */
   CheckTimeout(SD_SPI_WAIT_TIME_MS);
      
-} /* end SdCardWaitReady() */
+} /* end SdCardSM_WaitReady() */
 
 
 
@@ -843,7 +825,7 @@ command being sent.
      
 PROMISES: returns with RxBuffer pointer pointing at response byte */
      
-static void SdCardWaitCommand(void)
+static void SdCardSM_WaitCommand(void)
 {
   static u8 u8Retries = SD_CMD_RETRIES;
   
@@ -860,7 +842,7 @@ static void SdCardWaitCommand(void)
       {
         /* We didn't get a return token, so abort */
         SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
-        SD_pfnStateMachine = SdError;
+        SD_pfStateMachine = SdCardSM_Error;
       }
 
       AdvanceSD_pu8RxBufferParser(1);
@@ -869,7 +851,7 @@ static void SdCardWaitCommand(void)
     {
       /* Otherwise return now */
       u8Retries = SD_CMD_RETRIES;
-      SD_pfnStateMachine = SD_WaitReturnState;
+      SD_pfStateMachine = SD_pfWaitReturnState;
     }
   }
   
@@ -877,15 +859,15 @@ static void SdCardWaitCommand(void)
   {
     u8Retries = SD_CMD_RETRIES;
     SD_u8ErrorCode = SD_ERROR_TIMEOUT;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
      
-} /* end SdCardWaitCommand() */
+} /* end SdCardSM_WaitCommand() */
 
   
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Kill time before checking SSP availability again */
-static void SdCardWaitSSP(void)          
+static void SdCardSM_WaitSSP(void)          
 {
   if( IsTimeUp(&SD_u32Timeout, SD_SPI_WAIT_TIME_MS) )
   {
@@ -893,15 +875,15 @@ static void SdCardWaitSSP(void)
     //SD_CardStatusLed.eBlinkRate = LED_OFF;
     //LedRequest(&SD_CardStatusLed);
     
-    SD_pfnStateMachine = SD_WaitReturnState;
+    SD_pfStateMachine = SD_pfWaitReturnState;
   }
   
-} /* end SdCardWaitSSP() */
+} /* end SdCardSM_WaitSSP() */
      
      
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* SD card is initialized: wait for action request. */
-static void SdCardReadyIdle(void)          
+static void SdCardSM_ReadyIdle(void)          
 {
   /* Check if the card is still in; if not return through WaitSSP to allow some debounce time */
   if( !SdIsCardInserted() )
@@ -914,8 +896,8 @@ static void SdCardReadyIdle(void)
     
     /* Exit through a wait state for effective debouncing */
     SD_u32Timeout = G_u32SystemTime1ms;
-    SD_WaitReturnState = SdIdleNoCard;
-    SD_pfnStateMachine = SdCardWaitSSP;
+    SD_pfWaitReturnState = SdCardSM_IdleNoCard;
+    SD_pfStateMachine = SdCardSM_WaitSSP;
   }
     
   /* Look for a request to read or write file data */
@@ -928,8 +910,8 @@ static void SdCardReadyIdle(void)
       /* Go to wait state if SSP is not available */
       DebugPrintf(SD_au8SspRequestFailed);
       SD_u32Timeout = G_u32SystemTime1ms;
-      SD_WaitReturnState = SdCardReadyIdle;
-      SD_pfnStateMachine = SdCardWaitSSP;
+      SD_pfWaitReturnState = SdCardSM_ReadyIdle;
+      SD_pfStateMachine = SdCardSM_WaitSSP;
     }
     else
     {
@@ -937,7 +919,7 @@ static void SdCardReadyIdle(void)
       if(SD_CardState == SD_WRITING)
       {
         /* Not yet implemented */
-        SD_pfnStateMachine = SdCardReadyIdle;
+        SD_pfStateMachine = SdCardSM_ReadyIdle;
         SD_CardState = SD_IDLE;
       }
       else
@@ -949,16 +931,16 @@ static void SdCardReadyIdle(void)
         SD_au8CMD17[4] = (u8)SD_u32Address;
         
         SdCommand(&SD_au8CMD17[0]);
-        SD_WaitReturnState = SdCardResponseCMD17;
+        SD_pfWaitReturnState = SdCardSM_ResponseCMD17;
       }
     }
   }
-} /* end SdCardReadyIdle() */
+} /* end SdCardSM_ReadyIdle() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Start read sequence */
-static void SdCardResponseCMD17(void)
+static void SdCardSM_ResponseCMD17(void)
 {
   /* Check the response byte (response R1) */
   if(*SD_pu8RxBufferParser == SD_STATUS_READY)
@@ -967,24 +949,24 @@ static void SdCardResponseCMD17(void)
     SD_u32CurrentMsgToken = SspReadByte(SD_Ssp);
  
     SD_u32Timeout = G_u32SystemTime1ms;
-    SD_pfnStateMachine = SdCardWaitStartToken;
+    SD_pfStateMachine = SdCardSM_WaitStartToken;
   }
   else
   {
     /* Incorrect response from the SD card, so abort */
     SD_u8ErrorCode = SD_ERROR_BAD_RESPONSE;
-    SD_pfnStateMachine = SdFailedDataTransfer;
+    SD_pfStateMachine = SdCardSM_FailedDataTransfer;
   }
 
   /* Either way, advance the RxBuffer pointer */  
   AdvanceSD_pu8RxBufferParser(1);
 
-} /* end SdCardResponseCMD17() */
+} /* end SdCardSM_ResponseCMD17() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Look for the returned token that indicates the read or write process has begun */
-static void SdCardWaitStartToken(void)          
+static void SdCardSM_WaitStartToken(void)          
 {
   /* Check if the SSP peripheral has sent the data request */
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
@@ -998,7 +980,7 @@ static void SdCardWaitStartToken(void)
       
       /* Queue a read for the entire sector plus two checksum bytes */
       SD_u32CurrentMsgToken = SspReadData(SD_Ssp, 514);    
-      SD_pfnStateMachine = SdCardDataTransfer;
+      SD_pfStateMachine = SdCardSM_DataTransfer;
     }
     else
     {
@@ -1012,66 +994,66 @@ static void SdCardWaitStartToken(void)
   if(IsTimeUp(&SD_u32Timeout, SD_READ_TOKEN_MS))
   {
     SD_u8ErrorCode = SD_ERROR_TIMEOUT;
-    SD_pfnStateMachine = SdFailedDataTransfer;
+    SD_pfStateMachine = SdCardSM_FailedDataTransfer;
   }
   
-} /* end SdCardWaitStartToken() */
+} /* end SdCardSM_WaitStartToken() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Read the sector */
-static void SdCardDataTransfer(void)
+static void SdCardSM_DataTransfer(void)
 {
   /* Check if the SSP peripheral is finished with the data request */
   if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
   {
     SD_CardState = SD_DATA_READY;
 
-    SspDeAssertCS(SD_Ssp);
+    //SspDeAssertCS(SD_Ssp);
     SspRelease(SD_Ssp);
 
     /* Reset the RxBuffer pointers to the start of the RxBuffer */
     SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
     SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
 
-    SD_pfnStateMachine = SdCardReadyIdle;
+    SD_pfStateMachine = SdCardSM_ReadyIdle;
   }
 
   /* Monitor time */
   if(IsTimeUp(&SD_u32Timeout, SD_SECTOR_READ_TIMEOUT_MS))
   {
     SD_u8ErrorCode = SD_ERROR_TIMEOUT;
-    SD_pfnStateMachine = SdError;
+    SD_pfStateMachine = SdCardSM_Error;
   }
 
-} /* end SdCardDataTransfer() */
+} /* end SdCardSM_DataTransfer() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle a failed data transfer */
-static void SdFailedDataTransfer(void)
+static void SdCardSM_FailedDataTransfer(void)
 {
   /* Reset the system variables */
-  SspDeAssertCS(SD_Ssp);
+  //SspDeAssertCS(SD_Ssp);
   SspRelease(SD_Ssp);
   FlushSdRxBuffer();
   SD_CardState = SD_CARD_ERROR;
   
   SD_u32Timeout = G_u32SystemTime1ms;
-  SD_pfnStateMachine = SdCardWaitSSP;
+  SD_pfStateMachine = SdCardSM_WaitSSP;
   
-} /* end SdFailedDataTransfer() */
+} /* end SdCardSM_FailedDataTransfer() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-static void SdError(void)          
+static void SdCardSM_Error(void)          
 {
   u8* pu8ErrorMessage;
   //u8 u8MessageSize;
   
   /* Reset the system variables */
-  SspDeAssertCS(SD_Ssp);
+  //SspDeAssertCS(SD_Ssp);
   SspRelease(SD_Ssp);
   FlushSdRxBuffer();
 
@@ -1130,10 +1112,10 @@ static void SdError(void)
   
   SD_CardState = SD_NO_CARD;
   SD_u32Timeout = G_u32SystemTime1ms;
-  SD_WaitReturnState = SdIdleNoCard;
-  SD_pfnStateMachine = SdCardWaitSSP;
+  SD_pfWaitReturnState = SdCardSM_IdleNoCard;
+  SD_pfStateMachine = SdCardSM_WaitSSP;
   
-} /* end SdError() */
+} /* end SdCardSM_Error() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
