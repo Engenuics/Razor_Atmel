@@ -2,7 +2,7 @@
 File: main.c                                                                
 
 Description:
-Container for the MPG firmware.  
+Container for the EiE firmware.  
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -42,7 +42,6 @@ the 1ms period.
 void main(void)
 {
   G_u32SystemFlags |= _SYSTEM_INITIALIZING;
-  // Check for watch dog restarts
 
   /* Low level initialization */
   WatchDogSetup(); /* During development, set to not reset processor if timeout */
@@ -68,8 +67,6 @@ void main(void)
   SdCardInitialize();
 
   /* Application initialization */
-//  BoardTestInitialize();
-//  AudioTestInitialize();
     UserAppInitialize();
   
   /* Exit initialization */
@@ -94,8 +91,6 @@ void main(void)
     SdCardRunActiveState();
 
     /* Applications */
-    //BoardTestRunActiveState();
-    //AudioTestRunActiveState();
     UserAppRunActiveState();
     
     /* System sleep*/

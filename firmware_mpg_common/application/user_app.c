@@ -178,23 +178,11 @@ static void UserAppSM_Idle(void)
   
 #ifdef MPG1
   u16BlinkCount++;
-  if(u16BlinkCount == 500)
+  if(u16BlinkCount == DELAY_TIME)
   {
     u16BlinkCount = 0;
-    
-    /* Update the counter and roll at 16 */
     u8Counter++;
-    if(u8Counter == 16)
-    {
-      u8Counter = 0;
-      
-      /* Manage the backlight color */
-      u8ColorIndex++;
-      if(u8ColorIndex == 7)
-      {
-        u8ColorIndex = 0;
-      }
-      
+    
     /* Parse the current count to set the LEDs.  RED is bit 0, ORANGE is bit 1,
     YELLOW is bit 2, GREEN is bit 3. */
     
@@ -234,6 +222,18 @@ static void UserAppSM_Idle(void)
       LedOff(GREEN);
     }
 
+    /* Check if the counter should roll and update the blacklight */
+    if(u8Counter == 16)
+    {
+      u8Counter = 0;
+      
+      /* Manage the backlight color */
+      u8ColorIndex++;
+      if(u8ColorIndex == 7)
+      {
+        u8ColorIndex = 0;
+      }
+      
       /* Set the backlight color: white (all), purple (blue + red), blue, cyan (blue + green),
       green, yellow (green + red), red */
       switch(u8ColorIndex)
@@ -288,12 +288,12 @@ static void UserAppSM_Idle(void)
       } /* end switch */
     } /* end if(u8Counter == 16) */
     
-  } /* end if(u16BlinkCount == 500) */
+  } /* end if(u16BlinkCount == DELAY_TIME) */
 #endif /* MPGL1 */
 
 #ifdef MPG2
   u16BlinkCount++;
-  if(u16BlinkCount == 500)
+  if(u16BlinkCount == DELAY_TIME)
   {
     u16BlinkCount = 0;
     
@@ -354,7 +354,7 @@ static void UserAppSM_Idle(void)
       LedOff(RED0 + (4 * u8ColorIndex));
     }
     
-  } /* end if(u16BlinkCount == 500) */
+  } /* end if(u16BlinkCount == DELAY_TIME) */
 #endif /* MPG2 */  
   
 } /* end UserAppSM_Idle() */
