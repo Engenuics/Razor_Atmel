@@ -31,7 +31,7 @@ Protected:
 void MessagingInitialize(void)
 One-time call to start the messaging application.
 
-u32 QueueMessage(MessageType** eTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
+u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
 Adds a message to the correct data queue, assigns a token which is posted to the status queue and returned to the client.
 This function is Protected because tasks that can queue messages should be managed carefully and not granted free reign
 to queue messages.  The message queue is a finite resource with TX_QUEUE_SIZE slots available for messages.
@@ -146,7 +146,7 @@ Description:
 Allocates one of the positions in the message queue to the calling function's send queue.
 
 Requires:
-  - eTargetTxBuffer_ is the peripheral transmit buffer where the message will be queued
+  - ppeTargetTxBuffer_ is the peripheral transmit buffer where the message will be queued
   - u32MessageSize_ is the size of the message data array in bytes
   - pu8MessageData_ points to the message data array
   - Msg_Pool should not be full 
@@ -155,7 +155,7 @@ Promises:
   - The message is inserted into the target list and assigned a token
   - If the message is created successfully, the message token is returned; otherwise, NULL is returned
 */
-u32 QueueMessage(MessageType** eTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
+u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
 {
   MessageSlot *psSlotParser;
   MessageType *psNewMessage;
@@ -223,16 +223,16 @@ u32 QueueMessage(MessageType** eTargetTxBuffer_, u32 u32MessageSize_, u8* pu8Mes
   
     /* Link the new message into the client's transmit buffer */
     /* Handle an empty list */
-    if(*eTargetTxBuffer_ == NULL)
+    if(*ppeTargetTxBuffer_ == NULL)
     {
-      *eTargetTxBuffer_ = psNewMessage;
+      *ppeTargetTxBuffer_ = psNewMessage;
     }
 
     /* Add the message to the end of the list */
     else
     {
       /* Find the last node */
-      psListParser =  *eTargetTxBuffer_;
+      psListParser =  *ppeTargetTxBuffer_;
       while(psListParser->psNextMessage != NULL)
       {
         psListParser = psListParser->psNextMessage;

@@ -14,7 +14,8 @@ Header file for sam3u_ssp.c
 Type Definitions
 **********************************************************************************************************************/
 typedef enum {MSB_FIRST, LSB_FIRST} SspBitOrderType;
-typedef enum {SPI_MASTER, SPI_SLAVE, SPI_SLAVE_FLOW_CONTROL} SpiModeType;
+typedef enum {SSP_FULL_DUPLEX, SSP_HALF_DUPLEX} SspDuplexModeType;
+typedef enum {SPI_MASTER_AUTO_CS, SPI_MASTER_MANUAL_CS, SPI_SLAVE, SPI_SLAVE_FLOW_CONTROL} SpiModeType;
 
 typedef struct 
 {
@@ -26,7 +27,7 @@ typedef struct
   fnCode_type fnSlaveTxFlowCallback;  /* Callback function for SPI_SLAVE_FLOW_CONTROL transmit */
   fnCode_type fnSlaveRxFlowCallback;  /* Callback function for SPI_SLAVE_FLOW_CONTROL receive */
   u8* pu8RxBufferAddress;             /* Address to circular receive buffer */
-  u8** ppu8RxNextByte;                /* Location of pointer to next byte to write in buffer for SPI_SLAVE_FLOW_CONTROL*/
+  u8** ppu8RxNextByte;                /* Location of pointer to next byte to write in buffer for SPI_SLAVE_FLOW_CONTROL only */
   u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
 } SspConfigurationType;
 
@@ -42,7 +43,7 @@ typedef struct
   fnCode_type fnSlaveTxFlowCallback;  /* Callback function for SPI SLAVE transmit that uses flow control */
   fnCode_type fnSlaveRxFlowCallback;  /* Callback function for SPI SLAVE receive that uses flow control */
   u8* pu8RxBuffer;                    /* Pointer to circular receive buffer in user application */
-  u8** ppu8RxNextByte;                /* Pointer to buffer location where next received byte will be placed (SPI_SLAVE_FLOW_CONTROL) */
+  u8** ppu8RxNextByte;                /* Pointer to buffer location where next received byte will be placed (SPI_SLAVE_FLOW_CONTROL only) */
   u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
   u8 u8PeripheralId;                  /* Simple peripheral ID number */
   u8 u8Pad;                           /* Preserve 4-byte alignment */
@@ -90,8 +91,8 @@ Constants / Definitions
 SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_);
 void SspRelease(SspPeripheralType* psSspPeripheral_);
 
-void SspAssertCS(SspPeripheralType* psSspPeripheral_);
-void SspDeAssertCS(SspPeripheralType* psSspPeripheral_);
+//void SspAssertCS(SspPeripheralType* psSspPeripheral_);
+//void SspDeAssertCS(SspPeripheralType* psSspPeripheral_);
 
 u32 SspWriteByte(SspPeripheralType* psSspPeripheral_, u8 u8Byte_);
 u32 SspWriteData(SspPeripheralType* psSspPeripheral_, u32 u32Size_, u8* u8Data_);
