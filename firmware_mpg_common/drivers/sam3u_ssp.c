@@ -878,7 +878,8 @@ void SspSM_Idle(void)
   if( (SSP_psCurrentSsp->psTransmitBuffer != NULL) && 
      !(SSP_psCurrentSsp->u32PrivateFlags & (_SSP_PERIPHERAL_TX | _SSP_PERIPHERAL_RX) ) )
   {
-    /* For a SPI_MASTER_AUTO_CS device, start by asserting chip select */
+    /* For a SPI_MASTER_AUTO_CS device, start by asserting chip select 
+   (SPI_MASTER_MANUAL_CS devices should already have asserted CS in the user's task) */
     if(SSP_psCurrentSsp->SpiMode == SPI_MASTER_AUTO_CS)
     {
       SSP_psCurrentSsp->pCsGpioAddress->PIO_CODR = SSP_psCurrentSsp->u32CsPin;
@@ -891,23 +892,23 @@ void SspSM_Idle(void)
       UpdateMessageStatus(SSP_psCurrentSsp->psTransmitBuffer->u32Token, RECEIVING);
       SSP_psCurrentSsp->u32PrivateFlags |= _SSP_PERIPHERAL_RX;    
       
-      /* Load the PDC counter and pointer registers */
-      //SSP_psCurrentSsp->pBaseAddress->US_RPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
+      /* Load the PDC counter and pointer registers. Half duplex transmission assumed, so don't load transmit PDC registers. 
+      However the transfer is set up based on the classic SPI model of transmitting dummy bytes, so we use the transmit data
+      size for the receive byte count. */
+
       /* Receive bytes */
       SSP_psCurrentSsp->pBaseAddress->US_RPR = (unsigned int)SSP_psCurrentSsp->pu8RxBuffer; 
-      //SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
-
-      /* Always transmit and receive the same number of bytes */
       SSP_psCurrentSsp->pBaseAddress->US_RCR = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
       //SSP_psCurrentSsp->pBaseAddress->US_TCR = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
+      //SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
       
       /* When RCR is loaded, the ENDRX flag is cleared so it is safe to enable the interrupt */
       SSP_psCurrentSsp->pBaseAddress->US_IER = AT91C_US_ENDRX;
       
-      /* Enable the receiver to start the transfer; the transmitter is also enabled so the
-      PDC sends the dummy bytes as expected. */
-      //SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN;
-      SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+      /* Enable the receiver to start the transfer. We are not explicitly sending dummy bytes, so do not
+      enable the transmitter. */
+      SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN;
+      //SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
     } /* End of receive function */
     else
     {

@@ -48,6 +48,7 @@ typedef struct
   u8 u8PeripheralId;                  /* Simple peripheral ID number */
   u8 u8Pad;                           /* Preserve 4-byte alignment */
   MessageType* psTransmitBuffer;      /* Pointer to the transmit message struct linked list */
+//  MessageType* psReceiveBuffer;       /* Pointer to the transmit message struct linked list */
   u32 u32CurrentTxBytesRemaining;     /* Counter for bytes remaining in current transfer */
   u8* pu8CurrentTxData;               /* Pointer to current location in the Tx buffer */
 } SspPeripheralType;
