@@ -13,17 +13,17 @@ Header file for sam3u_ssp.c
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
-typedef enum {MSB_FIRST, LSB_FIRST} SspBitOrderType;
+typedef enum {MSB_FIRST, LSB_FIRST} SspeBitOrderType;
 typedef enum {SSP_FULL_DUPLEX, SSP_HALF_DUPLEX} SspDuplexModeType;
-typedef enum {SPI_MASTER_AUTO_CS, SPI_MASTER_MANUAL_CS, SPI_SLAVE, SPI_SLAVE_FLOW_CONTROL} SpiModeType;
+typedef enum {SPI_MASTER_AUTO_CS, SPI_MASTER_MANUAL_CS, SPI_SLAVE, SPI_SLAVE_FLOW_CONTROL} eSpiModeType;
 
 typedef struct 
 {
   PeripheralType SspPeripheral;       /* Easy name of peripheral */
   AT91PS_PIO pCsGpioAddress;          /* Base address for GPIO port for chip select line */
   u32 u32CsPin;                       /* Pin location for SSEL line */
-  SspBitOrderType BitOrder;           /* MSB_FIRST or LSB_FIRST: this is only available in SPI_SLAVE_FLOW_CONTROL mode */
-  SpiModeType SpiMode;                /* Type of SPI configured */
+  SspeBitOrderType eBitOrder;         /* MSB_FIRST or LSB_FIRST: this is only available in SPI_SLAVE_FLOW_CONTROL mode */
+  eSpiModeType eSpiMode;              /* Type of SPI configured */
   fnCode_type fnSlaveTxFlowCallback;  /* Callback function for SPI_SLAVE_FLOW_CONTROL transmit */
   fnCode_type fnSlaveRxFlowCallback;  /* Callback function for SPI_SLAVE_FLOW_CONTROL receive */
   u8* pu8RxBufferAddress;             /* Address to circular receive buffer */
@@ -36,13 +36,13 @@ typedef struct
   AT91PS_USART pBaseAddress;          /* Base address of the associated peripheral */
   AT91PS_PIO pCsGpioAddress;          /* Base address for GPIO port for chip select line */
   u32 u32CsPin;                       /* Pin location for SSEL line */
-  SspBitOrderType BitOrder;           /* MSB_FIRST or LSB_FIRST: this is only available in SPI_SLAVE_FLOW_CONTROL mode */
-  SpiModeType SpiMode;                /* Type of SPI configured */
+  SspeBitOrderType eBitOrder;          /* MSB_FIRST or LSB_FIRST: this is only available in SPI_SLAVE_FLOW_CONTROL mode */
+  eSpiModeType eSpiMode;               /* Type of SPI configured */
   u16 u16Pad;                         /* Preserve 4-byte alignment */
   u32 u32PrivateFlags;                /* Private peripheral flags */
   fnCode_type fnSlaveTxFlowCallback;  /* Callback function for SPI SLAVE transmit that uses flow control */
   fnCode_type fnSlaveRxFlowCallback;  /* Callback function for SPI SLAVE receive that uses flow control */
-  u8* pu8RxBuffer;                    /* Pointer to circular receive buffer in user application */
+  u8* pu8RxBuffer;                    /* Pointer to receive buffer in user application */
   u8** ppu8RxNextByte;                /* Pointer to buffer location where next received byte will be placed (SPI_SLAVE_FLOW_CONTROL only) */
   u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
   u8 u8PeripheralId;                  /* Simple peripheral ID number */

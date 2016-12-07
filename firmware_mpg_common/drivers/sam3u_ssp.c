@@ -227,10 +227,10 @@ SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
   /* Activate and configure the peripheral */
   AT91C_BASE_PMC->PMC_PCER |= (1 << psRequestedSsp->u8PeripheralId);
   
-  psRequestedSsp->pCsGpioAddress  = psSspConfig_->pCsGpioAddress;
-  psRequestedSsp->u32CsPin        = psSspConfig_->u32CsPin;
-  psRequestedSsp->BitOrder        = psSspConfig_->BitOrder;
-  psRequestedSsp->SpiMode         = psSspConfig_->SpiMode;
+  psRequestedSsp->pCsGpioAddress = psSspConfig_->pCsGpioAddress;
+  psRequestedSsp->u32CsPin       = psSspConfig_->u32CsPin;
+  psRequestedSsp->eBitOrder      = psSspConfig_->eBitOrder;
+  psRequestedSsp->eSpiMode       = psSspConfig_->eSpiMode;
   psRequestedSsp->fnSlaveTxFlowCallback = psSspConfig_->fnSlaveTxFlowCallback;
   psRequestedSsp->fnSlaveRxFlowCallback = psSspConfig_->fnSlaveRxFlowCallback;
   psRequestedSsp->pu8RxBuffer     = psSspConfig_->pu8RxBufferAddress;
@@ -244,7 +244,7 @@ SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
   psRequestedSsp->pBaseAddress->US_IDR  = u32TargetIDR;
   psRequestedSsp->pBaseAddress->US_BRGR = u32TargetBRGR;
   
-  if(psRequestedSsp->SpiMode == SPI_SLAVE)
+  if(psRequestedSsp->eSpiMode == SPI_SLAVE)
   {
     /* Preset the PDC pointers and counters; the receive buffer must be starting from [0] and be at least 2 bytes long)*/
     psRequestedSsp->pBaseAddress->US_RPR  = (u32)psSspConfig_->pu8RxBufferAddress;
@@ -258,7 +258,7 @@ SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
     psRequestedSsp->pBaseAddress->US_IER = AT91C_US_CTSIC;
   }
 
-  if(psRequestedSsp->SpiMode == SPI_SLAVE_FLOW_CONTROL)
+  if(psRequestedSsp->eSpiMode == SPI_SLAVE_FLOW_CONTROL)
   {
     /* Enable the CS and receiver requests so they are ready to go if the Master starts clocking */
     psRequestedSsp->pBaseAddress->US_IER = (AT91C_US_CTSIC | AT91C_US_RXRDY);
@@ -414,8 +414,8 @@ Promises:
 */
 u32 SspReadByte(SspPeripheralType* psSspPeripheral_)
 {
-  return( QueueMessage(&psSspPeripheral_->psTransmitBuffer, 1, &SSP_au8Dummies[0]) );
-
+  //return( QueueMessage(&psSspPeripheral_->psTransmitBuffer, 1, &SSP_au8Dummies[0]) );
+  
 } /* end SspReadByte() */
 
 
@@ -696,7 +696,7 @@ void SspGenericHandler(void)
       *SSP_pu32SspApplicationFlagsISR &= ~_SSP_CS_ASSERTED;
      
       /* Make sure RCR is 1 for next transmission on Slave - no flow control devices only */
-      if(SSP_psCurrentISR->SpiMode == SPI_SLAVE)
+      if(SSP_psCurrentISR->eSpiMode == SPI_SLAVE)
       {
         SSP_psCurrentISR->pBaseAddress->US_RCR  = 1;
       }
@@ -718,7 +718,7 @@ void SspGenericHandler(void)
       u32Byte = 0x000000FF & *SSP_psCurrentISR->pu8CurrentTxData;
 
       /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
-      if(SSP_psCurrentISR->BitOrder == LSB_FIRST)
+      if(SSP_psCurrentISR->eBitOrder == LSB_FIRST)
       {
         u32Byte = __RBIT(u32Byte)>>24;
       }
@@ -751,7 +751,7 @@ void SspGenericHandler(void)
     u32Byte = 0x000000FF & SSP_psCurrentISR->pBaseAddress->US_RHR;
 
     /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
-    if(SSP_psCurrentISR->BitOrder == LSB_FIRST)
+    if(SSP_psCurrentISR->eBitOrder == LSB_FIRST)
     {
       u32Byte = __RBIT(u32Byte)>>24;
     }
@@ -777,8 +777,8 @@ void SspGenericHandler(void)
       (u32Current_CSR & AT91C_US_ENDRX) )
   {
     /* Master mode and Slave mode operate differently */
-    if( (SSP_psCurrentISR->SpiMode == SPI_MASTER_AUTO_CS) ||
-        (SSP_psCurrentISR->SpiMode == SPI_MASTER_MANUAL_CS) ) 
+    if( (SSP_psCurrentISR->eSpiMode == SPI_MASTER_AUTO_CS) ||
+        (SSP_psCurrentISR->eSpiMode == SPI_MASTER_MANUAL_CS) ) 
     {
       /* Update this message token status and then DeQueue it */
       UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
@@ -786,7 +786,7 @@ void SspGenericHandler(void)
       SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_RX;
     
       /* Shut down hardware */
-      if(SSP_psCurrentSsp->SpiMode == SPI_MASTER_AUTO_CS)
+      if(SSP_psCurrentSsp->eSpiMode == SPI_MASTER_AUTO_CS)
       {
         SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
       }
@@ -838,10 +838,10 @@ void SspGenericHandler(void)
       u32Timeout++;
     } 
     
-    if(SSP_psCurrentISR->SpiMode == SPI_MASTER_AUTO_CS)
+    if(SSP_psCurrentISR->eSpiMode == SPI_MASTER_AUTO_CS)
     {
       /* Deassert chip select when the buffer and shift register are totally empty */
-      if(SSP_psCurrentSsp->SpiMode == SPI_MASTER_AUTO_CS)
+      if(SSP_psCurrentSsp->eSpiMode == SPI_MASTER_AUTO_CS)
       {
         SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
       }
@@ -875,12 +875,12 @@ void SspSM_Idle(void)
   For SSP SPI Master mode, the peripheral will have a message queued regardless of whether the intent is send or receive.
   For Master devices sending a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to the application transmit buffer
   For Master devices receiving a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to SSP_au8Dummies */
-  if( (SSP_psCurrentSsp->psTransmitBuffer != NULL) && 
+  if( ((SSP_psCurrentSsp->psTransmitBuffer != NULL) && 
      !(SSP_psCurrentSsp->u32PrivateFlags & (_SSP_PERIPHERAL_TX | _SSP_PERIPHERAL_RX) ) )
   {
-    /* For a SPI_MASTER_AUTO_CS device, start by asserting chip select 
+    /* For an SPI_MASTER_AUTO_CS device, start by asserting chip select 
    (SPI_MASTER_MANUAL_CS devices should already have asserted CS in the user's task) */
-    if(SSP_psCurrentSsp->SpiMode == SPI_MASTER_AUTO_CS)
+    if(SSP_psCurrentSsp->eSpiMode == SPI_MASTER_AUTO_CS)
     {
       SSP_psCurrentSsp->pCsGpioAddress->PIO_CODR = SSP_psCurrentSsp->u32CsPin;
     }
@@ -918,7 +918,7 @@ void SspSM_Idle(void)
       
       /* TRANSMIT SPI_SPI_SLAVE_FLOW_CONTROL */
       /* A Slave device with flow control uses interrupt-driven single byte transfers */
-      if(SSP_psCurrentSsp->SpiMode == SPI_SLAVE_FLOW_CONTROL)
+      if(SSP_psCurrentSsp->eSpiMode == SPI_SLAVE_FLOW_CONTROL)
       {
         /* At this point, CS is asserted and the master is waiting for flow control.
         Load in the message parameters. */
@@ -927,7 +927,7 @@ void SspSM_Idle(void)
 
         /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
         u32Byte = 0x000000FF & *SSP_psCurrentSsp->pu8CurrentTxData;
-        if(SSP_psCurrentSsp->BitOrder == LSB_FIRST)
+        if(SSP_psCurrentSsp->eBitOrder == LSB_FIRST)
         {
           u32Byte = __RBIT(u32Byte)>>24;
         }
