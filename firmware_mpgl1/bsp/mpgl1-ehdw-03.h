@@ -464,7 +464,7 @@ counter must be set at 1280. */
 0: No effect
 1: Pin is controlled by PIO
 */
-#define PIOA_PER_INIT (u32)0x84030007
+#define PIOA_PER_INIT (u32)0x84030107
 /* 
     31 [1] PA_31_HEARTBEAT PIO control enabled
     30 [0] PA_30_AN_DEMO PIO control not enabled
@@ -494,7 +494,7 @@ counter must be set at 1280. */
     11 [0] PA_11_BLADE_UPIMO PIO control not enabled
     10 [0] PA_10_I2C_SCL PIO control not enabled
     09 [0] PA_09_I2C_SDA PIO control not enabled
-    08 [0] PA_08_SD_CS_MCDA3 PIO control not enabled
+    08 [1] PA_08_SD_CS_MCDA3 PIO control enabled
 
     07 [0] PA_07_HSMCI_MCDA2 PIO control not enabled
     06 [0] PA_06_HSMCI_MCDA1 PIO control not enabled
@@ -555,7 +555,7 @@ counter must be set at 1280. */
 0: No effect
 1: Pin is controlled by corresponding peripheral
 */
-#define PIOA_PDR_INIT (u32)0x7BFCFFF8
+#define PIOA_PDR_INIT (u32)0x7BFCFEF8
 /* 
     31 [0] PA_31_HEARTBEAT not controlled by peripheral
     30 [1] PA_30_AN_DEMO controlled by peripheral
@@ -585,7 +585,7 @@ counter must be set at 1280. */
     11 [1] PA_11_BLADE_UPIMO controlled by peripheral
     10 [1] PA_10_I2C_SCL controlled by peripheral
     09 [1] PA_09_I2C_SDA controlled by peripheral
-    08 [1] PA_08_SD_CS_MCDA3 controlled by peripheral
+    08 [0] PA_08_SD_CS_MCDA3 not controlled by peripheral
 
     07 [1] PA_07_HSMCI_MCDA2 controlled by peripheral
     06 [1] PA_06_HSMCI_MCDA1 controlled by peripheral
@@ -660,7 +660,7 @@ Configures the pin as an output or input.
 
     23 [0] PA_23_ANT_USPI2_MOSI input
     22 [1] PA_22_ANT_USPI2_MISO output enabled
-    21 [0] PA_21_SD_USPI1_MISO input input
+    21 [0] PA_21_SD_USPI1_MISO input 
     20 [1] PA_20_SD_USPI1_MOSI output enabled
 
     19 [0] PA_19_DEBUG_U0_PIMO input
@@ -1368,7 +1368,7 @@ Initial output values are stored here.
 0: No effect
 1: Disables the pull up resistor on the I/O line.
 */
-#define PIOA_PPUDR_INIT (u32)0xFFFFFFFE
+#define PIOA_PPUDR_INIT (u32)0xFFDFFFFE
 /* 
     31 [1] PA_31_HEARTBEAT no pull-up
     30 [1] PA_30_AN_DEMO no pull-up
@@ -1382,7 +1382,7 @@ Initial output values are stored here.
 
     23 [1] PA_23_ANT_USPI2_MOSI no pull-up
     22 [1] PA_22_ANT_USPI2_MISO no pull-up
-    21 [1] PA_21_SD_USPI1_MISO no pull-up
+    21 [0] PA_21_SD_USPI1_MISO pull-up
     20 [1] PA_20_SD_USPI1_MOSI no pull-up
 
     19 [1] PA_19_DEBUG_U0_PIMO no pull-up
@@ -1872,7 +1872,7 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
 0: No effect
 1: Enables writing PIO_ODSR for the I/O line.
 */
-#define PIOA_OWER_INIT (u32)0xB4010000
+#define PIOA_OWER_INIT (u32)0xB4010100
 /* 
     31 [1] PA_31_HEARTBEAT write enabled
     30 [0] PA_30_AN_DEMO
@@ -1902,7 +1902,7 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
     11 [0] PA_11_BLADE_UPIMO
     10 [0] PA_10_I2C_SCL
     09 [0] PA_09_I2C_SDA
-    08 [0] PA_08_SD_CS_MCDA3
+    08 [1] PA_08_SD_CS_MCDA3
 
     07 [0] PA_07_HSMCI_MCDA2
     06 [0] PA_06_HSMCI_MCDA1

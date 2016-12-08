@@ -335,6 +335,8 @@ Promises:
 */
 void SspAssertCS(SspPeripheralType* psSspPeripheral_)
 {
+  //u32 u32Test = psSspPeripheral_->u32CsPin;
+  //u32 u32Test2 = psSspPeripheral_->pCsGpioAddress->PIO_CODR;
   psSspPeripheral_->pCsGpioAddress->PIO_CODR = psSspPeripheral_->u32CsPin;
   
 } /* end SspAssertCS() */

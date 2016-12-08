@@ -929,7 +929,7 @@ SPI slave mode to communicate with an ANT device.
 */
 
 /* USART Interrupt Disable Register - Page 743 */
-#define ANT_US_IDR_INIT (u32)~LCD_US_IER_INIT
+#define ANT_US_IDR_INIT (u32)~ANT_US_IER_INIT
 
 /* USART Baud Rate Generator Register - Page 752
 !!!!! Not applicable for slave (note that incoming clock cannot 
@@ -1058,14 +1058,14 @@ SPI mode to communicate with an SPI SD card.
     05 [0] OVRE Overrun Error interrupt not enabled
     04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled for now
 
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled
+    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt not enabled for now
     02 [0] RXBRK Break Received interrupt not enabled
     01 [0] TXRDY Transmitter Ready interrupt not enabled
     00 [0] RXRDY Receiver Ready interrupt not enabled
 */
 
 /* USART Interrupt Disable Register - Page 743 */
-#define SD_US_IDR_INIT (u32)~LCD_US_IER_INIT
+#define SD_US_IDR_INIT (u32)~SD_US_IER_INIT
 
 /* USART Baud Rate Generator Register - Page 752
 BAUD = MCK / CD 
