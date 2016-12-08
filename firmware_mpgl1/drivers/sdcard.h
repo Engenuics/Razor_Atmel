@@ -175,6 +175,7 @@ static void SdCardSM_FailedDataTransfer(void);
 
 static void SdCardSM_WaitReady(void);
 static void SdCardSM_WaitCommand(void);
+static void SdCardSM_WaitResponse(void);
 static void SdCardSM_WaitSSP(void);
 
 static void SdCardSM_Error(void);         

@@ -49,8 +49,8 @@ Should be 6000 for 48MHz CCLK. */
 
 #define SD_CARD_INSERTED()    (!(AT91C_BASE_PIOA->PIO_PDSR & PA_02_SD_DETECT))   /* SD detect switch asserted */
 
-#define SD_SSP_CS_ASSERT()    (AT91C_BASE_PIOA->PIO_CODR = PA_08_SD_CS_MCDA3)    /* SD CS line low (selected) */
-#define SD_SSP_CS_DEASSERT()  (AT91C_BASE_PIOA->PIO_SODR = PA_08_SD_CS_MCDA3)    /* SD CS line high (not selected) */
+//#define SD_SSP_CS_ASSERT()    (AT91C_BASE_PIOA->PIO_CODR = PA_08_SD_CS_MCDA3)    /* SD CS line low (selected) */
+//#define SD_SSP_CS_DEASSERT()  (AT91C_BASE_PIOA->PIO_SODR = PA_08_SD_CS_MCDA3)    /* SD CS line high (not selected) */
 
 
 /***********************************************************************************************************************

@@ -241,7 +241,7 @@ static void AntRxMessage(void)
   /* If the Global _ANT_FLAGS_TX_INTERRUPTED flag has been set, then we have already read the TX_SYNC byte */
   if(G_u32AntFlags & _ANT_FLAGS_TX_INTERRUPTED)
   {
-    /* Clear flag and load the value we know was already received to allow the function to proceed*/
+    /* Clear flag and load the value we know was already received to allow the function to proceed */
     G_u32AntFlags &= ~_ANT_FLAGS_TX_INTERRUPTED;
     
     /* Adjust the starting byte counter since it came in during AntTxMessage */
@@ -511,7 +511,7 @@ void AntInitialize(void)
     Ant_sSspConfig.pCsGpioAddress     = ANT_SPI_CS_GPIO;
     Ant_sSspConfig.u32CsPin           = ANT_SPI_CS_PIN;
     Ant_sSspConfig.eBitOrder          = LSB_FIRST;
-    Ant_sSspConfig.eSpiMode           = SPI_SLAVE_FLOW_CONTROL;
+    Ant_sSspConfig.eSspMode           = SPI_SLAVE_FLOW_CONTROL;
     Ant_sSspConfig.fnSlaveTxFlowCallback = AntTxFlowControlCallback;
     Ant_sSspConfig.fnSlaveRxFlowCallback = AntRxFlowControlCallback;
     Ant_sSspConfig.pu8RxBufferAddress = Ant_au8AntRxBuffer;
