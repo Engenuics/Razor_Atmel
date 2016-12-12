@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-869049813
+Checksum=1028213254
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -44,21 +44,7 @@ ActionState=1
 [CodeCoverage]
 Enabled=_ 0
 [struct_types]
-Fmt0=struct <Unnamed 12>-u32CsPin	4	0
-Fmt1=struct <Unnamed 12>-u32PrivateFlags	4	0
-[Trace1]
-Enabled=0
-ShowSource=1
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\drivers\sdcard.c}.518.5" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\drivers\sdcard.c}.474.5" 0 0 1 "" 0 "" 0
-Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_ssp.c}.884.7" 0 0 1 "" 0 "" 0
-Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\drivers\sdcard.c}.515.3" 0 0 1 "" 0 "" 0
-Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_ssp.c}.980.5" 0 0 1 "" 0 "" 0
-Bp5=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_ssp.c}.359.3" 0 0 1 "" 0 "" 0
-Count=6
+Fmt0=struct <Unnamed 11>-u32CsPin	4	0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -66,9 +52,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[Aliases]
-Count=0
-SuppressDialog=0
 [CallStackLog]
 Enabled=0
 [DriverProfiling]
@@ -77,3 +60,17 @@ Mode=1
 Graph=0
 Symbiont=0
 Exclusions=
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\drivers\sdcard.c}.518.5" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_ssp.c}.884.7" 0 0 1 "" 0 "" 0
+Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\drivers\sdcard.c}.515.3" 0 0 1 "" 0 "" 0
+Bp3=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_ssp.c}.1002.7" 0 0 1 "" 0 "" 0
+Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c}.521.5" 0 0 1 "" 0 "" 0
+Bp5=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_ssp.c}.241.3" 0 0 1 "" 0 "" 0
+Bp6=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\drivers\sdcard.c}.474.5" 0 0 1 "" 0 "" 0
+Count=7
+[Aliases]
+Count=0
+SuppressDialog=0

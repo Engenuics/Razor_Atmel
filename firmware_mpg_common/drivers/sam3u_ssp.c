@@ -972,7 +972,7 @@ void SspSM_Idle(void)
   Slave devices receive outside of the state machine
   For Master devices sending a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to the application transmit buffer
   For Master devices receiving a message, SSP_psCurrentSsp->u16RxBytes will != 0 */
-  if( ((SSP_psCurrentSsp->psTransmitBuffer != NULL) || (SSP_psCurrentSsp->u16RxBytes !=0)) && 
+  if( ( (SSP_psCurrentSsp->psTransmitBuffer != NULL) || (SSP_psCurrentSsp->u16RxBytes !=0) ) && 
      !(SSP_psCurrentSsp->u32PrivateFlags & (_SSP_PERIPHERAL_TX | _SSP_PERIPHERAL_RX) ) )
   {
     /* For an SPI_MASTER_AUTO_CS device, start by asserting chip select 

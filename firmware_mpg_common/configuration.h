@@ -945,7 +945,7 @@ SD USART Setup in SSP mode
 SPI mode to communicate with an SPI SD card. 
 */
 /* USART Control Register - Page 734 */
-#define SD_US_CR_INIT (u32)0x00000060
+#define SD_US_CR_INIT (u32)0x00000050
 /*
     31 - 20 [0] Reserved
 
@@ -966,8 +966,8 @@ SPI mode to communicate with an SPI SD card.
 
     07 [0] TXDIS transmitter not disabled
     06 [1] TXEN transmitter enabled
-    05 [1] RXDIS receiver disabled
-    04 [0] RXEN receiver not enabled
+    05 [0] RXDIS receiver not disabled
+    04 [1] RXEN receiver enabled
 
     03 [0] RSTTX not reset
     02 [0] RSTRX not reset
