@@ -40,7 +40,7 @@ Constants / Definitions
 #define SD_WAKEUP_BYTES           (u32)20              /* Number of dummy bytes sent to wake up new SD card */
 #define SD_CMD_RETRIES            (u8)20               /* Number of polls to retry a command response */
 
-#define SD_CMD_SIZE               (u8)7                /* Size of an SD card command including a dummy byte to read a resposne */
+#define SD_CMD_SIZE               (u8)6                /* Size of an SD card command */
 
 #define SD_SPI_WAIT_TIME_MS	      (u32)(500)           /* Time to wait for the SPI resource to become available */
 #define SD_READ_TOKEN_MS		      (u32)(200)

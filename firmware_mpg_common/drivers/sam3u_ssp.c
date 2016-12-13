@@ -132,7 +132,7 @@ static SspPeripheralType* SSP_psCurrentSsp;      /* Current SSP peripheral being
 static SspPeripheralType* SSP_psCurrentISR;      /* Current SSP peripheral being processed in ISR */
 static u32* SSP_pu32SspApplicationFlagsISR;      /* Current SSP application status flags in ISR */
 
-static u8 SSP_au8Dummies[MAX_TX_MESSAGE_LENGTH]; /* Array of dummy bytes sent to receive bytes from a slave */
+//static u8 SSP_au8Dummies[MAX_TX_MESSAGE_LENGTH]; /* Array of dummy bytes sent to receive bytes from a slave */
 
 static u32 SSP_u32Int0Count = 0;                 /* Debug counter for SSP0 interrupts */
 static u32 SSP_u32Int1Count = 0;                 /* Debug counter for SSP1 interrupts */
@@ -605,7 +605,7 @@ void SspInitialize(void)
   SSP_psCurrentSsp                = &SSP_Peripheral0;
   
   /* Fill the dummy array with SSP_DUMMY bytes */
-  memset(SSP_au8Dummies, SSP_DUMMY_BYTE, MAX_TX_MESSAGE_LENGTH);
+  //memset(SSP_au8Dummies, SSP_DUMMY_BYTE, MAX_TX_MESSAGE_LENGTH);
 
   /* Set application pointer */
   Ssp_pfnStateMachine = SspSM_Idle;
@@ -891,8 +891,8 @@ void SspGenericHandler(void)
         SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
       }
      
-      /* Disable the receiver */
-      SSP_psCurrentISR->pBaseAddress->US_PTCR = AT91C_PDC_RXTDIS;
+      /* Disable the receiver and transmitter */
+      SSP_psCurrentISR->pBaseAddress->US_PTCR = AT91C_PDC_RXTDIS | AT91C_PDC_TXTDIS;
       SSP_psCurrentISR->pBaseAddress->US_IDR  = AT91C_US_ENDRX;
     }
     /* Otherwise the peripheral is a Slave that just received a byte */
@@ -988,18 +988,21 @@ void SspSM_Idle(void)
       /* Receiving: flag that the peripheral is now busy */
       SSP_psCurrentSsp->u32PrivateFlags |= _SSP_PERIPHERAL_RX;    
       
-      /* Load the PDC counter and pointer registers. Half duplex transmission assumed, so don't load transmit PDC registers. */
+      /* Clear the receive buffer so we can see (most) data changes but also so we send
+      predictable dummy bytes since we'll point to this buffer to source the transmit dummies */
+      memset(SSP_psCurrentSsp->pu8RxBuffer, SSP_DUMMY_BYTE, SSP_psCurrentSsp->u16RxBufferSize);
 
-      /* Receive bytes */
+      /* Load the PDC counter and pointer registers */
       SSP_psCurrentSsp->pBaseAddress->US_RPR = (unsigned int)SSP_psCurrentSsp->pu8RxBuffer; 
+      SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->pu8RxBuffer; 
       SSP_psCurrentSsp->pBaseAddress->US_RCR = SSP_psCurrentSsp->u16RxBytes;
+      SSP_psCurrentSsp->pBaseAddress->US_TCR = SSP_psCurrentSsp->u16RxBytes;
 
       /* When RCR is loaded, the ENDRX flag is cleared so it is safe to enable the interrupt */
       SSP_psCurrentSsp->pBaseAddress->US_IER = AT91C_US_ENDRX;
       
-      /* Enable the receiver to start the transfer. We are not explicitly sending dummy bytes, so do not
-      enable the transmitter. */
-      SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN;
+      /* Enable the receiver and transmitter to start the transfer */
+      SSP_psCurrentSsp->pBaseAddress->US_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
     } /* End of receive function */
     else
     {

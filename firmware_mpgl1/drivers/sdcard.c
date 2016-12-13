@@ -82,14 +82,14 @@ static u8 SD_au8CardError4[]       = "NO_TOKEN\n\r";
 static u8 SD_au8CardError5[]       = "NO_SD_TOKEN\n\r";
 
 
-static u8 SD_au8CMD0[]   = {SD_HOST_CMD | SD_CMD0,  0, 0, 0, 0, SD_CMD0_CRC, SSP_DUMMY_BYTE};
-static u8 SD_au8CMD8[]   = {SD_HOST_CMD | SD_CMD8,  0, 0, SD_VHS_VALUE, SD_CHECK_PATTERN, SD_CMD8_CRC, SSP_DUMMY_BYTE};
-static u8 SD_au8CMD16[]   ={SD_HOST_CMD | SD_CMD16, 0, 0, 0x02, 0x00, SD_NO_CRC, SSP_DUMMY_BYTE};
-static u8 SD_au8CMD17[]   ={SD_HOST_CMD | SD_CMD17, 0, 0, 0, 0, SD_NO_CRC, SSP_DUMMY_BYTE};
-static u8 SD_au8CMD55[]  = {SD_HOST_CMD | SD_CMD55, 0, 0, 0 ,0, SD_NO_CRC, SSP_DUMMY_BYTE};
-static u8 SD_au8CMD58[]  = {SD_HOST_CMD | SD_CMD58, 0, 0, 0 ,0, SD_NO_CRC, SSP_DUMMY_BYTE};
+static u8 SD_au8CMD0[]   = {SD_HOST_CMD | SD_CMD0,  0, 0, 0, 0, SD_CMD0_CRC};
+static u8 SD_au8CMD8[]   = {SD_HOST_CMD | SD_CMD8,  0, 0, SD_VHS_VALUE, SD_CHECK_PATTERN, SD_CMD8_CRC};
+static u8 SD_au8CMD16[]  = {SD_HOST_CMD | SD_CMD16, 0, 0, 0x02, 0x00, SD_NO_CRC};
+static u8 SD_au8CMD17[]  = {SD_HOST_CMD | SD_CMD17, 0, 0, 0, 0, SD_NO_CRC};
+static u8 SD_au8CMD55[]  = {SD_HOST_CMD | SD_CMD55, 0, 0, 0 ,0, SD_NO_CRC};
+static u8 SD_au8CMD58[]  = {SD_HOST_CMD | SD_CMD58, 0, 0, 0 ,0, SD_NO_CRC};
 
-static u8 SD_au8ACMD41[] = {SD_HOST_CMD | SD_ACMD41,0, 0, 0, 0, SD_NO_CRC, SSP_DUMMY_BYTE};
+static u8 SD_au8ACMD41[] = {SD_HOST_CMD | SD_ACMD41,0, 0, 0, 0, SD_NO_CRC};
 
 
 /**********************************************************************************************************************
@@ -268,14 +268,10 @@ Promises:
 */
 void SdCardInitialize(void)
 {
-  //u8 au8SdCardStarted[] = "SdCard task disabled\n\r";
   u8 au8SdCardStartedMsg[] = "SdCard task ready\n\r";
 
-  /* Clear the receive buffer */
-  for (u16 i = 0; i < SDCARD_RX_BUFFER_SIZE; i++)
-  {
-    SD_au8RxBuffer[i] = 0;
-  }
+  /* Reset the receive buffer to dummies for a known starting state */
+  memset(SD_au8RxBuffer, SSP_DUMMY_BYTE, SDCARD_RX_BUFFER_SIZE);
 
   /* Initailze startup values and the command array */
   SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
@@ -345,8 +341,6 @@ Requires:
 Promises:
   - Requested command is queued to the SSP peripheral
   - SD_u32CurrentMsgToken updated with the corresponding message token
-  - SD_pu8RxBufferParser is positioned to point to where the response byte from the command will be once the
-    commmand has been sent from by SSP task (a bit dangerous...)
   - SD_u32Timeout loaded to start counting the timeout period for the command
   - State machine set to wait command
 */
@@ -354,28 +348,13 @@ void SdCommand(u8* pau8Command_)
 {
   /* Queue the transmit message with this command */
   SD_u32CurrentMsgToken = SspWriteData(SD_Ssp, SD_CMD_SIZE, pau8Command_);
-
-  /* Set up time-outs and next state */
-  SD_u32Timeout = G_u32SystemTime1ms;
-  SD_pfStateMachine = SdCardSM_WaitCommand;
-
-#if 0 /* The old driver */
-  /* Save the desired command */
-  SD_NextCommand = pau8Command_;
-
- 
-  /* Queue a dummy read to wake up the card -- CS must NOT be asserted */
-  SspAssertCS(SD_Ssp);
-  //SD_SSP_CS_DEASSERT();
-  SD_u32Timeout = G_u32SystemTime1ms;
-  SD_u32CurrentMsgToken = SspReadByte(SD_Ssp);
   if(SD_u32CurrentMsgToken)
   {
-    SD_pfStateMachine = SdCardSM_WaitReady;
-    
-    /* Assert CS to start the command process */
     SspAssertCS(SD_Ssp);
-    //SD_SSP_CS_ASSERT();
+
+    /* Set up time-outs and next state */
+    SD_u32Timeout = G_u32SystemTime1ms;
+    SD_pfStateMachine = SdCardSM_WaitCommand;
   }
   else
   {
@@ -383,7 +362,6 @@ void SdCommand(u8* pau8Command_)
     SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
     SD_pfStateMachine = SdCardSM_Error;
   }
-#endif
     
 } /* end SdCommand() */
 
@@ -488,8 +466,6 @@ static void SdCardSM_IdleNoCard(void)
 
       /* CS is NOT asserted for initial dummy clocks */
       SspDeAssertCS(SD_Ssp);
-      //SD_SSP_CS_DEASSERT();
-      //FlushSdRxBuffer();
       
       /* Queue up a set of dummy transfers to make sure the card is awake; */
       if(SspReadData(SD_Ssp, SD_WAKEUP_BYTES))
@@ -726,12 +702,9 @@ static void SdCardSM_ResponseCMD16(void)
   {
     /* Success! Card is ready for read/write operations */
     SspDeAssertCS(SD_Ssp);
-    //SD_SSP_CS_DEASSERT();
     SspRelease(SD_Ssp);
 
     SD_CardState = SD_IDLE;
-    //SD_CardStatusLed.eBlinkRate = LED_ON;
-    //LedRequest(&SD_CardStatusLed);
     DebugPrintf(SD_au8CardReady);
 
     SD_pfStateMachine = SdCardSM_ReadyIdle;
@@ -763,12 +736,9 @@ static void SdCardSM_ReadCMD58(void)
       
       /* Success! Card is ready for read/write operations */
       SspDeAssertCS(SD_Ssp);
-      //SD_SSP_CS_DEASSERT();
       SspRelease(SD_Ssp);
   
       SD_CardState = SD_IDLE;
-      //SD_CardStatusLed.eBlinkRate = LED_ON;
-      //LedRequest(&SD_CardStatusLed);
       DebugPrintf(SD_au8CardReady);
     
       SD_pfStateMachine = SdCardSM_ReadyIdle;
@@ -807,8 +777,6 @@ static void SdCardSM_WaitReady(void)
         SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
         SD_pfStateMachine = SdCardSM_Error;
       }
-
-      //AdvanceSD_pu8RxBufferParser(1);
     }
     /* The card is ready for the command */
     else
@@ -892,7 +860,12 @@ static void SdCardSM_WaitResponse(void)
     {
       u8Retries--;
       
-      if( !SspReadByte(SD_Ssp) )
+      if(u8Retries == 0)
+      {
+        SD_u8ErrorCode = SD_ERROR_BAD_RESPONSE;
+        SD_pfStateMachine = SdCardSM_Error;
+      }
+      else if( !SspReadByte(SD_Ssp) )
       {
         /* We didn't get a return token, so abort */
         SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
@@ -924,10 +897,6 @@ static void SdCardSM_WaitSSP(void)
 {
   if( IsTimeUp(&SD_u32Timeout, SD_SPI_WAIT_TIME_MS) )
   {
-    /* Make sure error light is off if we exitted through here from SD_Error */
-    //SD_CardStatusLed.eBlinkRate = LED_OFF;
-    //LedRequest(&SD_CardStatusLed);
-    
     SD_pfStateMachine = SD_pfWaitReturnState;
   }
   
@@ -941,10 +910,6 @@ static void SdCardSM_ReadyIdle(void)
   /* Check if the card is still in; if not return through WaitSSP to allow some debounce time */
   if( !SdIsCardInserted() )
   {
-    /* Make sure all LEDs are off and flags are clear */
-    //SD_CardStatusLed.eBlinkRate = LED_OFF;
-    //LedRequest(&SD_CardStatusLed);
-
     SD_u32Flags &= SD_CLEAR_CARD_TYPE_BITS;
     
     /* Exit through a wait state for effective debouncing */
@@ -1063,7 +1028,6 @@ static void SdCardSM_DataTransfer(void)
     SD_CardState = SD_DATA_READY;
 
     SspDeAssertCS(SD_Ssp);
-    //SD_SSP_CS_DEASSERT();
     SspRelease(SD_Ssp);
 
     /* Reset the RxBuffer pointers to the start of the RxBuffer */
@@ -1089,7 +1053,6 @@ static void SdCardSM_FailedDataTransfer(void)
 {
   /* Reset the system variables */
   SspDeAssertCS(SD_Ssp);
-  //SD_SSP_CS_DEASSERT();
   SspRelease(SD_Ssp);
   FlushSdRxBuffer();
   SD_CardState = SD_CARD_ERROR;
@@ -1109,7 +1072,6 @@ static void SdCardSM_Error(void)
   
   /* Reset the system variables */
   SspDeAssertCS(SD_Ssp);
-  //SD_SSP_CS_DEASSERT();
   SspRelease(SD_Ssp);
   FlushSdRxBuffer();
 

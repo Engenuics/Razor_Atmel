@@ -80,7 +80,7 @@ Constants / Definitions
 #define SSP_ERROR_FLAG_MASK           (u32)0xFF000000   /* AND to SSP_u32Flags to get just error flags */
 /* end of SSP_u32Flags flags */
 
-#define SSP_DUMMY_BYTE                (u8)0xFF          /* Byte to send for dummy */
+#define SSP_DUMMY_BYTE                (u8)0x00          /* Byte to send for dummy */
 
 #define SSP_TXEMPTY_TIMEOUT           (u32)100           /* Instruction cycles of a while loop that waits for a register to clear */
 
