@@ -1,14 +1,14 @@
 /**********************************************************************************************************************
-File: user_app.c                                                                
+File: user_app1.c                                                                
 
 ----------------------------------------------------------------------------------------------------------------------
-To start a new task using this user_app as a template:
- 1. Copy both user_app.c and user_app.h to the Application directory
+To start a new task using this user_app1 as a template:
+ 1. Copy both user_app1.c and user_app1.h to the Application directory
  2. Rename the files yournewtaskname.c and yournewtaskname.h
  3. Add yournewtaskname.c and yournewtaskname.h to the Application Include and Source groups in the IAR project
- 4. Use ctrl-h (make sure "Match Case" is checked) to find and replace all instances of "user_app" with "yournewtaskname"
- 5. Use ctrl-h to find and replace all instances of "UserApp" with "YourNewTaskName"
- 6. Use ctrl-h to find and replace all instances of "USER_APP" with "YOUR_NEW_TASK_NAME"
+ 4. Use ctrl-h (make sure "Match Case" is checked) to find and replace all instances of "user_app1" with "yournewtaskname"
+ 5. Use ctrl-h to find and replace all instances of "UserApp1" with "YourNewTaskName"
+ 6. Use ctrl-h to find and replace all instances of "USER_APP1" with "YOUR_NEW_TASK_NAME"
  7. Add a call to YourNewTaskNameInitialize() in the init section of main
  8. Add a call to YourNewTaskNameRunActiveState() in the Super Loop section of main
  9. Update yournewtaskname.h per the instructions at the top of yournewtaskname.h
@@ -16,7 +16,7 @@ To start a new task using this user_app as a template:
 ----------------------------------------------------------------------------------------------------------------------
 
 Description:
-This is a user_app.c file template 
+This is a user_app1.c file template 
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
@@ -25,10 +25,10 @@ Public functions:
 
 
 Protected System functions:
-void UserAppInitialize(void)
+void UserApp1Initialize(void)
 Runs required initialzation for the task.  Should only be called once in main init section.
 
-void UserAppRunActiveState(void)
+void UserApp1RunActiveState(void)
 Runs current task state.  Should only be called once in main loop.
 
 
@@ -41,7 +41,7 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32UserAppFlags;                       /* Global state flags */
+volatile u32 G_u32UserApp1Flags;                       /* Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -57,8 +57,8 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp_StateMachine;            /* The state machine function pointer */
-//static u32 UserApp_u32Timeout;                      /* Timeout counter used across states */
+static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
+//static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
 
 
 /**********************************************************************************************************************
@@ -75,7 +75,7 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------------------------------------------
-Function: UserAppInitialize
+Function: UserApp1Initialize
 
 Description:
 Initializes the State Machine and its variables.
@@ -86,24 +86,24 @@ Requires:
 Promises:
   - 
 */
-void UserAppInitialize(void)
+void UserApp1Initialize(void)
 {
   /* If good initialization, set state to Idle */
   if( 1 )
   {
-    UserApp_StateMachine = UserAppSM_Idle;
+    UserApp1_StateMachine = UserApp1SM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp_StateMachine = UserAppSM_FailedInit;
+    UserApp1_StateMachine = UserApp1SM_FailedInit;
   }
 
-} /* end UserAppInitialize() */
+} /* end UserApp1Initialize() */
 
   
 /*----------------------------------------------------------------------------------------------------------------------
-Function UserAppRunActiveState()
+Function UserApp1RunActiveState()
 
 Description:
 Selects and runs one iteration of the current state in the state machine.
@@ -116,11 +116,11 @@ Requires:
 Promises:
   - Calls the function to pointed by the state machine function pointer
 */
-void UserAppRunActiveState(void)
+void UserApp1RunActiveState(void)
 {
-  UserApp_StateMachine();
+  UserApp1_StateMachine();
 
-} /* end UserAppRunActiveState */
+} /* end UserApp1RunActiveState */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -134,27 +134,27 @@ State Machine Function Definitions
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a message to be queued */
-static void UserAppSM_Idle(void)
+static void UserApp1SM_Idle(void)
 {
     
-} /* end UserAppSM_Idle() */
+} /* end UserApp1SM_Idle() */
      
 #if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-static void UserAppSM_Error(void)          
+static void UserApp1SM_Error(void)          
 {
   
-} /* end UserAppSM_Error() */
+} /* end UserApp1SM_Error() */
 #endif
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* State to sit in if init failed */
-static void UserAppSM_FailedInit(void)          
+static void UserApp1SM_FailedInit(void)          
 {
     
-} /* end UserAppSM_FailedInit() */
+} /* end UserApp1SM_FailedInit() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

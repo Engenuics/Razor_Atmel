@@ -2074,7 +2074,13 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\music.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.h</name>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app1.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app3.h</name>
       </file>
     </group>
     <group>
@@ -2086,7 +2092,13 @@
         <name>$PROJ_DIR$\..\application\main.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c</name>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app1.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app3.c</name>
       </file>
     </group>
   </group>
