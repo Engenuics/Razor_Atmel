@@ -1979,9 +1979,6 @@
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_uart.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\drivers\sdcard.h</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\timer.h</name>
       </file>
       <file>
@@ -2022,9 +2019,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\sam3u_uart.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\drivers\sdcard.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\drivers\timer.c</name>

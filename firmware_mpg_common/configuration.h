@@ -67,7 +67,6 @@ Includes
 #ifdef MPGL1
 #include "mpgl1-ehdw-03.h"
 #include "lcd_nhd-c0220biz.h"
-#include "sdcard.h"
 #endif /* MPGL1 */
 
 #ifdef MPGL2
