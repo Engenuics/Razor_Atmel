@@ -16,7 +16,7 @@ To start a new task using this user_app1 as a template:
 ----------------------------------------------------------------------------------------------------------------------
 
 Description:
-This is a user_app1.c file template 
+Provides a Tera-Term driven system to display, read and write an LED command list.
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
@@ -52,6 +52,9 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
+extern u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE]; /* From debug.c */
+extern u8 G_u8DebugScanfCharCount;                        /* From debug.c */
+
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -59,6 +62,8 @@ Variable names shall start with "UserApp_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
+
+static u32 UserApp1_u32UserListCount;
 
 
 /**********************************************************************************************************************
@@ -88,10 +93,14 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-  /* If good initialization, set state to Idle */
+  u8 au8UserApp1Start1[] = "LED program task started\n\r";
+  
+  DebugPrintf(au8UserApp1Start1);
+  
+    /* If good initialization, set state to Idle */
   if( 1 )
   {
-    UserApp1_StateMachine = UserApp1SM_Idle;
+    UserApp1_StateMachine = UserApp1SM_Start;
   }
   else
   {
@@ -126,19 +135,116 @@ void UserApp1RunActiveState(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------------
+Function: PrintInstructions
 
+Description:
+Print out the instructions
+
+Requires:
+  -
+
+Promises:
+  - 
+*/
+void PrintInstructions(void)
+{
+  u8 au8Instruction0[] = "\n\rProgram LEDs at the prompt\n\r";
+  u8 au8Instruction1[] = "Format: LED-START_TIME-END_TIME (e.g. R-1000-3000) then press <Enter>\n\r";
+  u8 au8Instruction2[] = "Press <Enter> after each line\n\r";
+  u8 au8Instruction3[] = "Press <Enter> on blank line to end program\n\r";
+  u8 au8Entry[] = ": ";
+
+  DebugPrintf(au8Instruction0);
+  DebugPrintf(au8Instruction1);
+  DebugPrintf(au8Instruction2);
+  DebugPrintf(au8Instruction3);
+
+} /* end PrintInstructions() */
+
+
+/*--------------------------------------------------------------------------------------------------------------------
+Function: PrintMenu
+
+Description:
+Print out the menu
+
+Requires:
+  -
+
+Promises:
+  - 
+*/
+void PrintMenu(void)
+{
+  u8 au8Menu1[] = "******************************************************\n\r";
+  u8 au8Menu2[] = "LED Programming Interface\n\r";
+  u8 au8Menu3[] = "Press 1 to program LED sequence\n\r";
+  u8 au8Menu4[] = "Press 2 to show current program\n\r";
+
+  DebugPrintf(au8Menu1);
+  DebugPrintf(au8Menu2);
+  DebugPrintf(au8Menu3);
+  DebugPrintf(au8Menu4);
+  DebugPrintf(au8Menu1);
+
+} /* end PrintMenu() */
 
 /**********************************************************************************************************************
 State Machine Function Definitions
 **********************************************************************************************************************/
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a message to be queued */
+/* Wait for input*/
+static void UserApp1SM_Start(void)
+{
+  PrintMenu();
+  UserApp1_StateMachine = UserApp1SM_Idle;
+  
+} /* end UserApp1SM_Start() */
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for input*/
 static void UserApp1SM_Idle(void)
 {
-    
+  u8 au8Buffer[2] = "  ";
+  
+  /* Wait for user input to appear.  Must be either 1 or 2 */
+  if(G_u8DebugScanfCharCount == 2)
+  {
+    DebugScanf(au8Buffer);
+    if(au8Buffer[1] == ASCII_CARRIAGE_RETURN)
+    {
+      if(au8Buffer[0] == '1')
+      { 
+        LedDisplayStartList();
+        UserApp1_u32UserListCount = 0;
+        DebugPrintf("Enter LED-START_TIME-END_TIME and press enter\n\rLED colors: R, O, Y, G, C, B, P, W\n\rPress enter on blank line to end\n\r");
+        DebugPrintNumber(UserApp1_u32UserListCount + 1);
+        DebugPrintf(": ");
+        UserApp1_StateMachine = UserApp1SM_EnterProgram; 
+      }
+    }
+  }
+  
 } /* end UserApp1SM_Idle() */
      
+         
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Enter a list */
+static void UserApp1SM_EnterProgram(void)
+{
+  u8 u8CurrentChar;
+  u8 au8CommandString[] = "X-XXXXXX-XXXXXX";
+  
+  if(DebugScanf(&u8CurrentChar))
+  {
+    
+  }
+} /* end UserApp1SM_EnterProgram() */
+         
+         
 #if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */

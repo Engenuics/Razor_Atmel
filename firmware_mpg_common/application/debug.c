@@ -970,7 +970,7 @@ void DebugSM_CheckCmd(void)
   /* Otherwise print an error message and return to Idle */
   else
   { 
-    DebugPrintf(au8InvalidCommand);
+    //DebugPrintf(au8InvalidCommand);
     Debug_pfnStateMachine = DebugSM_Idle;
   }
 

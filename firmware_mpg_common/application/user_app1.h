@@ -49,12 +49,17 @@ void UserApp1RunActiveState(void);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
+void PrintMenu(void);
+void PrintInstructions(void);
 
 
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
+static void UserApp1SM_Start(void);    
 static void UserApp1SM_Idle(void);    
+
+static void UserApp1SM_EnterProgram(void);
 
 static void UserApp1SM_Error(void);         
 static void UserApp1SM_FailedInit(void);        
