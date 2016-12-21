@@ -238,6 +238,7 @@ static void UserApp1SM_EnterProgram(void)
   u8 u8CurrentChar;
   u8 au8CommandString[] = "X-XXXXXX-XXXXXX";
   
+  /* Watch for characters coming in and check them as they arrive */
   if(DebugScanf(&u8CurrentChar))
   {
     

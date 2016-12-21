@@ -51,10 +51,8 @@ static fnCode_type UserApp2_StateMachine;            /* The state machine functi
 static LedDisplayListHeadType UserApp2_sDemoLedCommandList;   
 static u32 UserApp2_u32DemoListEndTime;
 
-#ifdef USER_LIST_EXAMPLE
 static LedDisplayListHeadType UserApp2_sUserLedCommandList;     
 static u32 UserApp2_u32UserListEndTime;
-#endif
 
 static LedDisplayListHeadType* UserApp2_psActiveList;
 static u32 UserApp2_u32ActiveListEndTime;
@@ -386,7 +384,7 @@ static void UserApp2SM_Idle(void)
      ButtonAcknowledge(BUTTON0);
      
      UserApp2_psActiveList = &UserApp2_sDemoLedCommandList;
-     UserApp2_u32ActiveListEndTime = UserApp2_u32DemoListEndTime
+     UserApp2_u32ActiveListEndTime = UserApp2_u32DemoListEndTime;
      UserApp2_StateMachine = UserApp2SM_RunCommandList;
    }
    
@@ -412,46 +410,46 @@ static void UserApp2SM_Idle(void)
     
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-
+/* The main program that runs the LEDs and LCD user interface */
 static void UserApp2SM_RunCommandList(void)
 {
   static u32 u32SystemTime = 0;
   LedDisplayListNodeType* psListParser = UserApp2_psActiveList->psFirstCommand;
 
-   if(WasButtonPressed(BUTTON0))
-   {
-     ButtonAcknowledge(BUTTON0);
-     UserApp2_psActiveList = &UserApp2_sDemoLedCommandList;
-     u32SystemTime = 0;
-     AllLedsOff();
-   }
+  /* BUTTON0 starts the DEMO LED pattern */
+  if(WasButtonPressed(BUTTON0))
+  {
+    ButtonAcknowledge(BUTTON0);
+    UserApp2_psActiveList = &UserApp2_sDemoLedCommandList;
+    UserApp2_u32ActiveListEndTime = UserApp2_u32DemoListEndTime;
+    u32SystemTime = 0;
+    AllLedsOff();
+  }
 
-   if(WasButtonPressed(BUTTON1))
-   {
-     ButtonAcknowledge(BUTTON1);
-     UserApp2_psActiveList = &UserApp2_sUserLedCommandList;
-     u32SystemTime = 0;
-     AllLedsOff();
-   }
+  /* BUTTON1 starts teh USER LED pattern */
+  if(WasButtonPressed(BUTTON1))
+  {
+    ButtonAcknowledge(BUTTON1);
+    UserApp2_psActiveList = &UserApp2_sUserLedCommandList;
+    UserApp2_u32ActiveListEndTime = UserApp2_u32UserListEndTime;
+    u32SystemTime = 0;
+    AllLedsOff();
+  }
 
-  
+  /* BUTTON2 pauses the active program */
   if(WasButtonPressed(BUTTON2))
   {
-    UserApp2_bSystemRunning = !UserApp2_bSystemRunning;
+    UserApp2_bSystemRunning = (bool)(!UserApp2_bSystemRunning);
     ButtonAcknowledge(BUTTON2);
   }
 
+  /* BUTTON3 toggles "Dark mode" where all LEDs remain off but the active LED program continues to run */
   if(WasButtonPressed(BUTTON3))
   {
-    UserApp2_bSystemDark = !UserApp2_bSystemDark;
+    UserApp2_bSystemDark = (bool)(!UserApp2_bSystemDark);
     ButtonAcknowledge(BUTTON3);
   }
-  
-  if(u32SystemTime > UserApp2_u32DemoListEndTime)
-  {
-    u32SystemTime = 0;
-  }
-  
+   
   /* Handle an empty list */
   if( (UserApp2_psActiveList->u8ListSize == 0) ||
       (UserApp2_bSystemDark == TRUE) )
@@ -465,53 +463,62 @@ static void UserApp2SM_RunCommandList(void)
     {
       if(psListParser->eCommand.u32Time == u32SystemTime)
       {
-        /* Check for adjustment */
+        /* Manage an LED turning ON */
         if( (psListParser->eCommand.bOn == TRUE) )
         { 
           if(psListParser->eCommand.eCurrentRate != LED_PWM_100)
           {
-            psListParser->eCommand.eCurrentRate += 2;
-            psListParser->eCommand.u32Time += 20;
+            psListParser->eCommand.eCurrentRate += LED_FADE_STEP;
+            psListParser->eCommand.u32Time += LED_FADE_TIME;
 
-            /* Set the current rate */
+           /* Set the current rate */
            LedPWM(psListParser->eCommand.eLED, psListParser->eCommand.eCurrentRate);
           }
           else
           {
-             psListParser->eCommand.u32Time -= 200;
+             psListParser->eCommand.u32Time -= LED_TOTAL_FADE_TIME;
              psListParser->eCommand.eCurrentRate = LED_PWM_0;
           }
         }
 
+        /* Manage an LED turning off */
         if( (psListParser->eCommand.bOn == FALSE))
         {
+          /* Adjust the fade rate until the LED is off */
          if(psListParser->eCommand.eCurrentRate != LED_PWM_0)
           {
-            psListParser->eCommand.eCurrentRate -= 2;
-            psListParser->eCommand.u32Time += 20;
+            psListParser->eCommand.eCurrentRate -= LED_FADE_STEP;
+            psListParser->eCommand.u32Time += LED_FADE_TIME;
 
             /* Set the current rate */
            LedPWM(psListParser->eCommand.eLED, psListParser->eCommand.eCurrentRate);
           }
+         /* Once the LED is off, then reset the start time */
           else
           {
-            psListParser->eCommand.u32Time -= 200;
+            psListParser->eCommand.u32Time -= LED_TOTAL_FADE_TIME;
             psListParser->eCommand.eCurrentRate = LED_PWM_100;
           }
         }
-       
       }
 
       psListParser = psListParser->psNextNode;
     }
   }
 
+  /* Advance the system time */
   if(UserApp2_bSystemRunning)
   {
     u32SystemTime++;
+
+    /* Check if we're at the end of the list */
+    if(u32SystemTime > UserApp2_u32ActiveListEndTime)
+    {
+      u32SystemTime = 0;
+    }
   }
 
-} /* end UserApp2SM_Idle() */
+} /* end UserApp2SM_RunCommandList() */
  
 
 

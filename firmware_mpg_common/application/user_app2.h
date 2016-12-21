@@ -38,13 +38,14 @@ Constants / Definitions
 **********************************************************************************************************************/
 //#define USER_LIST_EXAMPLE         /* Define to load a default User LED command list */
 
-#define LED_FADE_TIME             (u32)20                       /* On time in ms for each level of PWM during fade */
-#define LED_TOTAL_FADE_TIME       (u32)(10 x LED_FADE_TIME)     /* Total fading time in ms for an LED turning on or off */
+#define LED_TOTAL_FADE_TIME       (u32)200              /* Total fading time in ms for an LED turning on or off */
+#define LED_FADE_TIME             (u32)20               /* On time in ms for each level of PWM during fade */
+#define LED_FADE_STEP             (u32)2                /* PWM steps for each iteration of LED fade */
 
-#define LCD_DMO_ON_CHAR_ADDRESS   (u8)0x43                      /* Address to show '<' when DMO code is running */
-#define LCD_USR_ON_CHAR_ADDRESS   (u8)0x49                      /* Address to show '<' when USR code is running */
-#define LCD_PAUSE_CHAR_ADDRESS    (u8)0x4D                      /* Starting address for the '||' symbol on the LCD */
-#define LCD_DARK_CHAR_ADDRESS     (u8)0x53                      /* LCD address for the 'X' (dark) symbol */
+#define LCD_DMO_ON_CHAR_ADDRESS   (u8)0x43              /* Address to show '<' when DMO code is running */
+#define LCD_USR_ON_CHAR_ADDRESS   (u8)0x49              /* Address to show '<' when USR code is running */
+#define LCD_PAUSE_CHAR_ADDRESS    (u8)0x4D              /* Starting address for the '||' symbol on the LCD */
+#define LCD_DARK_CHAR_ADDRESS     (u8)0x53              /* LCD address for the 'X' (dark) symbol */
 
 
 /**********************************************************************************************************************
