@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=976167566
+Checksum=-1267779220
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -43,8 +43,6 @@ UnspecRange=1
 ActionState=1
 [CodeCoverage]
 Enabled=_ 0
-[struct_types]
-Fmt0=struct <Unnamed 55>-u8ListSize	3	0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -64,11 +62,10 @@ Exclusions=
 mode=0
 [Breakpoints2]
 Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\leds.c}.355.10" 0 0 1 "" 0 "" 0
-Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\main.c}.97.5" 0 0 1 "" 0 "" 0
-Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.c}.196.1" 0 0 1 "" 0 "" 0
-Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.c}.455.3" 0 0 1 "" 0 "" 0
-Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.c}.498.13" 0 0 1 "" 0 "" 0
-Count=5
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.c}.194.6" 0 0 1 "" 0 "" 0
+Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.c}.454.3" 0 0 1 "" 0 "" 0
+Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app2.c}.499.13" 0 0 1 "" 0 "" 0
+Count=4
 [Aliases]
 Count=0
 SuppressDialog=0

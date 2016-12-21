@@ -28,6 +28,10 @@ Type Definitions
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
+#define   INPUT_ERROR_LED             (u8)1   /* An invalid character was entered for the LED in the user command string */
+#define   INPUT_ERROR_FORMAT          (u8)2   /* The LED command does not follow the L-S-E format */
+#define   INPUT_ERROR_START_INVALID   (u8)3   /* The start time is not a valid number */
+#define   INPUT_ERROR_END_INVALID     (u8)4   /* The end time is not a valid number */
 
 
 /**********************************************************************************************************************

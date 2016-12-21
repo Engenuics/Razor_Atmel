@@ -254,6 +254,30 @@ u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_)
 
 
 /*-----------------------------------------------------------------------------/
+Function: AsciiToNumber
+
+Description:
+Reads an ASCII string and coverts it to a u32
+
+Requires:
+  - pu8NumberString_ points to a NULL terminated ASCII number string
+  - The size of the number is < 2^32
+
+Promises:
+  - Returns the integer value of the ASCII number 
+Example:
+u32 u32Number;
+u32Number = AsciiToNumber(“123456”);
+// u32Number is now 123456
+
+*/
+u32 AsciiToNumber(u8* pu8NumberString_)
+{
+  return 0;
+}  /* end AsciiToNumber() */
+
+
+/*-----------------------------------------------------------------------------/
 Function: SearchString
 
 Description:

@@ -52,6 +52,7 @@ u8 ASCIIHexCharToChar(u8);
 u8 HexToASCIICharUpper(u8 u8Char_);
 u8 HexToASCIICharLower(u8 u8Char_);
 u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_);
+u32 AsciiToNumber(u8* pu8NumberString_);
 bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_);
 
 
