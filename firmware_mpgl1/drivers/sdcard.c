@@ -57,14 +57,14 @@ static SdCardStateType SD_CardState;               /* Card state variable */
 
 static u8  SD_u8ErrorCode;                         /* Error code */
 static fnCode_type SD_pfWaitReturnState;           /* The saved state to return after a wait period */
-static u8* SD_NextCommand;                         /* Saved command to be executed next */
+//static u8* SD_NextCommand;                         /* Saved command to be executed next */
 
 static SspConfigurationType SD_sSspConfig;         /* Configuration information for SSP peripheral */
 static SspPeripheralType* SD_Ssp;                  /* Pointer to SSP peripheral object */
 
 static u8 SD_au8RxBuffer[SDCARD_RX_BUFFER_SIZE];   /* Space for incoming bytes from the SD card */
 static u8 *SD_pu8RxBufferNextByte;                 /* Pointer to next spot in RxBuffer to write a byte */
-static u8 *SD_pu8RxBufferParser;                   /* Pointer to loop through the Rx buffer to read bytes */
+//static u8 *SD_pu8RxBufferParser;                   /* Pointer to loop through the Rx buffer to read bytes */
 
 static u32 SD_u32Timeout;                          /* Timeout counter used across states */
 static u32 SD_u32CurrentMsgToken;                  /* Token of message currently being sent */
@@ -275,7 +275,7 @@ void SdCardInitialize(void)
 
   /* Initailze startup values and the command array */
   SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
-  SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
+  //SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
 
   /* Configure the SSP resource to be used for the SD Card application */
   SD_sSspConfig.SspPeripheral      = SD_SSP;
@@ -391,7 +391,7 @@ void CheckTimeout(u32 u32Time_)
 
 } /* end CheckTimeout() */
 
-
+#if 0
 /*--------------------------------------------------------------------------------------------------------------------
 Function: AdvanceSD_pu8RxBufferParser
 
@@ -435,7 +435,7 @@ void FlushSdRxBuffer(void)
   SD_pu8RxBufferParser = SD_pu8RxBufferNextByte;
   
 } /* end FlushSdRxBuffer() */
-
+#endif
 
 /**********************************************************************************************************************
 State Machine Function Definitions
@@ -503,8 +503,11 @@ static void SdCardSM_Dummies(void)
 
 static void SdCardSM_ResponseCMD0(void)
 {
+  /* CS is deasserted after CMD0 */
+  SspDeAssertCS(SD_Ssp);
+
   /* Process the received byte */
-  if(*SD_pu8RxBufferParser == SD_STATUS_IDLE)
+  if(SD_au8RxBuffer[0] == SD_STATUS_IDLE)
   {
     /* Card is in Idle state, so issue CMD8 */
     SdCommand(&SD_au8CMD8[0]);
@@ -518,28 +521,30 @@ static void SdCardSM_ResponseCMD0(void)
   }
   
   /* In any case, advance the buffer pointer */
-  AdvanceSD_pu8RxBufferParser(1);
+  //AdvanceSD_pu8RxBufferParser(1);
        
 } /* end SdCardSM_ResponseCMD0() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Queue a read to get the CMD8 data. */
+/* This is not a state but more a call-back after CMD8 */
 static void SdCardSM_ResponseCMD8(void)
 {
   /* Check the response byte (response R1) */
-  if(*SD_pu8RxBufferParser == SD_STATUS_IDLE)
+  if(SD_au8RxBuffer[0] == SD_STATUS_IDLE)
   {
-    /* Command is good which means the card is at least SDv2 so we can read 4 more bytes of the CMD8 response */
+    /* Command is good which means the card is at least SDv2 so we can read 4 more bytes of the CMD8 response. */
     SD_u32Flags |= _SD_TYPE_SD2;
     
+    /* CS is still asserted since we are reading data */
     if(SspReadData(SD_Ssp, 4))
     {
       SD_pfStateMachine = SdCardSM_ReadCMD8;
     }
     else
     {
-      /* We didn't get a return token, so abort */
+      /* SSP read error - we'll just abort */
       SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
       SD_pfStateMachine = SdCardSM_Error;
     }
@@ -547,37 +552,45 @@ static void SdCardSM_ResponseCMD8(void)
   /* CMD8 not supported => not SDv2 */
   else
   {
-    /* The card does not support CMD8 so go directly to ACMD41 */
+    /* The card does not support CMD8 so Deassert CS and go directly to ACMD41 */
+    SD_u32Flags &= ~_SD_TYPE_SD2;
+    SspDeAssertCS(SD_Ssp);
+    /* Do we need a delay here since CS will be asserted almost immediately in SdCommand? */
+    
     SdCommand(&SD_au8ACMD41[0]);
-    SD_pfWaitReturnState = SdCardSM_ACMD41;
+    SD_pfWaitReturnState = SdCardSM_ResponseCMD55;
   }
     
   /* In either case, advance the buffer pointer */
-  AdvanceSD_pu8RxBufferParser(1);
+  //AdvanceSD_pu8RxBufferParser(1);
    
 } /* end SdCardSM_ResponseCMD8() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a response to CMD8. */
+/* Wait for the 4 payload bytes from CMD8. */
 static void SdCardSM_ReadCMD8(void)
 {
   /* Check to see if the SSP peripheral has sent the data request */
-  if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
+//  if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
+  if(SspQueryReceiveStatus(SD_Ssp) == SSP_RX_COMPLETE)
   {
+    /* CMD8 is finished so deassert CS */
+    SspDeAssertCS(SD_Ssp);
+    
     /* Process the four response bytes (only the last two matter) */
-    AdvanceSD_pu8RxBufferParser(2);
-    if(*SD_pu8RxBufferParser == SD_VHS_VALUE)
+    //SD_pu8RxBufferParser = ;
+    if(SD_au8RxBuffer[SD_CMD8_INDEX_VHS] == SD_VHS_VALUE)
     {
-      AdvanceSD_pu8RxBufferParser(1);
-      if(*SD_pu8RxBufferParser == SD_CHECK_PATTERN)
+      //AdvanceSD_pu8RxBufferParser(1);
+      if(SD_au8RxBuffer[SD_CMD8_INDEX_CHECK] == SD_CHECK_PATTERN)
       {
         /* Card supports VCC 2.7 - 3.6V so we're good to go */
         /* Next we need to send CMD55 so we can send ACMD41 */
         SdCommand(&SD_au8CMD55[0]);
-        SD_pfWaitReturnState = SdCardSM_ACMD41;
+        SD_pfWaitReturnState = SdCardSM_ResponseCMD55;
       }
-      AdvanceSD_pu8RxBufferParser(1);
+      //AdvanceSD_pu8RxBufferParser(1);
     }
     else
     {
@@ -594,12 +607,15 @@ static void SdCardSM_ReadCMD8(void)
 
      
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Check the response to CMD55. SD_pu8RxBufferParser is pointing to the RxBuffer where a response R1 is sitting */
+/* Check the response to CMD55. */
 /* This is really a call-back to CMD55 */
-static void SdCardSM_ACMD41(void)
+static void SdCardSM_ResponseCMD55(void)
 {
-  /* Process the received byte from CMD55*/
-  if(*SD_pu8RxBufferParser == SD_STATUS_IDLE)
+  /* CMD55 is finished so deassert CS */
+  SspDeAssertCS(SD_Ssp);
+
+  /* Process the received byte from CMD55 */
+  if(SD_au8RxBuffer[0] == SD_STATUS_IDLE)
   {
     /* Card is ready for ACMD41 to configure Host Capacity Support (HCS) bit */
     if(SD_u32Flags & _SD_TYPE_SD2)
@@ -617,9 +633,9 @@ static void SdCardSM_ACMD41(void)
   }
   
   /* In any case, advance the buffer pointer */
-  AdvanceSD_pu8RxBufferParser(1);
+  //AdvanceSD_pu8RxBufferParser(1);
        
-} /* end SdCardSM_ACMD41() */
+} /* end SdCardSM_ResponseCMD55() */
      
      
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -627,8 +643,11 @@ static void SdCardSM_ACMD41(void)
 Once the card is ready, can send CMD58.  The next step is different for version 1 and version 2 cards.  MMC will not be supported. */
 static void SdCardSM_ResponseACMD41(void)
 {
+  /* ACMD41 is finished so deassert CS */
+  SspDeAssertCS(SD_Ssp);
+
   /* Process the received byte based on card type */
-  if(*SD_pu8RxBufferParser == SD_STATUS_READY)
+  if(SD_au8RxBuffer[0] == SD_STATUS_READY)
   {
     /* Card is ready for next command */
     if(SD_u32Flags & _SD_TYPE_SD2)
@@ -652,31 +671,31 @@ static void SdCardSM_ResponseACMD41(void)
   {
     /* Card is not idle yet, so repeat */
     SdCommand(&SD_au8CMD55[0]);
-    SD_pfWaitReturnState = SdCardSM_ACMD41;
+    SD_pfWaitReturnState = SdCardSM_ResponseCMD55;
   }
   
   /* In any case, advance the buffer pointer */
-  AdvanceSD_pu8RxBufferParser(1);
+  //AdvanceSD_pu8RxBufferParser(1);
        
-} /* end SdCardSM_ACMD41() */     
+} /* end SdCardSM_ResponseCMD55() */     
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Queue a read to get the CMD58 data. RxBuffer pointer is on R1 response byte. */
+/* Queue a read to get the CMD58 data. RxBuffer has R1 response byte. */
 static void SdCardSM_ResponseCMD58(void)
 {
   /* Check the response byte (response R1) */
-  if(*SD_pu8RxBufferParser == SD_STATUS_READY)
+  if(SD_au8RxBuffer[0] == SD_STATUS_READY)
   {
     /* Command is good so we can read 4 more bytes of the CMD58 response */
-    SD_u32CurrentMsgToken = SspReadData(SD_Ssp, 4);
-    if(SD_u32CurrentMsgToken)
+    /* CS is still asserted since we are reading data */
+    if(SspReadData(SD_Ssp, 4))
     {
       SD_pfStateMachine = SdCardSM_ReadCMD58;
     }
     else
     {
-      /* We didn't get a return token, so abort */
+      /* SSP read error - we'll just abort */
       SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
       SD_pfStateMachine = SdCardSM_Error;
     }
@@ -688,19 +707,20 @@ static void SdCardSM_ResponseCMD58(void)
   }
     
   /* In either case, advance the buffer pointer */
-  AdvanceSD_pu8RxBufferParser(1);
+  //AdvanceSD_pu8RxBufferParser(1);
        
 } /* end SdCardSM_ResponseCMD8() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Process response to CMD16. */
+/* Not a state, just a call back for CMD16 */
 static void SdCardSM_ResponseCMD16(void)
 {
   /* Check the response byte (response R1) */
-  if(*SD_pu8RxBufferParser == SD_STATUS_READY)
+  if(SD_au8RxBuffer[0] == SD_STATUS_READY)
   {
-    /* Success! Card is ready for read/write operations */
+    /* Success! Card is ready for read/write operations.  We can release the SSP resource for now. */
     SspDeAssertCS(SD_Ssp);
     SspRelease(SD_Ssp);
 
@@ -716,26 +736,29 @@ static void SdCardSM_ResponseCMD16(void)
   }
     
   /* In either case, advance the buffer pointer */
-  AdvanceSD_pu8RxBufferParser(1);
+  //AdvanceSD_pu8RxBufferParser(1);
        
 } /* end SdCardSM_ResponseCMD8() */
      
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a data for CMD58. RxBuffer pointer is at first of four response bytes when SSP is complete. */
+/* Wait for a data for CMD58. RxBuffer will have four response bytes when SSP is complete. */
 static void SdCardSM_ReadCMD58(void)
 {
   /* Check to see if the SSP peripheral has sent the command */
-  if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
+//  if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
+  if(SspQueryReceiveStatus(SD_Ssp) == SSP_RX_COMPLETE)
   {
+    /* CMD58 is finished so deassert CS */
+    SspDeAssertCS(SD_Ssp);
+
     /* Determine card capacity */
     SD_u32Flags &= ~_SD_CARD_HC;
-    if(*SD_pu8RxBufferParser & _SD_OCR_CCS_BIT)
+    if(SD_au8RxBuffer[0] & _SD_OCR_CCS_BIT)
     {
       SD_u32Flags |= _SD_CARD_HC;
       
       /* Success! Card is ready for read/write operations */
-      SspDeAssertCS(SD_Ssp);
       SspRelease(SD_Ssp);
   
       SD_CardState = SD_IDLE;
@@ -751,7 +774,7 @@ static void SdCardSM_ReadCMD58(void)
     }
     
     /* Ignore the other 3 response bytes */
-    AdvanceSD_pu8RxBufferParser(4);
+    //AdvanceSD_pu8RxBufferParser(4);
   }
   
   /* Watch for SSP timeout */
@@ -759,7 +782,7 @@ static void SdCardSM_ReadCMD58(void)
      
 } /* end SdCardSM_ReadCMD58() */
            
-     
+#if 0     
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Kill time waiting for the SD card to indicate it is ready after CS.
 SD_NextCommand is queue with the command that will be sent once
@@ -784,7 +807,7 @@ static void SdCardSM_WaitReady(void)
       SD_u32CurrentMsgToken = SspWriteData(SD_Ssp, SD_CMD_SIZE, SD_NextCommand);
       
       /* Pre-emptively move RxBufferParser so it will point to command response */
-      AdvanceSD_pu8RxBufferParser(SD_CMD_SIZE);
+      //AdvanceSD_pu8RxBufferParser(SD_CMD_SIZE);
     
       /* Set up time-outs and next state */
       SD_u32Timeout = G_u32SystemTime1ms;
@@ -796,7 +819,7 @@ static void SdCardSM_WaitReady(void)
   CheckTimeout(SD_SPI_WAIT_TIME_MS);
      
 } /* end SdCardSM_WaitReady() */
-
+#endif
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Kill time waiting for a command to finish sending; the first byte from all completed commands
@@ -838,11 +861,10 @@ static void SdCardSM_WaitCommand(void)
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Kill time waiting for a response read to finish; the first byte from all completed commands
-is response R1 which has BIT7 clear.
+is response R1 which has BIT7 clear.  This response will be at SD_au8RxBuffer[0].
      
 REQUIRES: 
   - SD_pfWaitReturnState points to the function that should be accessed next.
-  - SD_pu8RxBufferParser points to the location where the response byte will be received.
      
 PROMISES: 
   - State machine set to either SD_pfWaitReturnState or SdCardSM_Error
@@ -856,7 +878,7 @@ static void SdCardSM_WaitResponse(void)
   if(SspQueryReceiveStatus(SD_Ssp) == SSP_RX_COMPLETE)
   {
     /* If no response but retries left, queue another read */
-    if( (*SD_pu8RxBufferParser & BIT7) && (u8Retries != 0) )
+    if( (SD_au8RxBuffer[0] & BIT7) && (u8Retries != 0) )
     {
       u8Retries--;
       
@@ -917,39 +939,41 @@ static void SdCardSM_ReadyIdle(void)
     SD_pfWaitReturnState = SdCardSM_IdleNoCard;
     SD_pfStateMachine = SdCardSM_WaitSSP;
   }
-    
-  /* Look for a request to read or write file data */
-  if( (SD_CardState == SD_WRITING) || (SD_CardState == SD_READING) )
+  else
   {
-    /* Request the SSP resource to talk to the card */
-    SD_Ssp = SspRequest(&SD_sSspConfig);
-    if(SD_Ssp == NULL)
+    /* Look for a request to read or write file data */
+    if( (SD_CardState == SD_WRITING) || (SD_CardState == SD_READING) )
     {
-      /* Go to wait state if SSP is not available */
-      DebugPrintf(SD_au8SspRequestFailed);
-      SD_u32Timeout = G_u32SystemTime1ms;
-      SD_pfWaitReturnState = SdCardSM_ReadyIdle;
-      SD_pfStateMachine = SdCardSM_WaitSSP;
-    }
-    else
-    {
-      /* Got SSP, so start read or write */
-      if(SD_CardState == SD_WRITING)
+      /* Request the SSP resource to talk to the card */
+      SD_Ssp = SspRequest(&SD_sSspConfig);
+      if(SD_Ssp == NULL)
       {
-        /* Not yet implemented */
-        SD_pfStateMachine = SdCardSM_ReadyIdle;
-        SD_CardState = SD_IDLE;
+        /* Go to wait state if SSP is not available */
+        DebugPrintf(SD_au8SspRequestFailed);
+        SD_u32Timeout = G_u32SystemTime1ms;
+        SD_pfWaitReturnState = SdCardSM_ReadyIdle;
+        SD_pfStateMachine = SdCardSM_WaitSSP;
       }
       else
       {
-        /* Parse out the bytes of the address into the command array */
-        SD_au8CMD17[1] = (u8)(SD_u32Address >> 24);
-        SD_au8CMD17[2] = (u8)(SD_u32Address >> 16);
-        SD_au8CMD17[3] = (u8)(SD_u32Address >> 8);
-        SD_au8CMD17[4] = (u8)SD_u32Address;
-        
-        SdCommand(&SD_au8CMD17[0]);
-        SD_pfWaitReturnState = SdCardSM_ResponseCMD17;
+        /* Got SSP, so start read or write */
+        if(SD_CardState == SD_WRITING)
+        {
+          /* Not yet implemented */
+          SD_pfStateMachine = SdCardSM_ReadyIdle;
+          SD_CardState = SD_IDLE;
+        }
+        else
+        {
+          /* Parse out the bytes of the address into the command array */
+          SD_au8CMD17[1] = (u8)(SD_u32Address >> 24);
+          SD_au8CMD17[2] = (u8)(SD_u32Address >> 16);
+          SD_au8CMD17[3] = (u8)(SD_u32Address >> 8);
+          SD_au8CMD17[4] = (u8)SD_u32Address;
+          
+          SdCommand(&SD_au8CMD17[0]);
+          SD_pfWaitReturnState = SdCardSM_ResponseCMD17;
+        }
       }
     }
   }
@@ -961,13 +985,21 @@ static void SdCardSM_ReadyIdle(void)
 static void SdCardSM_ResponseCMD17(void)
 {
   /* Check the response byte (response R1) */
-  if(*SD_pu8RxBufferParser == SD_STATUS_READY)
+  if(SD_au8RxBuffer[0] == SD_STATUS_READY)
   {
     /* Queue a read looking to get TOKEN_START_BLOCK back from the card */
-    SD_u32CurrentMsgToken = SspReadByte(SD_Ssp);
- 
-    SD_u32Timeout = G_u32SystemTime1ms;
-    SD_pfStateMachine = SdCardSM_WaitStartToken;
+    //SD_u32CurrentMsgToken = SspReadByte(SD_Ssp);
+    if(SspReadByte(SD_Ssp))
+    {
+      SD_u32Timeout = G_u32SystemTime1ms;
+      SD_pfStateMachine = SdCardSM_WaitStartToken;
+    }
+    else
+    {
+      /* SSP read error - we'll just abort */
+      SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
+      SD_pfStateMachine = SdCardSM_Error;
+    }
   }
   else
   {
@@ -977,7 +1009,7 @@ static void SdCardSM_ResponseCMD17(void)
   }
 
   /* Either way, advance the RxBuffer pointer */  
-  AdvanceSD_pu8RxBufferParser(1);
+  //AdvanceSD_pu8RxBufferParser(1);
 
 } /* end SdCardSM_ResponseCMD17() */
 
@@ -987,24 +1019,42 @@ static void SdCardSM_ResponseCMD17(void)
 static void SdCardSM_WaitStartToken(void)          
 {
   /* Check if the SSP peripheral has sent the data request */
-  if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
+//  if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
+  if(SspQueryReceiveStatus(SD_Ssp) == SSP_RX_COMPLETE)
   {
     /* Check the response byte */
-    if(*SD_pu8RxBufferParser == TOKEN_START_BLOCK)
+    if(SD_au8RxBuffer[0] == TOKEN_START_BLOCK)
     {
       /* Set the RxBuffer pointers to the start of the RxBuffer so the sector data occupies the beginning */
-      SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
-      SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
+      //SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
+      //SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
       
       /* Queue a read for the entire sector plus two checksum bytes */
-      SD_u32CurrentMsgToken = SspReadData(SD_Ssp, 514);    
-      SD_pfStateMachine = SdCardSM_DataTransfer;
+      /* CS is still asserted since we are reading data */
+      if(SspReadData(SD_Ssp, 514))
+      {
+        SD_pfStateMachine = SdCardSM_DataTransfer;
+      }
+      else
+      {
+        /* SSP read error - we'll just abort */
+        SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
+        SD_pfStateMachine = SdCardSM_Error;
+      }
     }
     else
     {
-      /* Queue a read looking to get TOKEN_START_BLOCK back from the card */
-      SD_u32CurrentMsgToken = SspReadByte(SD_Ssp);    
-      AdvanceSD_pu8RxBufferParser(1);
+      /* Didn't get the start token so retry */
+      if(SspReadByte(SD_Ssp))
+      {
+        SD_pfStateMachine = SdCardSM_WaitStartToken;
+      }
+      else
+      {
+        /* SSP read error - we'll just abort */
+        SD_u8ErrorCode = SD_ERROR_NO_TOKEN;
+        SD_pfStateMachine = SdCardSM_Error;
+      }
     }
   }
   
@@ -1023,7 +1073,7 @@ static void SdCardSM_WaitStartToken(void)
 static void SdCardSM_DataTransfer(void)
 {
   /* Check if the SSP peripheral is finished with the data request */
-  if( QueryMessageStatus(SD_u32CurrentMsgToken) == COMPLETE )
+  if(SspQueryReceiveStatus(SD_Ssp) == SSP_RX_COMPLETE)
   {
     SD_CardState = SD_DATA_READY;
 
@@ -1031,8 +1081,8 @@ static void SdCardSM_DataTransfer(void)
     SspRelease(SD_Ssp);
 
     /* Reset the RxBuffer pointers to the start of the RxBuffer */
-    SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
-    SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
+    //SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
+    //SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
 
     SD_pfStateMachine = SdCardSM_ReadyIdle;
   }
@@ -1054,7 +1104,7 @@ static void SdCardSM_FailedDataTransfer(void)
   /* Reset the system variables */
   SspDeAssertCS(SD_Ssp);
   SspRelease(SD_Ssp);
-  FlushSdRxBuffer();
+  //FlushSdRxBuffer();
   SD_CardState = SD_CARD_ERROR;
   
   SD_u32Timeout = G_u32SystemTime1ms;
@@ -1073,7 +1123,7 @@ static void SdCardSM_Error(void)
   /* Reset the system variables */
   SspDeAssertCS(SD_Ssp);
   SspRelease(SD_Ssp);
-  FlushSdRxBuffer();
+  //FlushSdRxBuffer();
 
   /* Indicate error and return through the SSP delay state to give the system some recovery time */
   DebugPrintf(SD_au8CardError);

@@ -364,8 +364,8 @@ void LedInitialize(void)
 #endif /* MPGL1 */
 #endif /* STARTUP_SOUND */
     
-    /* Spend 40ms in each level of intensity */
-    for(u16 j = 40; j > 0; j--)
+    /* Spend a short time in each level of intensity */
+    for(u16 j = 20; j > 0; j--)
     {
       u32Timer = G_u32SystemTime1ms;
       while( !IsTimeUp(&u32Timer, 1) );
@@ -374,7 +374,7 @@ void LedInitialize(void)
     /* Pause for a bit on the first iteration to show the LEDs on for little while */
     if(i == 20)
     {
-      while( !IsTimeUp(&u32Timer, 1500) );
+      while( !IsTimeUp(&u32Timer, 200) );
     }
     
     /* Set the LED intensity for the next iteration */

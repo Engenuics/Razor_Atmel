@@ -49,9 +49,6 @@ Should be 6000 for 48MHz CCLK. */
 
 #define SD_CARD_INSERTED()    (!(AT91C_BASE_PIOA->PIO_PDSR & PA_02_SD_DETECT))   /* SD detect switch asserted */
 
-//#define SD_SSP_CS_ASSERT()    (AT91C_BASE_PIOA->PIO_CODR = PA_08_SD_CS_MCDA3)    /* SD CS line low (selected) */
-//#define SD_SSP_CS_DEASSERT()  (AT91C_BASE_PIOA->PIO_SODR = PA_08_SD_CS_MCDA3)    /* SD CS line high (not selected) */
-
 
 /***********************************************************************************************************************
 * Function Declarations
@@ -1007,7 +1004,7 @@ Default start-up IO values are held here.
 0: No effect
 1: Sets the data to be driven on the I/O line.
 */
-#define PIOA_SODR_INIT (u32)0x88010000
+#define PIOA_SODR_INIT (u32)0x88010100
 /* 
     31 [1] PA_31_HEARTBEAT output high 
     30 [0] PA_30_AN_DEMO N/A
@@ -1037,7 +1034,7 @@ Default start-up IO values are held here.
     11 [0] PA_11_BLADE_UPIMO N/A
     10 [0] PA_10_I2C_SCL N/A
     09 [0] PA_09_I2C_SDA N/A
-    08 [0] PA_08_SD_CS_MCDA3 N/A
+    08 [1] PA_08_SD_CS_MCDA3 output high
 
     07 [0] PA_07_HSMCI_MCDA2 N/A
     06 [0] PA_06_HSMCI_MCDA1 N/A
@@ -1128,7 +1125,7 @@ Initial output values are stored here.
     11 [0] PA_11_BLADE_UPIMO N/A
     10 [0] PA_10_I2C_SCL N/A
     09 [0] PA_09_I2C_SDA N/A
-    08 [0] PA_08_SD_CS_MCDA3 N/A
+    08 [0] PA_08_SD_CS_MCDA3 output high
 
     07 [0] PA_07_HSMCI_MCDA2 N/A
     06 [0] PA_06_HSMCI_MCDA1 N/A
@@ -1368,7 +1365,7 @@ Initial output values are stored here.
 0: No effect
 1: Disables the pull up resistor on the I/O line.
 */
-#define PIOA_PPUDR_INIT (u32)0xFFDFFFFE
+#define PIOA_PPUDR_INIT (u32)0xFFEFFFFE
 /* 
     31 [1] PA_31_HEARTBEAT no pull-up
     30 [1] PA_30_AN_DEMO no pull-up
@@ -1382,8 +1379,8 @@ Initial output values are stored here.
 
     23 [1] PA_23_ANT_USPI2_MOSI no pull-up
     22 [1] PA_22_ANT_USPI2_MISO no pull-up
-    21 [0] PA_21_SD_USPI1_MISO pull-up
-    20 [1] PA_20_SD_USPI1_MOSI no pull-up
+    21 [1] PA_21_SD_USPI1_MISO no pull-up
+    20 [0] PA_20_SD_USPI1_MOSI pull-up
 
     19 [1] PA_19_DEBUG_U0_PIMO no pull-up
     18 [1] PA_18_DEBUG_U0_POMI no pull-up
@@ -1458,7 +1455,7 @@ Initial output values are stored here.
 0: No effect
 1: Enables the pull-up resistor on the selected pin
 */
-#define PIOA_PPUER_INIT (u32)0x00000001
+#define PIOA_PPUER_INIT (u32)0x00100001
 /*
     31 [0] PA_31_HEARTBEAT no pull-up
     30 [0] PA_30_AN_DEMO no pull-up
@@ -1473,7 +1470,7 @@ Initial output values are stored here.
     23 [0] PA_23_ANT_USPI2_MOSI no pull-up
     22 [0] PA_22_ANT_USPI2_MISO no pull-up
     21 [0] PA_21_SD_USPI1_MISO no pull-up
-    20 [0] PA_20_SD_USPI1_MOSI no pull-up
+    20 [1] PA_20_SD_USPI1_MOSI pull-up
 
     19 [0] PA_19_DEBUG_U0_PIMO no pull-up
     18 [0] PA_18_DEBUG_U0_POMI no pull-up
@@ -1579,7 +1576,7 @@ Initial output values are stored here.
     11 [0] PA_11_BLADE_UPIMO PERIPHERAL A
     10 [0] PA_10_I2C_SCL PERIPHERAL A
     09 [0] PA_09_I2C_SDA PERIPHERAL A
-    08 [0] PA_08_SD_CS_MCDA3 PERIPHERAL A
+    08 [0] PA_08_SD_CS_MCDA3 N/A
 
     07 [0] PA_07_HSMCI_MCDA2 PERIPHERAL A
     06 [0] PA_06_HSMCI_MCDA1 PERIPHERAL A
@@ -1902,7 +1899,7 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
     11 [0] PA_11_BLADE_UPIMO
     10 [0] PA_10_I2C_SCL
     09 [0] PA_09_I2C_SDA
-    08 [1] PA_08_SD_CS_MCDA3
+    08 [1] PA_08_SD_CS_MCDA3 write enabled
 
     07 [0] PA_07_HSMCI_MCDA2
     06 [0] PA_06_HSMCI_MCDA1

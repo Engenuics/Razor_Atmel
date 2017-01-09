@@ -25,9 +25,9 @@ Constants / Definitions
 #define _SD_TYPE_SD2		          (u32)0x00000010		   /* SD ver 2 */
 #define _SD_TYPE_MMC		          (u32)0x00000020	     /* SD ver 3 */
 #define _SD_TYPE_BLOCK		        (u32)0x00000040		   /* Block addressing */
-#define _SD_TYPE_SDSC             (u32)0x00000000      /* Standard Capacity SD Memory Card (SDSC): Up to and including 2 GB */
-#define _SD_TYPE_SDHC             (u32)0x00000000      /* High Capacity SD Memory Card (SDHC): More than 2GB and up to and including 32GB */
-#define _SD_TYPE_SDXC             (u32)0x00000000      /* Extended Capacity SD Memory Card (SDXC): More than 32GB and up to and including 2TB */
+//#define _SD_TYPE_SDSC             (u32)0x00000000      /* Standard Capacity SD Memory Card (SDSC): Up to and including 2 GB */
+//#define _SD_TYPE_SDHC             (u32)0x00000000      /* High Capacity SD Memory Card (SDHC): More than 2GB and up to and including 32GB */
+//#define _SD_TYPE_SDXC             (u32)0x00000000      /* Extended Capacity SD Memory Card (SDXC): More than 32GB and up to and including 2TB */
 /* end of SD_u32Flags */
 
 #define SD_CLEAR_CARD_TYPE_BITS  ~(_SD_CARD_HC | _SD_TYPE_MMC | _SD_TYPE_SD1 | _SD_TYPE_SD2 |_SD_TYPE_BLOCK)
@@ -53,6 +53,8 @@ Constants / Definitions
 #define SD_CMD0		                (u8)(0)			  /* GO_IDLE_STATE */
 #define SD_CMD1		                (u8)(1)			  /* SEND_OP_COND (SD) */
 #define SD_CMD8		                (u8)(8)			  /* SEND_IF_COND */
+#define SD_CMD8_INDEX_VHS         (u8)(2)       /* Index of VHS information in response to CMD 8 */
+#define SD_CMD8_INDEX_CHECK       (u8)(3)       /* Index of check pattern information in response to CMD 8 */
 #define SD_CMD9		                (u8)(9)			  /* SEND_CSD */
 #define SD_CMD10		              (u8)(10)			/* SEND_CID */
 #define SD_CMD12		              (u8)(12)			/* STOP_TRANSMISSION */
@@ -149,8 +151,8 @@ bool SdIsCardInserted(void);
 /* Private functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
 static void SdCommand(u8* pau8Command_);
-static void AdvanceSD_pu8RxBufferParser(u32 u32NumBytes_);
-static void FlushSdRxBuffer(void);
+//static void AdvanceSD_pu8RxBufferParser(u32 u32NumBytes_);
+//static void FlushSdRxBuffer(void);
 
 
 /***********************************************************************************************************************
@@ -161,7 +163,7 @@ static void SdCardSM_Dummies(void);
 static void SdCardSM_ResponseCMD0(void);
 static void SdCardSM_ResponseCMD8(void);
 static void SdCardSM_ReadCMD8(void);
-static void SdCardSM_ACMD41(void);
+static void SdCardSM_ResponseCMD55(void);
 static void SdCardSM_ResponseACMD41(void);
 static void SdCardSM_ResponseCMD58(void);
 static void SdCardSM_ResponseCMD16(void);
@@ -173,7 +175,7 @@ static void SdCardSM_WaitStartToken(void);
 static void SdCardSM_DataTransfer(void);
 static void SdCardSM_FailedDataTransfer(void);
 
-static void SdCardSM_WaitReady(void);
+//static void SdCardSM_WaitReady(void);
 static void SdCardSM_WaitCommand(void);
 static void SdCardSM_WaitResponse(void);
 static void SdCardSM_WaitSSP(void);
