@@ -2,15 +2,42 @@
 File: adc12.c                                                                
 
 Description:
-This is a adc12.c file template 
+Driver function to give access to the 12-bit ADC on the EiE development boards.  
+The ADC hardware is the same for the EiE 1 and EiE 2 development board Blade connectors.
+The EiE1 board has an additional on-board potentiometer for testing purporses.
+
+This driver currently only provides setup and single result read access from any
+channel on the ADC.  Any averaging or special operations should be handled by the
+application using the driver.  This driver is set up as a state machine for future
+feature additions.
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
 
-Public functions:
+TYPES
+Adc12ChannelType {ADC12_CH0...ADC12_CH7}
+
+PUBLIC FUNCTIONS
+void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_)
+Assigns callback for the client application.  This is how the ADC result for any channel
+is accessed.  The callback function must have one u16 parameter where the result is passed.
+Different callbacks may be assigned for each channel. 
+
+e.g. to read AN0 from the blade connector (which is channel 2 on the ADC):
+void UserApp_AdcCallback(u16 u16Result_);
+...
+Adc12AssignCallback(ADC12_CH2, UserApp_AdcCallback);
 
 
-Protected System functions:
+bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
+Checks if the ADC is available and starts the conversion on the selected channel.
+Returns TRUE if the conversion is started; returns FALSE if the ADC is not available.
+e.g.
+bool bConversionStarted = FALSE;
+bConversionStarted = Adc12StartConversion(ADC12_CH2);
+
+
+PROTECTED FUNCTIONS
 void Adc12Initialize(void)
 Runs required initialzation for the task.  Should only be called once in main init section.
 
@@ -60,45 +87,6 @@ Function Definitions
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-#if 0
-/*----------------------------------------------------------------------------------------------------------------------
-Function: Adc12EnableChannel
-
-Description
-Enables the specified channel including the associated interrupt.
-
-Requires:
-  - eAdcChannel_ is the ADC12 channel to enable
-
-Promises:
-  - ADC12B_CHER bit for eAdcChannel_ is set
-  - ADC12B_IER bit for eAdcChannel_is set
-*/
-void Adc12EnableChannel(Adc12ChannelType eAdcChannel_)
-{
-    AT91C_BASE_ADC12B->ADC12B_CHER = (1 << eAdcChannel_);
-} /* end Adc12EnableChannel() */
-
-    
-/*----------------------------------------------------------------------------------------------------------------------
-Function: Adc12DisableChannel
-
-Description
-Disables the specified channel including the associated interrupt.
-
-Requires:
-  - eAdcChannel_ is the ADC12 channel to disable
-
-Promises:
-  - ADC12B_CHDR bit for eAdcChannel_ is set
-  - ADC12B_IDR bit for eAdcChannel_is set
-*/
-void Adc12DisableChannel(Adc12ChannelType eAdcChannel_)
-{
-} /* end Adc12DisableChannel() */
-#endif
-
-
 /*----------------------------------------------------------------------------------------------------------------------
 Function: Adc12AssignCallback
 
@@ -116,11 +104,14 @@ void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCa
 {
   switch(eAdcChannel_)
   {
+#ifdef EIE1
+    /* On-board potentiometer analog input (EiE 1 only) */
     case ADC12_CH1:
     {
       Adc12_fpCallbackCh1 = fpUserCallback_;
       break;
     }
+#endif /* EIE1 */
     case ADC12_CH2:
     {
       Adc12_fpCallbackCh2 = fpUserCallback_;
