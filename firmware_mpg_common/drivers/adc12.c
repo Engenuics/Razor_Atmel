@@ -43,13 +43,13 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Adc12_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Adc12_StateMachine;            /* The state machine function pointer */
-//static u32 Adc12_u32Timeout;                      /* Timeout counter used across states */
+static fnCode_type Adc12_StateMachine;                /* The state machine function pointer */
+//static u32 Adc12_u32Timeout;                        /* Timeout counter used across states */
 static fnCode_u16_type Adc12_fpCallbackCh1;           /* ADC12 ISR callback function pointer */
 static fnCode_u16_type Adc12_fpCallbackCh2;           /* ADC12 ISR callback function pointer */
 static fnCode_u16_type Adc12_fpCallbackCh3;           /* ADC12 ISR callback function pointer */
 
-static bool Adc12_bAdcAvailable;                  /* Binary semaphore to control access to the ADC12 peripheral */
+static bool Adc12_bAdcAvailable;                      /* Binary semaphore to control access to the ADC12 peripheral */
 
 
 /**********************************************************************************************************************
@@ -159,7 +159,7 @@ If Adc12_bAdcAvailable is TRUE:
   - ADC12B_IER bit for eAdcChannel_is set
   - Returns TRUE
 
-If Adc12_bAdcAvailable is TRUE:
+If Adc12_bAdcAvailable is FALSE:
   - Returns FALSE
 */
 bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
