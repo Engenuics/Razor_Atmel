@@ -135,6 +135,7 @@ void UserApp1RunActiveState(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
+
 /*--------------------------------------------------------------------------------------------------------------------
 Function: PrintInstructions
 
@@ -220,7 +221,7 @@ static void UserApp1SM_Idle(void)
       { 
         LedDisplayStartList();
         UserApp1_u32UserListCount = 0;
-        DebugPrintf("Enter LED-START_TIME-END_TIME and press enter\n\rLED colors: R, O, Y, G, C, B, P, W\n\rPress enter on blank line to end\n\r");
+        DebugPrintf("Enter LED-START_TIME-END_TIME and press enter\n\rLED colors: R, O, Y, G, C, B, P, W\n\rExample: R-100-200\n\rPress enter on blank line to end\n\r");
         DebugPrintNumber(UserApp1_u32UserListCount + 1);
         DebugPrintf(": ");
         UserApp1_StateMachine = UserApp1SM_EnterProgram; 

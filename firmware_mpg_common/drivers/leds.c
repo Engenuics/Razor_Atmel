@@ -405,7 +405,8 @@ void LedInitialize(void)
   /* Exit with Leds off, NORMAL mode, and the backlight on (white) */
   for(u8 i = 0; i < TOTAL_LEDS; i++)
   {
-    Leds_asLedArray[0].eMode = LED_NORMAL_MODE;
+    LedOff( (LedNumberType)i );
+    Leds_asLedArray[i].eMode = LED_NORMAL_MODE;
   }
 
 #ifdef MPGL1
