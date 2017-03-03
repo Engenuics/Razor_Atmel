@@ -32,7 +32,7 @@ Main Program
 Main has two sections:
 
 1. Initialization which is run once on power-up or reset.  All drivers and applications are setup here without timing
-contraints but must complete execution regardless of success or failure of starting the application. 
+contraints but must complete execution 2regardless of success or failure of starting the application. 
 
 2. Super loop which runs infinitely giving processor time to each application.  The total loop time should not exceed
 1ms of execution time counting all application execution.  SystemSleep() will execute to complete the remaining time in

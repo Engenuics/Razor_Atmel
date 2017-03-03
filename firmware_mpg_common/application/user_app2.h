@@ -12,6 +12,8 @@ Header file for user_app2.c
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
+typedef enum {DEMO_LIST, USER_LIST} LedDisplayListNameType;
+
 typedef struct
 {
   LedNumberType eLED;       /* LED to operate on */
@@ -29,6 +31,7 @@ typedef struct
 typedef struct
 {
   u8 u8ListSize;                             /* Total size of the list */
+  u32 u32ListEndTime;                        /* Last time of an event in the list */
   LedDisplayListNodeType* psFirstCommand;    /* Pointer to the first command in the list */
 } LedDisplayListHeadType;
 
@@ -37,7 +40,7 @@ typedef struct
 Constants / Definitions
 **********************************************************************************************************************/
 //#define USER_LIST_EXAMPLE         /* Define to load a default User LED command list */
-
+#define MAX_LIST_SIZE             (u8)200               /* Maximum number of list entries (100 commands, each with START and END */
 #define LED_FADE_TIME             (u32)20               /* On time in ms for each level of PWM during fade */
 #define LED_FADE_STEP             (u32)2                /* PWM steps for each iteration of LED fade */
 #define LED_TOTAL_FADE_TIME       (u32)200              /* Total fading time in ms for an LED turning on or off */
@@ -56,7 +59,8 @@ Function Declarations
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
 void LedDisplayStartList(void);
-bool LedDisplayAddCommand(LedDisplayListHeadType* psDisplayList_, LedCommandType* pCommandInfo_);
+bool LedDisplayAddCommand(LedDisplayListNameType eListName_, LedCommandType* pCommandInfo_);
+bool LedDisplayPrintListLine(u8 u8ListItem_);
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -71,6 +75,7 @@ void UserApp2RunActiveState(void);
 /*--------------------------------------------------------------------------------------------------------------------*/
 void AllLedsOff(void);
 void LoadLcdScreen(void);
+void ResetListFades(LedDisplayListNodeType* psTargetList_);
 
 
 /***********************************************************************************************************************
@@ -79,6 +84,7 @@ State Machine Declarations
 static void UserApp2SM_Idle(void);    
 static void UserApp2SM_RunCommandList(void);
 
+static void UserApp2SM_Delay(void); 
 static void UserApp2SM_Error(void);         
 static void UserApp2SM_FailedInit(void);        
 

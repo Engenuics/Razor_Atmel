@@ -163,13 +163,20 @@ u32 QueueMessage(MessageType** eTargetTxBuffer_, u32 u32MessageSize_, u8* pu8Mes
   u32 u32BytesRemaining = u32MessageSize_;
   u32 u32CurrentMessageSize = 0;
   
+  /* Check for 0 message size */
+   if(u32MessageSize_ == 0)
+  {
+    G_u32MessagingFlags |= _MESSAGING_0_MESSAGE_SIZE;
+    return(0);
+  }
+
   /* Check for available space in the message pool */
   if(Msg_u8QueuedMessageCount == TX_QUEUE_SIZE)
   {
     G_u32MessagingFlags |= _MESSAGING_TX_QUEUE_FULL;
     return(0);
   }
-
+   
   /* Space available, so proceed with allocation.  Though only one message is queued at a time, we
   use a while loop to handle messages that are too big and must be split into different slots.  The slots
   are always sequential and the message processor will send the bytes continuously across slots */

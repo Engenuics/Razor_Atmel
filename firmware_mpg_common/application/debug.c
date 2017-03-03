@@ -169,11 +169,13 @@ u32 DebugPrintf(u8* u8String_)
   u8* pu8Parser = u8String_;
   u32 u32Size = 0;
   
+  /* Count the characters in the string */
   while(*pu8Parser != NULL)
   {
     u32Size++;
     pu8Parser++;
   }
+    
   return( UartWriteData(Debug_Uart, u32Size, u8String_) );
  
 } /* end DebugPrintf() */
@@ -970,7 +972,7 @@ void DebugSM_CheckCmd(void)
   /* Otherwise print an error message and return to Idle */
   else
   { 
-    //DebugPrintf(au8InvalidCommand);
+    //DebugPrintf(au8InvalidCommand);  COMMENTED OUT AS A HACK FOR NOW FOR THE PROGRAMMING COMPETITION
     Debug_pfnStateMachine = DebugSM_Idle;
   }
 
