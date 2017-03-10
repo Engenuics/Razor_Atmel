@@ -904,8 +904,11 @@ void DebugSM_Idle(void)
       /* Carriage return: change states to process new command and fall through to echo character */
       case(ASCII_CARRIAGE_RETURN): 
       {
-        bCommandFound = TRUE;
-        Debug_pfnStateMachine = DebugSM_CheckCmd;
+        if( !( G_u32DebugFlags & _DEBUG_PASSTHROUGH) )
+        {
+          bCommandFound = TRUE;
+          Debug_pfnStateMachine = DebugSM_CheckCmd;
+        }
         
         /* Fall through to default */        
       }
