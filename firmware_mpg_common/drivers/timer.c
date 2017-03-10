@@ -266,6 +266,9 @@ void TimerInitialize(void)
     NVIC_EnableIRQ(IRQn_TC1);
     Timer_StateMachine = TimerSM_Idle;
     DebugPrintf(au8TimerStarted);
+    
+    /* Flag that the Timer task is ready */
+    G_u32ApplicationFlags |= _APPLICATION_FLAGS_TIMER;
   }
   else
   {
