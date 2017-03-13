@@ -8,7 +8,7 @@ Provides a Tera-Term driven system to display, read and write an LED command lis
 API:
 
 Public functions:
-
+None.
 
 Protected System functions:
 void UserApp1Initialize(void)
@@ -254,6 +254,141 @@ static bool CheckCommandString(u8* pu8CommandToCheck_)
 } /* end CheckCommandString() */
 
 
+/*--------------------------------------------------------------------------------------------------------------------
+Function: CreateNewListCommands
+
+Description:
+Creates the ON and OFF list command pair based on a verified command string.
+
+Requires:
+  - pu8CommandToAdd_ points to the start of a VERIFIED command string
+
+Promises:
+  - If successful, two commands are added to the USER list (ON and OFF) and function returns TRUE
+  - Otherwise return FALSE
+*/
+static bool CreateNewListCommands(u8* pu8CommandToAdd_)
+{
+  LedCommandType sCommandOn;
+  LedCommandType sCommandOff;
+  LedNumberType eLed;
+  u8 au8TempString[INPUT_MAX_TIME_DIGITS + 1];
+  u8 u8Index;
+  u8 u8IndexOffset;
+
+  /* We rely on the fact that we have already verified the format of the command. */
+  switch(*pu8CommandToAdd_)
+  {
+    case 'R':
+      /* fall through */
+    case 'r':
+    {
+      eLed = RED;
+      break;
+    }
+    case 'O':
+      /* fall through */
+    case 'o':
+    {
+      eLed = ORANGE;
+      break;
+    }
+    case 'Y':
+      /* fall through */
+    case 'y':
+    {
+      eLed = YELLOW;
+      break;
+    }
+    case 'G':
+      /* fall through */
+    case 'g':
+    {
+      eLed = GREEN;
+      break;
+    }
+    case 'C':
+      /* fall through */
+    case 'c':
+    {
+      eLed = CYAN;
+      break;
+    }
+    case 'B':
+      /* fall through */
+    case 'b':
+    {
+      eLed = BLUE;
+      break;
+    }
+    case 'P':
+      /* fall through */
+    case 'p':
+    {
+      eLed = PURPLE;
+      break;
+    }
+    case 'W':
+      /* fall through */
+    case 'w':
+    {
+      eLed = WHITE;
+      break;
+    }
+    default:
+    {
+      DebugPrintf("\n\rError: unexpected LED color\n\r");
+      eLed = RED;
+      break;
+    }
+  } /* end switch */
+
+  /* Load the LED name to both the ON and OFF nodes */ 
+  sCommandOn.bOn = TRUE;
+  sCommandOn.eLED = eLed;
+  sCommandOff.eLED = eLed;
+  sCommandOff.bOn = FALSE;
+
+  /* Get the ON time. The ON time starts at au8CommandString[2] */
+  for(u8Index = 0; *(pu8CommandToAdd_ + u8Index + 2) != '-'; u8Index++)
+  {
+    /* Copy the string into its own array */
+    au8TempString[u8Index] = *(pu8CommandToAdd_ + u8Index + 2);
+  }
+  /* u8Index is at the end of the number in au8TempString so add a NULL there and then
+  convert the string to a number */
+  au8TempString[u8Index] = '\0';
+  sCommandOn.u32Time = (u32)(atoi( (const char*)au8TempString ) & 0x0000FFFF);
+                 
+  /* Get the Off time.
+  u8Index + 2 is at the '-' after the ON number.  So if we add 1 more and save this to u8IndexOffset
+  we can index pu8CommandToAdd_ in the same loop structure as above */
+  u8IndexOffset = u8Index + 3;
+  for(u8Index = 0; *(pu8CommandToAdd_ + u8Index + u8IndexOffset) != ASCII_CARRIAGE_RETURN; u8Index++)
+  {
+    /* Copy the string into its own array */
+    au8TempString[u8Index] = *(pu8CommandToAdd_ + u8Index + u8IndexOffset);
+  }
+  /* u8Index is at the end of the number in au8TempString so add a NULL there and then
+  convert the string to a number */
+  au8TempString[u8Index] = '\0';
+  sCommandOff.u32Time = (u32)(atoi( (const char*)au8TempString ) & 0x0000FFFF);
+                              
+  /* Add the commands to the USER list.  These should ALWAYS be added in pairs or the system will break */
+  if(LedDisplayAddCommand(USER_LIST, &sCommandOn))
+  {
+    if(LedDisplayAddCommand(USER_LIST, &sCommandOff))
+    {
+      return TRUE;
+    }
+  }
+  
+  /* Something failed, so return FALSE */
+  return FALSE;
+    
+} /* end CreateNewListCommands */
+
+
 /**********************************************************************************************************************
 State Machine Function Definitions
 **********************************************************************************************************************/
@@ -317,7 +452,12 @@ static void UserApp1SM_Idle(void)
 than one at a time since this is a human interface. This could be improved
 later by adding a check to ensure DebugScanf only returns 1.
 
-We will also choose to leave all character checking until the user presses Enter
+We will also choose to leave all character checking until the user presses Enter.
+Pressing Enter on a blank line shows how many commands were entered and the new
+command list, then returns to the main menu.
+
+If a command string is correct, both the ON and OFF command nodes are created.
+TWO NODES MUST BE CREATED FOR EVERY COMMAND.  THE ON NODE IS ADDED FIRST TO THE LIST.
 */
 static void UserApp1SM_EnterProgram(void)
 {
@@ -326,12 +466,6 @@ static void UserApp1SM_EnterProgram(void)
   static u8 au8CommandString[16];
   
   u8 u8CurrentChar;
-  LedCommandType sCommandOn;
-  LedCommandType sCommandOff;
-  LedNumberType eLed;
-  u8 au8TempString[INPUT_MAX_TIME_DIGITS + 1];
-  u8 u8Index;
-  u8 u8IndexOffset;
     
   /* Watch for characters coming in and check them as they arrive */
   if(DebugScanf(&u8CurrentChar))
@@ -357,112 +491,12 @@ static void UserApp1SM_EnterProgram(void)
       
       if(u8CurrentChar == ASCII_CARRIAGE_RETURN)
       {
+        /* If CR is found, then check if the command format is correct */
         if(CheckCommandString(au8CommandString))
         {
-          /* The command is good, so first we must create the two command nodes.
-          We rely on the fact that we have already verified the format of the command. */
-          switch(au8CommandString[0])
-          {
-            case 'R':
-              /* fall through */
-            case 'r':
-            {
-              eLed = RED;
-              break;
-            }
-            case 'O':
-              /* fall through */
-            case 'o':
-            {
-              eLed = ORANGE;
-              break;
-            }
-            case 'Y':
-              /* fall through */
-            case 'y':
-            {
-              eLed = YELLOW;
-              break;
-            }
-            case 'G':
-              /* fall through */
-            case 'g':
-            {
-              eLed = GREEN;
-              break;
-            }
-            case 'C':
-              /* fall through */
-            case 'c':
-            {
-              eLed = CYAN;
-              break;
-            }
-            case 'B':
-              /* fall through */
-            case 'b':
-            {
-              eLed = BLUE;
-              break;
-            }
-            case 'P':
-              /* fall through */
-            case 'p':
-            {
-              eLed = PURPLE;
-              break;
-            }
-            case 'W':
-              /* fall through */
-            case 'w':
-            {
-              eLed = WHITE;
-              break;
-            }
-            default:
-            {
-              DebugPrintf("\n\rError: unexpected LED color\n\r");
-              eLed = RED;
-              break;
-            }
-          } /* end switch */
-
-          /* Load the LED name to both the ON and OFF nodes */ 
-          sCommandOn.bOn = TRUE;
-          sCommandOn.eLED = eLed;
-          sCommandOff.eLED = eLed;
-          sCommandOff.bOn = FALSE;
-
-          /* Get the ON time. The ON time starts at au8CommandString[2] */
-          for(u8Index = 0; au8CommandString[u8Index + 2] != '-'; u8Index++)
-          {
-            /* Copy the string into its own array */
-            au8TempString[u8Index] = au8CommandString[u8Index + 2];
-          }
-          /* u8Index is at the end of the number in au8TempString so add a NULL there and then
-          convert the string to a number */
-          au8TempString[u8Index] = '\0';
-          sCommandOn.u32Time = (u32)(atoi( (const char*)au8TempString ) & 0x0000FFFF);
-                         
-          /* Get the Off time.
-          u8Index + 2 is at the '-' after the ON number.  So if we add 1 more and save this to u8IndexOffset
-          we can index au8CommandString in the same loop structure as above */
-          u8IndexOffset = u8Index + 3;
-          for(u8Index = 0; au8CommandString[u8Index + u8IndexOffset] != ASCII_CARRIAGE_RETURN; u8Index++)
-          {
-            /* Copy the string into its own array */
-            au8TempString[u8Index] = au8CommandString[u8Index + u8IndexOffset];
-          }
-          /* u8Index is at the end of the number in au8TempString so add a null there and then
-          convert the string to a number */
-          au8TempString[u8Index] = '\0';
-          sCommandOff.u32Time = (u32)(atoi( (const char*)au8TempString ) & 0x0000FFFF);
-          
-                                      
-          /* Add the commands to the USER list.  These should ALWAYS be added in pairs or the system will break */
-          LedDisplayAddCommand(USER_LIST, &sCommandOn);
-          LedDisplayAddCommand(USER_LIST, &sCommandOff);
-          
+          /* Good command, so we can safely add it to the list */
+          CreateNewListCommands(au8CommandString);
+            
           /* Update the variables to take the next command and print the next input line header */
           u8CharCount = 0;
           u8CommandCount++;

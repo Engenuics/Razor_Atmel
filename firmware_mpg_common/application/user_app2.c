@@ -9,6 +9,32 @@ Provides the API to create new display lists.
 API:
 
 Public functions:
+void LedDisplayStartList(void)
+Clears the existing USER list so it is ready to be programmed again.  All data is lost.
+
+bool LedDisplayAddCommand(LedDisplayListNameType eListName_, LedCommandType* pCommandInfo_)
+Adds a new LED commmand node.  When a new node is added, the size of the list is incremented
+and the list end time is checked to see if the new end time is greater and needs updating.
+Check the return value to ensure the command was added successfully.
+e.g.
+LedCommandType eExampleCommand;
+// Initialize an "ON" command that will turn on RED at 1000ms 
+eExampleCommand.eLED = RED;
+eExampleCommand.bOn = TRUE;
+eExampleCommand.u32Time = 1000;
+if(!LedDisplayAddCommand(UserApp2_sUserLedCommandList, &eExampleCommand))
+{
+  DebugPrintf("Add command failed\n\r");
+}
+
+bool LedDisplayPrintListLine(u8 u8ListItem_)
+Outputs a string with the color, start time and end time of each LED command in the USER list.
+The USER list must be in the correct format where each on/off pair is grouped together.
+The function will return FALSE when a command at u8ListItem_ does not exist.  So to
+print an entire list, you could do this:
+
+u8 u8ListEntry = 0;
+while( LedDisplayPrintListLine(u8ListEntry++) );
 
 
 Protected System functions:
@@ -46,7 +72,6 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp2_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp2_StateMachine;            /* The state machine function pointer */
-//static u32 UserApp2_u32Timeout;                      /* Timeout counter used across states */
 
 static LedDisplayListHeadType UserApp2_sDemoLedCommandList;   
 static LedDisplayListHeadType UserApp2_sUserLedCommandList;     
@@ -70,20 +95,24 @@ Function Definitions
 Function: LedDisplayStartList
 
 Description:
-Clears 
+Clears the current USER list and ensures that all allocated memory is freed. 
+Since the list is being cleared, the LED display task must be stopped if it is currently
+displaying the USER list.  Alternately, the DEMO list could be started, but it 
+makes more sense to turn off the display at this time (the user can restart the DEMO
+list if they want to).
 
 Requires:
-  -
+  - UserApp2_sUserLedCommandList is initialized and can be any length including 0.
 
 Promises:
-  - 
+  - UserApp2_sUserLedCommandList is an empty list.
 */
 void LedDisplayStartList(void)
 {
   LedDisplayListNodeType* psNodeParser;
   LedDisplayListNodeType* psNodeToKill;
   
-  /* If the user list is active, stop the program, all LEDs off and clear the < char */
+  /* If the user list is active, stop the program, all LEDs off and clear the '<' char */
   if(UserApp2_psActiveList == &UserApp2_sUserLedCommandList)
   {
     UserApp2_StateMachine = UserApp2SM_Idle;
@@ -119,7 +148,7 @@ Function: LedDisplayAddCommand
 
 Description:
 Adds a new LED commmand node.  When a new node is added, the size of the list must be incremented
-and the list end time needs to be checked to see if the new TIME is greater.
+and the list end time needs to be checked to see if the new end time is greater.
 
 Requires:
   - eListName_ determine if the command is for the DEMO or USER list
@@ -128,6 +157,7 @@ Requires:
 Promises:
   - As long as malloc is ok and the requested list is valid, a new list node is added
   - The list's head node ListSize and ListEndTime parameters are updated
+  - Returns TRUE if the command is successfully added
   - Returns FALSE on any errors
 */
 bool LedDisplayAddCommand(LedDisplayListNameType eListName_, LedCommandType* pCommandInfo_)
@@ -144,7 +174,6 @@ bool LedDisplayAddCommand(LedDisplayListNameType eListName_, LedCommandType* pCo
     return FALSE;
   }
 
-  
   /* Select the list to modify */
   if(eListName_ == DEMO_LIST)
   {
@@ -225,11 +254,12 @@ Outputs a string with the color, start time and end time of each LED command in 
 
 Requires:
   - List entries are always paired as a start time and end time
-  - u8ListItem_ is the command number to print
-  - The list 
+  - u8ListItem_ is the command number to print; if u8ListItem is 8, then items 16 and 17 will
+    be printed since those are the 8th pair of on/off commands.
 
 Promises:
-  - If the command is valid, queues the command display in the form:
+  - If the command number is valid, queues the command display by reading the command
+at number and the command at number + 1 in the form:
 
 LED  ON TIME   OFF TIME
 -----------------------    
@@ -238,6 +268,7 @@ _L___XXXXXX____XXXXXX \n\r
 
 ON TIME value starts at index 0x5
 OFF TIME value starts at index 0xF
+
 We add a space after OFF TIME because a 6-digit off time will return a NULL here.  It is
 easiest to just overwrite a space to this character.
 */
@@ -262,45 +293,49 @@ bool LedDisplayPrintListLine(u8 u8ListItem_)
     u8ListIndex++;
   }
   
-  /* Check if it's valid or not */
-  if(psListParser == NULL)
+  /* Check if the pointer is valid or not */
+  if( psListParser == NULL )
   {
     return FALSE;
   }
-  else
+  
+  /* Make sure the next node is there, too */
+  if ( psListParser->psNextNode == NULL )
   {
-    /* Load each part of the display array starting with the LED name */
-    au8DisplayString[1] = au8LedNames[(u8)(psListParser->eCommand.eLED)];
-    
-    /* ON time is at the current node; Correct the time if a fade is in progress. */
-    u32CurrentTime = psListParser->eCommand.u32Time;
-    if(psListParser->eCommand.eCurrentRate != LED_PWM_0)
-    {
-      u32CurrentTime -= ( (u32)(psListParser->eCommand.eCurrentRate) / LED_FADE_STEP) * LED_FADE_TIME;
-    }
-    
-    /* Convert to ASCII and clear the NULL that comes back with the string from NumberToAscii() */
-    u8NumChars = NumberToAscii( u32CurrentTime, &au8DisplayString[ONTIME_INDEX] );
-    au8DisplayString[ONTIME_INDEX + u8NumChars] = ' ';  
-    
-    /* Advance to next node which must be the OFF time and load the time string.
-    Correct the time if a fade is in progress. */
-    psListParser = psListParser->psNextNode; 
-    u32CurrentTime = psListParser->eCommand.u32Time;
-    if(psListParser->eCommand.eCurrentRate != LED_PWM_100)
-    {
-      u32CurrentTime -= (u32)( (LED_PWM_100 - (psListParser->eCommand.eCurrentRate)) / LED_FADE_STEP) * LED_FADE_TIME;
-    }
-
-    /* The time must also be corrected by LED_TOTAL_FADE_TIME so it matches what the user entered.
-    Clear the NULL that comes back with the string from NumberToAscii() */
-    u8NumChars = NumberToAscii( u32CurrentTime + LED_TOTAL_FADE_TIME, &au8DisplayString[OFFTIME_INDEX] );
-    au8DisplayString[OFFTIME_INDEX + u8NumChars] = ' ';  
-    
-    /* The string is ready, so send it and return TRUE since the requested item exists */
-    DebugPrintf(au8DisplayString);
-    return TRUE;
+    return FALSE;
   }
+
+  /* Load each part of the display array starting with the LED name */
+  au8DisplayString[1] = au8LedNames[(u8)(psListParser->eCommand.eLED)];
+  
+  /* ON time is at the current node; Correct the time if a fade is in progress. */
+  u32CurrentTime = psListParser->eCommand.u32Time;
+  if(psListParser->eCommand.eCurrentRate != LED_PWM_0)
+  {
+    u32CurrentTime -= ( (u32)(psListParser->eCommand.eCurrentRate) / LED_FADE_STEP) * LED_FADE_TIME;
+  }
+  
+  /* Convert to ASCII and clear the NULL that comes back with the string from NumberToAscii() */
+  u8NumChars = NumberToAscii( u32CurrentTime, &au8DisplayString[ONTIME_INDEX] );
+  au8DisplayString[ONTIME_INDEX + u8NumChars] = ' ';  
+  
+  /* Advance to next node which must be the OFF time and load the time string.
+  Correct the time if a fade is in progress. */
+  psListParser = psListParser->psNextNode; 
+  u32CurrentTime = psListParser->eCommand.u32Time;
+  if(psListParser->eCommand.eCurrentRate != LED_PWM_100)
+  {
+    u32CurrentTime -= (u32)( (LED_PWM_100 - (psListParser->eCommand.eCurrentRate)) / LED_FADE_STEP) * LED_FADE_TIME;
+  }
+
+  /* The time must also be corrected by LED_TOTAL_FADE_TIME so it matches what the user entered.
+  Clear the NULL that comes back with the string from NumberToAscii() */
+  u8NumChars = NumberToAscii( u32CurrentTime + LED_TOTAL_FADE_TIME, &au8DisplayString[OFFTIME_INDEX] );
+  au8DisplayString[OFFTIME_INDEX + u8NumChars] = ' ';  
+  
+  /* The string is ready, so send it and return TRUE since the requested item exists */
+  DebugPrintf(au8DisplayString);
+  return TRUE;
   
 } /* end LedDisplayPrintListLine() */
 

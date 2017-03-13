@@ -58,8 +58,6 @@ void UserApp1RunActiveState(void);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
-//static void PrintMenu(void);
-//static void PrintInstructions(void);
 static bool CheckCommandString(u8* pu8CommandToCheck_);
 
 
