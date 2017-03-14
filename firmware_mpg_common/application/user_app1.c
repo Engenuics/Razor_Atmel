@@ -377,8 +377,10 @@ static bool CreateNewListCommands(u8* pu8CommandToAdd_)
   /* Add the commands to the USER list.  These should ALWAYS be added in pairs or the system will break */
   if(LedDisplayAddCommand(USER_LIST, &sCommandOn))
   {
+    /* Once the ON command is added successfully, add the OFF command */
     if(LedDisplayAddCommand(USER_LIST, &sCommandOff))
     {
+      /* Both commands have been added successfully, so we can return TRUE */
       return TRUE;
     }
   }

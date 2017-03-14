@@ -137,6 +137,7 @@ void LedDisplayStartList(void)
     /* Initialize the head node and reset system time */
     UserApp2_sUserLedCommandList.psFirstCommand = NULL;
     UserApp2_sUserLedCommandList.u8ListSize = 0;
+    UserApp2_sUserLedCommandList.u32ListEndTime = 0;
     UserApp2_u32SystemTime = 0;
   }
   
@@ -363,8 +364,11 @@ void UserApp2Initialize(void)
   /* Initialize the list variables */
   UserApp2_sDemoLedCommandList.psFirstCommand = NULL;
   UserApp2_sDemoLedCommandList.u8ListSize = 0;
+  UserApp2_sDemoLedCommandList.u32ListEndTime = 0;
+  
   UserApp2_sUserLedCommandList.psFirstCommand = NULL;
   UserApp2_sUserLedCommandList.u8ListSize = 0;
+  UserApp2_sUserLedCommandList.u32ListEndTime = 0;
     
   /* Set up the hard-coded display array */
   LedCommandType aeDemoList[] =
@@ -400,7 +404,7 @@ void UserApp2Initialize(void)
     {PURPLE, 6600, TRUE, LED_PWM_0},
     {PURPLE, 9000, FALSE, LED_PWM_100},
     {WHITE, 6700, TRUE, LED_PWM_0},
-    {WHITE, 9000, FALSE, LED_PWM_100},
+    {WHITE, 9000, FALSE, LED_PWM_100}
 #if 0
     /* The ON times */
     {WHITE, 0, TRUE, LED_PWM_0},
@@ -439,8 +443,7 @@ void UserApp2Initialize(void)
 #endif
   };
 
-  /* Set the total list time and build the command array */
-  UserApp2_sDemoLedCommandList.u32ListEndTime = 0;
+  /* Build the command array */
   for(u8 i = 0; i < (sizeof(aeDemoList) / sizeof(LedCommandType)); i++)
   {
     LedDisplayAddCommand(DEMO_LIST, &aeDemoList[i]);
@@ -460,13 +463,62 @@ void UserApp2Initialize(void)
     {YELLOW, 2000, FALSE, LED_PWM_100}
   };
 
-  /* Set the total list time and build the command array */
-  UserApp2_u32UserListEndTime = 2000;
+  /* Build the command array */
   for(u8 i = 0; i < (sizeof(aeUserList) / sizeof(LedCommandType)); i++)
   {
     LedDisplayAddCommand(USER_LIST, &aeUserList[i]);
   }
 #endif  
+  
+#ifdef USER_KNIGHT_RIDER
+  /* This doesn't work quite properly due to the system design -- a limitation imposed by
+  the way the alorithm was designed an implemented. */
+  LedCommandType aeUserList[] =
+  {
+    {RED, 0, TRUE, LED_PWM_0},
+    {ORANGE, 100, TRUE, LED_PWM_0},
+    {YELLOW, 200, TRUE, LED_PWM_0},
+    {GREEN, 300, TRUE, LED_PWM_0},
+    {CYAN, 400, TRUE, LED_PWM_0},
+    {BLUE, 500, TRUE, LED_PWM_0},
+    {PURPLE, 600, TRUE, LED_PWM_0},
+    {WHITE, 700, TRUE, LED_PWM_0},
+    
+    {WHITE, 900, TRUE, LED_PWM_0},
+    {PURPLE, 1000, TRUE, LED_PWM_0},
+    {BLUE, 1200, TRUE, LED_PWM_0},
+    {CYAN, 1300, TRUE, LED_PWM_0},
+    {GREEN, 1400, TRUE, LED_PWM_0},
+    {YELLOW, 1500, TRUE, LED_PWM_0},
+    {ORANGE, 1600, TRUE, LED_PWM_0},
+    {RED, 1700, TRUE, LED_PWM_0},
+    
+    {RED, 300, FALSE, LED_PWM_100},
+    {ORANGE, 400, FALSE, LED_PWM_100},
+    {YELLOW, 500, FALSE, LED_PWM_100},
+    {GREEN, 600, FALSE, LED_PWM_100},
+    {CYAN, 700, FALSE, LED_PWM_100},
+    {BLUE, 800, FALSE, LED_PWM_100},
+    {PURPLE, 900, FALSE, LED_PWM_100},
+    {WHITE, 1000, FALSE, LED_PWM_100},
+
+    {WHITE, 1300, FALSE, LED_PWM_100},
+    {PURPLE, 1400, FALSE, LED_PWM_100},
+    {BLUE, 1500, FALSE, LED_PWM_100},
+    {CYAN, 1600, FALSE, LED_PWM_100},
+    {GREEN, 1700, FALSE, LED_PWM_100},
+    {YELLOW, 1800, FALSE, LED_PWM_100},
+    {ORANGE, 1900, FALSE, LED_PWM_100},
+    {RED, 2000, TRUE, LED_PWM_0},
+  };
+
+  /* Build the command array */
+  for(u8 i = 0; i < (sizeof(aeUserList) / sizeof(LedCommandType)); i++)
+  {
+    LedDisplayAddCommand(USER_LIST, &aeUserList[i]);
+  }
+
+#endif /* USER_KNIGHT_RIDER */
 
   UserApp2_psActiveList = &UserApp2_sDemoLedCommandList;
 

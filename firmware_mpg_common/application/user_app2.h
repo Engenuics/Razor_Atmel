@@ -40,6 +40,9 @@ typedef struct
 Constants / Definitions
 **********************************************************************************************************************/
 //#define USER_LIST_EXAMPLE         /* Define to load a default User LED command list */
+//#define USER_KNIGHT_RIDER         /* Define to load the Knight Rider User LED command list */
+
+
 #define MAX_LIST_SIZE             (u8)200               /* Maximum number of list entries (100 commands, each with START and END */
 #define LED_FADE_TIME             (u32)20               /* On time in ms for each level of PWM during fade */
 #define LED_FADE_STEP             (u32)2                /* PWM steps for each iteration of LED fade */
