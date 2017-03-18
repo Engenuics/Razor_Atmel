@@ -38,7 +38,7 @@ Runs current task state.  Should only be called once in main loop.
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_"
+All Global variable names shall start with "G_UserApp1"
 ***********************************************************************************************************************/
 /* New variables */
 volatile u32 G_u32UserApp1Flags;                       /* Global state flags */
@@ -55,7 +55,7 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "UserApp_" and be declared as static.
+Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
@@ -133,7 +133,7 @@ State Machine Function Definitions
 **********************************************************************************************************************/
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a message to be queued */
+/* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
     

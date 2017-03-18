@@ -24,7 +24,7 @@ Runs current task state.  Should only be called once in main loop.
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_"
+All Global variable names shall start with "G_UserApp3"
 ***********************************************************************************************************************/
 /* New variables */
 volatile u32 G_u32UserApp3Flags;                       /* Global state flags */
@@ -119,7 +119,7 @@ State Machine Function Definitions
 **********************************************************************************************************************/
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a message to be queued */
+/* Wait for ??? */
 static void UserApp3SM_Idle(void)
 {
     

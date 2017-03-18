@@ -184,6 +184,9 @@
         <name>$PROJ_DIR$\..\bsp\mpgl1-ehdw-03.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\firmware_mpg_common\sam3u2-flash.icf</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\firmware_mpg_common\typedefs.h</name>
       </file>
     </group>
