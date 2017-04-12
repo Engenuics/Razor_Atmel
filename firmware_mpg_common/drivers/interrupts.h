@@ -118,40 +118,28 @@ All unused interrupt sources will be set to priority 31.
     29 [1] "
     28 [1] "
 
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
+    27-24 [0] Unimplemented
 
     23 [1] ( 2) // REAL TIME CLOCK priority 15
     22 [1] "
     21 [1] "
     20 [1] "
 
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
+    19-16 [0] Unimplemented
 
     15 [0] ( 1) // RESET CONTROLLER priority 0
     14 [0] "
     13 [0] "
     12 [0] "
 
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
+    11-08 [0] Unimplemented
 
     07 [1] ( 0) // SUPPLY CONTROLLER priority 15
     06 [1] "
     05 [1] "
     04 [1] "
 
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
+    03-00 [0] Unimplemented
 */
 
 #define IPR1_INIT (u32)0xF0F0F000
@@ -240,47 +228,35 @@ All unused interrupt sources will be set to priority 31.
     00 [0] "
 */
 
-#define IPR3_INIT (u32)0xF0303050
+#define IPR3_INIT (u32)0x30303050
 /* Bit Set Description
-    31 [1] (15) // USART 2 priority 15
-    30 [1] "
+    31 [0] (15) // USART 2 priority 3
+    30 [0] "
     29 [1] "
     28 [1] "
 
-    27 [0] Unimplemented
-    26 [0] "
-    25 [0] "
-    24 [0] "
+    27-24 [0] Unimplemented
 
     23 [0] (14) // USART 1 priority 3
     22 [0] "
     21 [1] "
     20 [1] "
 
-    19 [0] Unimplemented
-    18 [0] "
-    17 [0] "
-    16 [0] "
+    19-16 [0] Unimplemented
 
     15 [0] (13) // USART 0 priority 3
     14 [0] "
     13 [1] "
     12 [1] "
 
-    11 [0] Unimplemented
-    10 [0] "
-    09 [0] "
-    08 [0] "
+    11-08 [0] Unimplemented
 
     07 [0] (12) // Parallel IO Controller C priority 5
     06 [1] "
     05 [0] "
     04 [1] "
 
-    03 [0] Unimplemented
-    02 [0] "
-    01 [0] "
-    00 [0] "
+    03-00 [0] Unimplemented
 */
 
 #define IPR4_INIT (u32)0xF020F0F0
