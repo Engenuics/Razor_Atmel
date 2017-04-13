@@ -69,7 +69,9 @@ void main(void)
   AntInitialize();
   
   /* Application initialization */
-  UserAppInitialize();
+  UserApp1Initialize();
+  UserApp2Initialize();
+  UserApp3Initialize();
   
   /* Exit initialization */
   SystemStatusReport();
@@ -93,7 +95,9 @@ void main(void)
     AntRunActiveState();
 
     /* Applications */
-    UserAppRunActiveState();
+    UserApp1RunActiveState();
+    UserApp2RunActiveState();
+    UserApp3RunActiveState();
         
     /* System sleep*/
     HEARTBEAT_OFF();

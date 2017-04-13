@@ -12,8 +12,8 @@ define symbol __ICFEDIT_region_ROM0_start__  = 0x00080000;
 define symbol __ICFEDIT_region_ROM0_end__    = 0x0009FFFF;
 /*-Sizes-*/
 /*define symbol __ICFEDIT_size_cstack__        = 0x1000;*//*for nandflash*/
-define symbol __ICFEDIT_size_cstack__        = 0x2000;
-define symbol __ICFEDIT_size_heap__          = 0x2000;
+define symbol __ICFEDIT_size_cstack__        = 0x1000;
+define symbol __ICFEDIT_size_heap__          = 0x4000;
 /*-Specials-*/
 /*define symbol __ICFEDIT_region_RAM_VECT_start__ = __ICFEDIT_region_RAM0_start__;*/ /*Referenced for CMSIS*/
 /*define symbol __ICFEDIT_size_vectors__          = 0x100;*/ /*Referenced for CMSIS*/
@@ -41,6 +41,6 @@ do not initialize  { section .noinit };
 /*place at start of ROM0_region { readonly section .intvec };*/ /*Referenced for CMSIS*/
 place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec }; /*Add for CMSIS*/
 place in ROM0_region          { readonly };
-place in RAM0_region          { readwrite, block HEAP };
-place in RAM1_region          { block CSTACK }; /* for nandflash*/
+place in RAM0_region          { readwrite, block CSTACK };
+place in RAM1_region          { block HEAP }; /* for nandflash*/
 /*place in RAM_VECT_region      { block RamVect };*/ /*Referenced for CMSIS*/

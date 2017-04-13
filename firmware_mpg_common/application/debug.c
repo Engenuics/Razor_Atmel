@@ -17,6 +17,11 @@ The terminal program used to interface to the debugger should be set to:
 - 115200-8-N-1
 
 
+DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
+USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
+INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
+RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
+
 ------------------------------------------------------------------------------------------------------------------------
 API:
 Types: none
@@ -55,12 +60,6 @@ e.g.
 u8 u8MyBuffer[SCANF_BUFFER_SIZE]
 u8 u8NumChars;
 u8NumChars = DebugScanf(u8MyBuffer);
-
-
-DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
-USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
-INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
-RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
 
 ***********************************************************************************************************************/
 
@@ -298,6 +297,54 @@ u8 DebugScanf(u8* au8Buffer_)
 } /* end DebugScanf() */
 
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: DebugSetPassthrough
+
+Description:
+Puts the Debug task in Passthrough mode so ALL characters received are put in to the Scanf buffer and
+the Debug task does not look for input for the menu system. This allows task to have full access to 
+terminal input without the Debug task printing messages or stealing Backspace characters!
+
+Passthrough mode does NOT disable any other Debug functions that have already been enabled.  For example,
+if you want the 1ms timing violation warning you can enable this and then enable Passthrough mode.
+
+Requires:
+  -
+
+Promises:
+  - G_u32DebugFlags _DEBUG_PASSTHROUGH is set
+*/
+void DebugSetPassthrough(void)
+{
+  G_u32DebugFlags |= _DEBUG_PASSTHROUGH;
+  
+  DebugPrintf("\n\n\r***Debug Passthrough enabled***\n\n\r");
+
+} /* end DebugSetPassthrough */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: DebugClearPassthrough
+
+Description:
+Takes the Debug task out of Passthrough mode.
+
+Requires:
+  -
+
+Promises:
+  - G_u32DebugFlags _DEBUG_PASSTHROUGH is cleared
+*/
+void DebugClearPassthrough(void)
+{
+  G_u32DebugFlags &= ~_DEBUG_PASSTHROUGH;
+  
+  DebugPrintf("\n\n\r***Debug Passthrough disabled***\n\n\r");
+  
+} /* end DebugClearPassthrough */
+
+
 /*----------------------------------------------------------------------------------------------------------------------
 Function: SystemStatusReport
 
@@ -316,18 +363,17 @@ Promises:
 */
 void SystemStatusReport(void)
 {
-
-  u8 au8SystemPassed[] = "NONE";
+  u8 au8SystemPassed[] = "No failed tasks.";
   u8 au8SystemReady[] = "\n\rInitialization complete. Type en+c00 for debug menu.  Failed tasks:\n\r";
   u32 u32TaskFlagMaskBit = (u32)0x01;
   bool bNoFailedTasks = TRUE;
 
 #ifdef MPGL1
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "SD"};
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "SD"};
 #endif /* MPGL1 */
 
 #ifdef MPGL2
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "CAPTOUCH"};
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "CAPTOUCH"};
 #endif /* MPGL2 */
 
   /* Announce init complete then report any tasks that failed init */
@@ -818,33 +864,39 @@ void DebugSM_Idle(void)
   {
     /* Grab a copy of the current byte and echo it back */
     u8CurrentByte = *Debug_pu8RxBufferParser;
-    
-    /* If the LED test is active, toggle LEDs based on characters */
-    if(G_u32DebugFlags & _DEBUG_LED_TEST_ENABLE)
-    {
-      DebugLedTestCharacter(u8CurrentByte);
-    }
-    
+        
     /* Process the character */
     switch (u8CurrentByte)
     {
       /* Backspace: update command buffer pointer and send sequence to delete the char on the terminal */
       case(ASCII_BACKSPACE): 
       {
-        /* Process for scanf */
-        if(G_u8DebugScanfCharCount != 0)
-        {
-          G_u8DebugScanfCharCount--;
-          G_au8DebugScanfBuffer[G_u8DebugScanfCharCount] = '\0';
+        /* Process for scanf as long as we are not in Passthrough mode */
+        if( G_u32DebugFlags & _DEBUG_PASSTHROUGH )
+        {        
+          if(G_u8DebugScanfCharCount < DEBUG_SCANF_BUFFER_SIZE)
+          {
+            G_au8DebugScanfBuffer[G_u8DebugScanfCharCount] = u8CurrentByte;
+            G_u8DebugScanfCharCount++;
+          }
         }
-        
-        /* Process for command */
-        if(Debug_pu8CmdBufferNextChar != &Debug_au8CommandBuffer[0])
+        else
         {
-          Debug_pu8CmdBufferNextChar--;
-          Debug_u16CommandSize--;
+          if(G_u8DebugScanfCharCount != 0)
+          {
+            G_u8DebugScanfCharCount--;
+            G_au8DebugScanfBuffer[G_u8DebugScanfCharCount] = '\0';
+          }
+
+          /* Process for command */
+          if(Debug_pu8CmdBufferNextChar != &Debug_au8CommandBuffer[0])
+          {
+            Debug_pu8CmdBufferNextChar--;
+            Debug_u16CommandSize--;
+          }
         }
-        
+                
+        /* Send the Backspace sequence to clear the character on the terminal */
         DebugPrintf(au8BackspaceSequence);
         break;
       }
@@ -852,8 +904,11 @@ void DebugSM_Idle(void)
       /* Carriage return: change states to process new command and fall through to echo character */
       case(ASCII_CARRIAGE_RETURN): 
       {
-        bCommandFound = TRUE;
-        Debug_pfnStateMachine = DebugSM_CheckCmd;
+        if( !( G_u32DebugFlags & _DEBUG_PASSTHROUGH) )
+        {
+          bCommandFound = TRUE;
+          Debug_pfnStateMachine = DebugSM_CheckCmd;
+        }
         
         /* Fall through to default */        
       }
@@ -868,27 +923,38 @@ void DebugSM_Idle(void)
           G_u8DebugScanfCharCount++;
         }
         
-        /* Echo the character and place it in the command buffer */
+        /* Echo the character back to the terminal */
         UartWriteByte(Debug_Uart, u8CurrentByte);
-        *Debug_pu8CmdBufferNextChar = u8CurrentByte;
-        Debug_pu8CmdBufferNextChar++;
-        Debug_u16CommandSize++;
-
-        /* If the command buffer is now full but the last character was not ASCII_CARRIAGE_RETURN, throw out the whole
-        buffer and report an error message */
-        if( (Debug_pu8CmdBufferNextChar >= &Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]) &&
-            (u8CurrentByte != ASCII_CARRIAGE_RETURN) )
+        
+        /* As long as Passthrough mode is not active, then update the command buffer */
+        if( !( G_u32DebugFlags & _DEBUG_PASSTHROUGH) )
         {
-          Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
-          Debug_u16CommandSize = 0;
+          *Debug_pu8CmdBufferNextChar = u8CurrentByte;
+          Debug_pu8CmdBufferNextChar++;
+          Debug_u16CommandSize++;
 
-          Debug_u32CurrentMessageToken = DebugPrintf(au8CommandOverflow);
+          /* If the command buffer is now full but the last character was not ASCII_CARRIAGE_RETURN, throw out the whole
+          buffer and report an error message */
+          if( (Debug_pu8CmdBufferNextChar >= &Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]) &&
+              (u8CurrentByte != ASCII_CARRIAGE_RETURN) )
+          {
+            Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
+            Debug_u16CommandSize = 0;
+
+            Debug_u32CurrentMessageToken = DebugPrintf(au8CommandOverflow);
+          }
         }
         break;
       }
 
     } /* end switch (u8RxChar) */
-      
+
+    /* If the LED test is active, toggle LEDs based on characters */
+    if(G_u32DebugFlags & _DEBUG_LED_TEST_ENABLE)
+    {
+      DebugLedTestCharacter(u8CurrentByte);
+    }
+    
     /* In all cases, advance the RxBufferParser pointer safely */
     Debug_pu8RxBufferParser++;
     if(Debug_pu8RxBufferParser >= &Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE])

@@ -56,7 +56,7 @@ Includes
 #include "buttons.h"
 #include "leds.h" 
 #include "messaging.h"
-#include "timer.h" //***********
+#include "timer.h" 
 
 #include "sam3u_i2c.h"
 #include "sam3u_ssp.h"
@@ -86,7 +86,9 @@ Includes
 /* Common application header files */
 #include "debug.h"
 #include "music.h"
-#include "user_app.h"
+#include "user_app1.h"
+#include "user_app2.h"
+#include "user_app3.h"
 
 
 /**********************************************************************************************************************
@@ -99,19 +101,20 @@ Includes
 #define _APPLICATION_FLAGS_DEBUG        0x00000004        /* DebugStateMachine */
 #define _APPLICATION_FLAGS_LCD          0x00000008        /* LcdStateMachine */
 #define _APPLICATION_FLAGS_ANT          0x00000010        /* AntStateMachine */
+#define _APPLICATION_FLAGS_TIMER        0x00000020        /* TimerStateMachine */
 
 #ifdef MPGL1
 /* MPGL1 specific application flags */
-#define _APPLICATION_FLAGS_SDCARD       0x00000020        /* SdCardStateMachine */
+#define _APPLICATION_FLAGS_SDCARD       0x00000040        /* SdCardStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)6            /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)7            /* Total number of applications */
 #endif /* MPGL1 specific application flags */
 
 #ifdef MPGL2
 /* MPGL2 specific application flags */
-#define _APPLICATION_FLAGS_CAPTOUCH     0x00000020        /* CapTouchStateMachine */
+#define _APPLICATION_FLAGS_CAPTOUCH     0x00000040        /* CapTouchStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)6             /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)7             /* Total number of applications */
 #endif /* MPGL2 specific application flags */
 
 

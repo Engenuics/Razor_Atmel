@@ -15,7 +15,10 @@ File: debug.h
 
 /* G_u32DebugFlags */
 #define _DEBUG_LED_TEST_ENABLE         (u32)0x00000001      /* Flag if LED test is enabled */
-#define _DEBUG_TIME_WARNING_ENABLE     (u32)0x00000001      /* Flag if system time check is enabled */
+#define _DEBUG_TIME_WARNING_ENABLE     (u32)0x00000002      /* Flag if system time check is enabled */
+#define _DEBUG_PASSTHROUGH             (u32)0x00000004      /* Set if Passthrough mode is enabled */
+
+/* end of G_u32DebugFlags */
 
 #ifdef MPGL1 /* MPGL1-specific G_u32DebugFlags flags */
 #endif /* MPGL1 */
@@ -94,7 +97,11 @@ typedef struct
 u32 DebugPrintf(u8* u8String_);
 void DebugLineFeed(void);       
 void DebugPrintNumber(u32 u32Number_);
+
 u8 DebugScanf(u8* au8Buffer_);
+
+void DebugSetPassthrough(void);
+void DebugClearPassthrough(void);
 
 void SystemStatusReport(void);
 

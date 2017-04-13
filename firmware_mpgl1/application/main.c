@@ -2,7 +2,7 @@
 File: main.c                                                                
 
 Description:
-Container for the MPG firmware.  
+Container for the EiE firmware.  
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -25,9 +25,6 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Main_" and be declared as static.
 ***********************************************************************************************************************/
-static volatile u32 Main_u32Num = 0;
-static volatile u8  Main_u8NumDone = 0;
-static volatile bool Main_bKeepGoing = TRUE;
 
 
 /***********************************************************************************************************************
@@ -72,14 +69,15 @@ void main(void)
   SdCardInitialize();
 
   /* Application initialization */
-  UserAppInitialize();
+  UserApp1Initialize();
+  UserApp2Initialize();
+  UserApp3Initialize();
+
   
   /* Exit initialization */
   SystemStatusReport();
   G_u32SystemFlags &= ~_SYSTEM_INITIALIZING;
-  
-  TimerStart(TIMER_CHANNEL1);
-  
+    
   /* Super loop */  
   while(1)
   {
@@ -100,7 +98,9 @@ void main(void)
     SdCardRunActiveState();
 
     /* Applications */
-    UserAppRunActiveState();
+    UserApp1RunActiveState();
+    UserApp2RunActiveState();
+    UserApp3RunActiveState();
     
     /* System sleep*/
     HEARTBEAT_OFF();
@@ -110,43 +110,6 @@ void main(void)
   } /* end while(1) main super loop */
   
 } /* end main() */
-
-
-/*--------------------------------------------------------------------------------------------------------------------
-Function: TimerCallBack
-
-Description:
-Timer1 ISR-accessed function to increment the counter.
-  
-Requires:
-  - No pre-reqs allowed in a call back!
-
-Promises:
-  - 
-*/
-void Timer1CallBack(void)
-{
-  Main_u32Num++;
-  
-  if(Main_bKeepGoing) 
-  {
-    /* Show when a certain number of interrupts have occurred */
-    if(Main_u32Num > 46875) 
-    { 
-      Main_u32Num = 0;
-      DebugPrintf("46875\n\r");
-      
-      /* After 6 times, turn off the timer */
-      Main_u8NumDone++;
-      if(Main_u8NumDone == 6)  
-      {
-        TimerStop(TIMER_CHANNEL1);
-        Main_bKeepGoing = FALSE;
-        LedOff(BLUE);
-      }
-    }
-  }
-} /* end Timer1CallBack() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
