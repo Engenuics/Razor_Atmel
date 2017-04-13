@@ -60,9 +60,6 @@ Variable names shall start with "UserApp1_" and be declared as static.
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
 
-static u32 UserApp_u32AdcResultAccumulator;         /* Storage for ADC results as they come in */
-static u8 UserApp_u8AdcResultCount;                 /* Counter to track ADC results as they come in */
-
 
 /**********************************************************************************************************************
 Function Definitions
@@ -71,30 +68,6 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-Function AdcCallback()
-
-Description:
-Function called to receive ADC result
-
-Requires:
-  - 
-
-Promises:
-  - 
-*/
-void AdcCallback(u16 u16Result_)
-{
-  UserApp_u32AdcResultAccumulator += (u32)(u16Result_ & 0x0000FFFF);
-  UserApp_u8AdcResultCount++;
-  
-  DebugPrintNumber(UserApp_u8AdcResultCount);
-  DebugPrintf(". Counts = ");
-  DebugPrintNumber(u16Result_);
-  DebugLineFeed();
-  
-} /* End AdcCallback() */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -169,7 +142,7 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-    
+
 } /* end UserApp1SM_Idle() */
     
 #if 0

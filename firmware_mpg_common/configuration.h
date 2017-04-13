@@ -102,19 +102,20 @@ Includes
 #define _APPLICATION_FLAGS_LCD          0x00000008        /* LcdStateMachine */
 #define _APPLICATION_FLAGS_ANT          0x00000010        /* AntStateMachine */
 #define _APPLICATION_FLAGS_TIMER        0x00000020        /* TimerStateMachine */
+#define _APPLICATION_FLAGS_ADC          0x00000040        /* Adc12StateMachine */
 
 #ifdef MPGL1
 /* MPGL1 specific application flags */
-#define _APPLICATION_FLAGS_SDCARD       0x00000040        /* SdCardStateMachine */
+#define _APPLICATION_FLAGS_SDCARD       0x00000080        /* SdCardStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)7            /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)8            /* Total number of applications */
 #endif /* MPGL1 specific application flags */
 
 #ifdef MPGL2
 /* MPGL2 specific application flags */
-#define _APPLICATION_FLAGS_CAPTOUCH     0x00000040        /* CapTouchStateMachine */
+#define _APPLICATION_FLAGS_CAPTOUCH     0x00000080        /* CapTouchStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)7             /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)8             /* Total number of applications */
 #endif /* MPGL2 specific application flags */
 
 
