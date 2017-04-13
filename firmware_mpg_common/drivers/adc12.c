@@ -7,9 +7,16 @@ The ADC hardware is the same for the EiE 1 and EiE 2 development board Blade con
 The EiE1 board has an additional on-board potentiometer for testing purporses.
 
 This driver currently only provides setup and single result read access from any
-channel on the ADC.  Any averaging or special operations should be handled by the
+channel on the ADC at a time.  Any averaging or special operations should be handled by the
 application using the driver.  This driver is set up as a state machine for future
 feature additions.
+
+The first sample tends to read 20-30 bits high.  If no sample is taken for a few minutes,
+the next first sample will also read high.  This implies a long time constant in the hold
+time, but the timing parameters that have been set all line up with the electrical
+characteristics and source impedence considerations.  So this is a mystery for
+now -- suggest the first sample is thrown out, or average it out with at least 16 samples
+per displayed result which will reduce the error down to 1 or 2 LSBs.  
 
 ------------------------------------------------------------------------------------------------------------------------
 API:
@@ -72,9 +79,9 @@ Variable names shall start with "Adc12_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type Adc12_StateMachine;                /* The state machine function pointer */
 //static u32 Adc12_u32Timeout;                        /* Timeout counter used across states */
-static fnCode_u16_type Adc12_fpCallbackCh1;           /* ADC12 ISR callback function pointer */
-static fnCode_u16_type Adc12_fpCallbackCh2;           /* ADC12 ISR callback function pointer */
-static fnCode_u16_type Adc12_fpCallbackCh3;           /* ADC12 ISR callback function pointer */
+
+static Adc12ChannelType Adc12_aeChannels[] = ADC_CHANNEL_ARRAY;  /* Available channels defined in configuration.h */
+static fnCode_u16_type Adc12_afCallbacks[8];          /* ADC12 ISR callback function pointers */
 
 static bool Adc12_bAdcAvailable;                      /* Binary semaphore to control access to the ADC12 peripheral */
 
@@ -102,32 +109,27 @@ Promises:
 */
 void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_)
 {
-  switch(eAdcChannel_)
-  {
-#ifdef EIE1
-    /* On-board potentiometer analog input (EiE 1 only) */
-    case ADC12_CH1:
-    {
-      Adc12_fpCallbackCh1 = fpUserCallback_;
-      break;
-    }
-#endif /* EIE1 */
-    case ADC12_CH2:
-    {
-      Adc12_fpCallbackCh2 = fpUserCallback_;
-      break;
-    }
-    case ADC12_CH3:
-    {
-      Adc12_fpCallbackCh3 = fpUserCallback_;
-      break;
-    }
-    default:
-    {
-      DebugPrintf("Invalid channel\n\r");
-    }
-  } /* end switch(eAdcChannel_) */
+  bool bChannelValid = FALSE;
 
+  /* Check to ensure the requested channel exists */
+  for(u8 i = 0; i < (sizeof(Adc12_aeChannels) / sizeof (Adc12ChannelType)); i++)
+  {
+    if(Adc12_aeChannels[i] == eAdcChannel_)
+    {
+      bChannelValid = TRUE;
+    }
+  }
+  
+  /* If the channel is valid, then assign the new callback function */
+  if(bChannelValid)
+  {
+    Adc12_afCallbacks[eAdcChannel_] = fpUserCallback_;
+  }
+  else
+  {
+    DebugPrintf("Invalid channel\n\r");
+  }
+  
 } /* end Adc12AssignCallback() */
 
 
@@ -203,10 +205,13 @@ void Adc12Initialize(void)
   AT91C_BASE_ADC12B->ADC12B_EMR  = ADC12B_EMR_INIT;
   AT91C_BASE_ADC12B->ADC12B_IDR  = ADC12B_IDR_INIT;
   
-  /* Set all the callbacks to default and set the ADC available */
-  Adc12_fpCallbackCh1 = Adc12DefaultCallback;
-  Adc12_fpCallbackCh2 = Adc12DefaultCallback;
-  Adc12_fpCallbackCh3 = Adc12DefaultCallback;
+  /* Set all the callbacks to default */
+  for(u8 i = 0; i < (sizeof(Adc12_afCallbacks) / sizeof(fnCode_u16_type)); i++)
+  {
+    Adc12_afCallbacks[i] = Adc12DefaultCallback;
+  }
+  
+  /* Mark the ADC semaphore as available */
   Adc12_bAdcAvailable = TRUE;
   
   /* If good initialization, set state to Idle */
@@ -280,7 +285,8 @@ that is enabled must be parsed out and handled.  There is no obviously available
 explanation for why this handler is called ADCC0_IrqHandler instead of ADC12B_IrqHandler
 
 Requires:
-  - 
+  - Only one channel can be converting at a time, so only one interrupt flag
+    will be set.
 
 Promises:
   - 
@@ -290,18 +296,23 @@ void ADCC0_IrqHandler(void)
   u16 u16Adc12Result;
   /* WARNING: if you step through this handler with the ADC12B registers
   debugging, the debugger reads ADC12B_SR and clears the EOC flag bits */
-    
-  /* Check for CH1  */
-  if(AT91C_BASE_ADC12B->ADC12B_SR & (1 << ADC12_CH1))
-  {
-    /* Read the channel's result register (clears EOC bit / interrupt) and send to callback */
-    u16Adc12Result = AT91C_BASE_ADC12B->ADC12B_CDR[ADC12_CH1];
-    Adc12_fpCallbackCh1(u16Adc12Result);
-    
-    /* Disable the channel */
-    AT91C_BASE_ADC12B->ADC12B_CHDR = (1 << ADC12_CH1);
-  }
+  
 
+  /* Check through all the available channels */
+  for(u8 i = 0; i < (sizeof(Adc12_aeChannels) / sizeof(Adc12ChannelType)); i++)
+  {
+    if(AT91C_BASE_ADC12B->ADC12B_SR & (1 << Adc12_aeChannels[i]))
+    {
+      /* Read the channel's result register (clears EOC bit / interrupt) and send to callback */
+      u16Adc12Result = AT91C_BASE_ADC12B->ADC12B_CDR[Adc12_aeChannels[i]];
+      Adc12_afCallbacks[Adc12_aeChannels[i]](u16Adc12Result);
+      
+      /* Disable the channel and exit the loop since only one channel can be set */
+      AT91C_BASE_ADC12B->ADC12B_CHDR = (1 << Adc12_aeChannels[i]);
+      break;
+    }
+  }
+  
   /* Give the Semaphore back, clear the ADC pending flag and exit */
   Adc12_bAdcAvailable = TRUE;
   NVIC->ICPR[0] = (1 << AT91C_ID_ADC12B);

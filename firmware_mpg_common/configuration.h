@@ -264,6 +264,20 @@ MPG1 has two buzzers, MPG2 only has one */
 
 
 /*----------------------------------------------------------------------------------------------------------------------
+%ADC% Analog input channel Configuration                                                                                                  
+------------------------------------------------------------------------------------------------------------------------
+Available analog channels are defined here.  The names in the arrays come from
+the board-specific definition header file in section !!!!! GPIO pin names
+*/
+#ifdef EIE1
+#define   ADC_CHANNEL_ARRAY   {ADC12_POTENTIOMETER, ADC12_BLADE_AN0, ADC12_BLADE_AN1}
+#endif /* EIE1 */
+
+#ifdef MPGL2
+#define   ADC_CHANNEL_ARRAY   {ADC12_BLADE_AN0, ADC12_BLADE_AN1}
+#endif /* MPGL2 */
+
+/*----------------------------------------------------------------------------------------------------------------------
 %ANT% Interface Configuration                                                                                                  
 ------------------------------------------------------------------------------------------------------------------------
 Board-specific ANT definitions are kept here

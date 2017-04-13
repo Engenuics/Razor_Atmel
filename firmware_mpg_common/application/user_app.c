@@ -71,6 +71,7 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
+
 /*----------------------------------------------------------------------------------------------------------------------
 Function AdcCallback()
 
@@ -171,7 +172,7 @@ static void UserAppSM_Idle(void)
 #ifdef PART1
   if(WasButtonPressed(BUTTON0))
   {
-    if(Adc12StartConversion(ADC12_CH1))
+    if(Adc12StartConversion(ADC12_POTENTIOMETER))
     {
       DebugPrintf("ADC requested\n\r");
     }
