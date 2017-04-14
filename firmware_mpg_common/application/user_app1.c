@@ -262,7 +262,7 @@ static void UserApp1SM_Idle(void)
       au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u8TransType >> 0) & 0x0F);
  
       /* RSSI value */
-      u8MessageIndex += 3;
+      u8MessageIndex += 2;
       au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.s8RSSI >> 4) & 0x0F);
       au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.s8RSSI >> 0) & 0x0F);
     
@@ -272,7 +272,7 @@ static void UserApp1SM_Idle(void)
   
   /* BUTTON0 sets up CHANNEL0 communication if the channel is currently not configured. 
   If the channel is already configured, the channel is unassigned. 
-  CHANNEL 0 is a MASTER with Device ID 0x0001 */
+  CHANNEL 0 is a SLAVE with Device ID 0x0001 */
   if(WasButtonPressed(BUTTON0))
   {
     ButtonAcknowledge(BUTTON0);
@@ -280,14 +280,14 @@ static void UserApp1SM_Idle(void)
     {
       /* Setup channel 0 */
       sChannelInfo.AntChannel = ANT_CHANNEL_0;
-      sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+      sChannelInfo.AntChannelType = CHANNEL_TYPE_SLAVE;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
       sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
       
       sChannelInfo.AntDeviceIdHi = 0x00;
       sChannelInfo.AntDeviceIdLo = 0x01;
-      sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
-      sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+      sChannelInfo.AntDeviceType = 2;
+      sChannelInfo.AntTransmissionType = 3;
       
       sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
       sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;

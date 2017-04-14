@@ -557,7 +557,7 @@ static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psEx
     {
       u16DeviceID = (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) & 0x00FF;
       u8BufferOffset++;
-      u16DeviceID |= ((u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset) << 4) & 0xFF00);
+      u16DeviceID |= ( (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) << 4 ) & 0xFF00;
       u8BufferOffset++;
       u8DeviceType = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
       u8BufferOffset++;
@@ -581,7 +581,7 @@ static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psEx
     {
       u16RxTimestamp = (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) & 0x00FF;
       u8BufferOffset++;
-      u16RxTimestamp |= ((u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset) << 4) & 0xFF00);
+      u16RxTimestamp |= ( (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) << 4 ) & 0xFF00;
     }
   }
   

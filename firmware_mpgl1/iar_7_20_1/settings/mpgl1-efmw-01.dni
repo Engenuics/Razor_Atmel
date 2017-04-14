@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-745477437
+Checksum=-107357094
 [JLinkDriver]
 CStepIntDis=_ 0
 WatchCond=_ 0
@@ -41,20 +41,13 @@ UseAuto=0
 TypeViolation=1
 UnspecRange=1
 ActionState=1
-[struct_types]
-Fmt0=struct <Unnamed 7>-s8RSSI	3	0
-Fmt1=struct <Unnamed 7>-u16DeviceID	4	0
-Fmt2=struct <Unnamed 7>-u8Channel	3	0
-Fmt3=struct <Unnamed 7>-u8DeviceType	3	0
-Fmt4=struct <Unnamed 7>-u8Flags	4	0
-Fmt5=struct <Unnamed 7>-u8TransType	3	0
-[array_types]
-Fmt0=u8[8]	3	0
 [CodeCoverage]
 Enabled=_ 0
 [RegisterFilter]
 FilePath=_ ""
 UseFilter=_ 0
+[array_types]
+Fmt0=u8[8]	3	0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -74,7 +67,8 @@ Exclusions=
 mode=0
 [Breakpoints2]
 Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\application\user_app.c}.227.7" 0 0 1 "" 0 "" 0
-Count=1
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_mpg_common\drivers\ant.c}.556.5" 0 0 1 "" 0 "" 0
+Count=2
 [Aliases]
 Count=0
 SuppressDialog=0
