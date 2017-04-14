@@ -92,11 +92,13 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+
   LCDCommand(LCD_CLEAR_CMD);
   LCDMessage(LINE1_START_ADDR, "ANT MULTICHAN DEMO");
   LCDMessage(LINE2_START_ADDR, "CH0   CH1   CH2  OPN");
   UserApp_StateMachine = UserAppSM_Idle;
 //  UserApp_StateMachine = UserAppSM_ChannelSetup;
+
 
   /* If good initialization, set state to Idle */
   if( 1 )
