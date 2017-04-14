@@ -55,7 +55,7 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 extern u32 G_u32AntApiCurrentMessageTimeStamp;                           /* From ant_api.c */
 extern AntApplicationMessageType G_eAntApiCurrentMessageClass;           /* From ant_api.c */
 extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES]; /* From ant_api.c */
-extern AntExtendedDataType G_stCurrentMessageExtendedData;               /* From ant_api.c */
+extern AntExtendedDataType G_sAntApiCurrentMessageExtData;               /* From ant_api.c */
 
 
 /***********************************************************************************************************************
@@ -96,8 +96,8 @@ void UserApp1Initialize(void)
   LCDCommand(LCD_CLEAR_CMD);
   LCDMessage(LINE1_START_ADDR, "ANT MULTICHAN DEMO");
   LCDMessage(LINE2_START_ADDR, "CH0   CH1   CH2  OPN");
-  UserApp_StateMachine = UserAppSM_Idle;
-//  UserApp_StateMachine = UserAppSM_ChannelSetup;
+  UserApp1_StateMachine = UserApp1SM_Idle;
+  //UserApp1_StateMachine = UserApp1SM_ChannelSetup;
 
 
   /* If good initialization, set state to Idle */
@@ -109,15 +109,13 @@ void UserApp1Initialize(void)
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp_StateMachine = UserAppSM_FailedInit;
+    UserApp1_StateMachine = UserApp1SM_FailedInit;
     DebugPrintf("User app setup failed\n\r");
   }
   
 } /* end UserAppInitialize() */
 
 
-
-  
 /*----------------------------------------------------------------------------------------------------------------------
 Function UserApp1RunActiveState()
 
@@ -148,9 +146,10 @@ void UserApp1RunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 
+#if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for a message to be queued */
-static void UserAppSM_ChannelSetup(void)
+static void UserApp1SM_ChannelSetup(void)
 {
   bool bSetupOk = TRUE;
   
@@ -183,38 +182,42 @@ static void UserAppSM_ChannelSetup(void)
 
   if( bSetupOk )
   {
-    UserApp_StateMachine = UserAppSM_Idle;
+    UserApp1_StateMachine = UserApp1SM_Idle;
     DebugPrintf("User app ready\n\r");
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp_StateMachine = UserAppSM_FailedInit;
+    UserApp1_StateMachine = UserApp1SM_FailedInit;
     DebugPrintf("User app setup failed\n\r");
   }
   
-} /* end UserAppSM_ChannelSetup */
-
+} /* end UserApp1SM_ChannelSetup */
+#endif
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Process Idle functions */
-static void UserAppSM_Idle(void)
+/* Monitor BUTTON0 - BUTTON2 to assign or unassign channels
+   Monitor BUTTON3 to open or close channels.  */
+static void UserApp1SM_Idle(void)
 {
   AntAssignChannelInfoType sChannelInfo;
   u8 au8DataContent[] = {"ANT_DATA CHX: xx-xx-xx-xx-xx-xx-xx-xx xx-xx-xx-xx xx dBm\n\r"};
   u8 au8TickContent[] = {"ANT_TICK CHX: xx-xx-xx-xx-xx-xx-xx-xx\n\r"};
   u8 u8MessageIndex;
+  #define MESSAGE_INDEX_CHANNEL         (u8)11
+  #define MESSAGE_INDEX_PAYLOAD_START   (u8)14
   
+  /* Look for any new messages from ANT in the application message buffer */
   if( AntReadAppMessageBuffer() )
   {
-    u8MessageIndex = 11;
+    //u8MessageIndex = 11;
     if( G_eAntApiCurrentMessageClass == ANT_TICK)
     {
       /* Get the channel number */
-      au8TickContent[u8MessageIndex] = HexToASCIICharUpper(G_stCurrentMessageExtendedData.u8Channel);
-      u8MessageIndex = 14;
+      au8TickContent[MESSAGE_INDEX_CHANNEL] = HexToASCIICharUpper(G_sAntApiCurrentMessageExtData.u8Channel);
 
       /* Read all the data bytes and convert to ASCII for the display string */
+      u8MessageIndex = MESSAGE_INDEX_PAYLOAD_START;
       for(u8 i = 0; i < ANT_DATA_BYTES; i++)
       {
        au8TickContent[u8MessageIndex]     = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] / 16);
@@ -228,10 +231,10 @@ static void UserAppSM_Idle(void)
     if( G_eAntApiCurrentMessageClass == ANT_DATA)
     {
       /* Get the channel number */
-      au8DataContent[u8MessageIndex] = HexToASCIICharUpper(G_stCurrentMessageExtendedData.u8Channel);
-      u8MessageIndex = 14;
+      au8DataContent[MESSAGE_INDEX_CHANNEL] = HexToASCIICharUpper(G_sAntApiCurrentMessageExtData.u8Channel);
 
       /* Read all the data bytes and convert to ASCII for the display string */
+      u8MessageIndex = MESSAGE_INDEX_PAYLOAD_START;
       for(u8 i = 0; i < ANT_DATA_BYTES; i++)
       {
         au8DataContent[u8MessageIndex]     = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] / 16);
@@ -239,34 +242,37 @@ static void UserAppSM_Idle(void)
         u8MessageIndex += 3;
       }
 
-      /* Add the extended data bytes */
+      /* Add the extended data bytes; u8MessageIndex is already at the next location */
     
-      /* Device ID */
-      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >>  4) & 0x000F);
-      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >>  0) & 0x000F);
+      /* Device ID (2 bytes) */
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u16DeviceID >>  4) & 0x000F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u16DeviceID >>  0) & 0x000F);
       u8MessageIndex += 2;
-      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >> 12) & 0x000F);
-      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u16DeviceID >>  8) & 0x000F);
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u16DeviceID >> 12) & 0x000F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u16DeviceID >>  8) & 0x000F);
 
       /* Device Type */
       u8MessageIndex += 2;
-      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8DeviceType >> 4) & 0x0F);
-      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8DeviceType >> 0) & 0x0F);
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u8DeviceType >> 4) & 0x0F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u8DeviceType >> 0) & 0x0F);
 
       /* Transmission Type */
       u8MessageIndex += 2;
-      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8TransType >> 4) & 0x0F);
-      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.u8TransType >> 0) & 0x0F);
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u8TransType >> 4) & 0x0F);
+      au8DataContent[u8MessageIndex]   = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.u8TransType >> 0) & 0x0F);
  
       /* RSSI value */
       u8MessageIndex += 3;
-      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.s8RSSI >> 4) & 0x0F);
-      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_stCurrentMessageExtendedData.s8RSSI >> 0) & 0x0F);
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.s8RSSI >> 4) & 0x0F);
+      au8DataContent[u8MessageIndex++] = HexToASCIICharUpper( (G_sAntApiCurrentMessageExtData.s8RSSI >> 0) & 0x0F);
     
       DebugPrintf(au8DataContent);
     }
-  }
+  } /* end if( AntReadAppMessageBuffer() ) */
   
+  /* BUTTON0 sets up CHANNEL0 communication if the channel is currently not configured. 
+  If the channel is already configured, the channel is unassigned. 
+  CHANNEL 0 is a MASTER with Device ID 0x0001 */
   if(WasButtonPressed(BUTTON0))
   {
     ButtonAcknowledge(BUTTON0);
@@ -300,6 +306,9 @@ static void UserAppSM_Idle(void)
     }
   } /* end BUTTON0 */
     
+  /* BUTTON1 sets up CHANNEL1 communication if the channel is currently not configured. 
+  If the channel is already configured, the channel is unassigned.
+  CHANNEL 1 is a MASTER with Device ID 0x1111 */
   if(WasButtonPressed(BUTTON1))
   {
     ButtonAcknowledge(BUTTON1);
@@ -333,6 +342,10 @@ static void UserAppSM_Idle(void)
     }
   } /* end BUTTON1 */
 
+
+  /* BUTTON2 sets up CHANNEL2 communication if the channel is currently not configured. 
+  If the channel is already configured, the channel is unassigned.
+  CHANNEL 2 is a MASTER with Device ID 0x2222 */
   if(WasButtonPressed(BUTTON2))
   {
     ButtonAcknowledge(BUTTON2);
@@ -366,6 +379,8 @@ static void UserAppSM_Idle(void)
     }
   } /* end BUTTON2 */
 
+  /* BUTTON3 opens all configured channels that are currently closed or closes any
+  channel that is currently open. */  
   if(WasButtonPressed(BUTTON3))
   {
     ButtonAcknowledge(BUTTON3);
@@ -385,7 +400,7 @@ static void UserAppSM_Idle(void)
     }
   } /* end BUTTON3 */
   
-} /* end UserAppSM_Idle() */
+} /* end UserApp1SM_Idle() */
 
     
 #if 0

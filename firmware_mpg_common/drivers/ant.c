@@ -10,9 +10,6 @@ with SPI_SLAVE_FLOW_CONTROL.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-Protected System functions:
-void AntInitialize(void)
-void AntRunActiveState(void)
 
 ***********************************************************************************************************************/
 
@@ -41,12 +38,15 @@ AntApplicationMsgListType *G_sAntApplicationMsgList;  /* Public linked list of m
 
 u8 G_au8AntMessageOk[]     = "OK\n\r";
 u8 G_au8AntMessageFail[  ] = "FAIL\n\r";
-u8 G_au8AntMessageAssign[] = "ANT channel d assign "; /* Replace 'd' at [12] */
+
+/* Replace 'd' at [12] with channel number */
+u8 G_au8AntMessageAssign[] = "ANT channel d assign "; 
 u8 G_au8AntMessageUnassign[]  = "ANT channel d unassign ";
 u8 G_au8AntMessageUnhandled[] = "ANT channel d message 0xxx response dd ";
 u8 G_au8AntMessageSetup[] = "ANT channel d setup ";
 u8 G_au8AntMessageClose[] = "ANT channel d close ";
 u8 G_au8AntMessageOpen[]  = "ANT channel d open ";
+
 u8 G_au8AntMessageInit[]  = "Initializing ANT... ";
 u8 G_au8AntMessageInitFail[] = "failed. Host IOs set to HiZ.\r\n";
 u8 G_au8AntMessageNoAnt[] = "\n\r### nRF51422 Programming Mode: no ANT functionality ####\n\r";
@@ -509,51 +509,50 @@ Promises:
 static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psExtDataTarget_)
 {
   bool bReturnValue;
+  u8 u8MessageSize;
   u8 u8Channel;                        
-  u8 u8Flags;       
+  u8 u8Flags = 0;       
   u8 u8BufferOffset = 0;
   
   /* Channel ID extended data */
-  u16 u16DeviceID;                         
-  u8 u8DeviceType;                        
-  u8 u8TransType;                          
+  u16 u16DeviceID = 0xFFFF;;                         
+  u8 u8DeviceType = 0xFF;                        
+  u8 u8TransType = 0xFF;                          
 
   /* RSSI extended data */
-  u8 u8MeasurementType;
-  s8 s8RSSI;           
-  u8 u8Threshold;
+  u8 u8MeasurementType = 0xFF;
+  s8 s8RSSI = 0xFF;           
+  u8 u8Threshold = 0xFF;
   
   /* RF Timestamp data */
-  u16 u16RxTimestamp;
+  u16 u16RxTimestamp = 0xFFFF;
     
   /* Get generic data */
+  u8MessageSize = *(pu8SourceMessage + BUFFER_INDEX_MESG_SIZE);
   u8Channel = *(pu8SourceMessage + BUFFER_INDEX_CHANNEL_NUM);
 
-  /* Ensure we have a message with extended data */
-  if(*(pu8SourceMessage + BUFFER_INDEX_MESG_SIZE) == MESG_MAX_DATA_SIZE)
+  /* Check to see if the message is the regular size (MESG_MAX_DATA_SIZE) */
+  if(u8MessageSize == MESG_MAX_DATA_SIZE)
   {
-    u8Flags = 0;
-    
-    u16DeviceID  = 0xFFFF;                         
-    u8DeviceType = 0xFF;                        
-    u8TransType  = 0xFF;                          
-
-    u8MeasurementType = 0xFF;
-    s8RSSI = 0xFF;           
-    u8Threshold = 0xFF;
-    
-    u16RxTimestamp = 0xFFFF;
-
     bReturnValue = FALSE;
   }
-   /* Verified we have extended data, so parse the flags to see what data is present */
- else
+  
+  /* Check for a message that is too big or too small */
+  else if( (u8MessageSize > MESG_MAX_SIZE) ||
+           (u8MessageSize < MESG_MAX_DATA_SIZE) )
+  {
+    DebugPrintf("\n\rUnexpected ANT message size\n\n\r");
+    bReturnValue = FALSE;
+  }
+  
+  /* Otherwise we have some extended message data */
+  else 
   {
     /* Byte after data must be flag byte */
     u8Flags = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA_FLAGS);
     bReturnValue = TRUE;
     
-    /* Channel ID information is always first */
+    /* Channel ID information is always first if it's there */
     if(u8Flags & LIB_CONFIG_CHANNEL_ID_FLAG)
     {
       u16DeviceID = (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) & 0x00FF;
@@ -566,7 +565,7 @@ static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psEx
       u8BufferOffset++;
     }
     
-    /* RSSI information is always next */
+    /* RSSI information is always next if it's there */
     if(u8Flags & LIB_CONFIG_RSSI_FLAG)
     {
       u8MeasurementType = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
@@ -587,12 +586,12 @@ static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psEx
   }
   
   /* Load psExtDataTarget_ and return */
+  psExtDataTarget_->u8Flags      = u8Flags;
   psExtDataTarget_->u8Channel    = u8Channel;
   psExtDataTarget_->u16DeviceID  = u16DeviceID;
   psExtDataTarget_->u8DeviceType = u8DeviceType;
   psExtDataTarget_->u8TransType  = u8TransType;
   psExtDataTarget_->s8RSSI       = s8RSSI;
-  psExtDataTarget_->u8Flags      = u8Flags;
 
   return bReturnValue;
   
@@ -641,7 +640,7 @@ void AntInitialize(void)
   /* Initialize the G_asAntChannelConfiguration data struct */
   for(u8 i = 0; i < ANT_NUM_CHANNELS; i++)
   {
-    G_asAntChannelConfiguration[i].AntChannel          = i;
+    G_asAntChannelConfiguration[i].AntChannel          = (AntChannelNumberType)i;
     G_asAntChannelConfiguration[i].AntChannelType      = 0xFF;
     G_asAntChannelConfiguration[i].AntNetwork          = 0xFF;
     G_asAntChannelConfiguration[i].AntDeviceIdLo       = 0xFF;
@@ -1195,7 +1194,7 @@ Requires:
   - GGpu8AntRxBufferUnreadMsg points to the first byte of an unread verified ANT message
 
 Promises:
-  - Returns 1 if Ant_u8AntNewRxMessages == 0
+  - Returns 1 if Ant_u8AntNewRxMessages == 0 or the message exceeds the maximum allowed length
   - Otherwise, returns 0 and:
     - Ant_u8AntNewRxMessages--
     - GGpu8AntRxBufferUnreadMsg points to the first byte of the next unread verified ANT message
@@ -1449,6 +1448,7 @@ static u8 AntProcessMessage(void)
 #if 0
 /*-----------------------------------------------------------------------------/
 Function: AntTick
+LEGACY
 
 Description:
 Queues an ANT_TICK message to the application message queue.
@@ -1523,6 +1523,7 @@ static void AntTickExtended(u8* pu8AntMessage_)
 #if 0
 /*-----------------------------------------------------------------------------/
 Function: AntQueueApplicationMessage
+LEGACY
 
 Description:
 Creates a new ANT data message structure and adds it to G_sAntApplicationMsgList.
@@ -1608,7 +1609,7 @@ Function: AntQueueExtendedApplicationMessage
 
 Description:
 Creates a new ANT data message structure and adds it to G_sAntApplicationMsgList.
-The Application list is the simple message list used between the ANT driver and
+The Application list used to communicate message information between the ANT driver and
 the ANT_API simplified interface task.
 
 Requires:

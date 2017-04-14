@@ -210,6 +210,7 @@ typedef struct
 #define ANT_TX_POWER_DEFAULT						  RADIO_TX_POWER_0DBM
 /* #### end of default channel configuration parameters ####*/
 
+#define ANT_NUM_CHANNELS                  (u8)8
 #define ANT_RX_BUFFER_SIZE                (u16)256
 
 #define ANT_RESET_WAIT_MS                 (u32)100

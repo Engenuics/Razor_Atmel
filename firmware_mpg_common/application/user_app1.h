@@ -54,8 +54,8 @@ void UserApp1RunActiveState(void);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-static void UserAppSM_ChannelSetup(void);
-static void UserAppSM_Idle(void);    
+static void UserApp1SM_ChannelSetup(void);
+static void UserApp1SM_Idle(void);    
 
 
 static void UserApp1SM_Error(void);         

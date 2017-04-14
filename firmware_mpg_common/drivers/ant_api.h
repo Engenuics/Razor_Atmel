@@ -20,24 +20,6 @@ Constants
 #define ANT_APPLICATION_MESSAGE_BUFFER_SIZE (u32)32
 #define ANT_DATA_BYTES                      (u8)8
 
-/* Device Types */
-#define	DEVICE_TYPE_BOARDTEST		            (u8)0x60
-
-
-#define ANT_NUM_CHANNELS                    (u8)8
-
-#if 0
-/* ANT Channels */
-#define ANT_CHANNEL_0                       (u8)0
-#define ANT_CHANNEL_1                       (u8)1
-#define ANT_CHANNEL_2                       (u8)2
-#define ANT_CHANNEL_3                       (u8)3
-#define ANT_CHANNEL_4                       (u8)4
-#define ANT_CHANNEL_5                       (u8)5
-#define ANT_CHANNEL_6                       (u8)6
-#define ANT_CHANNEL_7                       (u8)7
-#define ANT_CHANNEL_SCANNING                (u8)0xff
-#endif
 
 /**********************************************************************************************************************
 Type definitions
@@ -78,10 +60,6 @@ ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
 #define   ANT_TICK_MSG_MISSED_HIGH_BYTE_INDEX     (u8)5
 #define   ANT_TICK_MSG_MISSED_MID_BYTE_INDEX      (u8)6
 #define   ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX      (u8)7
-
-#ifdef ANT_API_LEGACY
-
-#endif /* ANT_API_LEGACY */
 
 
 /**********************************************************************************************************************

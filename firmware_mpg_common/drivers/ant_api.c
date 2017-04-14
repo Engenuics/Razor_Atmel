@@ -16,38 +16,56 @@ to be handled seperately as an add-on to this API.
 ------------------------------------------------------------------------------------------------------------------------
 API:
 
-Globals
-// Globals for passing data from the ANT application to the API (import these to application)
-extern u32 G_u32AntApiCurrentMessageTimeStamp;                       // From ant_api.c
-extern AntApplicationMessageType G_eAntApiCurrentMessageClass;       // From ant_api.c
+GLOBALS
+Three global variables give access to the latest ANT message data.
+Copy the following definitions to your client task:
+
+// Globals for passing data from the ANT application to the API 
+extern u32 G_u32AntApiCurrentMessageTimeStamp;                            // From ant_api.c
+extern AntApplicationMessageType G_eAntApiCurrentMessageClass;            // From ant_api.c
 extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];  // From ant_api.c
+extern AntExtendedDataType G_sAntApiCurrentMessageExtData;                // From ant_api.c
 
-Types
-typedef enum {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
-              ANT_CHANNEL_4, ANT_CHANNEL_5, ANT_CHANNEL_6, ANT_CHANNEL_7,
-              ANT_CHANNEL_SCANNING = 0} AntChannelNumberType;
-***AntChannelNumberType is allowed to be indexed and type cast to sequentially access channels.***
+TYPES
+Defined in ant.h but used throughout ant_api.c
 
-typedef enum {ANT_UNCONFIGURED, ANT_OPEN, ANT_CLOSED} AntChannelStatusType;
-typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
+AntChannelNumberType (allowed to be indexed and type cast to sequentially access channels)
+{ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
+ANT_CHANNEL_4, ANT_CHANNEL_5, ANT_CHANNEL_6, ANT_CHANNEL_7,
+ANT_CHANNEL_SCANNING = 0}
 
+AntChannelStatusType
+{ANT_UNCONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED}
 
-***ANT CONFIGURATION / STATUS FUNCTIONS***
-AntChannelStatusType AntChannelStatus(AntChannelNumberType eAntChannelToOpen)
+AntApplicationMessageType
+{ANT_EMPTY, ANT_DATA, ANT_TICK}
+
+AntApplicationGenericMsgStatus
+{ANT_GENERIC_MSG_READY, ANT_GENERIC_MSG_BUSY, ANT_GENERIC_MSG_OK, ANT_GENERIC_MSG_FAIL}
+
+Structs
+AntExtendedDataType
+AntApplicationMsgListType
+AntAssignChannelInfoType
+
+*** ANT CONFIGURATION / STATUS FUNCTIONS ***
+
+AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_)
 Query the status of the specified channel.  Returns ANT_UNCONFIGURED, ANT_CLOSING, ANT_OPEN, or ANT_CLOSED
 e.g.
 AntChannelStatus eAntCurrentStatus;
 
 // Get the status of Channel 1
-eAntCurrentStatus = AntChannelStatus(ANT_CHANNEL_1);
+eAntCurrentStatus = AntRadioStatusChannel(ANT_CHANNEL_1);
 
 
 bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_)
-
 Updates all configuration messages to completely configure an ANT channel with an application's 
 required parameters for communication.  The application should monitor AntRadioStatusChannel()
 to see if all of the configuration messages are sent and the channel is configured properly.
 e.g.
+  AntAssignChannelInfoType sChannelInfo;
+
   if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
   {
     sChannelInfo.AntChannel = ANT_CHANNEL_0;
@@ -76,7 +94,7 @@ e.g.
 
 
 bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
-Queues message to unassigns the specified ANT channel so it can be reconfigured.
+Queues message to unassign the specified ANT channel so it can be reconfigured.
 e.g.
 AntUnassignChannelNumber(ANT_CHANNEL_1)
 // Go to wait state that exists when AntChannelStatusType(ANT_CHANNEL_1) returns ANT_UNCONFIGURED
@@ -85,7 +103,7 @@ AntUnassignChannelNumber(ANT_CHANNEL_1)
 bool AntOpenChannelNumber(AntChannelNumberType eAntChannelToOpen)
 Queues a request to open the specified channel.
 Returns TRUE if the channel is configured and the message is successfully queued - this can be ignored or checked.  
-Application should monitor AntRadioStatus() for actual channel status.
+Application should monitor AntChannelStatus() for actual channel status.
 e.g.
 AntChannelStatusType eAntCurrentState;
 
@@ -102,7 +120,7 @@ bool AntOpenScanningChannel(void)
 Queues a request to open a scanning channel. Channel 0 setup parameters are used,
 but note that all channel resources are used by a scanning channel.
 Returns TRUE if message is successfully queued - this can be ignored or checked.  
-Application should monitor AntRadioStatus() for actual channel status.
+Application should monitor AntChannelStatus() for actual channel status.
 e.g.
 AntChannelStatusType eAntCurrentState;
 
@@ -194,8 +212,8 @@ volatile u32 G_u32AntApiFlags;                                          /* Globa
 
 u32 G_u32AntApiCurrentMessageTimeStamp = 0;                             /* Current read message's G_u32SystemTime1ms */
 AntApplicationMessageType G_eAntApiCurrentMessageClass = ANT_EMPTY;     /* Type of data */
-u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];               /* Array for message data */
-AntExtendedDataType G_stCurrentMessageExtendedData;                     /* Extended data struct for the current message */
+u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];       /* Array for message payload data */
+AntExtendedDataType G_sAntApiCurrentMessageExtData;                     /* Extended data struct for the current message */
 
 
 /*----------------------------------------------------------------------------*/
@@ -455,7 +473,7 @@ bool AntCloseChannelNumber(AntChannelNumberType eChannel_)
 Function: AntRadioStatusChannel
 
 Description:
-Returns the current radio status to the application.
+Returns the current radio status of the specified channel to the application.
   
 Requires:
   - G_u32AntFlags are up to date
@@ -552,15 +570,30 @@ bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_)
 Function: AntReadAppMessageBuffer
 
 Description:
-Checks for any new messages from ANT. The messages are of type AntLocalMessageType
-so the application must decide what the data means.
+Checks for any new messages from ANT.  New messages are buffered by ant.c and 
+made available to the application on a FIFO basis.  Whenever this function
+is called, the global parameters are updated:
+G_u32AntApiCurrentMessageTimeStamp
+G_eAntApiCurrentMessageClass
+G_au8AntApiCurrentMessageBytes
+G_sAntApiCurrentMessageExtData
+
+The application should check G_eAntApiCurrentMessageClass to determine if the message
+is ANT_DATA or ANT_TICK and then use G_au8AntApiCurrentMessageBytes and
+G_sAntApiCurrentMessageExtData accordingly.
 
 Requires:
   - 
 
 Promises:
-  - Returns TRUE if there is new data; G_asAntApiCurrentData holds the message type and data message
-  - Returns FALSE if no new data is present (G_asAntApiCurrentData unchanged)
+  - Returns TRUE if there is new data; 
+    G_u32AntApiCurrentMessageTimeStamp
+    G_eAntApiCurrentMessageClass
+    G_au8AntApiCurrentMessageBytes
+    G_sAntApiCurrentMessageExtData
+    are all updated with the oldest data from G_sAntApplicationMsgList and the message
+    is removed from the buffer.
+  - Returns FALSE if no new data is present (all variables unchanged)
 */
 bool AntReadAppMessageBuffer(void)
 {
@@ -572,7 +605,7 @@ bool AntReadAppMessageBuffer(void)
     G_u32AntApiCurrentMessageTimeStamp = G_sAntApplicationMsgList->u32TimeStamp;
     G_eAntApiCurrentMessageClass = G_sAntApplicationMsgList->eMessageType;
     
-    /* Copy over all the data */
+    /* Copy over all the payload data */
     pu8Parser = &(G_sAntApplicationMsgList->au8MessageData[0]);
     for(u8 i = 0; i < ANT_APPLICATION_MESSAGE_BYTES; i++)
     {
@@ -580,12 +613,12 @@ bool AntReadAppMessageBuffer(void)
     }
     
     /* Copy over the extended data */
-    G_stCurrentMessageExtendedData.u8Channel    = G_sAntApplicationMsgList->sExtendedData.u8Channel;
-    G_stCurrentMessageExtendedData.u8Flags      = G_sAntApplicationMsgList->sExtendedData.u8Flags;
-    G_stCurrentMessageExtendedData.u16DeviceID  = G_sAntApplicationMsgList->sExtendedData.u16DeviceID;
-    G_stCurrentMessageExtendedData.u8DeviceType = G_sAntApplicationMsgList->sExtendedData.u8DeviceType;
-    G_stCurrentMessageExtendedData.u8TransType  = G_sAntApplicationMsgList->sExtendedData.u8TransType;
-    G_stCurrentMessageExtendedData.s8RSSI       = G_sAntApplicationMsgList->sExtendedData.s8RSSI;
+    G_sAntApiCurrentMessageExtData.u8Channel    = G_sAntApplicationMsgList->sExtendedData.u8Channel;
+    G_sAntApiCurrentMessageExtData.u8Flags      = G_sAntApplicationMsgList->sExtendedData.u8Flags;
+    G_sAntApiCurrentMessageExtData.u16DeviceID  = G_sAntApplicationMsgList->sExtendedData.u16DeviceID;
+    G_sAntApiCurrentMessageExtData.u8DeviceType = G_sAntApplicationMsgList->sExtendedData.u8DeviceType;
+    G_sAntApiCurrentMessageExtData.u8TransType  = G_sAntApplicationMsgList->sExtendedData.u8TransType;
+    G_sAntApiCurrentMessageExtData.s8RSSI       = G_sAntApplicationMsgList->sExtendedData.s8RSSI;
     
     /* Done, so message can be removed from the buffer */
     AntDeQueueApplicationMessage();    
