@@ -35,7 +35,6 @@ Type Definitions
 **********************************************************************************************************************/
 typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
 
-
 /**********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
@@ -58,10 +57,12 @@ Includes
 #include "buttons.h"
 #include "leds.h" 
 #include "messaging.h"
+#include "timer.h" 
 
 #include "sam3u_i2c.h"
 #include "sam3u_ssp.h"
 #include "sam3u_uart.h"
+#include "adc12.h"
 
 /* MPGL1-specific header files */
 #ifdef MPGL1
@@ -86,7 +87,9 @@ Includes
 /* Common application header files */
 #include "debug.h"
 #include "music.h"
-#include "user_app.h"
+#include "user_app1.h"
+#include "user_app2.h"
+#include "user_app3.h"
 
 
 /**********************************************************************************************************************
@@ -99,19 +102,21 @@ Includes
 #define _APPLICATION_FLAGS_DEBUG        0x00000004        /* DebugStateMachine */
 #define _APPLICATION_FLAGS_LCD          0x00000008        /* LcdStateMachine */
 #define _APPLICATION_FLAGS_ANT          0x00000010        /* AntStateMachine */
+#define _APPLICATION_FLAGS_TIMER        0x00000020        /* TimerStateMachine */
+#define _APPLICATION_FLAGS_ADC          0x00000040        /* Adc12StateMachine */
 
 #ifdef MPGL1
 /* MPGL1 specific application flags */
-#define _APPLICATION_FLAGS_SDCARD       0x00000020        /* SdCardStateMachine */
+#define _APPLICATION_FLAGS_SDCARD       0x00000080        /* SdCardStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)6            /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)8            /* Total number of applications */
 #endif /* MPGL1 specific application flags */
 
 #ifdef MPGL2
 /* MPGL2 specific application flags */
-#define _APPLICATION_FLAGS_CAPTOUCH     0x00000020        /* CapTouchStateMachine */
+#define _APPLICATION_FLAGS_CAPTOUCH     0x00000080        /* CapTouchStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)6             /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)8             /* Total number of applications */
 #endif /* MPGL2 specific application flags */
 
 
@@ -276,6 +281,20 @@ MPG1 has two buzzers, MPG2 only has one */
 #define BUZZER2               AT91C_PWMC_CHID1
 #endif /* MPGL1 */
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+%ADC% Analog input channel Configuration                                                                                                  
+------------------------------------------------------------------------------------------------------------------------
+Available analog channels are defined here.  The names in the arrays come from
+the board-specific definition header file in section !!!!! GPIO pin names
+*/
+#ifdef EIE1
+#define   ADC_CHANNEL_ARRAY   {ADC12_POTENTIOMETER, ADC12_BLADE_AN0, ADC12_BLADE_AN1}
+#endif /* EIE1 */
+
+#ifdef MPGL2
+#define   ADC_CHANNEL_ARRAY   {ADC12_BLADE_AN0, ADC12_BLADE_AN1}
+#endif /* MPGL2 */
 
 /*----------------------------------------------------------------------------------------------------------------------
 %ANT% Interface Configuration                                                                                                  

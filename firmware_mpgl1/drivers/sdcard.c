@@ -825,6 +825,7 @@ static void SdCardWaitReady(void)
 } /* end SdCardWaitReady() */
 
 
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Kill time waiting for a command to finish sending; the first byte from all completed commands
 is response R1 which has BIT7 clear.
@@ -1059,7 +1060,7 @@ static void SdFailedDataTransfer(void)
 static void SdError(void)          
 {
   u8* pu8ErrorMessage;
-  u8 u8MessageSize;
+  //u8 u8MessageSize;
   
   /* Reset the system variables */
   SspDeAssertCS(SD_Ssp);
@@ -1075,42 +1076,42 @@ static void SdError(void)
   {
     case SD_ERROR_TIMEOUT:
     {
-      u8MessageSize = sizeof(SD_au8CardError1) - 1;
+      //u8MessageSize = sizeof(SD_au8CardError1) - 1;
       pu8ErrorMessage = SD_au8CardError1;
       break;
     }
     
     case SD_ERROR_CARD_VOLTAGE:
     {
-      u8MessageSize = sizeof(SD_au8CardError2) - 1;
+      //u8MessageSize = sizeof(SD_au8CardError2) - 1;
       pu8ErrorMessage = SD_au8CardError2;
       break;
     }
 
     case SD_ERROR_BAD_RESPONSE:
     {
-      u8MessageSize = sizeof(SD_au8CardError3) - 1;
+      //u8MessageSize = sizeof(SD_au8CardError3) - 1;
       pu8ErrorMessage = SD_au8CardError3;
       break;
     }
 
     case SD_ERROR_NO_TOKEN:
     {
-      u8MessageSize = sizeof(SD_au8CardError4) - 1;
+      //u8MessageSize = sizeof(SD_au8CardError4) - 1;
       pu8ErrorMessage = SD_au8CardError4;
       break;
     }
 
     case SD_ERROR_NO_SD_TOKEN:
     {
-      u8MessageSize = sizeof(SD_au8CardError5) - 1;
+      //u8MessageSize = sizeof(SD_au8CardError5) - 1;
       pu8ErrorMessage = SD_au8CardError5;
       break;
     }
     
    default:
    {
-    u8MessageSize = sizeof(SD_au8CardError0) - 1;
+    //u8MessageSize = sizeof(SD_au8CardError0) - 1;
     pu8ErrorMessage = SD_au8CardError0;
     break;
   }
@@ -1125,7 +1126,6 @@ static void SdError(void)
   SD_pfnStateMachine = SdCardWaitSSP;
   
 } /* end SdError() */
-
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
