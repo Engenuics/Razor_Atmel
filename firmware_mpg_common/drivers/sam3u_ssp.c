@@ -138,7 +138,7 @@ static u32 SSP_u32Int0Count = 0;                 /* Debug counter for SSP0 inter
 static u32 SSP_u32Int1Count = 0;                 /* Debug counter for SSP1 interrupts */
 static u32 SSP_u32Int2Count = 0;                 /* Debug counter for SSP2 interrupts */
 static u32 SSP_u32AntCounter = 0;                /* Debug counter */
-
+static u32 SSP_u32RxCounter = 0;                 /* Debug counter */
 
 /***********************************************************************************************************************
 Function Definitions
@@ -778,7 +778,7 @@ void SspGenericHandler(void)
   /* Get a copy of CSR because reading it changes it */
   u32Current_CSR = SSP_psCurrentISR->pBaseAddress->US_CSR;
 
-  /* Check for CS change state interrupt - only enabled on Slave SSP peripherals */
+  /*** CS change state interrupt - only enabled on Slave SSP peripherals ***/
   if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_CTSIC) && 
       (u32Current_CSR & AT91C_US_CTSIC) )
   {
@@ -842,7 +842,7 @@ void SspGenericHandler(void)
     }
   } /* end AT91C_US_TXEMPTY */
   
-  /* SSP ISR handling for Slave Rx with flow control (no DMA) */
+  /*** SSP ISR handling for Slave Rx with flow control (no DMA) ***/
   if( (SSP_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_RXRDY) && 
       (SSP_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_RXRDY) )
   {
@@ -884,7 +884,8 @@ void SspGenericHandler(void)
       SSP_psCurrentISR->u16RxBytes = 0;
       SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_RX;
       SSP_psCurrentISR->u32PrivateFlags |=  _SSP_PERIPHERAL_RX_COMPLETE;
-     
+      SSP_u32RxCounter++;
+      
       /* Deassert CS for SPI_MASTER_AUTO_CS transfers */
       if(SSP_psCurrentSsp->eSspMode == SPI_MASTER_AUTO_CS)
       {
@@ -969,11 +970,12 @@ void SspSM_Idle(void)
  u32 u32Byte;
   
   /* Check all SPI/SSP peripherals for message activity or skip the current peripheral if it is already busy.
-  Slave devices receive outside of the state machine
-  For Master devices sending a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to the application transmit buffer
-  For Master devices receiving a message, SSP_psCurrentSsp->u16RxBytes will != 0 */
+  Slave devices receive outside of the state machine.
+  For Master devices sending a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to the application transmit buffer.
+  For Master devices receiving a message, SSP_psCurrentSsp->u16RxBytes will != 0. Dummy bytes are sent.  */
   if( ( (SSP_psCurrentSsp->psTransmitBuffer != NULL) || (SSP_psCurrentSsp->u16RxBytes !=0) ) && 
-     !(SSP_psCurrentSsp->u32PrivateFlags & (_SSP_PERIPHERAL_TX | _SSP_PERIPHERAL_RX) ) )
+     !(SSP_psCurrentSsp->u32PrivateFlags & (_SSP_PERIPHERAL_TX | _SSP_PERIPHERAL_RX)       ) 
+    )
   {
     /* For an SPI_MASTER_AUTO_CS device, start by asserting chip select 
    (SPI_MASTER_MANUAL_CS devices should already have asserted CS in the user's task) */
