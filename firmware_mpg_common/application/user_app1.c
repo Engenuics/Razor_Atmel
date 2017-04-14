@@ -87,13 +87,7 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-  /* Initialize result variables */
-  UserApp_u32AdcResultAccumulator = 0;
-  UserApp_u8AdcResultCount = 0;
-  
-  /* Set the callback function for the ADC results */
-  Adc12AssignCallback(ADC12_CH1, AdcCallback);
-  
+ 
   /* If good initialization, set state to Idle */
   if( 1 )
   {
