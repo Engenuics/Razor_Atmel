@@ -12,8 +12,6 @@
 /**********************************************************************************************************************
 Constants
 **********************************************************************************************************************/
-//#define ANT_API_LEGACY   /* Define to support non-channel specific legacy commands */
-
 #define ANT_ASSIGN_MESSAGES                 (u8)7    /* Number of messages in AntAssignChannel */       
 
 #define ANT_OUTGOING_MESSAGE_BUFFER_SIZE    (u32)32
@@ -42,8 +40,8 @@ of a paired channel (EVENT_RX_FAIL event is generated).  This should be communic
 in case a missed message is important to any application using ANT.  
 
 MSG_NAME  MSG_ID     D_0      D_1      D_2     D_3     D_4     D_5     D_6
-ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
-                    CODE                              MSG #   MSG #   MSG #
+ANT_TICK   0xFF    CHANNEL  RESPONSE  EVENT   0xFF   MISSED  MISSED  MISSED
+                             TYPE     CODE            MSG #   MSG #   MSG #
                                                       HIGH    MID     LOW
 ---------------------------------------------------------------------------------------------------------------------*/
 
@@ -69,24 +67,13 @@ Function prototypes
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#ifdef ANT_API_LEGACY
-bool AntChannelConfig(bool);
-bool AntOpenChannel(void);
-bool AntCloseChannel(void);
-bool AntUnassignChannel(void);
-
-AntChannelStatusType AntRadioStatus(void);
-
-bool AntQueueBroadcastMessage(u8 *pu8Data_);
-bool AntQueueAcknowledgedMessage(u8 *pu8Data_);
-#endif /* ANT_API_LEGACY */
-
 AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_);
 
 bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_);
 bool AntUnassignChannelNumber(AntChannelNumberType eChannel_);
 
 bool AntOpenChannelNumber(AntChannelNumberType eChannel_);
+bool AntOpenScanningChannel(void);
 bool AntCloseChannelNumber(AntChannelNumberType eChannel_);
 
 bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);

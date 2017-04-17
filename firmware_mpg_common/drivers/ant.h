@@ -58,7 +58,8 @@ Search "####" for ANT Channel ID defaults
 /*******************************************************************************
 * Type definitions
 *******************************************************************************/
-typedef enum {ANT_UNCONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED} AntChannelStatusType;
+typedef enum {ANT_UNCONFIGURED = 0, ANT_CONFIGURED = 1, ANT_OPENING = 2, 
+              ANT_OPEN = 3, ANT_CLOSING = 4, ANT_CLOSED = 1} AntChannelStatusType;
 typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
 typedef enum {ANT_GENERIC_MSG_READY, ANT_GENERIC_MSG_BUSY, ANT_GENERIC_MSG_OK, ANT_GENERIC_MSG_FAIL} AntApplicationGenericMsgStatus;
 typedef enum {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
@@ -207,7 +208,7 @@ typedef struct
 #define ANT_CHANNEL_PERIOD_LO_DEFAULT		  (u8)0x00
 
 #define ANT_FREQUENCY_DEFAULT						  (u8)55
-#define ANT_TX_POWER_DEFAULT						  RADIO_TX_POWER_0DBM
+#define ANT_TX_POWER_DEFAULT						  RADIO_TX_POWER_4DBM
 /* #### end of default channel configuration parameters ####*/
 
 #define ANT_NUM_CHANNELS                  (u8)8

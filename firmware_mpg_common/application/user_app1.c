@@ -95,9 +95,8 @@ void UserApp1Initialize(void)
 
   LCDCommand(LCD_CLEAR_CMD);
   LCDMessage(LINE1_START_ADDR, "ANT MULTICHAN DEMO");
-  LCDMessage(LINE2_START_ADDR, "CH0   CH1   CH2  OPN");
+  LCDMessage(LINE2_START_ADDR, "CH0   CH1   CH2  CH3");
   UserApp1_StateMachine = UserApp1SM_Idle;
-  //UserApp1_StateMachine = UserApp1SM_ChannelSetup;
 
 
   /* If good initialization, set state to Idle */
@@ -146,58 +145,9 @@ void UserApp1RunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 
-#if 0
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a message to be queued */
-static void UserApp1SM_ChannelSetup(void)
-{
-  bool bSetupOk = TRUE;
-  
-  AntAssignChannelInfoType sChannelInfo;
-  
-  /* Setup channel 0 */
-  sChannelInfo.AntChannel = ANT_CHANNEL_0;
-  sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
-  sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-  sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-  
-  sChannelInfo.AntDeviceIdHi = 0x00;
-  sChannelInfo.AntDeviceIdLo = 0x03;
-  sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
-  sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
-  
-  sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
-  sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
-  
-  sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
-  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
-  {
-    sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
-  }
-    
-  if(!AntAssignChannel(&sChannelInfo))
-  {
-    bSetupOk = FALSE;
-  }
-
-  if( bSetupOk )
-  {
-    UserApp1_StateMachine = UserApp1SM_Idle;
-    DebugPrintf("User app ready\n\r");
-  }
-  else
-  {
-    /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp1_StateMachine = UserApp1SM_FailedInit;
-    DebugPrintf("User app setup failed\n\r");
-  }
-  
-} /* end UserApp1SM_ChannelSetup */
-#endif
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Monitor BUTTON0 - BUTTON2 to assign or unassign channels
-   Monitor BUTTON3 to open or close channels.  */
+/* Monitor BUTTON0 - BUTTON3 to assign or unassign channels */
 static void UserApp1SM_Idle(void)
 {
   AntAssignChannelInfoType sChannelInfo;
@@ -210,7 +160,6 @@ static void UserApp1SM_Idle(void)
   /* Look for any new messages from ANT in the application message buffer */
   if( AntReadAppMessageBuffer() )
   {
-    //u8MessageIndex = 11;
     if( G_eAntApiCurrentMessageClass == ANT_TICK)
     {
       /* Get the channel number */
@@ -271,23 +220,24 @@ static void UserApp1SM_Idle(void)
   } /* end if( AntReadAppMessageBuffer() ) */
   
   /* BUTTON0 sets up CHANNEL0 communication if the channel is currently not configured. 
-  If the channel is already configured, the channel is unassigned. 
-  CHANNEL 0 is a SLAVE with Device ID 0x0001 */
+  If the channel is already configured, the channel is unassigned.
+  CHANNEL 0 is SLAVE SCANNING CHANNEL with Device ID 0xffff */
   if(WasButtonPressed(BUTTON0))
   {
-    ButtonAcknowledge(BUTTON0);
     if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
     {
+      ButtonAcknowledge(BUTTON0);
+
       /* Setup channel 0 */
       sChannelInfo.AntChannel = ANT_CHANNEL_0;
       sChannelInfo.AntChannelType = CHANNEL_TYPE_SLAVE;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
       sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
       
-      sChannelInfo.AntDeviceIdHi = 0x00;
-      sChannelInfo.AntDeviceIdLo = 0x01;
-      sChannelInfo.AntDeviceType = 2;
-      sChannelInfo.AntTransmissionType = 3;
+      sChannelInfo.AntDeviceIdHi = 0;
+      sChannelInfo.AntDeviceIdLo = 0;
+      sChannelInfo.AntDeviceType = 0;
+      sChannelInfo.AntTransmissionType = 0;
       
       sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
       sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
@@ -300,23 +250,33 @@ static void UserApp1SM_Idle(void)
       
       AntAssignChannel(&sChannelInfo);
     }
-    else
+    else if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_CONFIGURED)
     {
-      AntUnassignChannelNumber(ANT_CHANNEL_0);
+      ButtonAcknowledge(BUTTON0);
+      AntOpenScanningChannel();
     }
+    else if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_OPEN)
+    {
+      ButtonAcknowledge(BUTTON0);
+      AntCloseChannelNumber(ANT_CHANNEL_0);
+    }
+
+    /* Otherwise, don't do anything since ANT must be opening or closing */
+    
   } /* end BUTTON0 */
     
   /* BUTTON1 sets up CHANNEL1 communication if the channel is currently not configured. 
   If the channel is already configured, the channel is unassigned.
-  CHANNEL 1 is a MASTER with Device ID 0x1111 */
+  CHANNEL 1 is Device ID 0x1111 */
   if(WasButtonPressed(BUTTON1))
   {
-    ButtonAcknowledge(BUTTON1);
     if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_UNCONFIGURED)
     {
+      ButtonAcknowledge(BUTTON1);
+
       /* Setup channel 1 */
       sChannelInfo.AntChannel = ANT_CHANNEL_1;
-      sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+      sChannelInfo.AntChannelType = CHANNEL_TYPE_SLAVE;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
       sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
       
@@ -336,10 +296,19 @@ static void UserApp1SM_Idle(void)
       
       AntAssignChannel(&sChannelInfo);
     }
-    else
+    else if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_CONFIGURED)
     {
-      AntUnassignChannelNumber(ANT_CHANNEL_1);
+      ButtonAcknowledge(BUTTON1);
+      AntOpenChannelNumber(ANT_CHANNEL_1);
     }
+    else if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_OPEN)
+    {
+      ButtonAcknowledge(BUTTON1);
+      AntCloseChannelNumber(ANT_CHANNEL_1);
+    }
+
+    /* Otherwise, don't do anything since ANT must be opening or closing */
+    
   } /* end BUTTON1 */
 
 
@@ -348,12 +317,13 @@ static void UserApp1SM_Idle(void)
   CHANNEL 2 is a MASTER with Device ID 0x2222 */
   if(WasButtonPressed(BUTTON2))
   {
-    ButtonAcknowledge(BUTTON2);
     if(AntRadioStatusChannel(ANT_CHANNEL_2) == ANT_UNCONFIGURED)
     {
+      ButtonAcknowledge(BUTTON2);
+
       /* Setup channel 2 */
       sChannelInfo.AntChannel = ANT_CHANNEL_2;
-      sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+      sChannelInfo.AntChannelType = CHANNEL_TYPE_SLAVE;
       sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
       sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
       
@@ -373,32 +343,67 @@ static void UserApp1SM_Idle(void)
       
       AntAssignChannel(&sChannelInfo);
     }
-    else
+    else if(AntRadioStatusChannel(ANT_CHANNEL_2) == ANT_CONFIGURED)
     {
-      AntUnassignChannelNumber(ANT_CHANNEL_2);
+      ButtonAcknowledge(BUTTON2);
+      AntOpenChannelNumber(ANT_CHANNEL_2);
     }
+    else if(AntRadioStatusChannel(ANT_CHANNEL_2) == ANT_OPEN)
+    {
+      ButtonAcknowledge(BUTTON2);
+      AntCloseChannelNumber(ANT_CHANNEL_2);
+    }
+
+    /* Otherwise, don't do anything since ANT must be opening or closing */
+    
   } /* end BUTTON2 */
 
-  /* BUTTON3 opens all configured channels that are currently closed or closes any
-  channel that is currently open. */  
+  /* BUTTON3 sets up CHANNEL3 communication if the channel is currently not configured. 
+  If the channel is already configured, the channel is unassigned.
+  CHANNEL 3 is Device ID 0x3333 */
   if(WasButtonPressed(BUTTON3))
   {
-    ButtonAcknowledge(BUTTON3);
-    
-    for(u8 i = 0; i < 3; i++)
+    if(AntRadioStatusChannel(ANT_CHANNEL_3) == ANT_UNCONFIGURED)
     {
-      /* Manage channels (type cast index to AntChannelNumberType is allowed */
-      if(AntRadioStatusChannel( (AntChannelNumberType)i ) == ANT_CLOSED)
+      ButtonAcknowledge(BUTTON3);
+
+      /* Setup channel 3 */
+      sChannelInfo.AntChannel = ANT_CHANNEL_3;
+      sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+      sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+      sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+      
+      sChannelInfo.AntDeviceIdHi = 0x33;
+      sChannelInfo.AntDeviceIdLo = 0x33;
+      sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+      sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+      
+      sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+      sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+      
+      sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+      for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
       {
-        AntOpenChannelNumber( (AntChannelNumberType)i );
+        sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
       }
       
-      if(AntRadioStatusChannel( (AntChannelNumberType)i ) == ANT_OPEN)
-      {
-        AntCloseChannelNumber( (AntChannelNumberType)i );
-      }
+      AntAssignChannel(&sChannelInfo);
     }
+    else if(AntRadioStatusChannel(ANT_CHANNEL_3) == ANT_CONFIGURED)
+    {
+      ButtonAcknowledge(BUTTON3);
+      AntOpenChannelNumber(ANT_CHANNEL_3);
+    }
+    else if(AntRadioStatusChannel(ANT_CHANNEL_3) == ANT_OPEN)
+    {
+      ButtonAcknowledge(BUTTON3);
+      AntCloseChannelNumber(ANT_CHANNEL_3);
+    }
+
+    /* Otherwise, don't do anything since ANT must be opening or closing */
+    
   } /* end BUTTON3 */
+
   
 } /* end UserApp1SM_Idle() */
 

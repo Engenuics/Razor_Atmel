@@ -1254,17 +1254,31 @@ static u8 AntProcessMessage(void)
         
         switch(au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID])
         {
+          case MESG_OPEN_SCAN_CHANNEL_ID:
+            DebugPrintf("Scanning ");
+            /* Fall through */
+            
           case MESG_OPEN_CHANNEL_ID:
             G_au8AntMessageOpen[12] = u8Channel + 0x30;
             DebugPrintf(G_au8AntMessageOpen);
-            G_asAntChannelConfiguration[u8Channel].AntFlags |= _ANT_FLAGS_CHANNEL_OPEN;
-            G_asAntChannelConfiguration[u8Channel].AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN_PENDING;
+            
+            /* Only change the flags if the command was successful */
+            if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
+            {
+              G_asAntChannelConfiguration[u8Channel].AntFlags |= _ANT_FLAGS_CHANNEL_OPEN;
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN_PENDING;
+            }
             break;
 
           case MESG_CLOSE_CHANNEL_ID:
             G_au8AntMessageClose[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageClose);
-            G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+
+            /* Only change the flags if the command was successful */
+            if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
+            {
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+            }
             break;
 
           case MESG_ASSIGN_CHANNEL_ID:
@@ -1275,7 +1289,12 @@ static u8 AntProcessMessage(void)
           case MESG_UNASSIGN_CHANNEL_ID:
             G_au8AntMessageUnassign[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageUnassign);
-            G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_OPEN_PENDING | _ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN); /* !!!! 2016-06-14 */
+
+            /* Only change the flags if the command was successful */
+            if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
+            {
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_OPEN_PENDING | _ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN); /* !!!! 2016-06-14 */
+            }
             break;
  
           default:
@@ -1381,6 +1400,9 @@ static u8 AntProcessMessage(void)
           
           /* All other messages are unexpected for now */
           default:
+            DebugPrintNumber(au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE]);
+            DebugPrintf(": unexpected channel event\n\r");
+
             G_u32AntFlags |= _ANT_FLAGS_UNEXPECTED_EVENT;
             break;
         } /* end Ant_pu8AntRxBufferUnreadMsg[EVENT_CODE_INDEX] */
@@ -1394,14 +1416,9 @@ static u8 AntProcessMessage(void)
       
     case MESG_BROADCAST_DATA_ID: /* A broadcast data message was received */
     { 
-#ifdef ANT_API_LEGACY
-      /* Put the data message into the application data buffer */ 
-      AntQueueApplicationMessage(ANT_DATA, &au8MessageCopy[BUFFER_INDEX_MESG_DATA]);      
-#else
       /* Parse the extended data and put the message to the application buffer */
       AntParseExtendedData(au8MessageCopy, &sExtendedData);
       AntQueueExtendedApplicationMessage(ANT_DATA, &au8MessageCopy[BUFFER_INDEX_MESG_DATA], &sExtendedData);
-#endif /* ANT_API_LEGACY */
       
       /* If this is a slave device, then a data message received means it's time to send */
       if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_SLAVE)
@@ -1445,38 +1462,6 @@ static u8 AntProcessMessage(void)
   
 } /* end AntProcessMessage() */
 
-#if 0
-/*-----------------------------------------------------------------------------/
-Function: AntTick
-LEGACY
-
-Description:
-Queues an ANT_TICK message to the application message queue.
-
-Requires:
-  - u8Code_ is payload byte indicating system info that may be relavent to the application
-
-Promises:
-  - A MESSAGE_ANT_TICK is queued to G_sAntApplicationMsgList
-*/
-static void AntTick(u8 u8Code_)
-{
-  u8 au8Message[ANT_APPLICATION_MESSAGE_BYTES];
-
-  /* Update data to communicate the ANT_TICK to the application */
-  au8Message[ANT_TICK_MSG_ID_INDEX]               = MESSAGE_ANT_TICK;
-  au8Message[ANT_TICK_MSG_EVENT_CODE_INDEX]       = u8Code_;
-  au8Message[ANT_TICK_MSG_SENTINEL1_INDEX]        = MESSAGE_ANT_TICK;
-  au8Message[ANT_TICK_MSG_SENTINEL2_INDEX]        = MESSAGE_ANT_TICK;
-  au8Message[ANT_TICK_MSG_SENTINEL3_INDEX]        = MESSAGE_ANT_TICK;
-  au8Message[ANT_TICK_MSG_MISSED_HIGH_BYTE_INDEX] = Ant_u8SlaveMissedMessageHigh;
-  au8Message[ANT_TICK_MSG_MISSED_MID_BYTE_INDEX]  = Ant_u8SlaveMissedMessageMid;
-  au8Message[ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX]  = Ant_u8SlaveMissedMessageLow;
-
-  AntQueueApplicationMessage(ANT_TICK, &au8Message[ANT_TICK_MSG_ID_INDEX]);
-
-} /* end AntTick() */
-#endif
 
 /*-----------------------------------------------------------------------------/
 Function: AntTickExtended
@@ -1520,89 +1505,6 @@ static void AntTickExtended(u8* pu8AntMessage_)
 
 } /* end AntTickExtended() */
 
-#if 0
-/*-----------------------------------------------------------------------------/
-Function: AntQueueApplicationMessage
-LEGACY
-
-Description:
-Creates a new ANT data message structure and adds it to G_sAntApplicationMsgList.
-The Application list is the simple message list used between the ANT driver and
-the ANT_API simplified interface task.
-
-Requires:
-  - eMessageType_ specifies the type of message
-  - pu8DataSource_ is a pointer to the first element of an array of 8 data bytes
-  - psTargetList_ is a pointer to the list pointer that is being updated
-  - Enough space is available on the heap
-
-Promises:
-  - A new list item in the target linked list is created and inserted at the end
-    of the list.
-  - Returns TRUE if the entry is added successfully.
-  - Returns FALSE if the malloc fails or the list is full.
-*/
-static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, u8 *pu8DataSource_)
-{
-  AntApplicationMsgListType *psNewMessage;
-  AntApplicationMsgListType *psListParser;
-  u8 u8MessageCount = 0;
-  u8 au8AddMessageFailMsg[] = "\n\rNo space in AntQueueApplicationMessage\n\r";
-  
-  /* Allocate space for the new message - always do maximum message size */
-  psNewMessage = malloc( sizeof(AntApplicationMsgListType) );
-  if (psNewMessage == NULL)
-  {
-    DebugPrintf(au8AddMessageFailMsg);
-    return(FALSE);
-  }
-  
-  /* Fill in all the fields of the newly allocated message structure */
-  for(u8 i = 0; i < ANT_APPLICATION_MESSAGE_BYTES; i++)
-  {
-    psNewMessage->au8MessageData[i] = *(pu8DataSource_ + i);
-  }
-  
-  psNewMessage->u32TimeStamp  = G_u32SystemTime1ms;
-  psNewMessage->eMessageType  = eMessageType_;
-  psNewMessage->psNextMessage = NULL;
-
-  /* Insert into an empty list */
-  if(G_sAntApplicationMsgList == NULL)
-  {
-    G_sAntApplicationMsgList = psNewMessage;
-    Ant_u32ApplicationMessageCount++;
-  }
-
-  /* Otherwise traverse the list to find the end where the new message will be inserted */
-  else
-  {
-    psListParser = G_sAntApplicationMsgList;
-    while(psListParser->psNextMessage != NULL) 
-    {
-      psListParser = psListParser->psNextMessage;
-      u8MessageCount++;
-    }
-    
-    /* Check for full list */
-    if(u8MessageCount < ANT_APPLICATION_MESSAGE_BUFFER_SIZE)
-    {
-      /* Insert the new message at the end of the list */
-      psListParser->psNextMessage = psNewMessage;
-      Ant_u32ApplicationMessageCount++;
-    }
-    /* Handle a full list */
-    else
-    {
-      DebugPrintf(au8AddMessageFailMsg);
-      return(FALSE);
-    }
-  }
-    
-  return(TRUE);
-    
-} /* end AntQueueApplicationMessage() */
-#endif
 
 /*-----------------------------------------------------------------------------/
 Function: AntQueueExtendedApplicationMessage
@@ -1756,17 +1658,16 @@ void AntSM_Idle(void)
   {
     /* At least one flag is set, so print header and parse out */
     DebugPrintf(au8AntFlagAlert);
-    u8MsgIndex++;
     for(u8 i = 0; i < ANT_ERROR_FLAGS_COUNT; i++)
     {
       /* Check if current flag is set */
       if(G_u32AntFlags & u32MsgBitMask)
       {
-        /* Print the error message and clear the flag */
+        /* Print the error message */
         DebugPrintf(au8AntFlagMessages[u8MsgIndex]);
-        G_u32AntFlags &= ~u32MsgBitMask;
       }
       u32MsgBitMask <<= 1;
+      u8MsgIndex++;
     }
     
     /* Clear all the error flags now that they have been reported */

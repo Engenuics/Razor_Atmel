@@ -35,7 +35,7 @@ ANT_CHANNEL_4, ANT_CHANNEL_5, ANT_CHANNEL_6, ANT_CHANNEL_7,
 ANT_CHANNEL_SCANNING = 0}
 
 AntChannelStatusType
-{ANT_UNCONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED}
+{ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED}
 
 AntApplicationMessageType
 {ANT_EMPTY, ANT_DATA, ANT_TICK}
@@ -51,7 +51,9 @@ AntAssignChannelInfoType
 *** ANT CONFIGURATION / STATUS FUNCTIONS ***
 
 AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_)
-Query the status of the specified channel.  Returns ANT_UNCONFIGURED, ANT_CLOSING, ANT_OPEN, or ANT_CLOSED
+Query the status of the specified channel.  
+Returns ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED
+ANT_CONFIGURED and ANT_CLOSED are actually the same state.
 e.g.
 AntChannelStatus eAntCurrentStatus;
 
@@ -131,7 +133,6 @@ if(eAntCurrentState == ANT_CLOSED )
 {
    AntOpenScanningChannel();
 }
-
 
 
 bool AntSendGenericMessage()
@@ -418,8 +419,8 @@ Promises:
 bool AntOpenChannelNumber(AntChannelNumberType eChannel_)
 {
   u8 au8AntOpenChannel[] = {MESG_OPEN_CHANNEL_SIZE, MESG_OPEN_CHANNEL_ID, 0, CS};
-
-  /* Update the channel number (scanning channel is always 0) */
+  
+  /* Update the channel number in the message for a regular channel */
   if(eChannel_ != ANT_CHANNEL_SCANNING)
   {
     au8AntOpenChannel[2] = eChannel_;
@@ -432,6 +433,41 @@ bool AntOpenChannelNumber(AntChannelNumberType eChannel_)
   return( AntQueueOutgoingMessage(au8AntOpenChannel) );
   
 } /* end AntOpenChannelNumber() */
+
+
+/*------------------------------------------------------------------------------
+Function: AntOpenChannelNumber
+
+Description:
+Queues the Open Scan Channel message.  Scanning channels must use Channel 0
+and actually take all channel resources.  It is up to the user to ensure
+that the device is configured properly.  Attempting to open a scanning channel
+when other channels are already open will result in a failure.
+
+The return value does not actually indicate that the channel has been 
+opened successfully -- the calling task must monitor _ANT_FLAGS_CHANNEL_OPEN
+to determine if channel opens successfully.
+  
+Requires:
+  - ANT channel 0 should be correctly configured as a SLAVE.
+
+Promises:
+  - If channel open message is queued, returns TRUE (Ant_u32CurrentTxMessageToken will be non-zero)
+  - Otherwise returns FALSE
+ 
+*/
+bool AntOpenScanningChannel(void)
+{
+  u8 au8AntOpenScanChannel[] = {MESG_OPEN_CHANNEL_SIZE, MESG_OPEN_SCAN_CHANNEL_ID, 0, CS};
+  
+  /* Update the checksum value and queue the open channel message */
+  au8AntOpenScanChannel[3] = AntCalculateTxChecksum(au8AntOpenScanChannel);
+  G_asAntChannelConfiguration[0].AntFlags |= _ANT_FLAGS_CHANNEL_OPEN_PENDING;
+ 
+  return( AntQueueOutgoingMessage(au8AntOpenScanChannel) );
+  
+} /* end AntOpenScanningChannelNumber() */
+
 
 
 /*------------------------------------------------------------------------------
@@ -479,7 +515,7 @@ Requires:
   - G_u32AntFlags are up to date
 
 Promises:
-  - Returns one of {ANT_UNCONFIGURED, ANT_CLOSING, ANT_OPEN, ANT_CLOSED}
+  - Returns one of {ANT_UNCONFIGURED, ANT_CONFIGURED (ANT_CLOSED), ANT_CLOSING, ANT_OPEN, ANT_CLOSED}
 
 */
 AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_)
@@ -761,12 +797,14 @@ static void  AntApiSM_AssignChannel(void)
 } /* end AntApiSM_AssignChannel() */
 
 
+#if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void  AntApiSM_Error(void)          
 {
   
 } /* end AntApiSM_Error() */
+#endif
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/

@@ -110,6 +110,7 @@
 #define MESG_OPEN_CHANNEL_ID              ((UCHAR)0x4B)
 #define MESG_CLOSE_CHANNEL_ID             ((UCHAR)0x4C)
 #define MESG_REQUEST_ID                   ((UCHAR)0x4D)
+#define MESG_OPEN_SCAN_CHANNEL_ID         ((UCHAR)0x5B)
 
 #define MESG_BROADCAST_DATA_ID            ((UCHAR)0x4E)
 #define MESG_ACKNOWLEDGED_DATA_ID         ((UCHAR)0x4F)
