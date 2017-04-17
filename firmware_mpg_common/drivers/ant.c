@@ -520,8 +520,8 @@ static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psEx
   u8 u8TransType = 0xFF;                          
 
   /* RSSI extended data */
-  u8 u8MeasurementType = 0xFF;
   s8 s8RSSI = 0xFF;           
+  u8 u8MeasurementType = 0xFF;
   u8 u8Threshold = 0xFF;
   
   /* RF Timestamp data */
