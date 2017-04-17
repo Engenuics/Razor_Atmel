@@ -13,34 +13,6 @@ Search "####" for ANT Channel ID defaults
 
 
 /*******************************************************************************
-* Type definitions
-*******************************************************************************/
-
-typedef struct 
-{
-  u8 AntChannel;
-  u8 AntChannelType;
-  u8 AntNetwork;
-  u8 AntSerialLo;
-  u8 AntSerialHi;
-  u8 AntDeviceType;
-  u8 AntTransmissionType;
-  u8 AntChannelPeriodLo;
-  u8 AntChannelPeriodHi;
-  u8 AntFrequency;
-  u8 AntTxPower;
-} AntSetupDataType;
-
-/* Message struct for outgoing data messages */
-typedef struct
-{
-  u32 u32TimeStamp;                     /* Current G_u32SystemTime1s */
-  u8 au8MessageData[MESG_MAX_SIZE];     /* Array for message data */
-  void *psNextMessage;                  /* Pointer to AntDataMessageStructType */
-} AntOutgoingMessageListType;
-
-
-/*******************************************************************************
 * Constants
 *******************************************************************************/
 /* Configuration */
@@ -56,7 +28,20 @@ typedef struct
 
 #define ANT_TX_TIMEOUT            (u32)100      /* Time in ms max to wait for Tx to ANT */
 
-#if 1
+#define ANT_APPLICATION_MESSAGE_BYTES       (u8)8
+
+/* Network number */
+#define ANT_NETWORK_NUMBER_BYTES  (u8)8
+#define ANT_DEFAULT_NETWORK_KEY   (u8)0
+#define N_0                       (u8)0         
+#define N_1                       (u8)0         
+#define N_2                       (u8)0         
+#define N_3                       (u8)0         
+#define N_4                       (u8)0         
+#define N_5                       (u8)0         
+#define N_6                       (u8)0         
+#define N_7                       (u8)0         
+
 /* Symbols for bytes in messages to help readability */
 #define CH                        (u8)0         /* Channel */
 #define D_0                       (u8)0         /* Data */
@@ -68,7 +53,89 @@ typedef struct
 #define D_6                       (u8)0         /* Data */
 #define D_7                       (u8)0         /* Data */
 #define CS                        (u8)0         /* Checksum */
+
+
+/*******************************************************************************
+* Type definitions
+*******************************************************************************/
+typedef enum {ANT_UNCONFIGURED = 0, ANT_CONFIGURED = 1, ANT_OPENING = 2, 
+              ANT_OPEN = 3, ANT_CLOSING = 4, ANT_CLOSED = 1} AntChannelStatusType;
+typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
+typedef enum {ANT_GENERIC_MSG_READY, ANT_GENERIC_MSG_BUSY, ANT_GENERIC_MSG_OK, ANT_GENERIC_MSG_FAIL} AntApplicationGenericMsgStatus;
+typedef enum {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
+              ANT_CHANNEL_4, ANT_CHANNEL_5, ANT_CHANNEL_6, ANT_CHANNEL_7,
+              ANT_CHANNEL_SCANNING = 0} AntChannelNumberType;
+
+/* Data struct for extended data information */
+typedef struct
+{
+  u8 u8Channel;                            /* Channel number */
+  u8 u8Flags;                              /* Extended data flags from the received message */
+  u16 u16DeviceID;                         /* Device ID from the received message */
+  u8 u8DeviceType;                         /* Device Type from the received message */
+  u8 u8TransType;                          /* Transmission Type from the received message */
+  s8 s8RSSI;                               /* RSSI from the received message */
+  u8 u8Dummy;                              /* Pad for 4-byte alignment */
+} AntExtendedDataType;
+
+typedef struct
+{
+  u32 u32TimeStamp;                                  /* Current G_u32SystemTime1s */
+  AntApplicationMessageType eMessageType;            /* Type of data */
+  u8 u8Channel;                                      /* Channel to which the data applies */
+  u8 au8MessageData[ANT_APPLICATION_MESSAGE_BYTES];  /* Array for message data */
+  AntExtendedDataType sExtendedData;                 /* Struct of extended message data */
+  void *psNextMessage;                               /* Pointer to AntDataMessageStructType */
+} AntApplicationMsgListType;
+
+#if 0
+typedef struct 
+{
+  u8 AntChannel;                           /* The ANT channel number */
+  u8 AntChannelType;                       /* ANT channel type from antdefines.h line 75 */
+  u8 AntNetwork;                           /* Network number */
+  u8 AntSerialLo;                          /* Device ID low byte */
+  u8 AntSerialHi;                          /* Device ID high byte */
+  u8 AntDeviceType;                        /* Device type byte */
+  u8 AntTransmissionType;                  /* Transmission type byte */
+  u8 AntChannelPeriodLo;                   /* Low byte of Channel Period */
+  u8 AntChannelPeriodHi;                   /* High byte of Channel Period */
+  u8 AntFrequency;                         /* RF frequency value */
+  u8 AntTxPower;                           /* RF power level from antdefines.h line 40 */
+} AntSetupDataType;
 #endif
+
+typedef struct 
+{
+  AntChannelNumberType AntChannel;         /* The ANT channel number */
+  u8 AntChannelType;                       /* ANT channel type from antdefines.h line 75 */
+  u8 AntNetwork;                           /* Network number */
+  u8 AntNetworkKey[8];                     /* Network key assigned to AntNetwork number */
+  u8 AntDeviceIdLo;                        /* Device ID low byte */
+  u8 AntDeviceIdHi;                        /* Device ID high byte */
+  u8 AntDeviceType;                        /* Device type byte */
+  u8 AntTransmissionType;                  /* Transmission type byte */
+  u8 AntChannelPeriodLo;                   /* Low byte of Channel Period */
+  u8 AntChannelPeriodHi;                   /* High byte of Channel Period */
+  u8 AntFrequency;                         /* RF frequency value */
+  u8 AntTxPower;                           /* RF power level from antdefines.h line 40 */
+  u8 AntFlags;                             /* Flag byte for tracking status */
+} AntAssignChannelInfoType;
+
+typedef struct
+{
+  u8 u8Channel;
+  u8 u8MessageNumber;
+  u8 u8ResponseCode;
+} AntMessageResponseType;
+
+/* Message struct for outgoing data messages */
+typedef struct
+{
+  u32 u32TimeStamp;                        /* Current G_u32SystemTime1s */
+  u8 au8MessageData[MESG_MAX_SIZE];        /* Array for message data */
+  void *psNextMessage;                     /* Pointer to AntDataMessageStructType */
+} AntOutgoingMessageListType;   
 
 
 /*******************************************************************************
@@ -104,39 +171,47 @@ typedef struct
 
 /* Status flags */
 #define _ANT_FLAGS_RESTART                (u32)0x00010000        /* An ANT restart message was received */
-#define _ANT_FLAGS_CHANNEL_CONFIGURED     (u32)0x00020000        /* Set when the ANT channel is configured and ready to be opened */
-#define _ANT_FLAGS_CHANNEL_OPEN_PENDING   (u32)0x00040000        /* Set when the ANT channel open request has been made */
-#define _ANT_FLAGS_CHANNEL_OPEN           (u32)0x00080000        /* Set when the ANT channel is open */
-#define _ANT_FLAGS_CHANNEL_CLOSE_PENDING  (u32)0x00100000        /* Set when a request to close the ANT channel has been sent */
 
 /* Control flags */
-#define _ANT_FLAGS_GOT_ACK                (u32)0x01000000        /* Set when an Acked data message gets acked */
 #define _ANT_FLAGS_FIRST_BYTE             (u32)0x02000000        /* The first byte in an ANT transmission is coming in */
 #define _ANT_FLAGS_RX_IN_PROGRESS         (u32)0x04000000        /* Set when an ANT frame reception starts */
 #define _ANT_FLAGS_TX_IN_PROGRESS         (u32)0x08000000        /* Set when an ANT frame transmission starts */
 #define _ANT_FLAGS_TX_INTERRUPTED         (u32)0x10000000        /* An attempt to transmit was interrupted */
 /* end G_u32AntFlags */
 
+
+/* Channel flags used for AntFlags in AntAssignChannelInfoType */
+#define _ANT_FLAGS_CHANNEL_CONFIGURED     (u8)0x01               /* Set when the ANT channel is configured and ready to be opened */
+#define _ANT_FLAGS_CHANNEL_OPEN_PENDING   (u8)0x02               /* Set when the ANT channel open request has been made */
+#define _ANT_FLAGS_CHANNEL_OPEN           (u8)0x04               /* Set when the ANT channel is open */
+#define _ANT_FLAGS_CHANNEL_CLOSE_PENDING  (u8)0x08               /* Set when a request to close the ANT channel has been sent */
+#define _ANT_FLAGS_GOT_ACK                (u8)0x10               /* Set when an Acked data message gets acked */
+
+
+
 /* Default Channel ID parameters */
-#define	ANT_SERIAL_LO_DEFAULT			        (u8)0xFF
-#define ANT_SERIAL_HI_DEFAULT			        (u8)0xFF
+//#define	ANT_SERIAL_LO_DEFAULT			        (u8)0x00
+//#define ANT_SERIAL_HI_DEFAULT			        (u8)0x20
+#define	ANT_DEVICE_ID_LO_DEFAULT		      (u8)0x00
+#define ANT_DEVICE_ID_HI_DEFAULT			    (u8)0x20
 #define	ANT_DEVICE_TYPE_DEFAULT					  (u8)0x01
-#define	ANT_TRANSMISSION_TYPE_DEFAULT		  (u8)0x10
+#define	ANT_TRANSMISSION_TYPE_DEFAULT		  (u8)0x01
 
 /* #### Default channel configuration parameters #### */
 #define ANT_CHANNEL_DEFAULT               (u8)0
 #define ANT_CHANNEL_TYPE_DEFAULT          CHANNEL_TYPE_MASTER
 #define ANT_NETWORK_DEFAULT               (u8)0
 
-#define ANT_CHANNEL_PERIOD_DEC_DEFAULT    (u16)3227
-#define ANT_CHANNEL_PERIOD_HEX_DEFAULT    (u16)0x0ccd
-#define ANT_CHANNEL_PERIOD_HI_DEFAULT		  (u8)0x0c
-#define ANT_CHANNEL_PERIOD_LO_DEFAULT		  (u8)0xcd
+#define ANT_CHANNEL_PERIOD_DEC_DEFAULT    (u16)8192
+#define ANT_CHANNEL_PERIOD_HEX_DEFAULT    (u16)0x2000
+#define ANT_CHANNEL_PERIOD_HI_DEFAULT		  (u8)0x20
+#define ANT_CHANNEL_PERIOD_LO_DEFAULT		  (u8)0x00
 
-#define ANT_FREQUENCY_DEFAULT						  (55)
-#define ANT_TX_POWER_DEFAULT						  RADIO_TX_POWER_0DBM
+#define ANT_FREQUENCY_DEFAULT						  (u8)55
+#define ANT_TX_POWER_DEFAULT						  RADIO_TX_POWER_4DBM
 /* #### end of default channel configuration parameters ####*/
 
+#define ANT_NUM_CHANNELS                  (u8)8
 #define ANT_RX_BUFFER_SIZE                (u16)256
 
 #define ANT_RESET_WAIT_MS                 (u32)100
@@ -161,6 +236,7 @@ static void AntRxMessage(void);
 static void AntAbortMessage(void);
 static void AdvanceAntRxBufferCurrentChar(void);
 static void AdvanceAntRxBufferUnreadMsgPointer(void);
+static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psExtDataTarget_);
 
 
 /* ANT Protected Interface-layer Functions */
@@ -174,10 +250,14 @@ u8 AntCalculateTxChecksum(u8* pu8Message_);
 bool AntQueueOutgoingMessage(u8 *pu8Message_);
 void AntDeQueueApplicationMessage(void);
 
+
 /* ANT private Interface-layer Functions */
 static u8 AntProcessMessage(void);
 static void AntTick(u8 u8Code_);
 static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, u8 *pu8DataSource_);
+
+static void AntTickExtended(u8* pu8AntMessage_);
+static bool AntQueueExtendedApplicationMessage(AntApplicationMessageType eMessageType_, u8* pu8DataSource_, AntExtendedDataType* psExtData_);
 static void AntDeQueueOutgoingMessage(void);
 
 

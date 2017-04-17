@@ -12,28 +12,16 @@
 /**********************************************************************************************************************
 Constants
 **********************************************************************************************************************/
+#define ANT_ASSIGN_MESSAGES                 (u8)7    /* Number of messages in AntAssignChannel */       
+
 #define ANT_OUTGOING_MESSAGE_BUFFER_SIZE    (u32)32
 #define ANT_APPLICATION_MESSAGE_BUFFER_SIZE (u32)32
-#define ANT_APPLICATION_MESSAGE_BYTES       (u8)8
 #define ANT_DATA_BYTES                      (u8)8
-
-/* Device Types */
-#define	DEVICE_TYPE_BOARDTEST		              (u8)0x60
 
 
 /**********************************************************************************************************************
 Type definitions
 **********************************************************************************************************************/
-typedef enum {ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED} AntChannelStatusType;
-typedef enum {ANT_EMPTY, ANT_DATA, ANT_TICK} AntApplicationMessageType;
-
-typedef struct
-{
-  u32 u32TimeStamp;                                  /* Current G_u32SystemTime1s */
-  AntApplicationMessageType eMessageType;            /* Type of data */
-  u8 au8MessageData[ANT_APPLICATION_MESSAGE_BYTES];  /* Array for message data */
-  void *psNextMessage;                               /* Pointer to AntDataMessageStructType */
-} AntApplicationMsgListType;
 
 
 /**********************************************************************************************************************
@@ -52,16 +40,18 @@ of a paired channel (EVENT_RX_FAIL event is generated).  This should be communic
 in case a missed message is important to any application using ANT.  
 
 MSG_NAME  MSG_ID     D_0      D_1      D_2     D_3     D_4     D_5     D_6
-ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
-                    CODE                              MSG #   MSG #   MSG #
+ANT_TICK   0xFF    CHANNEL  RESPONSE  EVENT   0xFF   MISSED  MISSED  MISSED
+                             TYPE     CODE            MSG #   MSG #   MSG #
                                                       HIGH    MID     LOW
 ---------------------------------------------------------------------------------------------------------------------*/
 
 
 #define   MESSAGE_ANT_TICK                        (u8)0xFF
-
 #define   ANT_TICK_MSG_ID_INDEX                   (u8)0
-#define   ANT_TICK_MSG_EVENT_CODE_INDEX           (u8)1
+#define   ANT_TICK_MSG_CHANNEL_INDEX              (u8)1
+#define   ANT_TICK_MSG_RESPONSE_TYPE_INDEX        (u8)2
+#define   ANT_TICK_MSG_EVENT_CODE_INDEX           (u8)3
+#define   ANT_TICK_MSG_RESPONSE_CODE_INDEX        (u8)3
 #define   ANT_TICK_MSG_SENTINEL1_INDEX            (u8)2
 #define   ANT_TICK_MSG_SENTINEL2_INDEX            (u8)3
 #define   ANT_TICK_MSG_SENTINEL3_INDEX            (u8)4
@@ -70,21 +60,46 @@ ANT_TICK   0xFF     EVENT    0xFF     0xFF    0xFF   MISSED  MISSED  MISSED
 #define   ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX      (u8)7
 
 
-
 /**********************************************************************************************************************
 Function prototypes
 **********************************************************************************************************************/
 
-/* ANT public Interface-layer Functions */
-bool AntChannelConfig(bool);
-bool AntOpenChannel(void);
-bool AntCloseChannel(void);
-bool AntUnassignChannel(void);
-AntChannelStatusType AntRadioStatus(void);
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Public functions                                                                                                   */
+/*--------------------------------------------------------------------------------------------------------------------*/
+AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_);
 
-bool AntQueueBroadcastMessage(u8 *pu8Data_);
-bool AntQueueAcknowledgedMessage(u8 *pu8Data_);
-bool AntReadData(void);
+bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_);
+bool AntUnassignChannelNumber(AntChannelNumberType eChannel_);
 
+bool AntOpenChannelNumber(AntChannelNumberType eChannel_);
+bool AntOpenScanningChannel(void);
+bool AntCloseChannelNumber(AntChannelNumberType eChannel_);
+
+bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
+bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
+
+bool AntReadAppMessageBuffer(void);
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Protected functions                                                                                                */
+/*--------------------------------------------------------------------------------------------------------------------*/
+void AntApiInitialize(void);
+void AntApiRunActiveState(void);
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Private functions                                                                                                  */
+/*--------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/***********************************************************************************************************************
+State Machine Declarations
+***********************************************************************************************************************/
+static void AntApiSM_Idle(void);    
+static void  AntApiSM_AssignChannel(void);       
+
+static void AntApiSM_Error(void);         
+static void AntApiSM_FailedInit(void);        
 
 #endif /* __ANT_API_H */
