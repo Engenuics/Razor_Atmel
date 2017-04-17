@@ -1,0 +1,7 @@
+Debug/
+*.dep
+*.bat
+*.wsdt
+*.TMP
+*.wspos
+*.dbgdt
