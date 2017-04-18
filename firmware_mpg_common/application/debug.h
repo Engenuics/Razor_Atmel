@@ -20,8 +20,8 @@ File: debug.h
 
 /* end of G_u32DebugFlags */
 
-#ifdef MPGL1 /* MPGL1-specific G_u32DebugFlags flags */
-#endif /* MPGL1 */
+#ifdef EIE1 /* EIE1-specific G_u32DebugFlags flags */
+#endif /* EIE1 */
 
 #ifdef MPGL2 /* MPGL2-specific G_u32DebugFlags flags */
 #define _DEBUG_CAPTOUCH_VALUES_ENABLE  (u32)0x00010000      /* Flag if debug should print Captouch values */
@@ -52,7 +52,7 @@ typedef struct
 /* New commands must update the definitions below. Valid commands are in the range
 00 - 99.  Command name string is a maximum of DEBUG_CMD_NAME_LENGTH characters. */
 
-#ifdef MPGL1
+#ifdef EIE1
 #define DEBUG_COMMANDS          8   /* Total number of debug commands */
 /*                              "0123456789ABCDEF0123456789ABCDEF"  Character position reference */
 #define DEBUG_CMD_NAME00        "Show debug command list         "  /* Command 0: List all commands */
@@ -63,7 +63,7 @@ typedef struct
 #define DEBUG_CMD_NAME05        "Dummy5                          "  /* Command 5: */
 #define DEBUG_CMD_NAME06        "Dummy6                          "  /* Command 6: */
 #define DEBUG_CMD_NAME07        "Dummy7                          "  /* Command 7: */
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 #define DEBUG_COMMANDS          8   /* Total number of debug commands */
@@ -76,7 +76,7 @@ typedef struct
 #define DEBUG_CMD_NAME05        "Dummy5                          "  /* Command 5: */
 #define DEBUG_CMD_NAME06        "Dummy6                          "  /* Command 6: */
 #define DEBUG_CMD_NAME07        "Dummy7                          "  /* Command 7: */
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 
 #define DEBUG_UART_TIMEOUT      (u32)2000                           /* Max time in ms for a command/message to be sent */
@@ -124,8 +124,8 @@ static void DebugCommandLedTestToggle(void);
 static void DebugLedTestCharacter(u8 u8Char_);
 static void DebugCommandSysTimeToggle(void);
 
-#ifdef MPGL1 /* MPGL1-specific debug functions */
-#endif /* MPGL1 */
+#ifdef EIE1 /* EIE1-specific debug functions */
+#endif /* EIE1 */
 
 #ifdef MPGL2 /* MPGL2-specific debug functions  */
 static void DebugCommandCaptouchValuesToggle(void);
