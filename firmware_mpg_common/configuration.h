@@ -64,12 +64,12 @@ Includes
 #include "sam3u_uart.h"
 #include "adc12.h"
 
-/* MPGL1-specific header files */
-#ifdef MPGL1
+/* EIE1-specific header files */
+#ifdef EIE1
 #include "mpgl1-ehdw-03.h"
 #include "lcd_nhd-c0220biz.h"
 #include "sdcard.h"
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 /* MPGL2-specific header files */
@@ -105,12 +105,12 @@ Includes
 #define _APPLICATION_FLAGS_TIMER        0x00000020        /* TimerStateMachine */
 #define _APPLICATION_FLAGS_ADC          0x00000040        /* Adc12StateMachine */
 
-#ifdef MPGL1
-/* MPGL1 specific application flags */
+#ifdef EIE1
+/* EIE1 specific application flags */
 #define _APPLICATION_FLAGS_SDCARD       0x00000080        /* SdCardStateMachine */
 
 #define NUMBER_APPLICATIONS             (u8)8            /* Total number of applications */
-#endif /* MPGL1 specific application flags */
+#endif /* EIE1 specific application flags */
 
 #ifdef MPGL2
 /* MPGL2 specific application flags */
@@ -161,7 +161,7 @@ Includes
 #define SPI_IRQHandler             SPI_IrqHandler
 #endif
 
-#ifdef MPGL1
+#ifdef EIE1
 /* %SSP% Configuration */
 /* SD SPI Peripheral Allocation (USART1) */
 #define SD_SSP                      USART1
@@ -174,7 +174,7 @@ Includes
 #define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
 
 #define SSP1_IRQHandler             USART1_IrqHandler
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 
 #ifdef MPGL2
@@ -219,9 +219,9 @@ Update the values below for the LEDs on the board.  Any name can be used for the
 Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the correct values for the LEDs in the system.  
 */
 
-#ifdef MPGL1
+#ifdef EIE1
 #define TOTAL_LEDS            (u8)11        /* Total number of LEDs in the system */
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 
 #ifdef MPGL2
@@ -243,7 +243,7 @@ Open buttons.c and edit the GPIO definitions sections with the bit numbers for t
 The order of the definitions below must match the order of the definitions provided in buttons.c. 
 */
 
-#ifdef MPGL1
+#ifdef EIE1
 #define TOTAL_BUTTONS         (u8)4       /* Total number of Buttons in the system */
 
 #define BUTTON0               (u32)0
@@ -254,7 +254,7 @@ The order of the definitions below must match the order of the definitions provi
 /* All buttons on each port must be ORed together here: set to 0 if no buttons on the port */
 #define GPIOA_BUTTONS         (u32)( PA_17_BUTTON0 )
 #define GPIOB_BUTTONS         (u32)( PB_00_BUTTON1 | PB_01_BUTTON2 | PB_02_BUTTON3 )
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 #define TOTAL_BUTTONS         (u8)2       /* Total number of Buttons in the system */
@@ -277,9 +277,9 @@ MPG1 has two buzzers, MPG2 only has one */
 
 #define BUZZER1               AT91C_PWMC_CHID0
 
-#ifdef MPGL1
+#ifdef EIE1
 #define BUZZER2               AT91C_PWMC_CHID1
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 
 /*----------------------------------------------------------------------------------------------------------------------

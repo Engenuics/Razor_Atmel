@@ -112,7 +112,7 @@ static u8 Debug_u8Command;                               /* A validated command 
 
 /* Add commands by updating debug.h in the Command-Specific Definitions section, then update this list
 with the function name to call for the corresponding command: */
-#ifdef MPGL1
+#ifdef EIE1
 DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugCommandPrepareList},
                                                        {DEBUG_CMD_NAME01, DebugCommandLedTestToggle},
                                                        {DEBUG_CMD_NAME02, DebugCommandSysTimeToggle},
@@ -124,7 +124,7 @@ DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugC
                                                      };
 
 static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 ASCII LCD DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugCommandPrepareList},
@@ -368,9 +368,9 @@ void SystemStatusReport(void)
   u32 u32TaskFlagMaskBit = (u32)0x01;
   bool bNoFailedTasks = TRUE;
 
-#ifdef MPGL1
+#ifdef EIE1
   u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "SD"};
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
   u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "CAPTOUCH"};
@@ -680,7 +680,7 @@ Promises:
 static void DebugLedTestCharacter(u8 u8Char_)
 {
   /* Check the char to see if an LED should be toggled */  
-#ifdef MPGL1
+#ifdef EIE1
   if(u8Char_ == 'W')
   {
     LedToggle(WHITE);
@@ -721,7 +721,7 @@ static void DebugLedTestCharacter(u8 u8Char_)
     LedToggle(RED);
   } 
 
-#endif /* MPGL1 */
+#endif /* EIE1 */
   
 #ifdef MPGL2
   
