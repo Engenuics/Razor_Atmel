@@ -1,5 +1,6 @@
 [MainWindow]
 <<<<<<< HEAD
+<<<<<<< HEAD
 WindowPlacement=_ 1 1 1279 737 1
 =======
 <<<<<<< HEAD
@@ -8,3 +9,6 @@ WindowPlacement=_ 321 141 1599 877 3
 WindowPlacement=_ 118 95 2003 1316 1
 >>>>>>> origin/master
 >>>>>>> refs/remotes/origin/master
+=======
+WindowPlacement=_ 400 124 2285 1194 3
+>>>>>>> c080c694e6eb3b5db5c649699ab09d322b1ac0ae
