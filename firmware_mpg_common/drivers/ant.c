@@ -10,9 +10,6 @@ with SPI_SLAVE_FLOW_CONTROL.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-Protected System functions:
-void AntInitialize(void)
-void AntRunActiveState(void)
 
 ***********************************************************************************************************************/
 
@@ -33,20 +30,48 @@ All Global variable names shall start with "G_<type>Ant"
 
 /* New variables */
 u32 G_u32AntFlags;                                    /* Flag bits for ANT-related information */
-AntSetupDataType G_stAntSetupData;                    /* ANT channel configuration data */
+
+AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]; /* Keeps track of all configured ANT channels */
+AntMessageResponseType G_stMessageResponse;           /* Holds the latest message response info */
+
 AntApplicationMsgListType *G_sAntApplicationMsgList;  /* Public linked list of messages from ANT to the application */
 
-u8 G_au8AntMessageOk[]   = "OK\n\r";
-u8 G_au8AntMessageFail[] = "FAIL\n\r";
-u8 G_au8AntMessageAssign[] = "ANT channel assign ";
-u8 G_au8AntMessageUnassign[] = "ANT channel unassign ";
-u8 G_au8AntMessageUnhandled[] = "Default Channel Response ";
-u8 G_au8AntMessageSetup[] = "ANT channel setup ";
-u8 G_au8AntMessageClose[] = "ANT channel close ";
-u8 G_au8AntMessageOpen[]  = "ANT channel open ";
-u8 G_au8AntMessageInit[] = "Initializing ANT... ";
+u8 G_au8AntMessageOk[]     = "OK\n\r";
+u8 G_au8AntMessageFail[  ] = "FAIL\n\r";
+
+/* Replace 'd' at [12] with channel number */
+u8 G_au8AntMessageAssign[]    = "ANT channel d assign "; 
+u8 G_au8AntMessageUnassign[]  = "ANT channel d unassign ";
+u8 G_au8AntMessageUnhandled[] = "ANT channel d message 0xxx response dd ";
+u8 G_au8AntMessageSetup[] = "ANT channel d setup ";
+u8 G_au8AntMessageClose[] = "ANT channel d close ";
+u8 G_au8AntMessageOpen[]  = "ANT channel d open ";
+
+u8 G_au8AntMessageInit[]  = "Initializing ANT... ";
 u8 G_au8AntMessageInitFail[] = "failed. Host IOs set to HiZ.\r\n";
 u8 G_au8AntMessageNoAnt[] = "\n\r### nRF51422 Programming Mode: no ANT functionality ####\n\r";
+
+
+/* ANT message structures */
+u8 G_au8AntSetNetworkKey[]    = {MESG_NETWORK_KEY_SIZE, MESG_NETWORK_KEY_ID, 0 /* Network number */, 
+                                 0 /* KEY0 */, 0 /* KEY1 */, 0 /* KEY2 */, 0 /* KEY3 */, 
+                                 0 /* KEY4 */, 0 /* KEY5 */, 0 /* KEY6 */, 0 /* KEY7 */, CS};
+u8 G_au8AntAssignChannel[]    = {MESG_ASSIGN_CHANNEL_SIZE, MESG_ASSIGN_CHANNEL_ID, 0 /* AntChannel */, 
+                                 0 /* AntChannelType */, 0 /* AntNetwork */, CS};
+u8 G_au8AntSetChannelID[]     = {MESG_CHANNEL_ID_SIZE, MESG_CHANNEL_ID_ID, 0 /* AntChannel */, 
+                                 0 /* AntDeviceIdLo */, 0 /* AntDeviceIdHi */, 0 /* AntDeviceType */, 
+                                 0 /* AntTransmissionType */, CS};
+u8 G_au8AntSetChannelPeriod[] = {MESG_CHANNEL_MESG_PERIOD_SIZE, MESG_CHANNEL_MESG_PERIOD_ID, 0 /* AntChannel */, 
+                                 0 /* AntChannelPeriodLo */, 0 /* AntChannelPeriodHi */, CS};
+u8 G_au8AntSetChannelRFFreq[] = {MESG_CHANNEL_RADIO_FREQ_SIZE, MESG_CHANNEL_RADIO_FREQ_ID, 0 /* AntChannel */, 
+                                 0 /* AntFrequency */, CS};           
+u8 G_au8AntSetChannelPower[]  = {MESG_RADIO_TX_POWER_SIZE, MESG_RADIO_TX_POWER_ID, 0 /* AntChannel */, 
+                                 0 /* AntTxPower */, CS};        
+u8 G_au8AntLibConfig[]        = {MESG_LIB_CONFIG_SIZE, MESG_LIB_CONFIG_ID, 0, LIB_CONFIG_CHANNEL_ID_FLAG | LIB_CONFIG_RSSI_FLAG, CS};        
+
+u8 G_au8AntBroadcastDataMessage[] = {MESG_DATA_SIZE, MESG_BROADCAST_DATA_ID, CH, D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, CS};
+u8 G_au8AntAckDataMessage[] = {MESG_DATA_SIZE, MESG_ACKNOWLEDGED_DATA_ID, CH, D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, CS};
+u8 G_au8ANTGetVersion[]     = {MESG_REQUEST_SIZE, MESG_REQUEST_ID, 0, MESG_VERSION_ID, 0};   
 
 
 /*----------------------------------------------------------------------------*/
@@ -130,7 +155,6 @@ Promises:
 */
 static void AntSyncSerialInitialize(void)
 {
-  u8 au8ANTGetVersion[] = {MESG_REQUEST_SIZE, MESG_REQUEST_ID, G_stAntSetupData.AntChannel, MESG_VERSION_ID, 0};    
   u32 u32EventTimer;
   bool bErrorStatus = FALSE;
   
@@ -165,8 +189,8 @@ static void AntSyncSerialInitialize(void)
     AntProcessMessage();   
 
   /* Send out version request message and expect response */
-    au8ANTGetVersion[4] = AntCalculateTxChecksum(&au8ANTGetVersion[0]);
-    AntTxMessage(&au8ANTGetVersion[0]);    
+    G_au8ANTGetVersion[4] = AntCalculateTxChecksum(&G_au8ANTGetVersion[0]);
+    AntTxMessage(&G_au8ANTGetVersion[0]);    
     AntExpectResponse(MESG_VERSION_ID, ANT_MSG_TIMEOUT_MS);
   }
  
@@ -203,8 +227,8 @@ static void AntSrdyPulse(void)
 Function: AntRxMessage
 
 Description:
-Receive a message from ANT to the Host.  Incoming bytes are deposited directly into the receive
-buffer from the SSP ISR which should be extremely fast.  
+Completely receive a message from ANT to the Host.  Incoming bytes are deposited directly into the receive
+buffer from the SSP ISR which should be extremely fast and complete in a maximum of 500us.  
 
 Requires:
   - _SSP_CS_ASSERTED is set indicating a message is ready to come in 
@@ -254,8 +278,9 @@ static void AntRxMessage(void)
     /* Do short delay then cycle SRDY to get the first byte */
     AntSrdyPulse();
 
-    /* Begin the receive cycle that takes place using interrupts and callbacks and is monitored by a timeout of about 500us - this should be plenty of time
-    to receive even the longest ANT message but still only half the allowed 1ms loop time for the system. */
+    /* Begin the receive cycle that takes place using interrupts and callbacks and is monitored by a timeout of 
+    about 500us - this should be plenty of time to receive even the longest ANT message but still only half the 
+    allowed 1ms loop time for the system. */
     
     /* Read the first byte when it comes in */
     while( !(ANT_SSP_FLAGS & _SSP_RX_COMPLETE) &&
@@ -453,6 +478,124 @@ static void AdvanceAntRxBufferUnreadMsgPointer()
   
 } /* end AdvanceAntRxBufferUnreadMsgPointer() */
 
+  
+/*------------------------------------------------------------------------------
+Function: AntParseExtendedData
+
+Description:
+Reads extended data based on the flags that are set.
+Loads into AntExtendedDataType which currently has these fields:
+{
+  u8 u8Channel;                        
+  u16 u16DeviceID;                         
+  u8 u8DeviceType;                         
+  u8 u8TransType;                          
+  u8 u8Flags;                             
+  s8 s8RSSI;                              
+} AntExtendedDataType;
+
+Requires:
+  - pu8SourceMessage_ points to an ANT message buffer that holds a complete ANT data
+    message structure except for SYNC byte.  antmessage.h Buffer Indices an then be used.
+  - psExtDataTarget_ points to the target AntExtendedDataType structure
+
+Promises:
+  - If extended data is present, all values are read into local variables and then
+    loaded into psExtDataTarget_ and the function returns TRUE.
+  - If no extended data is present, psExtDataTarget_ is set to default values and
+    the function returns FALSE.
+*/
+static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psExtDataTarget_)
+{
+  bool bReturnValue;
+  u8 u8MessageSize;
+  u8 u8Channel;                        
+  u8 u8Flags = 0;       
+  u8 u8BufferOffset = 0;
+  
+  /* Channel ID extended data */
+  u16 u16DeviceID = 0xFFFF;;                         
+  u8 u8DeviceType = 0xFF;                        
+  u8 u8TransType = 0xFF;                          
+
+  /* RSSI extended data */
+  s8 s8RSSI = 0xFF;           
+  u8 u8MeasurementType = 0xFF;
+  u8 u8Threshold = 0xFF;
+  
+  /* RF Timestamp data */
+  u16 u16RxTimestamp = 0xFFFF;
+    
+  /* Get generic data */
+  u8MessageSize = *(pu8SourceMessage + BUFFER_INDEX_MESG_SIZE);
+  u8Channel = *(pu8SourceMessage + BUFFER_INDEX_CHANNEL_NUM);
+
+  /* Check to see if the message is the regular size (MESG_MAX_DATA_SIZE) */
+  if(u8MessageSize == MESG_MAX_DATA_SIZE)
+  {
+    bReturnValue = FALSE;
+  }
+  
+  /* Check for a message that is too big or too small */
+  else if( (u8MessageSize > MESG_MAX_SIZE) ||
+           (u8MessageSize < MESG_MAX_DATA_SIZE) )
+  {
+    DebugPrintf("\n\rUnexpected ANT message size\n\n\r");
+    bReturnValue = FALSE;
+  }
+  
+  /* Otherwise we have some extended message data */
+  else 
+  {
+    /* Byte after data must be flag byte */
+    u8Flags = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA_FLAGS);
+    bReturnValue = TRUE;
+    
+    /* Channel ID information is always first if it's there */
+    if(u8Flags & LIB_CONFIG_CHANNEL_ID_FLAG)
+    {
+      u16DeviceID = (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) & 0x00FF;
+      u8BufferOffset++;
+      u16DeviceID |= ( (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) << 8 ) & 0xFF00;
+      u8BufferOffset++;
+      u8DeviceType = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
+      u8BufferOffset++;
+      u8TransType = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
+      u8BufferOffset++;
+    }
+    
+    /* RSSI information is always next if it's there */
+    if(u8Flags & LIB_CONFIG_RSSI_FLAG)
+    {
+      u8MeasurementType = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
+      u8BufferOffset++;
+      s8RSSI = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
+      u8BufferOffset++;
+      u8Threshold = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
+      u8BufferOffset++;
+   }   
+
+    /* Timestamp information is always last */
+    if(u8Flags & LIB_CONFIG_RX_TIMESTAMP_FLAG)
+    {
+      u16RxTimestamp = (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) & 0x00FF;
+      u8BufferOffset++;
+      u16RxTimestamp |= ( (u16)(*(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset)) << 8 ) & 0xFF00;
+    }
+  }
+  
+  /* Load psExtDataTarget_ and return */
+  psExtDataTarget_->u8Flags      = u8Flags;
+  psExtDataTarget_->u8Channel    = u8Channel;
+  psExtDataTarget_->u16DeviceID  = u16DeviceID;
+  psExtDataTarget_->u8DeviceType = u8DeviceType;
+  psExtDataTarget_->u8TransType  = u8TransType;
+  psExtDataTarget_->s8RSSI       = s8RSSI;
+
+  return bReturnValue;
+  
+} /* end AntParseExtendedData */
+
 
 /***********************************************************************************************************************
 @@@@@ ANT Interface-layer Functions
@@ -492,19 +635,28 @@ void AntInitialize(void)
     DebugPrintf(G_au8AntMessageInit);
     G_sAntApplicationMsgList = 0;
     Ant_psDataOutgoingMsgList = 0;
+  
+  /* Initialize the G_asAntChannelConfiguration data struct */
+  for(u8 i = 0; i < ANT_NUM_CHANNELS; i++)
+  {
+    G_asAntChannelConfiguration[i].AntChannel          = (AntChannelNumberType)i;
+    G_asAntChannelConfiguration[i].AntChannelType      = 0xFF;
+    G_asAntChannelConfiguration[i].AntNetwork          = 0xFF;
+    G_asAntChannelConfiguration[i].AntDeviceIdLo       = 0xFF;
+    G_asAntChannelConfiguration[i].AntDeviceIdHi       = 0xFF;
+    G_asAntChannelConfiguration[i].AntDeviceType       = 0xFF;
+    G_asAntChannelConfiguration[i].AntTransmissionType = 0xFF;
+    G_asAntChannelConfiguration[i].AntChannelPeriodLo  = 0xFF;
+    G_asAntChannelConfiguration[i].AntChannelPeriodHi  = 0xFF;
+    G_asAntChannelConfiguration[i].AntFrequency        = 0xFF;
+    G_asAntChannelConfiguration[i].AntTxPower          = 0xFF;
+    G_asAntChannelConfiguration[i].AntFlags            = 0;
     
-    /* Set default setup values in the AntSetupData struct */
-    G_stAntSetupData.AntChannel          = ANT_CHANNEL_DEFAULT;
-    G_stAntSetupData.AntChannelType      = ANT_CHANNEL_TYPE_DEFAULT;
-    G_stAntSetupData.AntNetwork          = ANT_NETWORK_DEFAULT;
-    G_stAntSetupData.AntSerialLo         = ANT_SERIAL_LO_DEFAULT;
-    G_stAntSetupData.AntSerialHi         = ANT_SERIAL_HI_DEFAULT;
-    G_stAntSetupData.AntDeviceType       = ANT_DEVICE_TYPE_DEFAULT;
-    G_stAntSetupData.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
-    G_stAntSetupData.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-    G_stAntSetupData.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-    G_stAntSetupData.AntFrequency        = ANT_FREQUENCY_DEFAULT;
-    G_stAntSetupData.AntTxPower          = ANT_TX_POWER_DEFAULT;
+    for(u8 j = 0; j < ANT_NETWORK_NUMBER_BYTES; j++)
+    {
+      G_asAntChannelConfiguration[i].AntNetworkKey[j] = 0;
+    }
+  }
     
     /* Configure the SSP resource to be used for the application */
     Ant_sSspConfig.SspPeripheral      = ANT_SPI;
@@ -528,6 +680,7 @@ void AntInitialize(void)
     if(G_u32ApplicationFlags & _APPLICATION_FLAGS_ANT)  
     {
       DebugPrintf(G_au8AntMessageOk);
+      DebugPrintf("ANT version: ");
       DebugPrintf(Ant_u8AntVersion);
       DebugLineFeed();
       
@@ -591,12 +744,10 @@ ANT to confirm the transmission can proceed.  If ANT happens to wants to send a 
 same time, the byte it sends will be an Rx byte so the AntTxMessage must suspend and go read the 
 incoming message first.  The process would restart after that.
 
-Once ANT confirms that the Host may transmit, the message to transmit is queued data is sent byte-by-byte with SRDY used for flow
+Once ANT confirms that the Host may transmit, the message to transmit is queued and data is sent byte-by-byte with SRDY used for flow
 control after each byte.  Due to the speed of the chip-to-chip communications, even the longest ANT message
-should be able to send in less than 500us, so it is safe to run this function completely in one main loop
-iteration (and retry or additional messages should wait until the following cycle).  
-
-Adapted from Dynastream Innovations Inc reference design, BitSyncSerial.c.
+should be able to send in less than 500us so it will likely be done on the main program cycle that
+immediately follows this call.  
 
 Requires:
   - pu8AntTxMessage_ points to an Ant formatted message where the first data byte
@@ -614,15 +765,15 @@ bool AntTxMessage(u8 *pu8AntTxMessage_)
   u8 u8Byte;
   u32 u32Length;
   u32 u32TimeOut = G_u32SystemTime1s;
-  u8 au8TxErrorMsg[] = "AntTx: msg already in progress\n\r";
-  u8 au8TxTimeoutMsg[] = "AntTx: SEN timeout\n\r";
-  u8 au8TxNoTokenMsg[] = "AntTx: No token\n\r";
-  u8 au8TxNoSyncMsg[] = "AntTx: No SYNC\n\r";
+  u8 au8TxInProgressMsg[] = "AntTx: msg already in progress\n\r";
+  u8 au8TxTimeoutMsg[]    = "AntTx: SEN timeout\n\r";
+  u8 au8TxNoTokenMsg[]    = "AntTx: No token\n\r";
+  u8 au8TxNoSyncMsg[]     = "AntTx: No SYNC\n\r";
 
   /* Check G_u32AntFlags first */
   if(G_u32AntFlags & (_ANT_FLAGS_TX_IN_PROGRESS | _ANT_FLAGS_RX_IN_PROGRESS) )
   {
-    DebugPrintf(au8TxErrorMsg);
+    DebugPrintf(au8TxInProgressMsg);
     return FALSE;
   }
   
@@ -907,6 +1058,7 @@ Function: AntQueueOutgoingMessage
 Description:
 Creates a new ANT message structure and adds it into Ant_psDataOutgoingMsgList.
 If the list is full, the message is not added.
+The Outgoing message list are the messages sent from the Host to the ANT chip.
 
 Requires:
   - pu8Message_ is an ANT-formatted message starting with LENGTH and ending with CHECKSUM
@@ -926,6 +1078,7 @@ bool AntQueueOutgoingMessage(u8 *pu8Message_)
   AntOutgoingMessageListType *psListParser;
   u8 au8AddMessageFailMsg[] = "\n\rNo space in AntQueueOutgoingMessage\n\r";
   
+  /* Add to the number of queued message */
   Ant_DebugQueuedDataMessages++;
 
   /* Allocate space for the new message - always do maximum message size */
@@ -1025,7 +1178,7 @@ Requires:
   - GGpu8AntRxBufferUnreadMsg points to the first byte of an unread verified ANT message
 
 Promises:
-  - Returns 1 if Ant_u8AntNewRxMessages == 0
+  - Returns 1 if Ant_u8AntNewRxMessages == 0 or the message exceeds the maximum allowed length
   - Otherwise, returns 0 and:
     - Ant_u8AntNewRxMessages--
     - GGpu8AntRxBufferUnreadMsg points to the first byte of the next unread verified ANT message
@@ -1034,7 +1187,9 @@ Promises:
 static u8 AntProcessMessage(void)
 {
   u8 u8MessageLength;
+  u8 u8Channel;
   u8 au8MessageCopy[MESG_MAX_SIZE];
+  AntExtendedDataType sExtendedData;
   
    /* Exit immediately if there are no messages in the RxBuffer */
 	if (!Ant_u8AntNewRxMessages)
@@ -1062,6 +1217,11 @@ static u8 AntProcessMessage(void)
   }
   /* Note: Ant_pu8AntRxBufferUnreadMsg is now pointing at the next unread message */
   
+  /* Get the channel number since it is needed for many things below (this value
+  will NOT be the channel for messages that do not include the channel number,
+  but that should be fine as long as the value is used in the correct context. */
+  u8Channel = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM];
+  
   /* Decide what to do based on the Message ID */
   switch( au8MessageCopy[BUFFER_INDEX_MESG_ID] )
   {
@@ -1070,30 +1230,63 @@ static u8 AntProcessMessage(void)
       /* Channel Message received: it is a Channel Response or Channel Event */
       if( au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID] != MESG_EVENT_ID )
       {
-        /* We have a Channel Response: parse it out based on the message ID to which the response applies */
+        /* We have a Channel Response: parse it out based on the message ID to which the 
+        response applies and post the result */
+        G_stMessageResponse.u8Channel = u8Channel;
+        G_stMessageResponse.u8MessageNumber = au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID];
+        G_stMessageResponse.u8ResponseCode  = au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE];      
+        
         switch(au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID])
         {
+          case MESG_OPEN_SCAN_CHANNEL_ID:
+            DebugPrintf("Scanning ");
+            /* Fall through */
+            
           case MESG_OPEN_CHANNEL_ID:
+            G_au8AntMessageOpen[12] = u8Channel + 0x30;
             DebugPrintf(G_au8AntMessageOpen);
-            G_u32AntFlags |= _ANT_FLAGS_CHANNEL_OPEN;
-            G_u32AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN_PENDING;
+            
+            /* Only change the flags if the command was successful */
+            if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
+            {
+              G_asAntChannelConfiguration[u8Channel].AntFlags |= _ANT_FLAGS_CHANNEL_OPEN;
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN_PENDING;
+            }
             break;
 
           case MESG_CLOSE_CHANNEL_ID:
+            G_au8AntMessageClose[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageClose);
-            G_u32AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+
+            /* Only change the flags if the command was successful */
+            if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
+            {
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+            }
             break;
 
           case MESG_ASSIGN_CHANNEL_ID:
+            G_au8AntMessageAssign[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageAssign);
             break;
 
           case MESG_UNASSIGN_CHANNEL_ID:
+            G_au8AntMessageUnassign[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageUnassign);
-            G_u32AntFlags &= ~(ANT_CONFIGURED | _ANT_FLAGS_CHANNEL_OPEN_PENDING | _ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+
+            /* Only change the flags if the command was successful */
+            if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
+            {
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_OPEN_PENDING | _ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN); /* !!!! 2016-06-14 */
+            }
             break;
  
           default:
+            G_au8AntMessageUnhandled[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
+            G_au8AntMessageUnhandled[24] = HexToASCIICharLower( (au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID] >> 4) & 0x0F );
+            G_au8AntMessageUnhandled[25] = HexToASCIICharLower( (au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID] & 0x0F) );
+            G_au8AntMessageUnhandled[36] = HexToASCIICharLower( (au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] >> 4) & 0x0F );
+            G_au8AntMessageUnhandled[37] = HexToASCIICharLower( (au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] & 0x0F) );
             DebugPrintf(G_au8AntMessageUnhandled);
             break;
         } /* end switch */
@@ -1116,6 +1309,7 @@ static u8 AntProcessMessage(void)
         {
           case RESPONSE_NO_ERROR: 
           {
+            AntTickExtended(RESPONSE_NO_ERROR);
             break;
           }
 
@@ -1132,7 +1326,7 @@ static u8 AntProcessMessage(void)
             }
             
             /* Queue an ANT_TICK message to the application message list. */
-            AntTick(EVENT_RX_FAIL);
+            AntTickExtended(au8MessageCopy);
             break;
           }
 
@@ -1140,7 +1334,7 @@ static u8 AntProcessMessage(void)
           {
             /* The slave missed enough consecutive messages so it goes back to search: communicate this to the
             application in case it matters. Could also queue a debug message here. */
-            AntTick(EVENT_RX_FAIL_GO_TO_SEARCH);
+            AntTickExtended(au8MessageCopy);
             break;
           }
 
@@ -1148,44 +1342,47 @@ static u8 AntProcessMessage(void)
           {
             /* If this is a master device, then EVENT_TX means it's time to queue the 
             next message */
-            if(G_stAntSetupData.AntChannelType == CHANNEL_TYPE_MASTER)
+            if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_MASTER)
             {
-              AntTick(EVENT_TX);
+              AntTickExtended(au8MessageCopy);
             }
             break;
           } 
 
           case EVENT_TRANSFER_TX_COMPLETED: /* ACK received from an acknowledged data message */
           { 
-            G_u32AntFlags |= _ANT_FLAGS_GOT_ACK;
+            G_asAntChannelConfiguration[u8Channel].AntFlags |= _ANT_FLAGS_GOT_ACK;
 
-            AntTick(EVENT_TRANSFER_TX_COMPLETED);
+            AntTickExtended(au8MessageCopy);
             break;
           } 
 
           case EVENT_TRANSFER_TX_FAILED: /* ACK was not received from an acknowledged data message */
           { 
             /* Regardless of complete or fail, it is time to send the next message */
-            AntTick(EVENT_TRANSFER_TX_FAILED);
+            AntTickExtended(au8MessageCopy);
             break;
           } 
 
           case EVENT_RX_SEARCH_TIMEOUT: /* The ANT channel is going to close due to search timeout */
           {
             /* Forward this to application */
-            AntTick(EVENT_RX_SEARCH_TIMEOUT);
+            AntTickExtended(au8MessageCopy);
             break;
           }
  
           case EVENT_CHANNEL_CLOSED: /* The ANT channel is now closed */
           {
             DebugPrintf("Channel closed\n\r");
-            G_u32AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+            G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
             break;
           }
           
           /* All other messages are unexpected for now */
           default:
+            DebugPrintNumber(au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE]);
+            DebugPrintf(": unexpected channel event\n\r");
+
             G_u32AntFlags |= _ANT_FLAGS_UNEXPECTED_EVENT;
             break;
         } /* end Ant_pu8AntRxBufferUnreadMsg[EVENT_CODE_INDEX] */
@@ -1195,27 +1392,18 @@ static u8 AntProcessMessage(void)
     } /* end case MESG_RESPONSE_EVENT_ID */
 
     case MESG_ACKNOWLEDGED_DATA_ID: /* An acknowledged data message was received */
-    { 
-      AntQueueApplicationMessage(ANT_DATA, &au8MessageCopy[BUFFER_INDEX_MESG_DATA]);
-
-      /* If this is a slave device, then a data message received means it's time to send */
-      if(G_stAntSetupData.AntChannelType == CHANNEL_TYPE_SLAVE)
-      {
-        AntTick(RESPONSE_NO_ERROR);
-      }
+    /* Fall through */
       
-      break;
-    } /* end case MESG_ACKNOWLEDGED_DATA_ID */
-
     case MESG_BROADCAST_DATA_ID: /* A broadcast data message was received */
     { 
-      /* Put the data message into the application data buffer */ 
-      AntQueueApplicationMessage(ANT_DATA, &au8MessageCopy[BUFFER_INDEX_MESG_DATA]);
-
+      /* Parse the extended data and put the message to the application buffer */
+      AntParseExtendedData(au8MessageCopy, &sExtendedData);
+      AntQueueExtendedApplicationMessage(ANT_DATA, &au8MessageCopy[BUFFER_INDEX_MESG_DATA], &sExtendedData);
+      
       /* If this is a slave device, then a data message received means it's time to send */
-      if(G_stAntSetupData.AntChannelType == CHANNEL_TYPE_SLAVE)
+      if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_SLAVE)
       {
-        AntTick(RESPONSE_NO_ERROR);
+        AntTickExtended(RESPONSE_NO_ERROR);
       }
       
       break;
@@ -1256,7 +1444,7 @@ static u8 AntProcessMessage(void)
 
 
 /*-----------------------------------------------------------------------------/
-Function: AntTick
+Function: AntTickExtended
 
 Description:
 Queues an ANT_TICK message to the application message queue.
@@ -1267,30 +1455,44 @@ Requires:
 Promises:
   - A MESSAGE_ANT_TICK is queued to G_sAntApplicationMsgList
 */
-static void AntTick(u8 u8Code_)
+static void AntTickExtended(u8* pu8AntMessage_)
 {
   u8 au8Message[ANT_APPLICATION_MESSAGE_BYTES];
+  AntExtendedDataType sExtData;
 
   /* Update data to communicate the ANT_TICK to the application */
   au8Message[ANT_TICK_MSG_ID_INDEX]               = MESSAGE_ANT_TICK;
-  au8Message[ANT_TICK_MSG_EVENT_CODE_INDEX]       = u8Code_;
-  au8Message[ANT_TICK_MSG_SENTINEL1_INDEX]        = MESSAGE_ANT_TICK;
-  au8Message[ANT_TICK_MSG_SENTINEL2_INDEX]        = MESSAGE_ANT_TICK;
+  au8Message[ANT_TICK_MSG_CHANNEL_INDEX]          = *(pu8AntMessage_ + BUFFER_INDEX_CHANNEL_NUM);
+  au8Message[ANT_TICK_MSG_RESPONSE_TYPE_INDEX]    = *(pu8AntMessage_ + BUFFER_INDEX_RESPONSE_MESG_ID);
+  au8Message[ANT_TICK_MSG_EVENT_CODE_INDEX]       = *(pu8AntMessage_ + BUFFER_INDEX_RESPONSE_CODE);
   au8Message[ANT_TICK_MSG_SENTINEL3_INDEX]        = MESSAGE_ANT_TICK;
   au8Message[ANT_TICK_MSG_MISSED_HIGH_BYTE_INDEX] = Ant_u8SlaveMissedMessageHigh;
   au8Message[ANT_TICK_MSG_MISSED_MID_BYTE_INDEX]  = Ant_u8SlaveMissedMessageMid;
   au8Message[ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX]  = Ant_u8SlaveMissedMessageLow;
 
-  AntQueueApplicationMessage(ANT_TICK, &au8Message[ANT_TICK_MSG_ID_INDEX]);
+  /* Extended data is not valid for an ANT_TICK message */
+  sExtData.u8Channel    = au8Message[ANT_TICK_MSG_CHANNEL_INDEX];
+  sExtData.u16DeviceID  = 0xFF;
+  sExtData.u8DeviceType = 0xFF;
+  sExtData.u8TransType  = 0xFF;
+  sExtData.s8RSSI       = 0xFF;
+  sExtData.u8Flags      = 0xFF;
+  
+  /* Data is ready so queue it in to the application buffer */
+  AntQueueExtendedApplicationMessage(ANT_TICK, 
+                                     &au8Message[ANT_TICK_MSG_ID_INDEX],
+                                     &sExtData);
 
-} /* end AntTick() */
+} /* end AntTickExtended() */
 
 
 /*-----------------------------------------------------------------------------/
-Function: AntQueueApplicationMessage
+Function: AntQueueExtendedApplicationMessage
 
 Description:
 Creates a new ANT data message structure and adds it to G_sAntApplicationMsgList.
+The Application list used to communicate message information between the ANT driver and
+the ANT_API simplified interface task.
 
 Requires:
   - eMessageType_ specifies the type of message
@@ -1304,7 +1506,9 @@ Promises:
   - Returns TRUE if the entry is added successfully.
   - Returns FALSE if the malloc fails or the list is full.
 */
-static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, u8 *pu8DataSource_)
+static bool AntQueueExtendedApplicationMessage(AntApplicationMessageType eMessageType_, 
+                                               u8* pu8DataSource_, 
+                                               AntExtendedDataType* psExtData_)
 {
   AntApplicationMsgListType *psNewMessage;
   AntApplicationMsgListType *psListParser;
@@ -1325,8 +1529,18 @@ static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, 
     psNewMessage->au8MessageData[i] = *(pu8DataSource_ + i);
   }
   
+  /* Copy basic items */
   psNewMessage->u32TimeStamp  = G_u32SystemTime1ms;
   psNewMessage->eMessageType  = eMessageType_;
+  
+  /* Copy all extended data fields */
+  psNewMessage->sExtendedData.u8Channel    = psExtData_->u8Channel;
+  psNewMessage->sExtendedData.u16DeviceID  = psExtData_->u16DeviceID;
+  psNewMessage->sExtendedData.u8DeviceType = psExtData_->u8DeviceType;
+  psNewMessage->sExtendedData.u8TransType  = psExtData_->u8TransType;
+  psNewMessage->sExtendedData.u8Flags      = psExtData_->u8Flags;
+  psNewMessage->sExtendedData.s8RSSI       = psExtData_->s8RSSI;
+    
   psNewMessage->psNextMessage = NULL;
 
   /* Insert into an empty list */
@@ -1363,7 +1577,7 @@ static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, 
     
   return(TRUE);
     
-} /* end AntQueueApplicationMessage() */
+} /* end AntQueueExtendedApplicationMessage() */
 
 
 /*-----------------------------------------------------------------------------/
@@ -1424,17 +1638,16 @@ void AntSM_Idle(void)
   {
     /* At least one flag is set, so print header and parse out */
     DebugPrintf(au8AntFlagAlert);
-    u8MsgIndex++;
     for(u8 i = 0; i < ANT_ERROR_FLAGS_COUNT; i++)
     {
       /* Check if current flag is set */
       if(G_u32AntFlags & u32MsgBitMask)
       {
-        /* Print the error message and clear the flag */
+        /* Print the error message */
         DebugPrintf(au8AntFlagMessages[u8MsgIndex]);
-        G_u32AntFlags &= ~u32MsgBitMask;
       }
       u32MsgBitMask <<= 1;
+      u8MsgIndex++;
     }
     
     /* Clear all the error flags now that they have been reported */
@@ -1507,7 +1720,7 @@ void AntSM_TransmitMessage(void)
       Ant_u32CurrentTxMessageToken = 0;
       G_u32AntFlags &= ~_ANT_FLAGS_TX_IN_PROGRESS;
 
-      /* Wait for SEN to deassert so we know ANT is totally ready for the text
+      /* Wait for SEN to deassert so we know ANT is totally ready for the next
       transaction.  This takes about 170us, so block in this state until that's over */
       while ( IS_SEN_ASSERTED() && (Ant_u32TxTimer < ANT_ACTIVITY_TIME_COUNT) )
       {

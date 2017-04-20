@@ -27,7 +27,7 @@ typedef enum {SLIDER0, SLIDER1} SliderNumberType;
 Constants / Definitions
 ***********************************************************************************************************************/
 #define QTOUCH_MEASUREMENT_TIME_MS  (u32)25               /* Interval in ms between captouch sweeps */
-#define QTOUCH_DEBUG_PRINT_PERIOD   (u32)250              /* Interval in ms between printing captouch current values */
+#define QTOUCH_DEBUG_PRINT_PERIOD   (u32)200              /* Interval in ms between printing captouch current values */
 
 
 /***********************************************************************************************************************

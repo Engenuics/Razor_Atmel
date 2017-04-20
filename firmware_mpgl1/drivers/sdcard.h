@@ -125,6 +125,7 @@ SdCardStateType SdGetStatus(void);
 bool SdReadBlock(u32 u32BlockAddress_);
 bool SdWriteBlock(u32 u32BlockAddress_);             
 bool SdGetReadData(u8* pu8Destination_);
+void CheckTimeout(u32 u32Time_);
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

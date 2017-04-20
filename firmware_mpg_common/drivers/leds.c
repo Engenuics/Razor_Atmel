@@ -10,7 +10,7 @@ regular 1ms calls to LedUpdate().
 ------------------------------------------------------------------------------------------------------------------------
 API:
 LedNumberType: 
-  MPGL1     - WHITE, PURPLE, BLUE, CYAN, GREEN, YELLOW, ORANGE, RED, LCD_RED, LCD_GREEN, LCD_BLUE
+  EIE1     - WHITE, PURPLE, BLUE, CYAN, GREEN, YELLOW, ORANGE, RED, LCD_RED, LCD_GREEN, LCD_BLUE
   MPGL2_R01 - BLUE, GREEN, YELLOW, RED, LCD_BL
   MPGL2     - BLUE0, BLUE1, BLUE2, BLUE3, GREEN0, GREEN1, GREEN2, GREEN3, RED0, RED1, RED2, RED3, LCD_BL
 
@@ -77,7 +77,7 @@ Variable names shall start with "Led_" and be declared as static.
 
 /************ %LED% EDIT BOARD-SPECIFIC GPIO DEFINITIONS BELOW ***************/
 
-#ifdef MPGL1
+#ifdef EIE1
 /* LED locations: order must correspond to the order set in LedNumberType in the header file. */
 static u32 Led_au32BitPositions[] = {PB_13_LED_WHT, PB_14_LED_PRP, PB_18_LED_BLU, PB_16_LED_CYN,
                                      PB_19_LED_GRN, PB_17_LED_YLW, PB_15_LED_ORG, PB_20_LED_RED,
@@ -98,7 +98,7 @@ static LedConfigType Leds_asLedArray[TOTAL_LEDS] =
  {LED_PWM_MODE, LED_PWM_100, LED_PWM_100, LED_PWM_DUTY_HIGH, LED_ACTIVE_HIGH, LED_PORTB}, /* LCD_GREEN  */
  {LED_PWM_MODE, LED_PWM_100, LED_PWM_100, LED_PWM_DUTY_HIGH, LED_ACTIVE_HIGH, LED_PORTB}  /* LCD_BLUE   */
 };   
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 
@@ -354,18 +354,18 @@ void LedInitialize(void)
   /* Turn all LEDs on full, then fade them out over a few seconds */
   for(u8 i = 20; i > 0; i--)
   {
-#if STARTUP_SOUND
+#ifdef STARTUP_SOUND
     /* Configure Buzzers to provide some audio during start up */
     PWMAudioSetFrequency(BUZZER1, u32Buzzer1Frequency);
     PWMAudioOn(BUZZER1);
-#ifdef  MPGL1
+#ifdef  EIE1
     PWMAudioSetFrequency(BUZZER2, u32Buzzer2Frequency);
     PWMAudioOn(BUZZER2);
-#endif /* MPGL1 */
+#endif /* EIE1 */
 #endif /* STARTUP_SOUND */
     
-    /* Spend 40ms in each level of intensity */
-    for(u16 j = 40; j > 0; j--)
+    /* Spend a little bit of time in each level of intensity */
+    for(u16 j = 20; j > 0; j--)
     {
       u32Timer = G_u32SystemTime1ms;
       while( !IsTimeUp(&u32Timer, 1) );
@@ -374,7 +374,7 @@ void LedInitialize(void)
     /* Pause for a bit on the first iteration to show the LEDs on for little while */
     if(i == 20)
     {
-      while( !IsTimeUp(&u32Timer, 1500) );
+      while( !IsTimeUp(&u32Timer, 200) );
     }
     
     /* Set the LED intensity for the next iteration */
@@ -392,12 +392,12 @@ void LedInitialize(void)
   LedUpdate();
   while( !IsTimeUp(&u32Timer, 200) );
   
-#if STARTUP_SOUND
+#ifdef STARTUP_SOUND
   /* Turn off the buzzers */
   PWMAudioOff(BUZZER1);
-#ifdef  MPGL1
+#ifdef  EIE1
   PWMAudioOff(BUZZER2);
-#endif /* MPGL1 */
+#endif /* EIE1 */
   
 #endif /* STARTUP_SOUND */
 
@@ -408,7 +408,7 @@ void LedInitialize(void)
     Leds_asLedArray[0].eMode = LED_NORMAL_MODE;
   }
 
-#ifdef MPGL1
+#ifdef EIE1
   LedOn(LCD_RED);
   LedOn(LCD_GREEN);
   LedOn(LCD_BLUE);

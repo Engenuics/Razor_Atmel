@@ -1,9 +1,14 @@
 Debug/
-settings/
+*.dep
+*.bat
 *.TMP
+<<<<<<< HEAD
 firmware_mpg_common/application/user_app_heart_and_soul.c
 firmware_mpg_common/application/user_app_heart_and_soul.h
 *.bat
 firmware_mpgl1/iar_7_20_1/settings/mpgl1-efmw-01.dni
 *.dep
 firmware_mpgl2/iar_7_20_1/settings/mpgl2-efmw-01.dni
+=======
+*.wspos
+>>>>>>> refs/remotes/origin/master

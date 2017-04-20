@@ -44,6 +44,7 @@
 #define RADIO_TX_POWER_MINUS10DBM                  ((UCHAR)0x01)
 #define RADIO_TX_POWER_MINUS5DBM                   ((UCHAR)0x02)
 #define RADIO_TX_POWER_0DBM                        ((UCHAR)0x03)
+#define RADIO_TX_POWER_4DBM                        ((UCHAR)0x04)
 
 //////////////////////////////////////////////
 // Default System Definitions
