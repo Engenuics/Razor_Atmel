@@ -7,11 +7,12 @@ Button functions and state machine.  The application handles all debouncing and 
 ------------------------------------------------------------------------------------------------------------------------
 API:
 Types:
-The argument u32Button_ is either BUTTON0 or BUTTON1.  
+MPG1: The argument u32Button_ is either BUTTON0, BUTTON1, BUTTON2, or BUTTON3.  
+MPG1: The argument u32Button_ is either BUTTON0 or BUTTON1.  
 
 Public:
 bool IsButtonPressed(u32 u32Button_)
-Returns TRUE if Button_aeCurrentState[eButton_] is currently pressed (and debounced).
+Returns TRUE if a particular button is currently pressed (and debounced).
 
 bool WasButtonPressed(u32 u32Button_)
 Returns TRUE if a particular button was pressed since last time it was checked even if it is no longer pressed.
@@ -73,7 +74,7 @@ static bool Button_abNewPress[TOTAL_BUTTONS];               /* Flags to indicate
 /* Add all of the GPIO pin names for the buttons in the system.  
 The order of the definitions below must match the order of the definitions provided in configuration.h */ 
 
-#ifdef MPGL1
+#ifdef EIE1
 static const u32 Button_au32ButtonPins[TOTAL_BUTTONS] = 
 {
   PA_17_BUTTON0, PB_00_BUTTON1, PB_01_BUTTON2, PB_02_BUTTON3
@@ -87,7 +88,7 @@ static ButtonConfigType Buttons_asArray[TOTAL_BUTTONS] =
  {BUTTON_ACTIVE_LOW, BUTTON_PORTB}, /* BUTTON2  */
  {BUTTON_ACTIVE_LOW, BUTTON_PORTB}, /* BUTTON3  */
 };   
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 static const u32 Button_au32ButtonPins[TOTAL_BUTTONS] = 
@@ -123,10 +124,10 @@ to return TRUE.
 
 Requires:
   - u32Button_ is a valid button index
-  - Button_aeCurrentState[u32Button_] is valid
+  - Button_aeCurrentState[u32Button_] is a valid index
  
 Promises:
-  - Returns TRUE if Button_aeCurrentState[eButton_] is pressed; otherwise returns FALSE
+  - Returns TRUE if Button_aeCurrentState[u32Button_] is pressed; otherwise returns FALSE
 */
 bool IsButtonPressed(u32 u32Button_)
 {
@@ -182,7 +183,7 @@ Requires:
   - u32Button_ is a valid button index
  
 Promises:
-  - The flag at Button_abNewPress[eButton_] is set to FALSE
+  - The flag at Button_abNewPress[u32Button_] is set to FALSE
 */
 void ButtonAcknowledge(u32 u32Button_)
 {
@@ -228,16 +229,17 @@ bool IsButtonHeld(u32 u32Button_, u32 u32ButtonHeldTime_)
 Function: ButtonInitialize
 
 Description:
-Configures the button system for the product including enabling button GPIO interrupts.  
+Configures the button system for the product including enabling button GPIO 
+interrupts. For all buttons, the default "Input Change Interrupt" is sufficient
+for providing the functionality needed.
 
 Requires:
   - GPIO configuration is already complete for all button inputs
   - Button interrupt initializations and handler functions are ready
  
 Promises:
-  - G_abButtonDebounceActive, LGaeButtonPreviousState and Button_aeCurrentState 
-    are intialized
-  - GGstButtonTrackballPosition fields are all initialized to default values
+  - G_abButtonDebounceActive, Button_aeCurrentState and Button_aeNewState 
+    are initialized
   - The button state machine is initialized to Idle
 */
 void ButtonInitialize(void)

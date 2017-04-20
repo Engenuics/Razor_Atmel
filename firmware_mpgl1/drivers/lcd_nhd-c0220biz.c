@@ -6,14 +6,15 @@ Driver for Newhaven Display NHD-C0220BiZ ASCII LCD.
 
 This application requires an I²C resource to output data.
 
-The displayable area of the screen is 20 character x 2 lines, though the LCD RAM will accomodate
+The displayable area of the screen is 20 characters x 2 lines, though the LCD RAM will accomodate
 40 characters per line (so can be used for scrolling text applications).
 Each character has a 1-byte address. Nmemonics are defined for the main locations
 
 Line #      Left most address             Last printed char           Right most address
-  1       0x00 (LINE1_START_ADDR)         0x13 (LINE1_END)          0x27 (LINE1_END_ABSOLUTE)      
-  2       0x40 (LINE2_START_ADDR)         0x53 (LINE2_END)          0x67 (LINE2_END_ABSOLUTE)      
+  1       0x00 (LINE1_START_ADDR)       0x13 (LINE1_END_ADDR)       0x27 (LINE1_END_ABSOLUTE)      
+  2       0x40 (LINE2_START_ADDR)       0x53 (LINE2_END_ADDR)       0x67 (LINE2_END_ABSOLUTE)      
 
+------------------------------------------------------------------------------------------------------------------------
 API
 void LcdInitialize(void)
 Initializes the LCD task and manually sends a message to the LCD.
@@ -37,8 +38,14 @@ LCDCommand(LCD_DISPLAY_CMD | LCD_DISPLAY_ON | LCD_DISPLAY_CURSOR);
 
 void LCDMessage(u8 u8Address_, u8 *u8Message_)
 Sends a text message to the LCD to be printed at the address specified.  
+e.g. 
+u8 au8Message[] = "Hello world!";
+LCDMessage(LINE1_START_ADDR, au8Message);
 
-
+void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_)
+Clears a number of chars starting from the address specified.  This function does not span rows.
+e.g. Clear "world!" from the screen after the above example.
+LCDClearChars(LINE1_START_ADDR + 5, 6);
 
 ***********************************************************************************************************************/
 
@@ -96,12 +103,17 @@ void LCDCommand(u8 u8Command_)
 {
   static u8 au8LCDWriteCommand[] = {LCD_CONTROL_COMMAND, 0x00};
 
-  /* $$$$ Update the command paramter into the command array */
+  /* Update the command paramter into the command array */
   au8LCDWriteCommand[1] = u8Command_;
     
-  /* $$$$ Queue the command to the I²C application */
+  /* Queue the command to the I²C application */
   TWI0WriteData(LCD_ADDRESS, sizeof(au8LCDWriteCommand), &au8LCDWriteCommand[0], STOP);
 
+  /* Add a delay during initialization to let the command send properly */
+  if(G_u32SystemFlags & _SYSTEM_INITIALIZING )
+  {
+    for(u32 i = 0; i < 100000; i++);
+  }
   
 } /* end LCDCommand() */
 
@@ -177,7 +189,7 @@ void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_)
   }
       
   /* Queue the message */
-  TWI0WriteData(LCD_ADDRESS, u8Index, au8LCDMessage, STOP);
+  TWI0WriteData(LCD_ADDRESS, u8CharactersToClear_ + 1, au8LCDMessage, STOP);
       	
 } /* end LCDClearChars() */
 
@@ -206,7 +218,7 @@ void LcdInitialize(void)
     LCD_CONTRAST_CMD, LCD_DISPLAY_SET_CMD, LCD_FOLLOWER_CMD 
   };
                  /* "012345567890123456789" */
-  u8 au8Welcome[] = "WELCOME!             ";
+  u8 au8Welcome[] = "RAZOR SAM3U2 ASCII   ";
   
   /* State to Idle */
   Lcd_StateMachine = LcdSM_Idle;

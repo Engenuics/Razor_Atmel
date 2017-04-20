@@ -16,16 +16,64 @@ The terminal program used to interface to the debugger should be set to:
 - send "CR" for new line
 - 115200-8-N-1
 
+
+DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
+USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
+INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
+RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
+
+------------------------------------------------------------------------------------------------------------------------
+API:
+Types: none
+
+Globals:
+G_au8DebugScanfBuffer[] is the DebugScanf() input buffer that can be read directly
+G_u8DebugScanfCharCount holds number of characters in Debug_au8ScanfBuffer
+Both of these variables are cleared whenever DebugScanf() is called.
+
+Constants:
+DEBUG_SCANF_BUFFER_SIZE is the size of G_au8DebugScanfBuffer and thus the max of G_u8DebugScanfCharCount
+
+Public:
+u32 DebugPrintf(u8* u8String_)
+Queues the string pointed to by u8String_ to the Debug port.  The string must be
+null-terminated.  It may also contain control charactesr like newline (\n) and line feed (\f)
+e.g.
+u8 u8String[] = "A string to print.\n\r"
+DebugPrintf(u8String);
+
+void DebugLineFeed(void)
+Queues a <CR><LF> sequence to the debug UART.
+e.g.
+DebugLineFeed();
+
+void DebugPrintNumber(u32 u32Number_)
+Formats a long into an ASCII string and queues to print.  Leading zeros are not printed.
+e.g.
+u32 u32Number = 1234567;
+DebugPrintNumber(u32Number);
+
+u8 DebugScanf(u8* au8Buffer_)
+Copies the current input buffer to au8Buffer_ and returns the number of new characters.
+Everytime DebugScanf is called, the 
+e.g.
+u8 u8MyBuffer[SCANF_BUFFER_SIZE]
+u8 u8NumChars;
+u8NumChars = DebugScanf(u8MyBuffer);
+
 ***********************************************************************************************************************/
 
 #include "configuration.h"
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_"
+All Global variable names shall start with "G_Debug"
 ***********************************************************************************************************************/
 /* New variables */
 u32 G_u32DebugFlags;                                     /* Debug flag register */
+
+u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE]; /* Space to latch characters for DebugScanf() */
+u8 G_u8DebugScanfCharCount = 0;                    /* Counter for # of characters in Debug_au8ScanfBuffer */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -64,7 +112,7 @@ static u8 Debug_u8Command;                               /* A validated command 
 
 /* Add commands by updating debug.h in the Command-Specific Definitions section, then update this list
 with the function name to call for the corresponding command: */
-#ifdef MPGL1
+#ifdef EIE1
 DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugCommandPrepareList},
                                                        {DEBUG_CMD_NAME01, DebugCommandLedTestToggle},
                                                        {DEBUG_CMD_NAME02, DebugCommandSysTimeToggle},
@@ -75,10 +123,8 @@ DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugC
                                                        {DEBUG_CMD_NAME07, DebugCommandDummy} 
                                                      };
 
-static bool Debug_bLedTestActive = TRUE;
-
 static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 ASCII LCD DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugCommandPrepareList},
@@ -91,7 +137,6 @@ DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugC
                                                        {DEBUG_CMD_NAME07, DebugCommandDummy} 
                                                      };
 
-static bool Debug_bLedTestActive = TRUE;
 static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 DOT MATRIX DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
 #endif /* MPGL2 */
 
@@ -218,6 +263,89 @@ void DebugPrintNumber(u32 u32Number_)
 
 
 /*----------------------------------------------------------------------------------------------------------------------
+Function: DebugScanf
+
+Description:
+Copies G_u8DebugScanfCharCount characters from G_au8DebugScanfBuffer to a target array 
+so the input can be saved.  Once copied, G_au8DebugScanfBuffer is cleared and
+G_u8DebugScanfCharCount is zeroed.
+
+Requires:
+  - G_u8DebugScanfCharCount holds the number of characters in the G_au8DebugScanfBuffer
+  - au8Buffer_ points to an array large enough to hold G_u8DebugScanfCharCount characters
+  - Debug task is blocked here so new characters are not added
+
+Promises:
+  - G_u8DebugScanfCharCount characters copied to *au8Buffer_
+  - G_au8DebugScanfBuffer[i] = '\0', where 0 <= i <= DEBUG_SCANF_BUFFER_SIZE
+  - G_u8DebugScanfCharCount = 0
+*/
+u8 DebugScanf(u8* au8Buffer_)
+{
+  u8 u8Temp = G_u8DebugScanfCharCount;
+  
+  /* Copy the characters, clearing as we go */
+  for(u8 i = 0; i < G_u8DebugScanfCharCount; i++)
+  {
+    *(au8Buffer_ + i) = G_au8DebugScanfBuffer[i];
+    G_au8DebugScanfBuffer[i] = '\0';
+  }
+  
+  G_u8DebugScanfCharCount = 0;
+  return u8Temp;
+  
+} /* end DebugScanf() */
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: DebugSetPassthrough
+
+Description:
+Puts the Debug task in Passthrough mode so ALL characters received are put in to the Scanf buffer and
+the Debug task does not look for input for the menu system. This allows task to have full access to 
+terminal input without the Debug task printing messages or stealing Backspace characters!
+
+Passthrough mode does NOT disable any other Debug functions that have already been enabled.  For example,
+if you want the 1ms timing violation warning you can enable this and then enable Passthrough mode.
+
+Requires:
+  -
+
+Promises:
+  - G_u32DebugFlags _DEBUG_PASSTHROUGH is set
+*/
+void DebugSetPassthrough(void)
+{
+  G_u32DebugFlags |= _DEBUG_PASSTHROUGH;
+  
+  DebugPrintf("\n\n\r***Debug Passthrough enabled***\n\n\r");
+
+} /* end DebugSetPassthrough */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+Function: DebugClearPassthrough
+
+Description:
+Takes the Debug task out of Passthrough mode.
+
+Requires:
+  -
+
+Promises:
+  - G_u32DebugFlags _DEBUG_PASSTHROUGH is cleared
+*/
+void DebugClearPassthrough(void)
+{
+  G_u32DebugFlags &= ~_DEBUG_PASSTHROUGH;
+  
+  DebugPrintf("\n\n\r***Debug Passthrough disabled***\n\n\r");
+  
+} /* end DebugClearPassthrough */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 Function: SystemStatusReport
 
 Description:
@@ -235,18 +363,17 @@ Promises:
 */
 void SystemStatusReport(void)
 {
-
-  u8 au8SystemPassed[] = "NONE";
+  u8 au8SystemPassed[] = "No failed tasks.";
   u8 au8SystemReady[] = "\n\rInitialization complete. Type en+c00 for debug menu.  Failed tasks:\n\r";
   u32 u32TaskFlagMaskBit = (u32)0x01;
   bool bNoFailedTasks = TRUE;
 
-#ifdef MPGL1
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "SD"};
-#endif /* MPGL1 */
+#ifdef EIE1
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "SD"};
+#endif /* EIE1 */
 
 #ifdef MPGL2
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "CAPTOUCH"};
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "CAPTOUCH"};
 #endif /* MPGL2 */
 
   /* Announce init complete then report any tasks that failed init */
@@ -301,6 +428,13 @@ void DebugInitialize(void)
   for (u16 i = 0; i < DEBUG_RX_BUFFER_SIZE; i++)
   {
     Debug_au8RxBuffer[i] = 0;
+  }
+
+  /* Clear the scanf buffer and counter */
+  G_u8DebugScanfCharCount = 0;
+  for (u8 i = 0; i < DEBUG_SCANF_BUFFER_SIZE; i++)
+  {
+    G_au8DebugScanfBuffer[i] = 0;
   }
 
   /* Initailze startup values and the command array */
@@ -406,6 +540,7 @@ static void DebugCommandPrepareList(void)
   au8CommandLine[3] = ' ';
   au8CommandLine[DEBUG_CMD_PREFIX_LENGTH + DEBUG_CMD_NAME_LENGTH] = '\n';
   au8CommandLine[DEBUG_CMD_PREFIX_LENGTH + DEBUG_CMD_NAME_LENGTH + 1] = '\r';
+  au8CommandLine[DEBUG_CMD_PREFIX_LENGTH + DEBUG_CMD_NAME_LENGTH + 2] = '\0';
 
   /* Prepare a nicely formatted list of commands */
   DebugPrintf(au8ListHeading);
@@ -462,7 +597,8 @@ Function: DebugCommandLedTestToggle
 
 Description:
 Toggles the active state of the LED test which allows typed characters corresponding to LED colors
-to toggle those LEDs on or off.
+to toggle those LEDs on or off.  LEDs are started all ON.  They are left in their current state when
+the function exits.
 */
 static void DebugCommandLedTestToggle(void)
 {
@@ -479,6 +615,50 @@ static void DebugCommandLedTestToggle(void)
   {
     G_u32DebugFlags |= _DEBUG_LED_TEST_ENABLE;
     DebugPrintf(G_au8MessageON);
+    
+#ifdef MPG1
+    LedOn(WHITE);
+    LedOn(PURPLE);
+    LedOn(BLUE);
+    LedOn(CYAN);
+    LedOn(GREEN);
+    LedOn(YELLOW);
+    LedOn(ORANGE);
+    LedOn(RED);
+#endif /* MPG 1 */   
+    
+    #ifdef MPG1
+    LedOn(WHITE);
+    LedOn(PURPLE);
+    LedOn(BLUE);
+    LedOn(CYAN);
+    LedOn(GREEN);
+    LedOn(YELLOW);
+    LedOn(ORANGE);
+    LedOn(RED);
+#endif /* MPG 1 */
+
+#ifdef MPGL2
+#ifdef MPGL2_R01
+    LedOn(BLUE);
+    LedOn(GREEN);
+    LedOn(YELLOW);
+    LedOn(RED);
+#else
+    LedOn(BLUE0);
+    LedOn(BLUE1);
+    LedOn(BLUE2);
+    LedOn(BLUE3);
+    LedOn(RED0);
+    LedOn(RED1);
+    LedOn(RED2);
+    LedOn(RED3);
+    LedOn(GREEN0);
+    LedOn(GREEN1);
+    LedOn(GREEN2);
+    LedOn(GREEN3);
+#endif /* MPGL2_R01 */
+#endif /* MPGL2 */
   }
   
 } /* end DebugCommandLedTestToggle() */
@@ -500,7 +680,7 @@ Promises:
 static void DebugLedTestCharacter(u8 u8Char_)
 {
   /* Check the char to see if an LED should be toggled */  
-#ifdef MPGL1
+#ifdef EIE1
   if(u8Char_ == 'W')
   {
     LedToggle(WHITE);
@@ -541,7 +721,7 @@ static void DebugLedTestCharacter(u8 u8Char_)
     LedToggle(RED);
   } 
 
-#endif /* MPGL1 */
+#endif /* EIE1 */
   
 #ifdef MPGL2
   
@@ -625,8 +805,6 @@ static void DebugCommandSysTimeToggle(void)
 } /* end DebugCommandSysTimeToggle() */
 
 #ifdef MPGL2 /* MPGL2 only tests */
-
-
 /*----------------------------------------------------------------------------------------------------------------------
 Function: DebugCommandCaptouchValuesToggle
 
@@ -636,6 +814,7 @@ Toggles printing the current Captouch horizontal and vertical values.
 static void DebugCommandCaptouchValuesToggle(void)
 {
   u8 au8CaptouchDisplayMessage[] = "\n\rDisplay Captouch values ";
+  u8 au8CaptouchOnMessage[] = "No values displayed if Captouch is OFF\n\r";
   
   /* Print message and toggle the flag */
   DebugPrintf(au8CaptouchDisplayMessage);
@@ -648,6 +827,7 @@ static void DebugCommandCaptouchValuesToggle(void)
   {
     G_u32DebugFlags |= _DEBUG_CAPTOUCH_VALUES_ENABLE;
     DebugPrintf(G_au8MessageON);
+    DebugPrintf(au8CaptouchOnMessage);
   }
   
 } /* end DebugCommandCaptouchValuesToggle() */
@@ -684,25 +864,39 @@ void DebugSM_Idle(void)
   {
     /* Grab a copy of the current byte and echo it back */
     u8CurrentByte = *Debug_pu8RxBufferParser;
-    
-    /* If the LED test is active, toggle LEDs based on characters */
-    if(Debug_bLedTestActive == TRUE)
-    {
-      DebugLedTestCharacter(u8CurrentByte);
-    }
-    
+        
     /* Process the character */
     switch (u8CurrentByte)
     {
       /* Backspace: update command buffer pointer and send sequence to delete the char on the terminal */
       case(ASCII_BACKSPACE): 
       {
-        if(Debug_pu8CmdBufferNextChar != &Debug_au8CommandBuffer[0])
-        {
-          Debug_pu8CmdBufferNextChar--;
-          Debug_u16CommandSize--;
+        /* Process for scanf as long as we are not in Passthrough mode */
+        if( G_u32DebugFlags & _DEBUG_PASSTHROUGH )
+        {        
+          if(G_u8DebugScanfCharCount < DEBUG_SCANF_BUFFER_SIZE)
+          {
+            G_au8DebugScanfBuffer[G_u8DebugScanfCharCount] = u8CurrentByte;
+            G_u8DebugScanfCharCount++;
+          }
         }
-        
+        else
+        {
+          if(G_u8DebugScanfCharCount != 0)
+          {
+            G_u8DebugScanfCharCount--;
+            G_au8DebugScanfBuffer[G_u8DebugScanfCharCount] = '\0';
+          }
+
+          /* Process for command */
+          if(Debug_pu8CmdBufferNextChar != &Debug_au8CommandBuffer[0])
+          {
+            Debug_pu8CmdBufferNextChar--;
+            Debug_u16CommandSize--;
+          }
+        }
+                
+        /* Send the Backspace sequence to clear the character on the terminal */
         DebugPrintf(au8BackspaceSequence);
         break;
       }
@@ -710,9 +904,11 @@ void DebugSM_Idle(void)
       /* Carriage return: change states to process new command and fall through to echo character */
       case(ASCII_CARRIAGE_RETURN): 
       {
-        bCommandFound = TRUE;
-        
-        Debug_pfnStateMachine = DebugSM_CheckCmd;
+        if( !( G_u32DebugFlags & _DEBUG_PASSTHROUGH) )
+        {
+          bCommandFound = TRUE;
+          Debug_pfnStateMachine = DebugSM_CheckCmd;
+        }
         
         /* Fall through to default */        
       }
@@ -720,27 +916,45 @@ void DebugSM_Idle(void)
       /* Add to command buffer and echo */
       default: 
       {
-        /* Echo the character and place it in the command buffer */
-        UartWriteByte(Debug_Uart, u8CurrentByte);
-        *Debug_pu8CmdBufferNextChar = u8CurrentByte;
-        Debug_pu8CmdBufferNextChar++;
-        Debug_u16CommandSize++;
-
-        /* If the command buffer is now full but the last character was not ASCII_CARRIAGE_RETURN, throw out the whole
-        buffer and report an error message */
-        if( (Debug_pu8CmdBufferNextChar >= &Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]) &&
-            (u8CurrentByte != ASCII_CARRIAGE_RETURN) )
+        /* Process for scanf */
+        if(G_u8DebugScanfCharCount < DEBUG_SCANF_BUFFER_SIZE)
         {
-          Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
-          Debug_u16CommandSize = 0;
+          G_au8DebugScanfBuffer[G_u8DebugScanfCharCount] = u8CurrentByte;
+          G_u8DebugScanfCharCount++;
+        }
+        
+        /* Echo the character back to the terminal */
+        UartWriteByte(Debug_Uart, u8CurrentByte);
+        
+        /* As long as Passthrough mode is not active, then update the command buffer */
+        if( !( G_u32DebugFlags & _DEBUG_PASSTHROUGH) )
+        {
+          *Debug_pu8CmdBufferNextChar = u8CurrentByte;
+          Debug_pu8CmdBufferNextChar++;
+          Debug_u16CommandSize++;
 
-          Debug_u32CurrentMessageToken = DebugPrintf(au8CommandOverflow);
+          /* If the command buffer is now full but the last character was not ASCII_CARRIAGE_RETURN, throw out the whole
+          buffer and report an error message */
+          if( (Debug_pu8CmdBufferNextChar >= &Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]) &&
+              (u8CurrentByte != ASCII_CARRIAGE_RETURN) )
+          {
+            Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
+            Debug_u16CommandSize = 0;
+
+            Debug_u32CurrentMessageToken = DebugPrintf(au8CommandOverflow);
+          }
         }
         break;
       }
 
     } /* end switch (u8RxChar) */
-      
+
+    /* If the LED test is active, toggle LEDs based on characters */
+    if(G_u32DebugFlags & _DEBUG_LED_TEST_ENABLE)
+    {
+      DebugLedTestCharacter(u8CurrentByte);
+    }
+    
     /* In all cases, advance the RxBufferParser pointer safely */
     Debug_pu8RxBufferParser++;
     if(Debug_pu8RxBufferParser >= &Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE])

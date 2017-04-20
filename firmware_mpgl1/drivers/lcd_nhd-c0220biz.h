@@ -89,8 +89,8 @@ space can be used for scrolling displays.
 																			    /* Bottom 6 bits are address (0x00-0x27 and 0x40-0x67) */
 #define		LINE1_START_ADDR		(u8)0x00 		/* Constant for defining cursor location for LINE1 */
 #define		LINE2_START_ADDR  	(u8)0x40 		/* Constant for defining cursor location for LINE2 */
-#define   LINE1_END           (u8)0x13    /* Constant for last displayable character address in LINE1 */
-#define   LINE2_END           (u8)0x53    /* Constant for last displayable character address in LINE2 */
+#define   LINE1_END_ADDR      (u8)0x13    /* Constant for last displayable character address in LINE1 */
+#define   LINE2_END_ADDR      (u8)0x53    /* Constant for last displayable character address in LINE2 */
 #define   LINE1_END_ABSOLUTE  (u8)0x27    /* Constant for last character RAM address in LINE1 */
 #define   LINE2_END_ABSOLUTE  (u8)0x67    /* Constant for last character RAM address in LINE2 */
 

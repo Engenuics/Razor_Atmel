@@ -7,6 +7,29 @@ Definitions for musical notes
 ***********************************************************************************************************************/
 
 
+/* Note lengths */
+#define MEASURE_TIME              (u16)2000  /* Time in ms for 1 measure (1 full note) - should be divisible by 16 */
+#define FULL_NOTE                 (u16)(MEASURE_TIME)
+#define HALF_NOTE                 (u16)(MEASURE_TIME / 2)
+#define QUARTER_NOTE              (u16)(MEASURE_TIME / 4)
+#define EIGHTH_NOTE               (u16)(MEASURE_TIME / 8)
+#define SIXTEENTH_NOTE            (u16)(MEASURE_TIME / 16)
+
+#define FN                        FULL_NOTE                 
+#define HN                        HALF_NOTE                 
+#define QN                        QUARTER_NOTE              
+#define EN                        EIGHTH_NOTE               
+#define SN                        SIXTEENTH_NOTE            
+
+/* Note length adjustments */
+#define REGULAR_NOTE_ADJUSTMENT   (u16)50
+#define STACCATO_NOTE_TIME        (u16)75
+#define HOLD_NOTE_ADJUSTMENT      (u16)0
+
+#define RT                        REGULAR_NOTE_ADJUSTMENT
+#define ST                        STACCATO_NOTE_TIME        
+#define HT                        HOLD_NOTE_ADJUSTMENT            
+
 /* Musical note definitions */
 #define NOTE_C3                   (u16)131
 #define NOTE_C3_SHARP             (u16)139
@@ -47,6 +70,18 @@ Definitions for musical notes
 #define NOTE_A5                   (u16)880
 #define NOTE_A5_SHARP             (u16)932
 #define NOTE_B5                   (u16)988
+#define NOTE_C6                   (u16)1047
+#define NOTE_C6_SHARP             (u16)1109
+#define NOTE_D6                   (u16)1175
+#define NOTE_D6_SHARP             (u16)1245
+#define NOTE_E6                   (u16)1319
+#define NOTE_F6                   (u16)1397
+#define NOTE_F6_SHARP             (u16)1480
+#define NOTE_G6                   (u16)1568
+#define NOTE_G6_SHARP             (u16)1661
+#define NOTE_A6                   (u16)1760
+#define NOTE_A6_SHARP             (u16)1865
+#define NOTE_B6                   (u16)1976
 #define NONE                      (u16)0
 
 /* Musical note definitions - short hand */
@@ -86,4 +121,16 @@ Definitions for musical notes
 #define A5                   (u32)NOTE_A5
 #define A5S                  (u32)NOTE_A5_SHARP
 #define B5                   (u32)NOTE_B5
+#define C6                   (u32)NOTE_C6
+#define C6S                  (u32)NOTE_C6_SHARP
+#define D6                   (u32)NOTE_D6
+#define D6S                  (u32)NOTE_D6_SHARP
+#define E6                   (u32)NOTE_E6
+#define F6                   (u32)NOTE_F6
+#define F6S                  (u32)NOTE_F6_SHARP
+#define G6                   (u32)NOTE_G6
+#define G6S                  (u32)NOTE_G6_SHARP
+#define A6                   (u32)NOTE_A6
+#define A6S                  (u32)NOTE_A6_SHARP
+#define B6                   (u32)NOTE_B6
 #define NO                   (u32)NONE

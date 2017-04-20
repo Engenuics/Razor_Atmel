@@ -8,4 +8,7 @@ firmware_mpgl2/iar_7_20_1/Debug/Obj/mpgl2-efmw-01.pbd.browse
 =======
 >>>>>>> refs/remotes/origin/master
 Debug/
+*.dep
+*.bat
 *.TMP
+*.wspos

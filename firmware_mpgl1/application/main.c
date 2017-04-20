@@ -2,7 +2,7 @@
 File: main.c                                                                
 
 Description:
-Container for the MPG firmware.  
+Container for the EiE firmware.  
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -44,7 +44,7 @@ void main(void)
   G_u32SystemFlags |= _SYSTEM_INITIALIZING;
 
   /* Low level initialization */
-  WatchDogSetup(); /* During development, set to not reset processor if timeout */
+  WatchDogSetup(); /* During development, does not reset processor if timeout */
   GpioSetup();
   ClockSetup();
   InterruptSetup();
@@ -57,23 +57,28 @@ void main(void)
 
   /* Debug messages through DebugPrintf() are available from here */
 
+  TimerInitialize();  
   SspInitialize();
   TWIInitialize();
-
+  Adc12Initialize();
+  
   LcdInitialize();
   LedInitialize();
   ButtonInitialize();
   AntInitialize();
+  AntApiInitialize();
   SdCardInitialize();
 
   /* Application initialization */
   BoardTestInitialize();
-  UserAppInitialize();
-  
+  UserApp1Initialize();
+  UserApp2Initialize();
+  UserApp3Initialize();
+
   /* Exit initialization */
   SystemStatusReport();
   G_u32SystemFlags &= ~_SYSTEM_INITIALIZING;
-  
+    
   /* Super loop */  
   while(1)
   {
@@ -83,17 +88,22 @@ void main(void)
     LedUpdate();
     ButtonRunActiveState();
     UartRunActiveState();
+    TimerRunActiveState(); 
     SspRunActiveState();
     TWIRunActiveState();
+    Adc12RunActiveState();
     MessagingRunActiveState();
     DebugRunActiveState();
     LcdRunActiveState();
     AntRunActiveState();
+    AntApiRunActiveState();
     SdCardRunActiveState();
 
     /* Applications */
     BoardTestRunActiveState();
-    UserAppRunActiveState();
+    UserApp1RunActiveState();
+    UserApp2RunActiveState();
+    UserApp3RunActiveState();
     
     /* System sleep*/
     HEARTBEAT_OFF();
