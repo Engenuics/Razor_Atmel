@@ -66,33 +66,33 @@ Updates all configuration messages to completely configure an ANT channel with a
 required parameters for communication.  The application should monitor AntRadioStatusChannel()
 to see if all of the configuration messages are sent and the channel is configured properly.
 e.g.
-  AntAssignChannelInfoType sChannelInfo;
+AntAssignChannelInfoType sChannelInfo;
 
-  if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
+if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
+{
+  sChannelInfo.AntChannel = ANT_CHANNEL_0;
+  sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+  sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+  sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+  
+  sChannelInfo.AntDeviceIdHi = 0x00;
+  sChannelInfo.AntDeviceIdLo = 0x01;
+  sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+  sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+  
+  sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+  sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+  
+  sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
   {
-    sChannelInfo.AntChannel = ANT_CHANNEL_0;
-    sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
-    sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-    sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-    
-    sChannelInfo.AntDeviceIdHi = 0x00;
-    sChannelInfo.AntDeviceIdLo = 0x01;
-    sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
-    sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
-    
-    sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
-    sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
-    
-    sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
-    for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
-    {
-      sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
-    }
-    
-    AntAssignChannel(&sChannelInfo);
+    sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
   }
+  
+  AntAssignChannel(&sChannelInfo);
+}
 
-  // Go to a wait state that exits when AntRadioStatusChannel(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
+// Go to a wait state that exits when AntRadioStatusChannel(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
 
 
 bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
