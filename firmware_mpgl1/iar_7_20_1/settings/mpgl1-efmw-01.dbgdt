@@ -69,7 +69,7 @@
       <Register/>
       <WATCH_1>
         <expressions>
-          <item></item>
+          <item/>
         </expressions>
         <col-names>
           <item>Expression</item>
@@ -86,7 +86,7 @@
       </WATCH_1>
       <WATCH_2>
         <expressions>
-          <item></item>
+          <item/>
         </expressions>
         <col-names>
           <item>Expression</item>
@@ -103,7 +103,7 @@
       </WATCH_2>
       <WATCH_3>
         <expressions>
-          <item></item>
+          <item/>
         </expressions>
         <col-names>
           <item>Expression</item>
@@ -120,7 +120,7 @@
       </WATCH_3>
       <WATCH_4>
         <expressions>
-          <item></item>
+          <item/>
         </expressions>
         <col-names>
           <item>Expression</item>

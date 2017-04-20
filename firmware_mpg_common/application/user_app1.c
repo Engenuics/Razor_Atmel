@@ -96,7 +96,7 @@ void UserApp1Initialize(void)
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp1_StateMachine = UserApp1SM_FailedInit;
+    UserApp1_StateMachine = UserApp1SM_Error;
   }
 
 } /* end UserApp1Initialize() */
@@ -139,22 +139,14 @@ static void UserApp1SM_Idle(void)
 
 } /* end UserApp1SM_Idle() */
     
-#if 0
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void UserApp1SM_Error(void)          
 {
   
 } /* end UserApp1SM_Error() */
-#endif
 
-
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* State to sit in if init failed */
-static void UserApp1SM_FailedInit(void)          
-{
-    
-} /* end UserApp1SM_FailedInit() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
