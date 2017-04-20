@@ -103,9 +103,9 @@ will not fit on the LCD are ignored (but this will allow for partial characters 
 - eFont_: font of choice
 - sStartPixel_: location where the top left pixel of the first character bitmap square is specifed
 e.g. Load a string on the bottom text line left justified.
-PixelAddressType sTestStringLocation = {LCD_SMALL_FONT_LINE7, LCD_LEFT_MOST_COLUMN); 
+PixelAddressType sTestStringLocation = {LCD_SMALL_FONT_LINE7, LCD_LEFT_MOST_COLUMN}; 
 u8 au8TestString[] = "Testing";
-LcdLoadSting(au8TestString, LCD_FONT_SMALL, &sTestStringLocation); 
+LcdLoadString(au8TestString, LCD_FONT_SMALL, &sTestStringLocation); 
 
 void LcdLoadBitmap(u8* aau8Bitmap_, PixelBlockType* sBitmapSize_)
 Places a bitmap into the LCD RAM.  
@@ -276,7 +276,7 @@ static PixelBlockType Lcd_sUpdateArea;                            /* Area of LCD
 static PixelBlockType Lcd_sCurrentUpdateArea;                     /* Area of LCD currently being updated */
 
 static u8 Lcd_au8MessageInit[]  = "LCD Ready\r\n";
-static u8 Lcd_au8MessageWelcome[] = "MPG LEVEL 2";
+static u8 Lcd_au8MessageWelcome[] = "SAM3U2 DOT MATRIX";
                                  
 static  u8 Lcd_au8SetupArray[] = {LCD_BIAS_LOW, LCD_ADC_SELECT_NORMAL, LCD_COMMON_MODE1, LCD_COMMON_MODE0, LCD_DISPLAY_LINE_SETx,
                                   LCD_VOLTAGTE_REG_SETx | SET_BIT0 | SET_BIT2,

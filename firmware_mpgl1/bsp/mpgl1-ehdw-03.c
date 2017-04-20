@@ -94,6 +94,21 @@ void ClockSetup(void)
 
 
 /*----------------------------------------------------------------------------------------------------------------------
+Function: RealTimeClockSetup
+
+Description:
+Loads all registers required to set up the real time clock.
+
+Requires:
+
+Promises:
+*/
+void RealTimeClockSetup(void)
+{
+} /* end RealTimeClockSetup() */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 Function: SysTickSetup
 
 Description:

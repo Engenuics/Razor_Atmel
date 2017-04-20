@@ -1,5 +1,5 @@
 Debug/
-settings/
+*.dep
+*.bat
 *.TMP
-firmware_mpg_common/application/user_app_heart_and_soul.c
-firmware_mpg_common/application/user_app_heart_and_soul.h
+*.wspos
