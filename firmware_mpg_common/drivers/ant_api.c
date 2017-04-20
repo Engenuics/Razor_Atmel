@@ -66,33 +66,33 @@ Updates all configuration messages to completely configure an ANT channel with a
 required parameters for communication.  The application should monitor AntRadioStatusChannel()
 to see if all of the configuration messages are sent and the channel is configured properly.
 e.g.
-  AntAssignChannelInfoType sChannelInfo;
+AntAssignChannelInfoType sChannelInfo;
 
-  if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
+if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
+{
+  sChannelInfo.AntChannel = ANT_CHANNEL_0;
+  sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+  sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+  sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+  
+  sChannelInfo.AntDeviceIdHi = 0x00;
+  sChannelInfo.AntDeviceIdLo = 0x01;
+  sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+  sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+  
+  sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+  sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+  
+  sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
   {
-    sChannelInfo.AntChannel = ANT_CHANNEL_0;
-    sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
-    sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-    sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-    
-    sChannelInfo.AntDeviceIdHi = 0x00;
-    sChannelInfo.AntDeviceIdLo = 0x01;
-    sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
-    sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
-    
-    sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
-    sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
-    
-    sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
-    for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
-    {
-      sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
-    }
-    
-    AntAssignChannel(&sChannelInfo);
+    sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
   }
+  
+  AntAssignChannel(&sChannelInfo);
+}
 
-  // Go to a wait state that exits when AntChannelStatusType(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
+// Go to a wait state that exits when AntChannelStatusType(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
 
 
 bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
@@ -147,21 +147,21 @@ AntChannelStatusType eAntCurrentState;
 
 
 ***ANT DATA FUNCTIONS***
-bool AntQueueBroadcastMessage(u8 *pu8Data_)
+bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_)
 Queue a broadcast data message.
 e.g.
 u8 u8DataToSend[ANT_DATA_BYTES] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
-AntQueueBroadcastMessage(&u8DataToSend[0]);
+AntQueueBroadcastMessage(ANT_CHANNEL_1, &u8DataToSend[0]);
 
 
-bool AntQueueAcknowledgedMessage(u8 *pu8Data_)
+bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_)
 Queue an acknowledged data message.
 e.g.
 u8 u8DataToSend[ANT_DATA_BYTES] = {0x07, 0x06, 0x05, 0x04, 0x03, 0xdd, 0xee, 0xff};
-AntQueueAcknowledgedMessage(u8DataToSend);
+AntQueueAcknowledgedMessage(ANT_CHANNEL_1, u8DataToSend);
 
 
-bool AntReadMessageBuffer(void)
+bool AntReadAppMessageBuffer(void)
 Check the incoming message buffer for any message from the ANT system (either ANT_TICK or ANT_DATA).  
 If no messages are present, returns FALSE.  If a message is there, returns TRUE and application can read:
 - G_u32AntApiCurrentMessageTimeStamp to see the system time stamp when the message arrived
@@ -173,7 +173,7 @@ u32 u32CurrentMessageTimeStamp;
 u8 u8CurrentTickEventCode;
 u8 u8CurrentMessageContents[ANT_APPLICATION_MESSAGE_BYTES];
 
-if(AntReadMessageBuffer())
+if(AntReadAppMessageBuffer())
 {
   // Report the time a message was received
   DebugPrintNumber(u32CurrentMessageTimeStamp);
@@ -183,7 +183,7 @@ if(AntReadMessageBuffer())
   if(G_eAntApiCurrentMessageClass == ANT_TICK)
   {
     // Get the EVENT code from the ANT_TICK message 
-    u8CurrentTickEventCode = G_asAntApiCurrentData[ANT_TICK_MSG_EVENT_CODE_INDEX];
+    u8CurrentTickEventCode = G_au8AntApiCurrentMessageBytes[ANT_TICK_MSG_EVENT_CODE_INDEX];
   }
 
   if(G_eAntApiCurrentMessageClass == ANT_DATA)
@@ -191,13 +191,10 @@ if(AntReadMessageBuffer())
     // Copy the message data locally
     for(u8 i = 0; i < ANT_APPLICATION_MESSAGE_BYTES; i++)
     {
-      u8CurrentMessageContents[i] = G_asAntApiCurrentData[i];
+      u8CurrentMessageContents[i] = G_au8AntApiCurrentMessageBytes[i];
     }
   }
 }
-
-u32 AntReadRSSI(void)
-Get the current RSSI value (if available)
 
 
 ***********************************************************************************************************************/
