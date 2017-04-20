@@ -92,20 +92,20 @@ if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
   AntAssignChannel(&sChannelInfo);
 }
 
-// Go to a wait state that exits when AntChannelStatusType(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
+  // Go to a wait state that exits when AntRadioStatusChannel(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
 
 
 bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
 Queues message to unassign the specified ANT channel so it can be reconfigured.
 e.g.
 AntUnassignChannelNumber(ANT_CHANNEL_1)
-// Go to wait state that exists when AntChannelStatusType(ANT_CHANNEL_1) returns ANT_UNCONFIGURED
+// Go to wait state that exists when AntRadioStatusChannel(ANT_CHANNEL_1) returns ANT_UNCONFIGURED
 
 
 bool AntOpenChannelNumber(AntChannelNumberType eAntChannelToOpen)
 Queues a request to open the specified channel.
 Returns TRUE if the channel is configured and the message is successfully queued - this can be ignored or checked.  
-Application should monitor AntChannelStatus() for actual channel status.
+Application should monitor AntRadioStatusChannel() for actual channel status.
 e.g.
 AntChannelStatusType eAntCurrentState;
 
@@ -118,18 +118,31 @@ if(eAntCurrentState == ANT_CLOSED )
 }
 
 
+bool AntCloseChannelNumber(AntChannelNumberType eAntChannelToOpen)
+Queues a request to close the specified channel.
+Returns TRUE if the message is successfully queued - this can be ignored or checked.  
+Application should monitor AntRadioStatusChannel() for actual channel status.
+e.g.
+AntChannelStatusType eAntCurrentState;
+
+// Request to close channel only on an open channel.
+if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_OPEN )
+{
+   AntCloseChannelNumber(ANT_CHANNEL_1);
+}
+
 bool AntOpenScanningChannel(void)
 Queues a request to open a scanning channel. Channel 0 setup parameters are used,
-but note that all channel resources are used by a scanning channel.
+but note that all channel resources are used by a scanning channel.  Trying to
+open a scanning channel if any other channel is open will fail.
+
 Returns TRUE if message is successfully queued - this can be ignored or checked.  
-Application should monitor AntChannelStatus() for actual channel status.
+Application should monitor AntRadioStatusChannel() for actual channel status.
 e.g.
 AntChannelStatusType eAntCurrentState;
 
 // Request to open channel only on an already closed channel.
-eAntCurrentState = AntChannelStatus(ANT_CHANNEL_SCANNING);
-
-if(eAntCurrentState == ANT_CLOSED )
+if(AntRadioStatusChannel(ANT_CHANNEL_SCANNING) == ANT_CLOSED )
 {
    AntOpenScanningChannel();
 }
@@ -166,7 +179,8 @@ Check the incoming message buffer for any message from the ANT system (either AN
 If no messages are present, returns FALSE.  If a message is there, returns TRUE and application can read:
 - G_u32AntApiCurrentMessageTimeStamp to see the system time stamp when the message arrived
 - G_eAntApiCurrentMessageClass to see what kind of message is present
-- G_asAntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES] to see the message bytes.
+- G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES] to see the message bytes.
+- G_sAntApiCurrentMessageExtData to see an available extended data (on incoming messages)
 
 e.g.
 u32 u32CurrentMessageTimeStamp;

@@ -30,7 +30,7 @@ All Global variable names shall start with "G_<type>Ant"
 
 /* New variables */
 u32 G_u32AntFlags;                                    /* Flag bits for ANT-related information */
-//AntSetupDataType G_stAntSetupData;                    /* ANT channel configuration data */
+
 AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]; /* Keeps track of all configured ANT channels */
 AntMessageResponseType G_stMessageResponse;           /* Holds the latest message response info */
 
@@ -40,7 +40,7 @@ u8 G_au8AntMessageOk[]     = "OK\n\r";
 u8 G_au8AntMessageFail[  ] = "FAIL\n\r";
 
 /* Replace 'd' at [12] with channel number */
-u8 G_au8AntMessageAssign[] = "ANT channel d assign "; 
+u8 G_au8AntMessageAssign[]    = "ANT channel d assign "; 
 u8 G_au8AntMessageUnassign[]  = "ANT channel d unassign ";
 u8 G_au8AntMessageUnhandled[] = "ANT channel d message 0xxx response dd ";
 u8 G_au8AntMessageSetup[] = "ANT channel d setup ";
@@ -478,7 +478,6 @@ static void AdvanceAntRxBufferUnreadMsgPointer()
   
 } /* end AdvanceAntRxBufferUnreadMsgPointer() */
 
-
   
 /*------------------------------------------------------------------------------
 Function: AntParseExtendedData
@@ -658,21 +657,6 @@ void AntInitialize(void)
       G_asAntChannelConfiguration[i].AntNetworkKey[j] = 0;
     }
   }
-
-#if 0
-    /* Set default setup values in the AntSetupData struct */
-    G_stAntSetupData.AntChannel          = ANT_CHANNEL_DEFAULT;
-    G_stAntSetupData.AntChannelType      = ANT_CHANNEL_TYPE_DEFAULT;
-    G_stAntSetupData.AntNetwork          = ANT_NETWORK_DEFAULT;
-    G_stAntSetupData.AntSerialLo         = ANT_SERIAL_LO_DEFAULT;
-    G_stAntSetupData.AntSerialHi         = ANT_SERIAL_HI_DEFAULT;
-    G_stAntSetupData.AntDeviceType       = ANT_DEVICE_TYPE_DEFAULT;
-    G_stAntSetupData.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
-    G_stAntSetupData.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-    G_stAntSetupData.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-    G_stAntSetupData.AntFrequency        = ANT_FREQUENCY_DEFAULT;
-    G_stAntSetupData.AntTxPower          = ANT_TX_POWER_DEFAULT;
-#endif
     
     /* Configure the SSP resource to be used for the application */
     Ant_sSspConfig.SspPeripheral      = ANT_SPI;
@@ -1356,16 +1340,12 @@ static u8 AntProcessMessage(void)
 
           case EVENT_TX: /* ANT has sent a data message */
           {
-            //AntTickExtended(EVENT_TX);
-
-#if 1 /* 2016-06-12 */
             /* If this is a master device, then EVENT_TX means it's time to queue the 
             next message */
             if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_MASTER)
             {
               AntTickExtended(au8MessageCopy);
             }
-#endif
             break;
           } 
 
