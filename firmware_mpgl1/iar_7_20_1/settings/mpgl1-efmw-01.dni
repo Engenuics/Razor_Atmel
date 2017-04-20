@@ -10,7 +10,7 @@ LimitSize=0
 ByteLimit=50
 [DebugChecksum]
 <<<<<<< HEAD
-Checksum=424344226
+Checksum=-956316723
 =======
 Checksum=1464341029
 >>>>>>> c080c694e6eb3b5db5c649699ab09d322b1ac0ae
@@ -47,14 +47,6 @@ UnspecRange=1
 ActionState=1
 [CodeCoverage]
 Enabled=_ 0
-[Trace1]
-Enabled=0
-ShowSource=1
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\mpgl1_board_test.c}.382.5" 0 0 1 "" 0 "" 0
-Count=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -62,9 +54,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[Aliases]
-Count=0
-SuppressDialog=0
 [CallStackLog]
 Enabled=0
 [DriverProfiling]
@@ -73,3 +62,11 @@ Mode=1
 Graph=0
 Symbiont=0
 Exclusions=
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\application\mpgl1_board_test.c}.408.7" 0 0 1 "" 0 "" 0
+Count=1
+[Aliases]
+Count=0
+SuppressDialog=0

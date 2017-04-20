@@ -23,13 +23,18 @@ Constants / Definitions
 #define   BOARDTEST_INIT_MSG_TIMEOUT      (u32)1000   /* Timeout for init display message to send */
 
 /* BoardTest ANT radio settings */
-#define	ANT_SERIAL_LO_BOARDTEST			          (u8)0x34
-#define ANT_SERIAL_HI_BOARDTEST			          (u8)0x12
+/* MAKE SURE TO CHANGE THE u8 and u32 values for DEVICEID */
+#define	ANT_DEVICEID_LO_BOARDTEST			        (u8)0x34
+#define ANT_DEVICEID_HI_BOARDTEST		          (u8)0x12
+#define ANT_DEVICEID_DEC_BOARDTEST	          (u32)4660
+
+/* IF YOU CHANGE DEVICE TYPE OR TRANSMISSION TYPE, YOU MUST CHANGE 
+THE STARTUP TEXT MESSAGE IN BoardTestSM_SetupAnt */
 #define	ANT_DEVICE_TYPE_BOARDTEST					    DEVICE_TYPE_BOARDTEST
 #define	ANT_TRANSMISSION_TYPE_BOARDTEST		    (u8)0x01
 
 /* Default channel configuration parameters */
-#define ANT_CHANNEL_BOARDTEST                 (u8)0
+#define ANT_CHANNEL_BOARDTEST                 ANT_CHANNEL_0
 #define ANT_CHANNEL_TYPE_BOARDTEST            CHANNEL_TYPE_MASTER
 #define ANT_NETWORK_BOARDTEST                 (u8)0
 
@@ -68,8 +73,10 @@ void BoardTestRunActiveState(void);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-void BoardTestSM_Idle(void);             
-void BoartTestSM_Error(void);         
+void BoardTestSM_SetupAnt(void);
+void BoardTestSM_Idle(void);
+
+void BoardTestSM_Error(void);
 
 
 #endif /* __BOARD_TEST_H */

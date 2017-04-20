@@ -118,6 +118,22 @@ if(eAntCurrentState == ANT_CLOSED )
 }
 
 
+bool AntCloseChannelNumber(AntChannelNumberType eAntChannelToClose)
+Queues a request to close the specified channel.
+Returns TRUE if the channel is configured and the message is successfully queued - this can be ignored or checked.  
+Application should monitor AntChannelStatus() for actual channel status.
+e.g.
+AntChannelStatusType eAntCurrentState;
+
+// Request to close channel only on an already open channel.
+eAntCurrentState = AntRadioStatusChannel(ANT_CHANNEL_1);
+
+if(eAntCurrentState == ANT_CLOSED )
+{
+   AntCloseChannelNumber(ANT_CHANNEL_1);
+}
+
+
 bool AntOpenScanningChannel(void)
 Queues a request to open a scanning channel. Channel 0 setup parameters are used,
 but note that all channel resources are used by a scanning channel.
@@ -147,21 +163,21 @@ AntChannelStatusType eAntCurrentState;
 
 
 ***ANT DATA FUNCTIONS***
-bool AntQueueBroadcastMessage(u8 *pu8Data_)
+bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_)
 Queue a broadcast data message.
 e.g.
 u8 u8DataToSend[ANT_DATA_BYTES] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
-AntQueueBroadcastMessage(&u8DataToSend[0]);
+AntQueueBroadcastMessage(ANT_CHANNEL_0, &u8DataToSend[0]);
 
 
-bool AntQueueAcknowledgedMessage(u8 *pu8Data_)
+bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_)
 Queue an acknowledged data message.
 e.g.
 u8 u8DataToSend[ANT_DATA_BYTES] = {0x07, 0x06, 0x05, 0x04, 0x03, 0xdd, 0xee, 0xff};
-AntQueueAcknowledgedMessage(u8DataToSend);
+AntQueueAcknowledgedMessage(ANT_CHANNEL_0, u8DataToSend);
 
 
-bool AntReadMessageBuffer(void)
+bool AntReadAppMessageBuffer(void)
 Check the incoming message buffer for any message from the ANT system (either ANT_TICK or ANT_DATA).  
 If no messages are present, returns FALSE.  If a message is there, returns TRUE and application can read:
 - G_u32AntApiCurrentMessageTimeStamp to see the system time stamp when the message arrived
@@ -173,7 +189,7 @@ u32 u32CurrentMessageTimeStamp;
 u8 u8CurrentTickEventCode;
 u8 u8CurrentMessageContents[ANT_APPLICATION_MESSAGE_BYTES];
 
-if(AntReadMessageBuffer())
+if(AntReadAppMessageBuffer())
 {
   // Report the time a message was received
   DebugPrintNumber(u32CurrentMessageTimeStamp);
@@ -195,9 +211,6 @@ if(AntReadMessageBuffer())
     }
   }
 }
-
-u32 AntReadRSSI(void)
-Get the current RSSI value (if available)
 
 
 ***********************************************************************************************************************/

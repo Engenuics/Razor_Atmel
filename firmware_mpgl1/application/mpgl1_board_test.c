@@ -23,24 +23,26 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
-extern u8 G_au8MessageOK[];                           /* From utilities.c */
-extern u8 G_au8MessageFAIL[];                         /* From utilities.c */
+extern u8 G_au8MessageOK[];                            /* From utilities.c */
+extern u8 G_au8MessageFAIL[];                          /* From utilities.c */
 
-extern u32 G_u32AntFlags;                             /* From ant.c */
-extern AntSetupDataType G_stAntSetupData;             /* From ant.c */
+extern u32 G_u32AntFlags;                              /* From ant.c */
 
-extern u32 G_u32AntApiCurrentDataTimeStamp;                      /* From ant_api.c */
-extern AntApplicationMessageType G_eAntApiCurrentMessageClass;   /* From ant_api.c */
-extern u8 G_au8AntApiCurrentData[ANT_APPLICATION_MESSAGE_BYTES]; /* From ant_api.c */
+extern u32 G_u32AntApiCurrentMessageTimeStamp;                           /* From ant_api.c */
+extern AntApplicationMessageType G_eAntApiCurrentMessageClass;           /* From ant_api.c */
+extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES]; /* From ant_api.c */
+extern AntExtendedDataType G_sAntApiCurrentMessageExtData;               /* From ant_api.c  */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "BoardTest_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type BoardTest_StateMachine;            /* The state machine function pointer */
+static fnCode_type BoardTest_StateMachine;               /* The state machine function pointer */
 
-static u32 BoardTest_u32Timeout;                      /* Timeout counter used across states */
+static u32 BoardTest_u32Timeout;                         /* Timeout counter used across states */
+
+static  AntAssignChannelInfoType BoardTest_sChannelInfo; /* ANT channel configuration */
 
 
 /***********************************************************************************************************************
@@ -70,8 +72,6 @@ Promises:
 */
 void BoardTestInitialize(void)
 {
-  u8 au8BoardTestStartupMsg[] = "Board test task started\n\r";
-
   /* Start with all LEDs on */
   LedOn(WHITE);
   LedOn(PURPLE);
@@ -85,26 +85,32 @@ void BoardTestInitialize(void)
   LedOn(LCD_GREEN);
   LedOn(LCD_RED);
 
+  /* Load the ANT setup parameters */
   /* Configure the ANT radio */
-  G_stAntSetupData.AntChannel          = ANT_CHANNEL_BOARDTEST;
-  G_stAntSetupData.AntChannelType      = ANT_CHANNEL_TYPE_BOARDTEST;
-  G_stAntSetupData.AntNetwork          = ANT_NETWORK_BOARDTEST;
-  G_stAntSetupData.AntSerialLo         = ANT_SERIAL_LO_BOARDTEST;
-  G_stAntSetupData.AntSerialHi         = ANT_SERIAL_HI_BOARDTEST;
-  G_stAntSetupData.AntDeviceType       = ANT_DEVICE_TYPE_BOARDTEST;
-  G_stAntSetupData.AntTransmissionType = ANT_TRANSMISSION_TYPE_BOARDTEST;
-  G_stAntSetupData.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_BOARDTEST;
-  G_stAntSetupData.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_BOARDTEST;
-  G_stAntSetupData.AntFrequency        = ANT_FREQUENCY_BOARDTEST;
-  G_stAntSetupData.AntTxPower          = ANT_TX_POWER_BOARDTEST;
+  BoardTest_sChannelInfo.AntChannel          = ANT_CHANNEL_BOARDTEST;
+  BoardTest_sChannelInfo.AntChannelType      = ANT_CHANNEL_TYPE_BOARDTEST;
+  BoardTest_sChannelInfo.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_BOARDTEST;
+  BoardTest_sChannelInfo.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_BOARDTEST;
+
+  BoardTest_sChannelInfo.AntDeviceIdHi       = ANT_DEVICEID_HI_BOARDTEST;
+  BoardTest_sChannelInfo.AntDeviceIdLo       = ANT_DEVICEID_LO_BOARDTEST;
+  BoardTest_sChannelInfo.AntDeviceType       = ANT_DEVICE_TYPE_BOARDTEST;
+  BoardTest_sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_BOARDTEST;
+
+  BoardTest_sChannelInfo.AntFrequency        = ANT_FREQUENCY_BOARDTEST;
+  BoardTest_sChannelInfo.AntTxPower          = ANT_TX_POWER_BOARDTEST;
+
+  BoardTest_sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+  {
+    BoardTest_sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+  }
   
-  /* Send all the channel config; 0 the message counter after so we clear the messsage from init */
-  AntChannelConfig(ANT_MASTER);
-  
-  /* Init complete: print message, set function pointer and application flag */
+  /* Queue the channel assignment and go to wait state */
+  AntAssignChannel(&BoardTest_sChannelInfo);
   BoardTest_u32Timeout = G_u32SystemTime1ms;
-  DebugPrintf(au8BoardTestStartupMsg);
-  BoardTest_StateMachine = BoardTestSM_Idle;
+  DebugPrintf("Board test task started\n\r");
+  BoardTest_StateMachine = BoardTestSM_SetupAnt;
 
 } /* end BoardTestInitialize() */
 
@@ -138,6 +144,29 @@ void BoardTestRunActiveState(void)
 /***********************************************************************************************************************
 State Machine Function Definitions
 ***********************************************************************************************************************/
+/*--------------------------------------------------------------------------------------------------------------------*/
+void BoardTestSM_SetupAnt(void)
+{
+  /* Check to see if the channel assignment is successful */
+  if(AntRadioStatusChannel(ANT_CHANNEL_BOARDTEST) == ANT_CONFIGURED)
+  {
+    DebugPrintf("Board test ANT Master ready\n\r");
+    DebugPrintf("Device ID: ");
+    DebugPrintNumber(ANT_DEVICEID_DEC_BOARDTEST);
+    DebugPrintf(", Device Type 96, Trans Type 1, Frequency 50\n\r");
+
+    BoardTest_StateMachine = BoardTestSM_Idle;
+  }
+
+  /* Watch for timeout */
+  if(IsTimeUp(&BoardTest_u32Timeout, 3000))
+  {
+    /* Init failed */
+    DebugPrintf("Board test cannot assign ANT channel\n\r");
+    BoardTest_StateMachine = BoardTestSM_Idle;
+  }
+
+} /* end BoardTestSM_SetupAnt */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 void BoardTestSM_Idle(void)
@@ -203,29 +232,30 @@ void BoardTestSM_Idle(void)
   if( WasButtonPressed(BUTTON1) )
   {
     ButtonAcknowledge(BUTTON1);
-    eAntCurrentState = AntRadioStatus();
+    eAntCurrentState = AntRadioStatusChannel(ANT_CHANNEL_BOARDTEST);
 
     if(eAntCurrentState == ANT_CLOSED )
     {
-       AntOpenChannel();
+       AntOpenChannelNumber(ANT_CHANNEL_BOARDTEST);
     }
 
     if(eAntCurrentState == ANT_OPEN)
     {
-       AntCloseChannel();
+       AntCloseChannelNumber(ANT_CHANNEL_BOARDTEST);
     }
   }
  
  
 #if 0
   /* Monitor the CHANNEL_OPEN flag to decide whether or not audio should be on */
-  if( (AntRadioStatus() == ANT_OPEN ) && !(BoardTest_u32Flags & _AUDIO_ANT_ON) )
+  if( (AntRadioStatusChannel(ANT_CHANNEL_BOARDTEST) == ANT_OPEN ) && 
+     !(BoardTest_u32Flags & _AUDIO_ANT_ON) )
   {
     PWMAudioOn(BUZZER1);
     BoardTest_u32Flags |= _AUDIO_ANT_ON;
   }
   
-  if( AntRadioStatus() == ANT_CLOSED )
+  if( AntRadioStatusChannel(ANT_CHANNEL_BOARDTEST) == ANT_CLOSED )
   {
     PWMAudioOff(BUZZER1);
     BoardTest_u32Flags &= ~_AUDIO_ANT_ON;
@@ -234,7 +264,7 @@ void BoardTestSM_Idle(void)
   
   /* Process ANT Application messages */  
         
-  if( AntReadData() )
+  if( AntReadAppMessageBuffer() )
   {
      /* New data message: check what it is */
     if(G_eAntApiCurrentMessageClass == ANT_DATA)
@@ -242,8 +272,8 @@ void BoardTestSM_Idle(void)
       /* We got some data: print it */
       for(u8 i = 0; i < ANT_DATA_BYTES; i++)
       {
-        au8DataContent[3 * i]     = HexToASCIICharUpper(G_au8AntApiCurrentData[i] / 16);
-        au8DataContent[3 * i + 1] = HexToASCIICharUpper(G_au8AntApiCurrentData[i] % 16);
+        au8DataContent[3 * i]     = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] / 16);
+        au8DataContent[3 * i + 1] = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] % 16);
         au8DataContent[3 * i + 2] = '-';
       }
       au8DataContent[23] = '\n';
@@ -266,7 +296,7 @@ void BoardTestSM_Idle(void)
           au8TestMessage[5]++;
         }
       }
-      AntQueueBroadcastMessage(au8TestMessage);
+      AntQueueBroadcastMessage(ANT_CHANNEL_BOARDTEST, au8TestMessage);
     }
   }
 
@@ -395,9 +425,16 @@ void BoardTestSM_Idle(void)
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-void BoardTestSM_Error(void)          
+void BoardTestSM_Error()
 {
-  BoardTest_StateMachine = BoardTestSM_Idle;
+  static bool bErrorStateEntered = FALSE;
+  
+  /* Print error state entry message once; application hangs here */
+  if(!bErrorStateEntered)
+  {
+   DebugPrintf("\n\r***BOARDTEST ERROR STATE***\n\n\r");
+   bErrorStateEntered = TRUE;
+  }
   
 } /* end BoardTestSM_Error() */
 
