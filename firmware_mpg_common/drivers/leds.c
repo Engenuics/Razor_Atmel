@@ -402,11 +402,17 @@ void LedInitialize(void)
 #endif /* STARTUP_SOUND */
 
  
-  /* Exit with Leds off, NORMAL mode, and the backlight on (white) */
+  /* The discrete LEDs are off and the backlight is on (white) -- this
+  is how we will exit the LED init.  But should we set all the LEDs to
+  NORMAL mode?  This would solve the LedToggle() problem described in 
+  LedBasic module.  So if the code below is added, then the module
+  information must be updated. */
+#if 0 
   for(u8 i = 0; i < TOTAL_LEDS; i++)
   {
-    Leds_asLedArray[0].eMode = LED_NORMAL_MODE;
+    Leds_asLedArray[i].eMode = LED_NORMAL_MODE;
   }
+#endif
 
 #ifdef EIE1
   LedOn(LCD_RED);
