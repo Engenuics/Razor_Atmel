@@ -1,0 +1,15 @@
+"C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\bin\armproc.dll" 
+
+"C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\bin\armjlink2.dll" 
+
+"D:\EiE\EiE_Git\Razor_Atmel\firmware_ascii\iar_8_10_1\Debug\Exe\eie_ascii-01.out" 
+
+--plugin "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\bin\armbat.dll" 
+
+--device_macro "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\config\debugger\Atmel\SAM3U.dmac" 
+
+--flash_loader "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\config\flashloader\Atmel\sam3u2c\sam3u2c-flash.board" 
+
+
+
+

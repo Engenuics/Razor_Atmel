@@ -519,9 +519,10 @@ static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psEx
   u8 u8TransType = 0xFF;                          
 
   /* RSSI extended data */
-  s8 s8RSSI = 0xFF;           
-  u8 u8MeasurementType = 0xFF;
-  u8 u8Threshold = 0xFF;
+  s8 s8RSSI = 0xFF;   
+  //For now, we don't have a use for these two:
+  //u8 u8MeasurementType = 0xFF;
+  //u8 u8Threshold = 0xFF;
   
   /* RF Timestamp data */
   u16 u16RxTimestamp = 0xFFFF;
@@ -567,11 +568,11 @@ static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psEx
     /* RSSI information is always next if it's there */
     if(u8Flags & LIB_CONFIG_RSSI_FLAG)
     {
-      u8MeasurementType = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
+      //u8MeasurementType = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
       u8BufferOffset++;
       s8RSSI = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
       u8BufferOffset++;
-      u8Threshold = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
+      //u8Threshold = *(pu8SourceMessage + BUFFER_INDEX_EXT_DATA + u8BufferOffset);
       u8BufferOffset++;
    }   
 
