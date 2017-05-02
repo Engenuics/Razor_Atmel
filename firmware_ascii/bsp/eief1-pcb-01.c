@@ -1,8 +1,8 @@
 /***********************************************************************************************************************
-File: mpgl1-ehdw-01.c                                                                
+File: eief1-pcb-01.c                                                                
 
 Description:
-This file provides core and GPIO functions for the mpgl1-ehdw-01 board.
+This file provides core and GPIO functions for the eief1-pcb-01 board.
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -14,16 +14,21 @@ All Global variable names shall start with "G_"
 /* New variables */
 volatile u32 G_u32SystemTime1ms;                       /* Global system time incremented every ms, max 2^32 (~49 days) */
 volatile u32 G_u32SystemTime1s;                        /* Global system time incremented every second, max 2^32 (~136 years) */
+
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
 extern volatile u32 G_u32SystemFlags;                  /* From main.c */
 extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
+
+extern u32 G_u32DebugFlags;                            /* From debug.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Bsp_" and be declared as static.
 ***********************************************************************************************************************/
+static u32 Bsp_u32TimingViolationsCounter = 0;
 
 
 /***********************************************************************************************************************
@@ -90,6 +95,21 @@ void ClockSetup(void)
 
 
 /*----------------------------------------------------------------------------------------------------------------------
+Function: RealTimeClockSetup
+
+Description:
+Loads all registers required to set up the real time clock.
+
+Requires:
+
+Promises:
+*/
+void RealTimeClockSetup(void)
+{
+} /* end RealTimeClockSetup() */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 Function: SysTickSetup
 
 Description:
@@ -132,10 +152,29 @@ Promises:
 */
 void SystemSleep(void)
 {    
+   static u32 u32PreviousSystemTick = 0;
+   static u8 au8TickWarningMessage[] = "\n\r*** 1ms timing violation: ";   
+   
+  /* Check system timing */
+  if( (G_u32SystemTime1ms - u32PreviousSystemTick) != 1)
+  {
+    /* Flag, count and optionally display warning */
+    Bsp_u32TimingViolationsCounter++;
+    G_u32SystemFlags |= _SYSTEM_TIME_WARNING;
+    if(G_u32DebugFlags & _DEBUG_TIME_WARNING_ENABLE)
+    {
+      DebugPrintf(au8TickWarningMessage);
+      DebugPrintNumber(Bsp_u32TimingViolationsCounter);
+      DebugLineFeed();
+    }
+  }
+  
+  u32PreviousSystemTick = G_u32SystemTime1ms;
+   
   /* Set the system control register for Sleep (but not Deep Sleep) */
    AT91C_BASE_PMC->PMC_FSMR &= ~AT91C_PMC_LPM;
    AT91C_BASE_NVIC->NVIC_SCR &= ~AT91C_NVIC_SLEEPDEEP;
-
+   
    /* Set the sleep flag (cleared only in SysTick ISR */
    G_u32SystemFlags |= _SYSTEM_SLEEPING;
 
@@ -144,9 +183,6 @@ void SystemSleep(void)
    {
      __WFI();
    }
-
-  /* Clear the sleep mode status flags */
-  //AT91C_SC->PCON &= SLEEP_MODE_STATUS_CLEAR;
   
 } /* end SystemSleep(void) */
 
@@ -253,18 +289,18 @@ void PWMSetupAudio(void)
   AT91C_BASE_PWMC->PWMC_SCM = PWM_SCM_INIT;
   
   AT91C_BASE_PWMC_CH0->PWMC_CMR = PWM_CMR0_INIT;
-  AT91C_BASE_PWMC_CH1->PWMC_CMR = PWM_CMR1_INIT;
-  
   AT91C_BASE_PWMC_CH0->PWMC_CPRDR    = PWM_CPRD0_INIT; /* Set current frequency */
-  AT91C_BASE_PWMC_CH1->PWMC_CPRDR    = PWM_CPRD1_INIT; /* Set current frequency  */
-  //AT91C_BASE_PWMC_CH0->PWMC_CPRDUPDR = PWM_CPRD0_INIT;   /* Latch CPRD values */
-  //AT91C_BASE_PWMC_CH1->PWMC_CPRDUPDR = PWM_CPRD1_INIT;   /* Latch CPRD values */
-  
+  AT91C_BASE_PWMC_CH0->PWMC_CPRDUPDR = PWM_CPRD0_INIT; /* Latch CPRD values */
   AT91C_BASE_PWMC_CH0->PWMC_CDTYR    = PWM_CDTY0_INIT; /* Set 50% duty */
+  AT91C_BASE_PWMC_CH0->PWMC_CDTYUPDR = PWM_CDTY0_INIT; /* Latch CDTY values */
+
+  AT91C_BASE_PWMC_CH1->PWMC_CMR = PWM_CMR1_INIT;
+  AT91C_BASE_PWMC_CH1->PWMC_CPRDR    = PWM_CPRD1_INIT; /* Set current frequency  */
+  AT91C_BASE_PWMC_CH1->PWMC_CPRDUPDR = PWM_CPRD1_INIT; /* Latch CPRD values */
   AT91C_BASE_PWMC_CH1->PWMC_CDTYR    = PWM_CDTY1_INIT; /* Set 50% duty */
-  //AT91C_BASE_PWMC_CH0->PWMC_CDTYUPDR = PWM_CDTY0_INIT;   /* Latch CDTY values */
-  //AT91C_BASE_PWMC_CH1->PWMC_CDTYUPDR = PWM_CDTY1_INIT;   /* Latch CDTY values */
-    
+  AT91C_BASE_PWMC_CH1->PWMC_CDTYUPDR = PWM_CDTY1_INIT; /* Latch CDTY values */
+
+  
 } /* end PWMSetupAudio() */
 
 
@@ -273,11 +309,9 @@ Function: PWMAudioSetFrequency
 
 Description:
 Configures the PWM peripheral with the desired frequency.
-Note, we don't care if we interrupt the current cycle, so the direct registers
-are used rather than the double-buffered values.
 
 Requires:
-  - u32Channel_ is the channel of interest - either AT91C_PWMC_CHID0 or AT91C_PWMC_CHID1
+  - u32Channel_ is the channel of interest - either BUZZER1 or BUZZER2
   - u16Frequency_ is in Hertz and should be in the range 100 - 20,000 since
     that is the audible range.  Higher and lower frequencies are allowed, though.
   - The PWM peripheral is correctly configured for the current processor clock speed.
@@ -294,20 +328,38 @@ void PWMAudioSetFrequency(u32 u32Channel_, u16 u16Frequency_)
   
   u32ChannelPeriod = CPRE_CLCK / u16Frequency_;
   
-  if(u32Channel_ == AT91C_PWMC_CHID0)
+  if(u32Channel_ == BUZZER1)
   {
-    AT91C_BASE_PWMC_CH0->PWMC_CPRDR = u32ChannelPeriod;
-    AT91C_BASE_PWMC_CH0->PWMC_CDTYR = u32ChannelPeriod >> 1;
-    //AT91C_BASE_PWMC_CH0->PWMC_CPRDUPDR = u32ChannelPeriod;   
-    //AT91C_BASE_PWMC_CH0->PWMC_CDTYUPDR = u32ChannelPeriod >> 1; 
+    /* Set different registers depending on if PWM is already running */
+    if (AT91C_BASE_PWMC->PWMC_SR & AT91C_PWMC_CHID0)
+    {
+      /* Beeper is already running, so use update registers */
+      AT91C_BASE_PWMC_CH0->PWMC_CPRDUPDR = u32ChannelPeriod;   
+      AT91C_BASE_PWMC_CH0->PWMC_CDTYUPDR = u32ChannelPeriod >> 1; 
+    }
+    else
+    {
+      /* Beeper is off, so use direct registers */
+      AT91C_BASE_PWMC_CH0->PWMC_CPRDR = u32ChannelPeriod;
+      AT91C_BASE_PWMC_CH0->PWMC_CDTYR = u32ChannelPeriod >> 1;
+    }
   }
   
-  else if(u32Channel_ == AT91C_PWMC_CHID1)
+  else if(u32Channel_ == BUZZER2)
   {
-    AT91C_BASE_PWMC_CH1->PWMC_CPRDR = u32ChannelPeriod;
-    AT91C_BASE_PWMC_CH1->PWMC_CDTYR = u32ChannelPeriod >> 1;
-    //AT91C_BASE_PWMC_CH1->PWMC_CPRDUPDR = u32ChannelPeriod;   
-    //AT91C_BASE_PWMC_CH1->PWMC_CDTYUPDR = u32ChannelPeriod >> 1; 
+    /* Set different registers depending on if PWM is already running */
+    if (AT91C_BASE_PWMC->PWMC_SR & AT91C_PWMC_CHID1)
+    {
+      /* Beeper is already running, so use update registers */
+      AT91C_BASE_PWMC_CH1->PWMC_CPRDUPDR = u32ChannelPeriod;   
+      AT91C_BASE_PWMC_CH1->PWMC_CDTYUPDR = u32ChannelPeriod >> 1; 
+    }
+    else
+    {
+      /* Beeper is off, so use direct registers */
+      AT91C_BASE_PWMC_CH1->PWMC_CPRDR = u32ChannelPeriod;
+      AT91C_BASE_PWMC_CH1->PWMC_CDTYR = u32ChannelPeriod >> 1;
+    }
   }
   
 } /* end PWMAudioSetFrequency() */
@@ -321,7 +373,7 @@ Enables a PWM channel.
 
 Requires:
   - All peripheral values should be configured
-  - u32Channel_ is AT91C_PWMC_CHID0 or AT91C_PWMC_CHID1
+  - u32Channel_ is BUZZER1 or BUZZER2
 
 Promises:
   - PWM for the selected channel is enabled
@@ -341,7 +393,7 @@ Description:
 Disables a PWM channel.
 
 Requires:
-  - u32Channel_ is AT91C_PWMC_CHID0 or AT91C_PWMC_CHID1
+  - u32Channel_ is BUZZER1 or BUZZER2
 
 Promises:
   - PWM for the selected channel is disabled
@@ -352,6 +404,7 @@ void PWMAudioOff(u32 u32Channel_)
   AT91C_BASE_PWMC->PWMC_DIS = u32Channel_;  
 
 } /* end PWMAudioOff() */
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

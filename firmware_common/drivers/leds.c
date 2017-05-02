@@ -4,7 +4,7 @@ File: leds.c
 Description:
 LED driver that provides on, off, toggle, blink and PWM functionality.
 The basic on/off/toggle functionality is applied directly to the LEDs.
-Blinking and PWMing of LEDs rely on the MPG operating system to provide timing at
+Blinking and PWMing of LEDs rely on the EIE operating system to provide timing at
 regular 1ms calls to LedUpdate().
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -324,7 +324,7 @@ Promises:
 void LedInitialize(void)
 {
   u32 u32Timer;
-//  u8* pu8Parser;
+  u8  u8Index;
 
   u32 u32Buzzer1Frequency = 4000;
   u32 u32Buzzer2Frequency = 500;
@@ -352,7 +352,7 @@ void LedInitialize(void)
 #endif /* MPGL2 */
   
   /* Turn all LEDs on full, then fade them out over a few seconds */
-  for(u8 i = 20; i > 0; i--)
+  for(u8Index = 20; u8Index > 0; u8Index--)
   {
 #ifdef STARTUP_SOUND
     /* Configure Buzzers to provide some audio during start up */
@@ -372,7 +372,7 @@ void LedInitialize(void)
       LedUpdate();
     }
     /* Pause for a bit on the first iteration to show the LEDs on for little while */
-    if(i == 20)
+    if(u8Index == 20)
     {
       while( !IsTimeUp(&u32Timer, 200) );
     }
@@ -380,7 +380,7 @@ void LedInitialize(void)
     /* Set the LED intensity for the next iteration */
     for(u8 j = 0; j < TOTAL_LEDS; j++)
     {
-      Leds_asLedArray[j].eRate = (LedRateType)(i - 1);
+      Leds_asLedArray[j].eRate = (LedRateType)(u8Index - 1);
     }
     
     /* Set the buzzer frequency for the next iteration */
@@ -506,6 +506,8 @@ void LedUpdate(void)
     }
   } /* end for */
 } /* end LedUpdate() */
+
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

@@ -11,6 +11,7 @@ Bookmarks:
 @@@@@ GPIO board-specific parameters
 ##### Communication peripheral board-specific parameters
 
+Quick references:
 DEBUG UART IS 115200-8-N-1
 ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
 
@@ -22,14 +23,12 @@ ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
 /**********************************************************************************************************************
 Runtime switches
 ***********************************************************************************************************************/
-#define MPGL1             1         /* Use to activate MPG Level 1 specific code */
-//#define MPGL2             1         /* Use to activate MPG Level 2 (all versions) specific code */
-//#define MPGL2_R01          1         /* Use with MPGL2-EHDW-01 revision board */
+//#define MPGL2_R01                   /* Use with MPGL2-EHDW-01 revision board */
 
-#define DEBUG_MODE        1         /* Define to enable certain debugging code */
-#define STARTUP_SOUND     1         /* Define to include buzzer sound on startup */
+#define DEBUG_MODE                /* Define to enable certain debugging code */
+//#define STARTUP_SOUND              /* Define to include buzzer sound on startup */
 
-//#define USE_SIMPLE_USART0 1  /* Define to use USART0 as a very simple byte-wise UART for debug purposes */
+//#define USE_SIMPLE_USART0   /* Define to use USART0 as a very simple byte-wise UART for debug purposes */
 
 /**********************************************************************************************************************
 Type Definitions
@@ -54,25 +53,24 @@ Includes
 /* Common driver header files */
 #include "antmessage.h"
 #include "antdefines.h"
-#include "ant_api.h"
 #include "ant.h"
+#include "ant_api.h"
 #include "buttons.h"
 #include "leds.h" 
 #include "messaging.h"
+#include "timer.h" 
 
 #include "sam3u_i2c.h"
 #include "sam3u_ssp.h"
 #include "sam3u_uart.h"
+#include "adc12.h"
 
-/* MPGL1-specific header files */
-#ifdef MPGL1
-#include "mpgl1-ehdw-03.h"
+/* EIEF1-PCB-01 specific header files */
+#ifdef EIE1
+#include "eief1-pcb-01.h"
 #include "lcd_nhd-c0220biz.h"
 #include "sdcard.h"
-
-//#include "mpgl1_audio_test.h"
-//#include "mpgl1_board_test.h"
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 /* MPGL2-specific header files */
@@ -85,17 +83,14 @@ Includes
 #include "captouch.h"
 #include "lcd_bitmaps.h"
 #include "lcd_NHD-C12864LZ.h"
-
-//#include "mpgl2_board_test.h"
-//#include "pong_atmel.h"
-
 #endif /* MPGL2 */
 
 /* Common application header files */
 #include "debug.h"
 #include "music.h"
-#include "user_app.h"
-
+#include "user_app1.h"
+#include "user_app2.h"
+#include "user_app3.h"
 
 
 /**********************************************************************************************************************
@@ -108,19 +103,21 @@ Includes
 #define _APPLICATION_FLAGS_DEBUG        0x00000004        /* DebugStateMachine */
 #define _APPLICATION_FLAGS_LCD          0x00000008        /* LcdStateMachine */
 #define _APPLICATION_FLAGS_ANT          0x00000010        /* AntStateMachine */
+#define _APPLICATION_FLAGS_TIMER        0x00000020        /* TimerStateMachine */
+#define _APPLICATION_FLAGS_ADC          0x00000040        /* Adc12StateMachine */
 
-#ifdef MPGL1
-/* MPGL1 specific application flags */
-#define _APPLICATION_FLAGS_SDCARD       0x00000020        /* SdCardStateMachine */
+#ifdef EIE1
+/* EIE1 specific application flags */
+#define _APPLICATION_FLAGS_SDCARD       0x00000080        /* SdCardStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)6            /* Total number of applications */
-#endif /* MPGL1 specific application flags */
+#define NUMBER_APPLICATIONS             (u8)8            /* Total number of applications */
+#endif /* EIE1 specific application flags */
 
 #ifdef MPGL2
 /* MPGL2 specific application flags */
-#define _APPLICATION_FLAGS_CAPTOUCH     0x00000020        /* CapTouchStateMachine */
+#define _APPLICATION_FLAGS_CAPTOUCH     0x00000080        /* CapTouchStateMachine */
 
-#define NUMBER_APPLICATIONS             (u8)6             /* Total number of applications */
+#define NUMBER_APPLICATIONS             (u8)8             /* Total number of applications */
 #endif /* MPGL2 specific application flags */
 
 
@@ -151,8 +148,21 @@ Includes
 #define UART0_IRQHandler            USART0_IrqHandler
 #define DEBUG_UART_PERIPHERAL       AT91C_ID_US0
 
+#if 0
+/* %SPI% Blade SPI Peripheral Allocation */
+#define BLADE_SPI                   SPI
+#define SD_BASE_PORT                AT91C_BASE_PIOA
+#define SD_CS_PIN                   PA_08_SD_CS_MCDA3
+#define USART1_US_CR_INIT           SD_US_CR_INIT
+#define USART1_US_MR_INIT           SD_US_MR_INIT
+#define USART1_US_IER_INIT          SD_US_IER_INIT
+#define USART1_US_IDR_INIT          SD_US_IDR_INIT
+#define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
 
-#ifdef MPGL1
+#define SPI_IRQHandler             SPI_IrqHandler
+#endif
+
+#ifdef EIE1
 /* %SSP% Configuration */
 /* SD SPI Peripheral Allocation (USART1) */
 #define SD_SSP                      USART1
@@ -165,7 +175,7 @@ Includes
 #define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
 
 #define SSP1_IRQHandler             USART1_IrqHandler
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 
 #ifdef MPGL2
@@ -197,6 +207,7 @@ Includes
 #define ANT_SPI_CS_PIN              PB_22_ANT_USPI2_CS
 
 /* Blade I²C (TWI0) / Accelerometer (MPGL2_R01 only) */
+/* Currently configured directly in sam3u_i2c.c */
 
 
 /***********************************************************************************************************************
@@ -209,9 +220,9 @@ Update the values below for the LEDs on the board.  Any name can be used for the
 Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the correct values for the LEDs in the system.  
 */
 
-#ifdef MPGL1
+#ifdef EIE1
 #define TOTAL_LEDS            (u8)11        /* Total number of LEDs in the system */
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 
 #ifdef MPGL2
@@ -233,7 +244,7 @@ Open buttons.c and edit the GPIO definitions sections with the bit numbers for t
 The order of the definitions below must match the order of the definitions provided in buttons.c. 
 */
 
-#ifdef MPGL1
+#ifdef EIE1
 #define TOTAL_BUTTONS         (u8)4       /* Total number of Buttons in the system */
 
 #define BUTTON0               (u32)0
@@ -244,7 +255,7 @@ The order of the definitions below must match the order of the definitions provi
 /* All buttons on each port must be ORed together here: set to 0 if no buttons on the port */
 #define GPIOA_BUTTONS         (u32)( PA_17_BUTTON0 )
 #define GPIOB_BUTTONS         (u32)( PB_00_BUTTON1 | PB_01_BUTTON2 | PB_02_BUTTON3 )
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
 #ifdef MPGL2
 #define TOTAL_BUTTONS         (u8)2       /* Total number of Buttons in the system */
@@ -263,14 +274,28 @@ The order of the definitions below must match the order of the definitions provi
 /*----------------------------------------------------------------------------------------------------------------------
 %BUZZER% Buzzer Configuration                                                                                                  
 ------------------------------------------------------------------------------------------------------------------------
-MPGL1 has two buzzers, MPGL2 only has one */
+EIE1 has two buzzers, MPG2 only has one */
 
 #define BUZZER1               AT91C_PWMC_CHID0
 
-#ifdef MPGL1
+#ifdef EIE1
 #define BUZZER2               AT91C_PWMC_CHID1
-#endif /* MPGL1 */
+#endif /* EIE1 */
 
+
+/*----------------------------------------------------------------------------------------------------------------------
+%ADC% Analog input channel Configuration                                                                                                  
+------------------------------------------------------------------------------------------------------------------------
+Available analog channels are defined here.  The names in the arrays come from
+the board-specific definition header file in section !!!!! GPIO pin names
+*/
+#ifdef EIE1
+#define   ADC_CHANNEL_ARRAY   {ADC12_POTENTIOMETER, ADC12_BLADE_AN0, ADC12_BLADE_AN1}
+#endif /* EIE1 */
+
+#ifdef MPGL2
+#define   ADC_CHANNEL_ARRAY   {ADC12_BLADE_AN0, ADC12_BLADE_AN1}
+#endif /* MPGL2 */
 
 /*----------------------------------------------------------------------------------------------------------------------
 %ANT% Interface Configuration                                                                                                  

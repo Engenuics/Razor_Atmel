@@ -70,7 +70,7 @@
       <WATCH_1>
         <expressions>
           
-        <item></item></expressions>
+        <item/></expressions>
         <col-names>
           
           
@@ -87,7 +87,7 @@
       <WATCH_2>
         <expressions>
           
-        <item></item></expressions>
+        <item/></expressions>
         <col-names>
           
           
@@ -104,7 +104,7 @@
       <WATCH_3>
         <expressions>
           
-        <item></item></expressions>
+        <item/></expressions>
         <col-names>
           
           

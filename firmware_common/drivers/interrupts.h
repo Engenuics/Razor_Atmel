@@ -2,7 +2,7 @@
 File: interrupts.h                                                               
 
 Description:
-Interrupt declarations for use with MPG development board firmware.
+Interrupt declarations for use with EIE development board firmware.
 ***********************************************************************************************************************/
 
 #ifndef __INTERRUPTS_H

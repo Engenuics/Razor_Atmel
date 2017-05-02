@@ -61,6 +61,16 @@ u8 u8MyBuffer[SCANF_BUFFER_SIZE]
 u8 u8NumChars;
 u8NumChars = DebugScanf(u8MyBuffer);
 
+
+void DebugSetPassthrough(void)
+Puts the Debug task in Passthrough mode so ALL characters received are put in to the Scanf buffer and
+the Debug task does not look for input for the menu system. 
+
+
+void DebugClearPassthrough(void)
+Takes the Debug task out of Passthrough mode.
+
+
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -616,7 +626,7 @@ static void DebugCommandLedTestToggle(void)
     G_u32DebugFlags |= _DEBUG_LED_TEST_ENABLE;
     DebugPrintf(G_au8MessageON);
     
-#ifdef MPG1
+#ifdef EIE1
     LedOn(WHITE);
     LedOn(PURPLE);
     LedOn(BLUE);
@@ -625,19 +635,8 @@ static void DebugCommandLedTestToggle(void)
     LedOn(YELLOW);
     LedOn(ORANGE);
     LedOn(RED);
-#endif /* MPG 1 */   
+#endif /* EIE1 */   
     
-    #ifdef MPG1
-    LedOn(WHITE);
-    LedOn(PURPLE);
-    LedOn(BLUE);
-    LedOn(CYAN);
-    LedOn(GREEN);
-    LedOn(YELLOW);
-    LedOn(ORANGE);
-    LedOn(RED);
-#endif /* MPG 1 */
-
 #ifdef MPGL2
 #ifdef MPGL2_R01
     LedOn(BLUE);
