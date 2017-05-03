@@ -379,11 +379,11 @@ void SystemStatusReport(void)
   bool bNoFailedTasks = TRUE;
 
 #ifdef EIE1
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "SD"};
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "ADC", "SD"};
 #endif /* EIE1 */
 
 #ifdef MPGL2
-  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "CAPTOUCH"};
+  u8 aau8AppShortNames[NUMBER_APPLICATIONS][MAX_TASK_NAME_SIZE] = {"LED", "BUTTON", "DEBUG", "LCD", "ANT", "TIMER", "ADC", "CAPTOUCH"};
 #endif /* MPGL2 */
 
   /* Announce init complete then report any tasks that failed init */

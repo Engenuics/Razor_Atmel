@@ -8,6 +8,8 @@ Header file for sdcard.c
 #ifndef __SDCARD_H
 #define __SDCARD_H
 
+//#define ENABLE_SD
+
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
@@ -25,6 +27,10 @@ Constants / Definitions
 #define _SD_TYPE_SD2		          (u32)0x00000010		   /* SD ver 2 */
 #define _SD_TYPE_MMC		          (u32)0x00000020	     /* SD ver 3 */
 #define _SD_TYPE_BLOCK		        (u32)0x00000040		   /* Block addressing */
+//#define _SD_TYPE_SDSC             (u32)0x00000000      /* Standard Capacity SD Memory Card (SDSC): Up to and including 2 GB */
+//#define _SD_TYPE_SDHC             (u32)0x00000000      /* High Capacity SD Memory Card (SDHC): More than 2GB and up to and including 32GB */
+//#define _SD_TYPE_SDXC             (u32)0x00000000      /* Extended Capacity SD Memory Card (SDXC): More than 32GB and up to and including 2TB */
+/* end of SD_u32Flags */
 
 #define SD_CLEAR_CARD_TYPE_BITS  ~(_SD_CARD_HC | _SD_TYPE_MMC | _SD_TYPE_SD1 | _SD_TYPE_SD2 |_SD_TYPE_BLOCK)
 #define _SD_TYPE_SDC		          (_SD_TYPE_SD1 | _SD_TYPE_SD2)	
@@ -36,7 +42,7 @@ Constants / Definitions
 #define SD_WAKEUP_BYTES           (u32)20              /* Number of dummy bytes sent to wake up new SD card */
 #define SD_CMD_RETRIES            (u8)20               /* Number of polls to retry a command response */
 
-#define SD_CMD_SIZE               (u8)7                /* Size of an SD card command including a dummy byte to read a resposne */
+#define SD_CMD_SIZE               (u8)6                /* Size of an SD card command */
 
 #define SD_SPI_WAIT_TIME_MS	      (u32)(500)           /* Time to wait for the SPI resource to become available */
 #define SD_READ_TOKEN_MS		      (u32)(200)
@@ -49,6 +55,8 @@ Constants / Definitions
 #define SD_CMD0		                (u8)(0)			  /* GO_IDLE_STATE */
 #define SD_CMD1		                (u8)(1)			  /* SEND_OP_COND (SD) */
 #define SD_CMD8		                (u8)(8)			  /* SEND_IF_COND */
+#define SD_CMD8_INDEX_VHS         (u8)(2)       /* Index of VHS information in response to CMD 8 */
+#define SD_CMD8_INDEX_CHECK       (u8)(3)       /* Index of check pattern information in response to CMD 8 */
 #define SD_CMD9		                (u8)(9)			  /* SEND_CSD */
 #define SD_CMD10		              (u8)(10)			/* SEND_CID */
 #define SD_CMD12		              (u8)(12)			/* STOP_TRANSMISSION */
@@ -83,28 +91,34 @@ Constants / Definitions
 #define SD_R7_LEN	                (u8)(SD_R1_LEN + 4)
 
 /* Card type flags (CardType) */
-#define SD_CT_MMC		              (u8)0x01		/* SD ver 3 */
-#define SD_CT_SD1		              (u8)0x02		/* SD ver 1 */
-#define SD_CT_SD2		              (u8)0x04		/* SD ver 2 */
+#define SD_CT_MMC		              (u8)0x01  	  /* SD ver 3 */
+#define SD_CT_SD1		              (u8)0x02		  /* SD ver 1 */
+#define SD_CT_SD2		              (u8)0x04		  /* SD ver 2 */
 #define SD_CT_SDC		              (u8)(SD_CT_SD1 | SD_CT_SD2)	/* SD */
-#define SD_CT_BLOCK		            (u8)0x08		/* Block addressing */
+#define SD_CT_BLOCK		            (u8)0x08		  /* Block addressing */
 
-/* Card status */
-#define SD_STATUS_IDLE            (u8)0x01     /* Response R1 when card is IDLE */
-#define SD_STATUS_READY           (u8)0x00     /* Response R1 when card is READY */
+/* Card status bits (in Response R1) */
+#define SD_STATUS_READY           (u8)0x00      /* Response R1 when card is READY */
+#define SD_STATUS_IDLE            (u8)0x01      /* Response R1 when card is IDLE */
+#define SD_STATUS_ERASE_RESET     (u8)0x02      /* Response bit in R1 */
+#define SD_STATUS_ILLEGAL_CMD     (u8)0x04      /* Response bit in R1 */
+#define SD_STATUS_COM_CRC_ERR     (u8)0x08      /* Response bit in R1 */
+#define SD_STATUS_ERASE_SEQ_ERR   (u8)0x10      /* Response bit in R1 */
+#define SD_STATUS_ADDRESS_ERR     (u8)0x20      /* Response bit in R1 */
+#define SD_STATUS_PARAMETER_ERR   (u8)0x40      /* Response bit in R1 */
 
 /* Data tokens */
-#define TOKEN_START_BLOCK         (u8)0xFE    /* First byte of a single block read or write, or multiple block read */
-#define TOKEN_START_BLOCK_MULT    (u8)0xFC    /* First byte of each block in multiple block write */
-#define TOKEN_STOP_BLOCK_MULT     (u8)0xFD    /* Stop transmission request token for multi-block write */
+#define TOKEN_START_BLOCK         (u8)0xFE      /* First byte of a single block read or write, or multiple block read */
+#define TOKEN_START_BLOCK_MULT    (u8)0xFC      /* First byte of each block in multiple block write */
+#define TOKEN_STOP_BLOCK_MULT     (u8)0xFD      /* Stop transmission request token for multi-block write */
 
 /* SD Error Codes */
-#define SD_ERROR_NONE             (u8)0x00    /* No error */
-#define SD_ERROR_TIMEOUT          (u8)0x01    /* SSP application did not deliver expected response */
-#define SD_ERROR_CARD_VOLTAGE     (u8)0x02    /* Card voltage not supported */
-#define SD_ERROR_BAD_RESPONSE     (u8)0x03    /* Unexpected or no response to a command */
-#define SD_ERROR_NO_TOKEN         (u8)0x04    /* Got '0' for a message token => message task is broken */
-#define SD_ERROR_NO_SD_TOKEN      (u8)0x05    /* Expected a token from the SD card but didn't get it */
+#define SD_ERROR_NONE             (u8)0x00      /* No error */
+#define SD_ERROR_TIMEOUT          (u8)0x01      /* SSP application did not deliver expected response */
+#define SD_ERROR_CARD_VOLTAGE     (u8)0x02      /* Card voltage not supported */
+#define SD_ERROR_BAD_RESPONSE     (u8)0x03      /* Unexpected or no response to a command */
+#define SD_ERROR_NO_TOKEN         (u8)0x04      /* Got '0' for a message token => message task is broken */
+#define SD_ERROR_NO_SD_TOKEN      (u8)0x05      /* Expected a token from the SD card but didn't get it */
 
 
 /**********************************************************************************************************************
@@ -114,8 +128,6 @@ Constants / Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Macros */
 /*--------------------------------------------------------------------------------------------------------------------*/
-#define SD_POWER_ON()             (LPC_GPIO0->FIOCLR = P0_26_SD_PWR)
-#define SD_POWER_OFF()            (LPC_GPIO0->FIOSET = P0_26_SD_PWR)  /* Must be open drain with pull-up */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -141,35 +153,40 @@ bool SdIsCardInserted(void);
 /* Private functions */
 /*--------------------------------------------------------------------------------------------------------------------*/
 static void SdCommand(u8* pau8Command_);
-static void AdvanceSD_pu8RxBufferParser(u32 u32NumBytes_);
-static void FlushSdRxBuffer(void);
+//static void AdvanceSD_pu8RxBufferParser(u32 u32NumBytes_);
+//static void FlushSdRxBuffer(void);
 
 
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-static void SdIdleNoCard(void);     
-static void SdCardDummies(void);
-static void SdCardResponseCMD0(void);
-static void SdCardResponseCMD8(void);
-static void SdCardReadCMD8(void);
-static void SdCardACMD41(void);
-static void SdCardResponseACMD41(void);
-static void SdCardResponseCMD58(void);
-static void SdCardResponseCMD16(void);
-static void SdCardReadCMD58(void);
+#ifndef ENABLE_SD 
+static void SdCardSM_Disabled(void);
+#endif /* ENABLE_SD */
 
-static void SdCardReadyIdle(void);          
-static void SdCardResponseCMD17(void);
-static void SdCardWaitStartToken(void);          
-static void SdCardDataTransfer(void);
-static void SdFailedDataTransfer(void);
+static void SdCardSM_IdleNoCard(void);     
+static void SdCardSM_Dummies(void);
+static void SdCardSM_ResponseCMD0(void);
+static void SdCardSM_ResponseCMD8(void);
+static void SdCardSM_ReadCMD8(void);
+static void SdCardSM_ResponseCMD55(void);
+static void SdCardSM_ResponseACMD41(void);
+static void SdCardSM_ResponseCMD58(void);
+static void SdCardSM_ResponseCMD16(void);
+static void SdCardSM_ReadCMD58(void);
 
-static void SdCardWaitReady(void);
-static void SdCardWaitCommand(void);
-static void SdCardWaitSSP(void);
+static void SdCardSM_ReadyIdle(void);          
+static void SdCardSM_ResponseCMD17(void);
+static void SdCardSM_WaitStartToken(void);          
+static void SdCardSM_DataTransfer(void);
+static void SdCardSM_FailedDataTransfer(void);
 
-static void SdError(void);         
+//static void SdCardSM_WaitReady(void);
+static void SdCardSM_WaitCommand(void);
+static void SdCardSM_WaitResponse(void);
+static void SdCardSM_WaitSSP(void);
+
+static void SdCardSM_Error(void);         
 
 
 #endif /* __SDCARD_H */
