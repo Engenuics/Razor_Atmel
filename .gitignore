@@ -3,4 +3,5 @@ Debug/
 *.bat
 *.TMP
 *.wspos
-firmware_mpgl1/iar_7_20_1/settings/mpgl1-efmw-01.dbgdt
+doxygen
+EIE-Purple-Logo.jpg
