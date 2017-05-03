@@ -1,6 +1,6 @@
 /** \file antdefines.h
 *
-* Conatins definitions for ANT config parameters and ANT event codes
+* Contains definitions for ANT config parameters and ANT event codes
 *
 * $Name:  $
 */

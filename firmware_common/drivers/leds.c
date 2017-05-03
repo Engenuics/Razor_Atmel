@@ -1,8 +1,8 @@
-/***********************************************************************************************************************
-File: leds.c                                                                
+/*!**********************************************************************************************************************
+@file leds.c                                                                
+@brief LED driver and API
 
-Description:
-LED driver that provides on, off, toggle, blink and PWM functionality.
+This driver provides on, off, toggle, blink and PWM functionality.
 The basic on/off/toggle functionality is applied directly to the LEDs.
 Blinking and PWMing of LEDs rely on the EIE operating system to provide timing at
 regular 1ms calls to LedUpdate().

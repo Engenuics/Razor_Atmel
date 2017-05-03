@@ -12,8 +12,8 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32SystemTime1ms;                       /* Global system time incremented every ms, max 2^32 (~49 days) */
-volatile u32 G_u32SystemTime1s;                        /* Global system time incremented every second, max 2^32 (~136 years) */
+volatile u32 G_u32SystemTime1ms;                       /**< Global system time incremented every ms, max 2^32 (~49 days) */
+volatile u32 G_u32SystemTime1s;                        /**< Global system time incremented every second, max 2^32 (~136 years) */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
