@@ -8,6 +8,8 @@ Header file for sdcard.c
 #ifndef __SDCARD_H
 #define __SDCARD_H
 
+//#define ENABLE_SD
+
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
@@ -158,6 +160,10 @@ static void SdCommand(u8* pau8Command_);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
+#ifndef ENABLE_SD 
+static void SdCardSM_Disabled(void);
+#endif /* ENABLE_SD */
+
 static void SdCardSM_IdleNoCard(void);     
 static void SdCardSM_Dummies(void);
 static void SdCardSM_ResponseCMD0(void);

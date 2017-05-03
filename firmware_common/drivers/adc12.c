@@ -214,13 +214,16 @@ void Adc12Initialize(void)
   /* Mark the ADC semaphore as available */
   Adc12_bAdcAvailable = TRUE;
   
-  /* If good initialization, set state to Idle */
+  /* Check initialization and set first state */
   if( 1 )
   {
     /* Enable required interrupts */
     NVIC_ClearPendingIRQ(IRQn_ADCC0);
     NVIC_EnableIRQ(IRQn_ADCC0);
+    
+    /* Write message, set "good" flag and select Idle state */
     DebugPrintf(au8Adc12Started);
+    G_u32ApplicationFlags |= _APPLICATION_FLAGS_ADC;
     Adc12_StateMachine = Adc12SM_Idle;
   }
   else

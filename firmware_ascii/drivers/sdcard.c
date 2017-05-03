@@ -268,6 +268,7 @@ Promises:
 */
 void SdCardInitialize(void)
 {
+#ifdef ENABLE_SD
   u8 au8SdCardStartedMsg[] = "SdCard task ready\n\r";
 
   /* Reset the receive buffer to dummies for a known starting state */
@@ -275,7 +276,6 @@ void SdCardInitialize(void)
 
   /* Initailze startup values and the command array */
   SD_pu8RxBufferNextByte = &SD_au8RxBuffer[0];
-  //SD_pu8RxBufferParser   = &SD_au8RxBuffer[0];
 
   /* Configure the SSP resource to be used for the SD Card application */
   SD_sSspConfig.SspPeripheral      = SD_SSP;
@@ -297,7 +297,13 @@ void SdCardInitialize(void)
   }
 
   G_u32ApplicationFlags |= _APPLICATION_FLAGS_SDCARD;
-  
+#else /* ENABLE_SD */
+  u8 au8SdCardStartedMsg[] = "SdCard task disabled\n\r";
+
+  G_u32ApplicationFlags |= _APPLICATION_FLAGS_SDCARD;
+  SD_pfStateMachine = SdCardSM_Disabled;
+  DebugPrintf(au8SdCardStartedMsg);
+#endif /* ENABLE_SD */
 } /* end SdCardInitialize() */
 
 
@@ -1181,6 +1187,17 @@ static void SdCardSM_Error(void)
   SD_pfStateMachine = SdCardSM_WaitSSP;
   
 } /* end SdCardSM_Error() */
+
+
+#ifndef ENABLE_SD 
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* SD card disbled state */
+static void SdCardSM_Disabled(void)
+{
+  
+} /* end SdCardSM_Disabled */
+#endif /* ENABLE_SD */
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
