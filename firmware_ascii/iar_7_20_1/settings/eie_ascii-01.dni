@@ -9,12 +9,17 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
+<<<<<<< HEAD
 Checksum=-473228282
+=======
+Checksum=-1086412391
+>>>>>>> refs/remotes/origin/master
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
 [CodeCoverage]
 Enabled=_ 0
+<<<<<<< HEAD
 [CallStack]
 ShowArgs=0
 [Disassembly]
@@ -24,6 +29,8 @@ CStepIntDis=_ 0
 TraceBufferSize=0x00010000
 TraceStallIfFIFOFull=0x00000000
 TracePortSize=0x00000000
+=======
+>>>>>>> refs/remotes/origin/master
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -31,8 +38,22 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+<<<<<<< HEAD
 [CallStackLog]
 Enabled=0
+=======
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[CallStackLog]
+Enabled=0
+[JLinkDriver]
+CStepIntDis=_ 0
+TraceBufferSize=0x00010000
+TraceStallIfFIFOFull=0x00000000
+TracePortSize=0x00000000
+>>>>>>> refs/remotes/origin/master
 [DriverProfiling]
 Enabled=0
 Mode=1

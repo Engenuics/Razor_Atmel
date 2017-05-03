@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
     <DebugChecksum>
+<<<<<<< HEAD
         <Checksum>1543415901</Checksum>
+=======
+        <Checksum>1526879452</Checksum>
+>>>>>>> refs/remotes/origin/master
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -10,6 +14,13 @@
     <CodeCoverage>
         <Enabled>_ 0</Enabled>
     </CodeCoverage>
+<<<<<<< HEAD
+=======
+    <Trace1>
+        <Enabled>0</Enabled>
+        <ShowSource>1</ShowSource>
+    </Trace1>
+>>>>>>> refs/remotes/origin/master
     <Stack>
         <FillEnabled>0</FillEnabled>
         <OverflowWarningsEnabled>1</OverflowWarningsEnabled>
@@ -21,6 +32,7 @@
         <LimitSize>0</LimitSize>
         <ByteLimit>50</ByteLimit>
     </Stack>
+<<<<<<< HEAD
     <CallStack>
         <ShowArgs>0</ShowArgs>
     </CallStack>
@@ -35,6 +47,8 @@
         <Enabled>0</Enabled>
         <ShowSource>1</ShowSource>
     </Trace1>
+=======
+>>>>>>> refs/remotes/origin/master
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -44,6 +58,15 @@
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
     </TermIOLog>
+<<<<<<< HEAD
+=======
+    <CallStack>
+        <ShowArgs>0</ShowArgs>
+    </CallStack>
+    <Disassembly>
+        <MixedMode>1</MixedMode>
+    </Disassembly>
+>>>>>>> refs/remotes/origin/master
     <DriverProfiling>
         <Enabled>0</Enabled>
         <Mode>1</Mode>
@@ -57,6 +80,13 @@
     <CallStackStripe>
         <ShowTiming>1</ShowTiming>
     </CallStackStripe>
+<<<<<<< HEAD
+=======
+    <JLinkDriver>
+        <CStepIntDis>_ 0</CStepIntDis>
+        <LeaveTargetRunning>_ 0</LeaveTargetRunning>
+    </JLinkDriver>
+>>>>>>> refs/remotes/origin/master
     <DisassembleMode>
         <mode>0</mode>
     </DisassembleMode>

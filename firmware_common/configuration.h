@@ -11,6 +11,7 @@ Bookmarks:
 @@@@@ GPIO board-specific parameters
 ##### Communication peripheral board-specific parameters
 
+Quick references:
 DEBUG UART IS 115200-8-N-1
 ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
 
@@ -33,6 +34,7 @@ Runtime switches
 Type Definitions
 **********************************************************************************************************************/
 typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
+
 
 /**********************************************************************************************************************
 Includes
@@ -146,6 +148,19 @@ Includes
 #define UART0_IRQHandler            USART0_IrqHandler
 #define DEBUG_UART_PERIPHERAL       AT91C_ID_US0
 
+#if 0
+/* %SPI% Blade SPI Peripheral Allocation */
+#define BLADE_SPI                   SPI
+#define SD_BASE_PORT                AT91C_BASE_PIOA
+#define SD_CS_PIN                   PA_08_SD_CS_MCDA3
+#define USART1_US_CR_INIT           SD_US_CR_INIT
+#define USART1_US_MR_INIT           SD_US_MR_INIT
+#define USART1_US_IER_INIT          SD_US_IER_INIT
+#define USART1_US_IDR_INIT          SD_US_IDR_INIT
+#define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
+
+#define SPI_IRQHandler             SPI_IrqHandler
+#endif
 
 #ifdef EIE1
 /* %SSP% Configuration */
@@ -192,6 +207,7 @@ Includes
 #define ANT_SPI_CS_PIN              PB_22_ANT_USPI2_CS
 
 /* Blade I²C (TWI0) / Accelerometer (MPGL2_R01 only) */
+/* Currently configured directly in sam3u_i2c.c */
 
 
 /***********************************************************************************************************************
