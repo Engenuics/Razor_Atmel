@@ -40,9 +40,6 @@ AntChannelStatusType
 AntApplicationMessageType
 {ANT_EMPTY, ANT_DATA, ANT_TICK}
 
-AntApplicationGenericMsgStatus
-{ANT_GENERIC_MSG_READY, ANT_GENERIC_MSG_BUSY, ANT_GENERIC_MSG_OK, ANT_GENERIC_MSG_FAIL}
-
 Structs
 AntExtendedDataType
 AntApplicationMsgListType

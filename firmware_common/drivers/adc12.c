@@ -29,6 +29,7 @@ PUBLIC FUNCTIONS
 PROTECTED FUNCTIONS
 - void Adc12Initialize(void)
 - void Adc12RunActiveState(void)
+- void ADCC0_IrqHandler(void)
 
 **********************************************************************************************************************/
 
@@ -55,37 +56,42 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Adc12_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Adc12_StateMachine;                 /* The state machine function pointer */
-//static u32 Adc12_u32Timeout;                         /* Timeout counter used across states */
+static fnCode_type Adc12_StateMachine;                 /*!< The state machine function pointer */
+//static u32 Adc12_u32Timeout;                         /*!< Timeout counter used across states */
 
-static Adc12ChannelType Adc12_aeChannels[] = ADC_CHANNEL_ARRAY;  /* Available channels defined in configuration.h */
-static fnCode_u16_type Adc12_afCallbacks[8];           /* ADC12 ISR callback function pointers */
+static Adc12ChannelType Adc12_aeChannels[] = ADC_CHANNEL_ARRAY;  /*!< Available channels defined in configuration.h */
+static fnCode_u16_type Adc12_afCallbacks[8];           /*!< ADC12 ISR callback function pointers */
 
-static bool Adc12_bAdcAvailable;                       /* Binary semaphore to control access to the ADC12 peripheral */
+static bool Adc12_bAdcAvailable;                       /*!< Binary semaphore to control access to the ADC12 peripheral */
 
 
 /**********************************************************************************************************************
 Function Definitions
 **********************************************************************************************************************/
 
-/*------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------------*/
 /*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*!----------------------------------------------------------------------------------------------------------------------
+/*!---------------------------------------------------------------------------------------------------------------------
 @fn void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_)
 
 @brief Assigns callback for the client application.  
 
 This is how the ADC result for any channel is accessed.  The callback function 
-must have one u16 parameter where the result is passed.
+must have one u16 parameter where the result is passed.  Define the function that 
+will be used for the callback, then assign this during user task initialization.
+
 Different callbacks may be assigned for each channel. 
 
 Example:
-To read AN0 from the blade connector (which is channel 2 on the ADC):
+
 void UserApp_AdcCallback(u16 u16Result_);
-...
-Adc12AssignCallback(ADC12_CH2, UserApp_AdcCallback);
+
+void UserApp1Initialize(void)
+{
+ Adc12AssignCallback(ADC12_BLADE_AN0, UserApp_AdcCallback);
+}
 
 
 Requires:
@@ -94,6 +100,7 @@ Requires:
 
 Promises:
 - Adc12_fpCallbackCh<eAdcChannel_> ADC global value loaded with fpUserCallback_
+
 */
 void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_)
 {
@@ -121,7 +128,7 @@ void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCa
 } /* end Adc12AssignCallback() */
 
 
-/*!----------------------------------------------------------------------------------------------------------------------
+/*!---------------------------------------------------------------------------------------------------------------------
 @fn bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
 
 @brief Checks if the ADC is available and starts the conversion on the selected channel.
@@ -129,7 +136,9 @@ void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCa
 Returns TRUE if the conversion is started; returns FALSE if the ADC is not available.
 
 Example:
+
 bool bConversionStarted = FALSE;
+
 bConversionStarted = Adc12StartConversion(ADC12_CH2);
 
 
@@ -138,14 +147,15 @@ Requires:
 @param Adc12_bAdcAvailable indicates if the ADC is available for a conversion
 
 Promises:
+
 If Adc12_bAdcAvailable is TRUE:
-- Adc12_bAdcAvailable changed to false
+- Adc12_bAdcAvailable changed to FALSE
 - ADC12B_CHER bit for eAdcChannel_ is set
 - ADC12B_IER bit for eAdcChannel_is set
-@return TRUE
+- Returns TRUE
 
 If Adc12_bAdcAvailable is FALSE:
-@return FALSE
+- Returns FALSE
 */
 bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
 {
@@ -170,7 +180,7 @@ bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
 } /* end Adc12StartConversion() */
 
 
-/*------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------------*/
 /*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
@@ -186,7 +196,9 @@ Requires:
 - NONE
 
 Promises:
-- NONE
+- The ADC-12 peripheral is configured
+- ADC interrupt is enabled
+
 */
 void Adc12Initialize(void)
 {
@@ -233,6 +245,7 @@ void Adc12Initialize(void)
 @fn Adc12RunActiveState
 
 @brief Selects and runs one iteration of the current state in the state machine.
+
 All state machines have a TOTAL of 1ms to execute, so on average n state machines
 may take 1ms / n to execute.
 
@@ -249,31 +262,11 @@ void Adc12RunActiveState(void)
 } /* end Adc12RunActiveState */
 
 
-/*------------------------------------------------------------------------------------------------------------------*/
-/*! @privatesection */                                                                                            
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-/*!----------------------------------------------------------------------------------------------------------------------
-@fn Adc12DefaultCallback()
-
-@brief An empty function that the unset Adc Callbacks point to.  
-Expected that the user will set their own.
-
-Requires:
-@param[in] u16Result_ Required for the ISR to pass the result to but not used
-
-Promises:
-@param[out]
-*/
-void Adc12DefaultCallback(u16 u16Result_)
-{
-} /* End Adc12DefaultCallback() */
-
-
 /*!----------------------------------------------------------------------------------------------------------------------
 @fn ADCC0_IrqHandler
 
-@brief Parses the ADC12 interrupts and handles them appropriately.  
+@brief Parses the ADC12 interrupts and handles them appropriately. 
+
 Note that all ADC12 interrupts are ORed and will trigger this handler, therefore 
 any expected interrupt that is enabled must be parsed out and handled.  There is 
 no obviously available explanation for why this handler is called ADCC0_IrqHandler 
@@ -284,14 +277,15 @@ Requires:
   will be set.
 
 Promises:
-- NONE
+- Adc12_bAdcAvailable = TRUE
+
 */
 void ADCC0_IrqHandler(void)
 {
   u16 u16Adc12Result;
+  
   /* WARNING: if you step through this handler with the ADC12B registers
   debugging, the debugger reads ADC12B_SR and clears the EOC flag bits */
-  
 
   /* Check through all the available channels */
   for(u8 i = 0; i < (sizeof(Adc12_aeChannels) / sizeof(Adc12ChannelType)); i++)
@@ -313,6 +307,28 @@ void ADCC0_IrqHandler(void)
   NVIC->ICPR[0] = (1 << AT91C_ID_ADC12B);
   
 } /* end ADCC0_IrqHandler() */
+
+
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn Adc12DefaultCallback()
+
+@brief An empty function that the unset Adc Callbacks point to.  
+
+Expected that the user will set their own.
+
+Requires:
+@param u16Result_ Required for the ISR to pass the result to but not used
+
+Promises:
+- NONE
+*/
+void Adc12DefaultCallback(u16 u16Result_)
+{
+} /* End Adc12DefaultCallback() */
 
 
 /***********************************************************************************************************************

@@ -34,7 +34,7 @@
 //////////////////////////////////////////////
 // ANT Clock Definition
 //////////////////////////////////////////////
-#define ANT_CLOCK_FREQUENCY                        ((ULONG)32768)          ///< ANT system clock frequency
+#define ANT_CLOCK_FREQUENCY                        ((ULONG)32768)          // ANT system clock frequency
 
 //////////////////////////////////////////////
 // Radio TX Power Definitions
@@ -51,9 +51,9 @@
 //////////////////////////////////////////////
 #define DEFAULT_CHANNEL_MESSAGE_FREQUENCY          ((ULONG)4)
 #define DEFAULT_CHANNEL_MESSAGE_PERIOD             ((USHORT)( ANT_CLOCK_FREQUENCY / DEFAULT_CHANNEL_MESSAGE_FREQUENCY )) ///< 8192 (4Hz)
-#define DEFAULT_RADIO_TX_POWER                     RADIO_TX_POWER_0DB      ///< ANT default RF power
-#define DEFAULT_RADIO_CHANNEL                      ((UCHAR)66)             ///< 2400MHz + 1MHz * Channel Number = 2466MHz
-#define DEFAULT_RX_SEARCH_TIMEOUT                  ((UCHAR)12)             ///< 12 * 2.5 seconds = 30 seconds
+#define DEFAULT_RADIO_TX_POWER                     RADIO_TX_POWER_0DB      // ANT default RF power
+#define DEFAULT_RADIO_CHANNEL                      ((UCHAR)66)             // 2400MHz + 1MHz * Channel Number = 2466MHz
+#define DEFAULT_RX_SEARCH_TIMEOUT                  ((UCHAR)12)             // 12 * 2.5 seconds = 30 seconds
 
 //////////////////////////////////////////////
 // ID Definitions
@@ -140,26 +140,26 @@
 //////////////////////////////////////////////
 // Response / Event Codes
 //////////////////////////////////////////////
-#define RESPONSE_NO_ERROR                          ((UCHAR)0x00)             
+#define RESPONSE_NO_ERROR                          ((UCHAR)0x00)           ///< ANT RESPONSE CODE when command was successful   
 
-#define EVENT_RX_SEARCH_TIMEOUT                    ((UCHAR)0x01)             
-#define EVENT_RX_FAIL                              ((UCHAR)0x02)             
-#define EVENT_TX                                   ((UCHAR)0x03)             
-#define EVENT_TRANSFER_RX_FAILED                   ((UCHAR)0x04)             
-#define EVENT_TRANSFER_TX_COMPLETED                ((UCHAR)0x05)             
-#define EVENT_TRANSFER_TX_FAILED                   ((UCHAR)0x06)             
-#define EVENT_CHANNEL_CLOSED                       ((UCHAR)0x07)
-#define EVENT_RX_FAIL_GO_TO_SEARCH                 ((UCHAR)0x08)
+#define EVENT_RX_SEARCH_TIMEOUT                    ((UCHAR)0x01)           ///< ANT EVENT CODE when slave's search time expires 
+#define EVENT_RX_FAIL                              ((UCHAR)0x02)           ///< ANT EVENT CODE when a slave does not receive an expected message
+#define EVENT_TX                                   ((UCHAR)0x03)           ///< ANT EVENT CODE when a message has been sent on the radio  
+#define EVENT_TRANSFER_RX_FAILED                   ((UCHAR)0x04)           ///< ANT EVENT CODE when a Burst transfer was not received as expected 
+#define EVENT_TRANSFER_TX_COMPLETED                ((UCHAR)0x05)           ///< ANT EVENT CODE when an Acknowledged data message or Burst transfer is successful 
+#define EVENT_TRANSFER_TX_FAILED                   ((UCHAR)0x06)           ///< ANT EVENT CODE when an Acknowledged data message or Burst transfer failed 
+#define EVENT_CHANNEL_CLOSED                       ((UCHAR)0x07)           ///< ANT EVENT CODE when an open channel has been closed
+#define EVENT_RX_FAIL_GO_TO_SEARCH                 ((UCHAR)0x08)           ///< ANT EVENT CODE when a slave has missed too many consecutive messages and drops back to search mode
 
-#define CHANNEL_IN_WRONG_STATE                     ((UCHAR)0x15)           ///< returned on attempt to perform an action from the wrong channel state
-#define CHANNEL_NOT_OPENED                         ((UCHAR)0x16)           ///< returned on attempt to communicate on a channel that is not open
-#define CHANNEL_ID_NOT_SET                         ((UCHAR)0x18)           ///< returned on attempt to open a channel without setting the channel ID
+#define CHANNEL_IN_WRONG_STATE                     ((UCHAR)0x15)           ///< ANT RESPONSE CODE attempt to perform an action from the wrong channel state
+#define CHANNEL_NOT_OPENED                         ((UCHAR)0x16)           ///< ANT RESPONSE CODE  on attempt to communicate on a channel that is not open
+#define CHANNEL_ID_NOT_SET                         ((UCHAR)0x18)           ///< ANT RESPONSE CODE  on attempt to open a channel without setting the channel ID
 
-#define TRANSFER_IN_PROGRESS                       ((UCHAR)0x1F)           ///< returned on attempt to communicate on a channel with a TX transfer in progress
-#define TRANSFER_SEQUENCE_NUMBER_ERROR             ((UCHAR)0x20)           ///< returned when sequence number is out of order on a Burst transfer
+#define TRANSFER_IN_PROGRESS                       ((UCHAR)0x1F)           ///< ANT RESPONSE CODE  on attempt to communicate on a channel with a TX transfer in progress
+#define TRANSFER_SEQUENCE_NUMBER_ERROR             ((UCHAR)0x20)           ///< ANT RESPONSE CODE  when sequence number is out of order on a Burst transfer
 
-#define INVALID_MESSAGE                            ((UCHAR)0x28)           ///< returned when the message has an invalid parameter
-#define INVALID_NETWORK_NUMBER                     ((UCHAR)0x29)           ///< returned when an invalid network number is provided
+#define INVALID_MESSAGE                            ((UCHAR)0x28)           ///< ANT RESPONSE CODE  when the message has an invalid parameter
+#define INVALID_NETWORK_NUMBER                     ((UCHAR)0x29)           ///< ANT RESPONSE CODE  when an invalid network number is provided
 
 #endif // !ANTDEFINES_H                                                    
 
