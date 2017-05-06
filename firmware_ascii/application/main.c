@@ -57,6 +57,7 @@ void main(void)
 
   /* Debug messages through DebugPrintf() are available from here */
 
+  ButtonInitialize();
   TimerInitialize();  
   SspInitialize();
   TWIInitialize();
@@ -64,7 +65,6 @@ void main(void)
   
   LcdInitialize();
   LedInitialize();
-  ButtonInitialize();
   AntInitialize();
   AntApiInitialize();
   SdCardInitialize();
