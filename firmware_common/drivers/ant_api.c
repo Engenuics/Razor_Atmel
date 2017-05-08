@@ -228,11 +228,10 @@ AntExtendedDataType G_sAntApiCurrentMessageExtData;                     /* Exten
 /*----------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) 
 and indicate what file the variable is defined in. */
-extern u32 G_u32SystemFlags;                                  /* From main.c */
-extern u32 G_u32ApplicationFlags;                             /* From main.c */
-
-extern volatile u32 G_u32SystemTime1ms;                       /* From board-specific source file */
-extern volatile u32 G_u32SystemTime1s;                        /* From board-specific source file */
+extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 
 extern u32 G_u32AntFlags;                                     /* From ant.c */
 extern AntApplicationMsgListType *G_sAntApplicationMsgList;   /* From ant.c */

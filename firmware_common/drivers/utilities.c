@@ -34,11 +34,10 @@ u8 G_au8UtilMessageOFF[]  = MESSAGE_OFF;           /* Common "OFF" message */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;        /* From scroll-ehw-ae.c */
-extern volatile u32 G_u32SystemTime1s;         /* From scroll-ehw-ae.c */
-
-extern volatile u32 G_u32SystemFlags;          /* From main.c */
-extern volatile u32 G_u32ApplicationFlags;     /* From main.c */
+extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 
 
 /***********************************************************************************************************************

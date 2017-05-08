@@ -65,11 +65,10 @@ u8 G_u8DebugScanfCharCount = 0;                        /*!< Counter for # of cha
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
+extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
 extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
 extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
-
-extern volatile u32 G_u32SystemTime1ms;                /*!< From board-specific source file */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From board-specific source file */
 
 extern u8 G_au8UtilMessageON[];                        /*!< From utilities.c */
 extern u8 G_au8UtilMessageOFF[];                       /*!< From utilities.c */

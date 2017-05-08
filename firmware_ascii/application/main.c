@@ -1,8 +1,6 @@
-/***********************************************************************************************************************
-File: main.c                                                                
-
-Description:
-Container for the EiE firmware.  
+/*!**********************************************************************************************************************
+@file /firmware_ascii/main.c                                                                
+@brief Main system file for the EiE firmware.  
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -12,13 +10,13 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32SystemFlags = 0;                     /* Global system flags */
-volatile u32 G_u32ApplicationFlags = 0;                /* Global applications flags: set when application is successfully initialized */
+volatile u32 G_u32SystemTime1ms;                       /*!< Global system time incremented every ms, max 2^32 (~49 days) */
+volatile u32 G_u32SystemTime1s;                        /*!< Global system time incremented every second, max 2^32 (~136 years) */
+volatile u32 G_u32SystemFlags = 0;                     /*!< Global system flags */
+volatile u32 G_u32ApplicationFlags = 0;                /*!< Global applications flags: set when application is successfully initialized */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* External global variables defined in other files (must indicate which file they are defined in) */
-extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
-extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
 
 /***********************************************************************************************************************
@@ -28,7 +26,9 @@ Variable names shall start with "Main_" and be declared as static.
 
 
 /*!**********************************************************************************************************************
-Main Program
+@fn void main(void)
+@brief Main program where all tasks are initialized and executed.
+
 Main has two sections:
 
 1. Initialization which is run once on power-up or reset.  All drivers and applications are setup here without timing
@@ -113,6 +113,8 @@ void main(void)
   } /* end while(1) main super loop */
   
 } /* end main() */
+
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
