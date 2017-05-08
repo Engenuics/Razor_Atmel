@@ -32,11 +32,10 @@ volatile u32 G_u32UserApp3Flags;                       /* Global state flags */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemFlags;                  /* From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
-
-extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
-extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
+extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 
 
 /***********************************************************************************************************************
