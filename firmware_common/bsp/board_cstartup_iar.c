@@ -1,3 +1,12 @@
+/*!
+@file board_cstartup_iar.c 
+@brief Atmel-supplied source file for IAR board startup.
+
+This file captures the vector table in FLASH and has the required
+entry symbols to make the IAR compiler happy and generate the proper
+startup code to do low level initializations and then call main.
+*/
+
 /* ----------------------------------------------------------------------------
 *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------

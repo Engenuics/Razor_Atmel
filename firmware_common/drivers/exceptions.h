@@ -1,3 +1,8 @@
+/*!
+@file exceptions.h 
+@brief Atmel-supplied header file for exceptions.c
+*/
+
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------

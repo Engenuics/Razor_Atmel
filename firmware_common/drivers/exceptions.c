@@ -1,3 +1,11 @@
+/*!
+@file exceptions.c 
+@brief Atmel-supplied source file for all default exception handlers.
+
+These definitions are declared "WEAK" so any re-definitions will take
+their place when the code is built.
+*/
+
 /* ----------------------------------------------------------------------------
  *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
