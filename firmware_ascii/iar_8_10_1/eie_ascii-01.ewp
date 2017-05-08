@@ -342,6 +342,7 @@
                     <state>$PROJ_DIR$\..\application</state>
                     <state>$PROJ_DIR$\..\..\firmware_common</state>
                     <state>$PROJ_DIR$\..\..\firmware_common\application</state>
+                    <state>$PROJ_DIR$\..\..\firmware_common\bsp</state>
                     <state>$PROJ_DIR$\..\..\firmware_common\cmsis</state>
                     <state>$PROJ_DIR$\..\..\firmware_common\drivers</state>
                 </option>
@@ -765,7 +766,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\..\..\firmware_common\sam3u2-flash.icf</state>
+                    <state>D:\EiE\EiE_Git\Razor_Atmel\firmware_common\bsp\sam3u2-flash.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -2040,25 +2041,25 @@
         <group>
             <name>Includes</name>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\AT91SAM3U4.h</name>
+                <name>$PROJ_DIR$\..\..\firmware_common\bsp\AT91SAM3U4.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\configuration.h</name>
+                <name>$PROJ_DIR$\..\..\firmware_common\bsp\configuration.h</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\bsp\eief1-pcb-01.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\sam3u2-flash.icf</name>
+                <name>$PROJ_DIR$\..\..\firmware_common\bsp\sam3u2-flash.icf</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\typedefs.h</name>
+                <name>$PROJ_DIR$\..\..\firmware_common\bsp\typedefs.h</name>
             </file>
         </group>
         <group>
             <name>Source</name>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\board_cstartup_iar.c</name>
+                <name>$PROJ_DIR$\..\..\firmware_common\bsp\board_cstartup_iar.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\bsp\eief1-pcb-01.c</name>
