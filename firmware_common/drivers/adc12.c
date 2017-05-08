@@ -18,7 +18,14 @@ characteristics and source impedence considerations.  So this is a mystery for
 now -- suggest the first sample is thrown out, or average it out with at least 16 samples
 per displayed result which will reduce the error down to 1 or 2 LSBs.  
 
+
 ------------------------------------------------------------------------------------------------------------------------
+GLOBALS
+- NONE
+
+CONSTANTS
+- NONE
+
 TYPES
 - Adc12ChannelType {ADC12_CH0 ... ADC12_CH7}
 
@@ -37,26 +44,26 @@ PROTECTED FUNCTIONS
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_"
+All Global variable names shall start with "G_xxAdc12"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32Adc12Flags;                          /* Global state flags */
+volatile u32 G_u32Adc12Flags;                          /*!< Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemFlags;                  /* From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 
-extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
-extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
+extern volatile u32 G_u32SystemTime1ms;                /*!< From board-specific source file */
+extern volatile u32 G_u32SystemTime1s;                 /*!< From board-specific source file */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Adc12_" and be declared as static.
+Variable names shall start with "Adc12_xx" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Adc12_StateMachine;                 /*!< The state machine function pointer */
+static fnCode_type Adc12_pfnStateMachine;              /*!< The state machine function pointer */
 //static u32 Adc12_u32Timeout;                         /*!< Timeout counter used across states */
 
 static Adc12ChannelType Adc12_aeChannels[] = ADC_CHANNEL_ARRAY;  /*!< Available channels defined in configuration.h */
@@ -156,6 +163,7 @@ If Adc12_bAdcAvailable is TRUE:
 
 If Adc12_bAdcAvailable is FALSE:
 - Returns FALSE
+
 */
 bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
 {
@@ -198,6 +206,7 @@ Requires:
 Promises:
 - The ADC-12 peripheral is configured
 - ADC interrupt is enabled
+@param Adc12_pfnStateMachine set to Idle
 
 */
 void Adc12Initialize(void)
@@ -230,19 +239,20 @@ void Adc12Initialize(void)
     /* Write message, set "good" flag and select Idle state */
     DebugPrintf(au8Adc12Started);
     G_u32ApplicationFlags |= _APPLICATION_FLAGS_ADC;
-    Adc12_StateMachine = Adc12SM_Idle;
+    Adc12_pfnStateMachine = Adc12SM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    Adc12_StateMachine = Adc12SM_FailedInit;
+    Adc12_pfnStateMachine = Adc12SM_FailedInit;
   }
 
 } /* end Adc12Initialize() */
 
 
 /*!----------------------------------------------------------------------------------------------------------------------
-@fn Adc12RunActiveState
+@fn void Adc12RunActiveState(void)
+
 
 @brief Selects and runs one iteration of the current state in the state machine.
 
@@ -257,13 +267,13 @@ Promises:
 */
 void Adc12RunActiveState(void)
 {
-  Adc12_StateMachine();
+  Adc12_pfnStateMachine();
 
 } /* end Adc12RunActiveState */
 
 
 /*!----------------------------------------------------------------------------------------------------------------------
-@fn ADCC0_IrqHandler
+@fn void ADCC0_IrqHandler(void)
 
 @brief Parses the ADC12 interrupts and handles them appropriately. 
 
@@ -325,18 +335,24 @@ Requires:
 
 Promises:
 - NONE
+  
 */
 void Adc12DefaultCallback(u16 u16Result_)
 {
-} /* End Adc12DefaultCallback() */
+  /* This is an empty function */
+  
+} /* end Adc12DefaultCallback() */
 
 
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/*! @brief Wait for a message to be queued */
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void Adc12SM_Idle(void)
+
+@brief Wait for a message to be queued 
+*/
 static void Adc12SM_Idle(void)
 {
     
@@ -344,8 +360,11 @@ static void Adc12SM_Idle(void)
      
 
 #if 0
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Handle an error */
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void Adc12SM_Error(void)          
+
+@brief Handle an error 
+*/
 static void Adc12SM_Error(void)          
 {
   

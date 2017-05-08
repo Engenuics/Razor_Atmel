@@ -52,6 +52,9 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
+extern u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE]; /* From debug.c */
+extern u8 G_u8DebugScanfCharCount;                        /* From debug.c */
+
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.

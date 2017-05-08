@@ -23,13 +23,13 @@ if( !IsTimeUp(&u32ApplicationTimer, 1000)
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_"
+All Global variable names shall start with "G_xxUtil"
 ***********************************************************************************************************************/
 /* New variables */
-u8 G_au8MessageOK[]   = MESSAGE_OK;            /* Common "OK" message */
-u8 G_au8MessageFAIL[] = MESSAGE_FAIL;          /* Common "FAIL" message */
-u8 G_au8MessageON[]   = MESSAGE_ON;            /* Common "ON" message */
-u8 G_au8MessageOFF[]  = MESSAGE_OFF;           /* Common "OFF" message */
+u8 G_au8UtilMessageOK[]   = MESSAGE_OK;            /* Common "OK" message */
+u8 G_au8UtilMessageFAIL[] = MESSAGE_FAIL;          /* Common "FAIL" message */
+u8 G_au8UtilMessageON[]   = MESSAGE_ON;            /* Common "ON" message */
+u8 G_au8UtilMessageOFF[]  = MESSAGE_OFF;           /* Common "OFF" message */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -43,7 +43,7 @@ extern volatile u32 G_u32ApplicationFlags;     /* From main.c */
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Util_" and be declared as static.
+Variable names shall start with "Util_xx" and be declared as static.
 ***********************************************************************************************************************/
 
 
