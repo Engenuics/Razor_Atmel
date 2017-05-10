@@ -84,6 +84,7 @@ void main(void)
   while(1)
   {
     WATCHDOG_BONE();
+    SystemTimeCheck();
     
     /* Drivers */
     LedUpdate();
@@ -105,9 +106,14 @@ void main(void)
     UserApp2RunActiveState();
     UserApp3RunActiveState();
     
-    /* System sleep*/
     HEARTBEAT_OFF();
-    SystemSleep();
+
+    do
+    {
+      /* System sleep until next Systick */
+      SystemSleep();
+    } while(G_u32SystemFlags & _SYSTEM_SLEEPING);
+
     HEARTBEAT_ON();
     
   } /* end while(1) main super loop */

@@ -120,6 +120,8 @@ Constants / Definitions
 #define SD_ERROR_NO_TOKEN         (u8)0x04      /* Got '0' for a message token => message task is broken */
 #define SD_ERROR_NO_SD_TOKEN      (u8)0x05      /* Expected a token from the SD card but didn't get it */
 
+#define BIT6                      ((u8)0x40)
+#define BIT7                      ((u8)0x80)
 
 /**********************************************************************************************************************
 * Function Declarations

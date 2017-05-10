@@ -42,7 +42,7 @@ extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp3_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp3_StateMachine;            /* The state machine function pointer */
+static fnCode_type UserApp3_StateMachine;              /* The state machine function pointer */
 //static u32 UserApp3_u32Timeout;                      /* Timeout counter used across states */
 
 
