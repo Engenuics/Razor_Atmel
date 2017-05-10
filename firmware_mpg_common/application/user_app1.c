@@ -79,6 +79,8 @@ void UserApp1Initialize(void)
 {
   u8 au8UserApp1Start1[] = "LED program task started\n\r";
   
+  /* Turn off the Debug task command processor and announce the task is ready */
+  DebugSetPassthrough();
   DebugPrintf(au8UserApp1Start1);
   
     /* If good initialization, set state to Idle */

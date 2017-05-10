@@ -28,8 +28,8 @@ All Global variable names shall start with "G_"
 /* New variables */
 u8 G_au8MessageOK[]   = MESSAGE_OK;            /* Common "OK" message */
 u8 G_au8MessageFAIL[] = MESSAGE_FAIL;          /* Common "FAIL" message */
-u8 G_au8MessageON[]   = MESSAGE_ON;            /* Common "ON" message */
-u8 G_au8MessageOFF[]  = MESSAGE_OFF;           /* Common "OFF" message */
+u8 G_au8UtilMessageON[]   = MESSAGE_ON;            /* Common "ON" message */
+u8 G_au8UtilMessageOFF[]  = MESSAGE_OFF;           /* Common "OFF" message */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
