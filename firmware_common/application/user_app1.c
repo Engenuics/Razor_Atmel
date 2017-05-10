@@ -51,15 +51,15 @@ extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
 extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
 extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 
-extern u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE]; /* From debug.c */
-extern u8 G_u8DebugScanfCharCount;                        /* From debug.c */
+extern u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE]; /*!< From debug.c */
+extern u8 G_u8DebugScanfCharCount;                        /*!< From debug.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
+static fnCode_type UserApp1_StateMachine;              /*!< The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
 
 

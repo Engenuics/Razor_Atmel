@@ -205,6 +205,7 @@ Requires:
 Promises:
 - The ADC-12 peripheral is configured
 - ADC interrupt is enabled
+
 @param Adc12_pfnStateMachine set to Idle
 
 */
@@ -252,7 +253,6 @@ void Adc12Initialize(void)
 /*!----------------------------------------------------------------------------------------------------------------------
 @fn void Adc12RunActiveState(void)
 
-
 @brief Selects and runs one iteration of the current state in the state machine.
 
 All state machines have a TOTAL of 1ms to execute, so on average n state machines
@@ -263,6 +263,7 @@ Requires:
 
 Promises:
 - Calls the function to pointed by the state machine function pointer
+
 */
 void Adc12RunActiveState(void)
 {

@@ -1,19 +1,28 @@
-/**********************************************************************************************************************
-File: configuration.h      
+/*!*********************************************************************************************************************
+@file configuration.h      
+@brief Main configuration header file for project.  
 
-Description:
-Main configuration header file for project.  This file bridges many of the generic features of the 
+This file bridges many of the generic features of the 
 firmware to the specific features of the design. The definitions should be updated
 to match the target hardware.  
  
 Bookmarks:
+
 !!!!! External module peripheral assignments
+
 @@@@@ GPIO board-specific parameters
+
 ##### Communication peripheral board-specific parameters
 
+
 Quick references:
+
 DEBUG UART IS 115200-8-N-1
-ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
+
+ANT BOARDTEST CHANNEL CONFIG: 
+ID: 4660 (0x1234) 
+Device Type: 96(0x60)  
+Transmission Type: 1
 
 ***********************************************************************************************************************/
 
@@ -23,16 +32,24 @@ ANT BOARDTEST CHANNEL CONFIG: 4660 (0x1234), 96(0x60), 1
 /**********************************************************************************************************************
 Runtime switches
 ***********************************************************************************************************************/
-//#define MPGL2_R01                   /* Use with MPGL2-EHDW-01 revision board */
+//#define MPGL2_R01                   /*!< Use with MPGL2-EHDW-01 revision board */
 
-#define DEBUG_MODE                /* Define to enable certain debugging code */
-//#define STARTUP_SOUND              /* Define to include buzzer sound on startup */
+#define DEBUG_MODE                /*!< Define to enable certain debugging code */
+//#define STARTUP_SOUND              /*!< Define to include buzzer sound on startup */
 
-//#define USE_SIMPLE_USART0   /* Define to use USART0 as a very simple byte-wise UART for debug purposes */
+//#define USE_SIMPLE_USART0   /*!< Define to use USART0 as a very simple byte-wise UART for debug purposes */
+
 
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
+/*! 
+@enum PeripheralType
+@brief Short names used to identify peripherals in their configuration structs.
+
+This provides self-documentation when indexing peripherals and when assigning
+better names for devices that make use of the peripherals.
+*/
 typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
 
 
@@ -93,40 +110,27 @@ Includes
 #include "user_app3.h"
 
 
-/**********************************************************************************************************************
-!!!!! External peripheral assignments
-***********************************************************************************************************************/
-/* G_u32ApplicationFlags */
-/* The order of these flags corresponds to the order of applications in SystemStatusReport() (debug.c) */
-#define _APPLICATION_FLAGS_LED          0x00000001        /* LedStateMachine */
-#define _APPLICATION_FLAGS_BUTTON       0x00000002        /* ButtonStateMachine */
-#define _APPLICATION_FLAGS_DEBUG        0x00000004        /* DebugStateMachine */
-#define _APPLICATION_FLAGS_LCD          0x00000008        /* LcdStateMachine */
-#define _APPLICATION_FLAGS_ANT          0x00000010        /* AntStateMachine */
-#define _APPLICATION_FLAGS_TIMER        0x00000020        /* TimerStateMachine */
-#define _APPLICATION_FLAGS_ADC          0x00000040        /* Adc12StateMachine */
-
-#ifdef EIE1
-/* EIE1 specific application flags */
-#define _APPLICATION_FLAGS_SDCARD       0x00000080        /* SdCardStateMachine */
-
-#define NUMBER_APPLICATIONS             (u8)8            /* Total number of applications */
-#endif /* EIE1 specific application flags */
-
-#ifdef MPGL2
-/* MPGL2 specific application flags */
-#define _APPLICATION_FLAGS_CAPTOUCH     0x00000080        /* CapTouchStateMachine */
-
-#define NUMBER_APPLICATIONS             (u8)8             /* Total number of applications */
-#endif /* MPGL2 specific application flags */
-
 
 /**********************************************************************************************************************
 !!!!! External device peripheral assignments
 ***********************************************************************************************************************/
+/* Peripheral assignments */
+#define BLADE_UART                  UART
+#define DEBUG_UART                  USART0
+#define BLADE_SPI                   SPI
+#define ANT_SPI                     USART2
+
+#ifdef EIE1
+#define SD_SSP                      USART1
+#endif
+
+#ifdef MPGL2
+#define LCD_SPI                     USART1
+#endif
+
+/*! @cond DOXYGEN_EXCLUDE */
 /* %UART% Configuration */
 /* Blade UART Peripheral Allocation (UART) */
-#define BLADE_UART                  UART
 #define UART_US_CR_INIT             BLADE_US_CR_INIT
 #define UART_US_MR_INIT             BLADE_US_MR_INIT
 #define UART_US_IER_INIT            BLADE_US_IER_INIT
@@ -138,7 +142,6 @@ Includes
 
 
 /* Debug UART Peripheral Allocation (USART0) */
-#define DEBUG_UART                  USART0
 #define USART0_US_CR_INIT           DEBUG_US_CR_INIT
 #define USART0_US_MR_INIT           DEBUG_US_MR_INIT
 #define USART0_US_IER_INIT          DEBUG_US_IER_INIT
@@ -150,7 +153,6 @@ Includes
 
 #if 0
 /* %SPI% Blade SPI Peripheral Allocation */
-#define BLADE_SPI                   SPI
 #define SD_BASE_PORT                AT91C_BASE_PIOA
 #define SD_CS_PIN                   PA_08_SD_CS_MCDA3
 #define USART1_US_CR_INIT           SD_US_CR_INIT
@@ -159,13 +161,12 @@ Includes
 #define USART1_US_IDR_INIT          SD_US_IDR_INIT
 #define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
 
-#define SPI_IRQHandler             SPI_IrqHandler
+#define SPI_IRQHandler              SPI_IrqHandler
 #endif
 
 #ifdef EIE1
 /* %SSP% Configuration */
 /* SD SPI Peripheral Allocation (USART1) */
-#define SD_SSP                      USART1
 #define SD_BASE_PORT                AT91C_BASE_PIOA
 #define SD_CS_PIN                   PA_08_SD_CS_MCDA3
 #define USART1_US_CR_INIT           SD_US_CR_INIT
@@ -194,7 +195,6 @@ Includes
 #endif /* MPGL2 */
 
 /* ANT SPI Peripheral Allocation (USART2) */
-#define ANT_SPI                     USART2
 #define USART2_US_CR_INIT           ANT_US_CR_INIT
 #define USART2_US_MR_INIT           ANT_US_MR_INIT
 #define USART2_US_IER_INIT          ANT_US_IER_INIT
@@ -209,6 +209,8 @@ Includes
 /* Blade I²C (TWI0) / Accelerometer (MPGL2_R01 only) */
 /* Currently configured directly in sam3u_i2c.c */
 
+/*! @endcond */
+
 
 /***********************************************************************************************************************
 @@@@@ GPIO board-specific parameters
@@ -221,16 +223,16 @@ Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the
 */
 
 #ifdef EIE1
-#define TOTAL_LEDS            (u8)11        /* Total number of LEDs in the system */
+#define TOTAL_LEDS            (u8)11        /*!< Total number of LEDs in the system */
 #endif /* EIE1 */
 
 
 #ifdef MPGL2
 
 #ifdef MPGL2_R01
-#define TOTAL_LEDS            (u8)5         /* Total number of LEDs in the system */
+#define TOTAL_LEDS            (u8)5         /*!< Total number of LEDs in the system */
 #else
-#define TOTAL_LEDS            (u8)13        /* Total number of LEDs in the system */
+#define TOTAL_LEDS            (u8)13        /*!< Total number of LEDs in the system */
 #endif /* MPGL2_R01 */
 
 #endif /* MPGL2 */
@@ -245,25 +247,25 @@ The order of the definitions below must match the order of the definitions provi
 */
 
 #ifdef EIE1
-#define TOTAL_BUTTONS         (u8)4       /* Total number of Buttons in the system */
+#define TOTAL_BUTTONS         (u8)4       /*!< Total number of Buttons in the system */
 
 #define BUTTON0               (u32)0
 #define BUTTON1               (u32)1
 #define BUTTON2               (u32)2
 #define BUTTON3               (u32)3
 
-/* All buttons on each port must be ORed together here: set to 0 if no buttons on the port */
+/*! All buttons on each port must be ORed together here: set to 0 if no buttons on the port */
 #define GPIOA_BUTTONS         (u32)( PA_17_BUTTON0 )
 #define GPIOB_BUTTONS         (u32)( PB_00_BUTTON1 | PB_01_BUTTON2 | PB_02_BUTTON3 )
 #endif /* EIE1 */
 
 #ifdef MPGL2
-#define TOTAL_BUTTONS         (u8)2       /* Total number of Buttons in the system */
+#define TOTAL_BUTTONS         (u8)2       /*!< Total number of Buttons in the system */
 
 #define BUTTON0               (u32)0
 #define BUTTON1               (u32)1
 
-/* All buttons on each port must be ORed together here: set to 0 if no buttons on the port */
+/*! All buttons on each port must be ORed together here: set to 0 if no buttons on the port */
 #define GPIOA_BUTTONS         (u32)( PA_17_BUTTON0 )
 #define GPIOB_BUTTONS         (u32)( PB_00_BUTTON1 )
 #endif /* MPGL2 */
@@ -297,13 +299,15 @@ the board-specific definition header file in section !!!!! GPIO pin names
 #define   ADC_CHANNEL_ARRAY   {ADC12_BLADE_AN0, ADC12_BLADE_AN1}
 #endif /* MPGL2 */
 
+
 /*----------------------------------------------------------------------------------------------------------------------
 %ANT% Interface Configuration                                                                                                  
 ------------------------------------------------------------------------------------------------------------------------
 Board-specific ANT definitions are kept here
 */
-#define ANT_SSP_FLAGS           G_u32Ssp2ApplicationFlags 
+#define ANT_SSP_FLAGS           G_u32Ssp2ApplicationFlags  /*!< Assigns the correct global Application Flags to a self-documenting symbol */
 
+/*! @cond DOXYGEN_EXCLUDE */
 #define ANT_MRDY_READ_REG      (AT91C_BASE_PIOB->PIO_ODSR & PB_23_ANT_MRDY) 
 #define ANT_MRDY_CLEAR_REG     (AT91C_BASE_PIOB->PIO_CODR = PB_23_ANT_MRDY)     
 #define ANT_MRDY_SET_REG       (AT91C_BASE_PIOB->PIO_SODR = PB_23_ANT_MRDY)
@@ -317,10 +321,13 @@ Board-specific ANT definitions are kept here
 #define ANT_PIOA_PINS          (PA_25_ANT_USPI2_SCK | PA_23_ANT_USPI2_MOSI | PA_22_ANT_USPI2_MISO)
 #define ANT_PIOB_PINS          (PB_21_ANT_RESET | PB_22_ANT_USPI2_CS | PB_23_ANT_MRDY | PB_24_ANT_SRDY)
 
+/*! @endcond */
 
 /***********************************************************************************************************************
 ##### Communication peripheral board-specific parameters
 ***********************************************************************************************************************/
+/*! @cond DOXYGEN_EXCLUDE */
+
 /*----------------------------------------------------------------------------------------------------------------------
 %UART%  Configuration                                                                                                  
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -668,10 +675,13 @@ Set FP = 0, CD = 26 = 0x1A
     00 [0] "
 */
 
+/*! @endcond */
+
 
 /*----------------------------------------------------------------------------------------------------------------------
 %SSP%  Configuration                                                                                                  
 ----------------------------------------------------------------------------------------------------------------------*/
+/*! @cond DOXYGEN_EXCLUDE */
 
 /*----------------------------------------------------------------------------------------------------------------------
 LCD USART Setup in SSP mode
@@ -1137,10 +1147,15 @@ BAUD desired = 1 Mbps
     00 [0] "
 */
 
+/*! @endcond */
 
-/*--------------------------------------------------------------------------------------------------------------------
-Two Wire Interface setup
 
+/*----------------------------------------------------------------------------------------------------------------------
+%I2C%  Configuration                                                                                                  
+----------------------------------------------------------------------------------------------------------------------*/
+/*! @cond DOXYGEN_EXCLUDE */
+
+/*----------------------------------------------------------------------------------------------------------------------
 I²C Master mode for ASCII LCD communication
 */
 
@@ -1292,6 +1307,8 @@ I²C Master mode for ASCII LCD communication
     01 [0] RXRDY - Receive Holding Register Ready
     00 [1] TXCOMP - Transmission Completed
 */
+
+/*! @endcond */
 
 
 

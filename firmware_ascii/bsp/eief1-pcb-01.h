@@ -1,8 +1,6 @@
-/***********************************************************************************************************************
-* File: eief1-pcb-01.h                                                                
-* 
-* Description:
-* This file provides header information for the eief1-pcb-01 board.
+/*!**********************************************************************************************************************
+@file eief1-pcb-01.h                                                                
+@brief This file provides header information for the eief1-pcb-01 board.
 ***********************************************************************************************************************/
 
 #ifndef __EIEF1
@@ -16,58 +14,53 @@ Type Definitions
 /***********************************************************************************************************************
 * Constants
 ***********************************************************************************************************************/
-#define OSC_VALUE                 (u32)12000000
-#define MAINCK                    OSC_VALUE
-#define MULA                      (u32)7
-#define DIVA                      (u32)1
-#define PLLACK_VALUE              (u32)(MAINCK * (MULA + 1)) / DIVA         /* 96 MHz */
-#define CPU_DIVIDER               (u32)2
-#define CCLK_VALUE                PLLACK_VALUE / CPU_DIVIDER                /* 48 MHz */
-#define MCK                       CCLK_VALUE
-#define PERIPHERAL_DIVIDER        (u32)1
-#define PCLK_VALUE                CCLK_VALUE / PERIPHERAL_DIVIDER           /* 48 MHz */
-#define SYSTICK_DIVIDER           (u32)8
+#define OSC_VALUE                 (u32)12000000                              /*!< @brief Crystal oscillator value */
+#define MAINCK                    OSC_VALUE                                  /*!< @brief Main clock is base crystal frequency */
+#define MULA                      (u32)7                                     /*!< @brief PLL multiplier */
+#define DIVA                      (u32)1                                     /*!< @brief PLL divider value */
+#define PLLACK_VALUE              (u32)(MAINCK * (MULA + 1)) / DIVA          /*!< @brief PLL scaled clock is 96 MHz */
+#define CPU_DIVIDER               (u32)2                                     /*!< @brief Divider to get CPU clock */
+#define CCLK_VALUE                PLLACK_VALUE / CPU_DIVIDER                 /*!< @brief CPU clock 48 MHz */
+#define MCK                       CCLK_VALUE                                 /*!< @brief Alternate name for CPU clock 48 MHz */
+#define PERIPHERAL_DIVIDER        (u32)1                                     /*!< @brief Peripheral clock divider */
+#define PCLK_VALUE                CCLK_VALUE / PERIPHERAL_DIVIDER            /*!< @brief Peripheral clock 48 MHz */
+#define SYSTICK_DIVIDER           (u32)8                                     /*!< @brief System tick scaling value */
+#define SLCK                      (u32)32000                                 /*!< @brief Nominal value of internal RC */
 
-
-#define SYSTICK_COUNT             (u32)(0.001 * (CCLK_VALUE / SYSTICK_DIVIDER) )
-/* To get 1 ms tick, need SYSTICK_COUNT to be 0.001 * SysTick Clock.  
+/*!@brief To get 1 ms tick, need SYSTICK_COUNT to be 0.001 * SysTick Clock.  
 Should be 6000 for 48MHz CCLK. */
-
-#define RTC_INT_TIME              (u16)2            /* Half-seconds for RTC interrupt */
-#define RTC_STOP_INT_TIME         (u16)2            /* Half-seconds for RTC interrupt */
-
-#define OSC_STARTUP_TIMOUT        (u32)1000000      /* Timeout for oscillator to start up */
-#define PLL_LOCK_TIMEOUT          (u32)4000000      /* Timeout for PLL0 to lock */
+#define SYSTICK_COUNT             (u32)(0.001 * (CCLK_VALUE / SYSTICK_DIVIDER) )
 
 
 /***********************************************************************************************************************
 * Macros
 ***********************************************************************************************************************/
-#define WATCHDOG_BONE()     (AT91C_BASE_WDTC->WDTC_WDCR = WDT_CR_FEED)    /* Resets the watch dog countdown timer*/
-#define HEARTBEAT_ON()      (AT91C_BASE_PIOA->PIO_CODR = PA_31_HEARTBEAT) /* Turns on Heartbeat LED */
-#define HEARTBEAT_OFF()     (AT91C_BASE_PIOA->PIO_SODR = PA_31_HEARTBEAT) /* Turns off Heartbeat LED */
+#define WATCHDOG_BONE()     (AT91C_BASE_WDTC->WDTC_WDCR = WDT_CR_FEED)       /*!< @brief Resets the watch dog countdown timer*/
+#define HEARTBEAT_ON()      (AT91C_BASE_PIOA->PIO_CODR = PA_31_HEARTBEAT)    /*!< @brief Turns on Heartbeat LED */
+#define HEARTBEAT_OFF()     (AT91C_BASE_PIOA->PIO_SODR = PA_31_HEARTBEAT)    /*!< @brief Turns off Heartbeat LED */
 
-#define SD_CARD_INSERTED()  (!(AT91C_BASE_PIOA->PIO_PDSR & PA_02_SD_DETECT))   /* SD detect switch asserted */
+#define SD_CARD_INSERTED()  (!(AT91C_BASE_PIOA->PIO_PDSR & PA_02_SD_DETECT)) /*!< @brief SD detect switch asserted */
 
 
 /***********************************************************************************************************************
 * Function Declarations
 ***********************************************************************************************************************/
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public Functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 void PWMAudioSetFrequency(u32 u32Channel_, u16 u16Frequency_);
 void PWMAudioOn(u32 u32Channel_);
 void PWMAudioOff(u32 u32Channel_);
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected Functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 void ClockSetup(void);
 void RealTimeClockSetup(void);
 void SysTickSetup(void);
+void SystemTimeCheck(void);
 void SystemSleep(void);
 void WatchDogSetup(void);
 void GpioSetup(void);
@@ -75,6 +68,87 @@ void GpioSetup(void);
 void PWMSetupAudio(void);
 
 
+/***********************************************************************************************************************
+!!!!! GPIO pin names
+***********************************************************************************************************************/
+/* Hardware Definition for PCB EIEF1-PCB-01 */
+
+/* Port A bit positions */
+#define PA_31_HEARTBEAT         (u32)0x80000000
+#define PA_30_AN_DEMO           (u32)0x40000000
+#define PA_29_BUZZER2           (u32)0x20000000
+#define PA_28_BUZZER1           (u32)0x10000000
+#define PA_27_CLOCK_OUT         (u32)0x08000000
+#define PA_26_ANT_PWR_EN        (u32)0x04000000 
+#define PA_25_ANT_USPI2_SCK     (u32)0x02000000
+#define PA_24_SD_USPI1_SCK      (u32)0x01000000
+#define PA_23_ANT_USPI2_MOSI    (u32)0x00800000
+#define PA_22_ANT_USPI2_MISO    (u32)0x00400000 
+#define PA_21_SD_USPI1_MISO     (u32)0x00200000
+#define PA_20_SD_USPI1_MOSI     (u32)0x00100000
+#define PA_19_DEBUG_U0_PIMO     (u32)0x00080000
+#define PA_18_DEBUG_U0_POMI     (u32)0x00040000
+#define PA_17_BUTTON0           (u32)0x00020000
+#define PA_16_BLADE_CS          (u32)0x00010000
+#define PA_15_BLADE_SCK         (u32)0x00008000
+#define PA_14_BLADE_MOSI        (u32)0x00004000
+#define PA_13_BLADE_MISO        (u32)0x00002000
+#define PA_12_BLADE_UPOMI       (u32)0x00001000
+#define PA_11_BLADE_UPIMO       (u32)0x00000800
+#define PA_10_I2C_SCL           (u32)0x00000400
+#define PA_09_I2C_SDA           (u32)0x00000200
+#define PA_08_SD_CS_MCDA3       (u32)0x00000100
+#define PA_07_HSMCI_MCDA2       (u32)0x00000080
+#define PA_06_HSMCI_MCDA1       (u32)0x00000040
+#define PA_05_HSMCI_MCDA0       (u32)0x00000020
+#define PA_04_HSMCI_MCCDA       (u32)0x00000010
+#define PA_03_HSMCI_MCCK        (u32)0x00000008
+#define PA_02_SD_DETECT         (u32)0x00000004
+#define PA_01_SD_WP             (u32)0x00000002 
+#define PA_00_TP54              (u32)0x00000001 
+
+
+/* Port B bit positions */
+#define PB_31_                  (u32)0x80000000
+#define PB_30_                  (u32)0x40000000
+#define PB_29_                  (u32)0x20000000
+#define PB_28_                  (u32)0x10000000
+#define PB_27_                  (u32)0x08000000
+#define PB_26_                  (u32)0x04000000
+#define PB_25_                  (u32)0x02000000
+#define PB_24_ANT_SRDY          (u32)0x01000000
+#define PB_23_ANT_MRDY          (u32)0x00800000
+#define PB_22_ANT_USPI2_CS      (u32)0x00400000
+#define PB_21_ANT_RESET         (u32)0x00200000
+#define PB_20_LED_RED           (u32)0x00100000
+#define PB_19_LED_GRN           (u32)0x00080000
+#define PB_18_LED_BLU           (u32)0x00040000
+#define PB_17_LED_YLW           (u32)0x00020000
+#define PB_16_LED_CYN           (u32)0x00010000
+#define PB_15_LED_ORG           (u32)0x00008000
+#define PB_14_LED_PRP           (u32)0x00004000
+#define PB_13_LED_WHT           (u32)0x00002000
+#define PB_12_LCD_BL_BLU        (u32)0x00001000
+#define PB_11_LCD_BL_GRN        (u32)0x00000800
+#define PB_10_LCD_BL_RED        (u32)0x00000400
+#define PB_09_LCD_RST           (u32)0x00000200
+#define PB_08_TP62              (u32)0x00000100 
+#define PB_07_TP60              (u32)0x00000080
+#define PB_06_TP58              (u32)0x00000040
+#define PB_05_TP56              (u32)0x00000020
+#define PB_04_BLADE_AN1         (u32)0x00000010
+#define PB_03_BLADE_AN0         (u32)0x00000008
+#define PB_02_BUTTON3           (u32)0x00000004
+#define PB_01_BUTTON2           (u32)0x00000002
+#define PB_00_BUTTON1           (u32)0x00000001
+
+
+#define ADC12_POTENTIOMETER     ADC12_CH1
+#define ADC12_BLADE_AN0         ADC12_CH2
+#define ADC12_BLADE_AN1         ADC12_CH3
+      
+
+/*! @cond DOXYGEN_EXCLUDE */
 /***********************************************************************************************************************
 Perihperal Setup Initializations
 
@@ -310,7 +384,8 @@ Since we want PLLACK at 96 MHz:
 
 
 /* Watch Dog Values
-The watchdog oscillator is on the internal 32k RC with a 128 prescaler = 3.9ms / tick.  For a minimum 5 second watchdog timeout, the watchdog
+The watchdog oscillator is on the internal 32k RC with a 128 prescaler = 3.9ms / tick.  
+For a minimum 5 second watchdog timeout, the watchdog
 counter must be set at 1280. */
 
 #define WDT_CR_FEED  (u32)0xA5000001
@@ -377,86 +452,6 @@ counter must be set at 1280. */
     00 [0] "
 */
 
-
-/***********************************************************************************************************************
-!!!!! GPIO pin names
-***********************************************************************************************************************/
-/* Hardware Definition for PCB EIEF1-PCB-01 */
-
-/* Port A bit positions */
-#define PA_31_HEARTBEAT          (u32)0x80000000
-#define PA_30_AN_DEMO            (u32)0x40000000
-#define PA_29_BUZZER2            (u32)0x20000000
-#define PA_28_BUZZER1            (u32)0x10000000
-#define PA_27_CLOCK_OUT          (u32)0x08000000
-#define PA_26_ANT_PWR_EN         (u32)0x04000000 
-#define PA_25_ANT_USPI2_SCK      (u32)0x02000000
-#define PA_24_SD_USPI1_SCK       (u32)0x01000000
-#define PA_23_ANT_USPI2_MOSI     (u32)0x00800000
-#define PA_22_ANT_USPI2_MISO     (u32)0x00400000 
-#define PA_21_SD_USPI1_MISO      (u32)0x00200000
-#define PA_20_SD_USPI1_MOSI      (u32)0x00100000
-#define PA_19_DEBUG_U0_PIMO      (u32)0x00080000
-#define PA_18_DEBUG_U0_POMI      (u32)0x00040000
-#define PA_17_BUTTON0            (u32)0x00020000
-#define PA_16_BLADE_CS           (u32)0x00010000
-#define PA_15_BLADE_SCK          (u32)0x00008000
-#define PA_14_BLADE_MOSI         (u32)0x00004000
-#define PA_13_BLADE_MISO         (u32)0x00002000
-#define PA_12_BLADE_UPOMI        (u32)0x00001000
-#define PA_11_BLADE_UPIMO        (u32)0x00000800
-#define PA_10_I2C_SCL            (u32)0x00000400
-#define PA_09_I2C_SDA            (u32)0x00000200
-#define PA_08_SD_CS_MCDA3        (u32)0x00000100
-#define PA_07_HSMCI_MCDA2        (u32)0x00000080
-#define PA_06_HSMCI_MCDA1        (u32)0x00000040
-#define PA_05_HSMCI_MCDA0        (u32)0x00000020
-#define PA_04_HSMCI_MCCDA        (u32)0x00000010
-#define PA_03_HSMCI_MCCK         (u32)0x00000008
-#define PA_02_SD_DETECT          (u32)0x00000004
-#define PA_01_SD_WP              (u32)0x00000002 
-#define PA_00_TP54               (u32)0x00000001 
-
-
-/* Port B bit positions */
-#define PB_31_                  (u32)0x80000000
-#define PB_30_                  (u32)0x40000000
-#define PB_29_                  (u32)0x20000000
-#define PB_28_                  (u32)0x10000000
-#define PB_27_                  (u32)0x08000000
-#define PB_26_                  (u32)0x04000000
-#define PB_25_                  (u32)0x02000000
-#define PB_24_ANT_SRDY          (u32)0x01000000
-#define PB_23_ANT_MRDY          (u32)0x00800000
-#define PB_22_ANT_USPI2_CS      (u32)0x00400000
-#define PB_21_ANT_RESET         (u32)0x00200000
-#define PB_20_LED_RED           (u32)0x00100000
-#define PB_19_LED_GRN           (u32)0x00080000
-#define PB_18_LED_BLU           (u32)0x00040000
-#define PB_17_LED_YLW           (u32)0x00020000
-#define PB_16_LED_CYN           (u32)0x00010000
-#define PB_15_LED_ORG           (u32)0x00008000
-#define PB_14_LED_PRP           (u32)0x00004000
-#define PB_13_LED_WHT           (u32)0x00002000
-#define PB_12_LCD_BL_BLU        (u32)0x00001000
-#define PB_11_LCD_BL_GRN        (u32)0x00000800
-#define PB_10_LCD_BL_RED        (u32)0x00000400
-#define PB_09_LCD_RST           (u32)0x00000200
-#define PB_08_TP62              (u32)0x00000100 
-#define PB_07_TP60              (u32)0x00000080
-#define PB_06_TP58              (u32)0x00000040
-#define PB_05_TP56              (u32)0x00000020
-#define PB_04_BLADE_AN1         (u32)0x00000010
-#define PB_03_BLADE_AN0         (u32)0x00000008
-#define PB_02_BUTTON3           (u32)0x00000004
-#define PB_01_BUTTON2           (u32)0x00000002
-#define PB_00_BUTTON1           (u32)0x00000001
-
-
-#define ADC12_POTENTIOMETER     ADC12_CH1
-#define ADC12_BLADE_AN0         ADC12_CH2
-#define ADC12_BLADE_AN1         ADC12_CH3
-      
 
 /***********************************************************************************************************************
 ##### GPIO setup values
@@ -2288,5 +2283,15 @@ In general, the period is 6000000 / frequency and duty is always period / 2.
     00 [0] 
 */
 
+/*! @endcond */
+
 
 #endif /* __EIEF1 */
+
+
+
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* End of File                                                                                                        */
+/*--------------------------------------------------------------------------------------------------------------------*/
+

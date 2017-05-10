@@ -1,5 +1,5 @@
 /*!**********************************************************************************************************************
-@file /firmware_ascii/main.c                                                                
+@file main.c                                                                
 @brief Main system file for the EiE firmware.  
 ***********************************************************************************************************************/
 
@@ -10,10 +10,10 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32SystemTime1ms;                       /*!< Global system time incremented every ms, max 2^32 (~49 days) */
-volatile u32 G_u32SystemTime1s;                        /*!< Global system time incremented every second, max 2^32 (~136 years) */
+volatile u32 G_u32SystemTime1ms = 0;                   /*!< Global system time incremented every ms, max 2^32 (~49 days) */
+volatile u32 G_u32SystemTime1s = 0;                    /*!< Global system time incremented every second, max 2^32 (~136 years) */
 volatile u32 G_u32SystemFlags = 0;                     /*!< Global system flags */
-volatile u32 G_u32ApplicationFlags = 0;                /*!< Global applications flags: set when application is successfully initialized */
+volatile u32 G_u32ApplicationFlags = 0;                /*!< Global system application flags: set when application is successfully initialized */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* External global variables defined in other files (must indicate which file they are defined in) */
@@ -57,6 +57,7 @@ void main(void)
 
   /* Debug messages through DebugPrintf() are available from here */
 
+  ButtonInitialize();
   TimerInitialize();  
   SspInitialize();
   TWIInitialize();
@@ -64,7 +65,6 @@ void main(void)
   
   LcdInitialize();
   LedInitialize();
-  ButtonInitialize();
   AntInitialize();
   AntApiInitialize();
   SdCardInitialize();
@@ -84,6 +84,7 @@ void main(void)
   while(1)
   {
     WATCHDOG_BONE();
+    SystemTimeCheck();
     
     /* Drivers */
     LedUpdate();
@@ -105,9 +106,14 @@ void main(void)
     UserApp2RunActiveState();
     UserApp3RunActiveState();
     
-    /* System sleep*/
     HEARTBEAT_OFF();
-    SystemSleep();
+
+    do
+    {
+      /* System sleep until next Systick */
+      SystemSleep();
+    } while(G_u32SystemFlags & _SYSTEM_SLEEPING);
+
     HEARTBEAT_ON();
     
   } /* end while(1) main super loop */

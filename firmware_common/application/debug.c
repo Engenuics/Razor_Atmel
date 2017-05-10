@@ -108,7 +108,7 @@ DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugC
                                                        {DEBUG_CMD_NAME07, DebugCommandDummy} 
                                                      };
 
-static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 ASCII LCD DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
+static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 ASCII LCD DEVELOPMENT BOARD ***\n\n\r";
 #endif /* EIE1 */
 
 #ifdef MPGL2
@@ -122,7 +122,7 @@ DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugC
                                                        {DEBUG_CMD_NAME07, DebugCommandDummy} 
                                                      };
 
-static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 DOT MATRIX DEVELOPMENT BOARD ***\n\rDebug ready\n\r";
+static u8 Debug_au8StartupMsg[] = "\n\n\r*** RAZOR SAM3U2 DOT MATRIX DEVELOPMENT BOARD ***\n\n\r";
 #endif /* MPGL2 */
 
 
@@ -458,6 +458,7 @@ Promises:
 */
 void DebugInitialize(void)
 {
+  u8 au8FirmwareVersion[] = FIRMWARE_VERSION;
   UartConfigurationType sUartConfig;  
 
   /* Clear the receive buffer */
@@ -497,6 +498,8 @@ void DebugInitialize(void)
   else
   {
     DebugPrintf(Debug_au8StartupMsg);   
+    DebugPrintf(au8FirmwareVersion);
+    
     G_u32ApplicationFlags |= _APPLICATION_FLAGS_DEBUG;
     Debug_pfnStateMachine = DebugSM_Idle;
   }
