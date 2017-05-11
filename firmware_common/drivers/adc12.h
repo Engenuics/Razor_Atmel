@@ -26,7 +26,7 @@ Function Declarations
 /*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 bool Adc12StartConversion(Adc12ChannelType eAdcChannel_);
-void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_);
+void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type pfUserCallback_);
 
 
 /*------------------------------------------------------------------------------------------------------------------*/

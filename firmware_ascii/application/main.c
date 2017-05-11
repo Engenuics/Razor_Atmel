@@ -10,10 +10,10 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32SystemTime1ms = 0;                   /*!< Global system time incremented every ms, max 2^32 (~49 days) */
-volatile u32 G_u32SystemTime1s = 0;                    /*!< Global system time incremented every second, max 2^32 (~136 years) */
-volatile u32 G_u32SystemFlags = 0;                     /*!< Global system flags */
-volatile u32 G_u32ApplicationFlags = 0;                /*!< Global system application flags: set when application is successfully initialized */
+volatile u32 G_u32SystemTime1ms = 0;                   /*!< @brief Global system time incremented every ms, max 2^32 (~49 days) */
+volatile u32 G_u32SystemTime1s = 0;                    /*!< @brief Global system time incremented every second, max 2^32 (~136 years) */
+volatile u32 G_u32SystemFlags = 0;                     /*!< @brief Global system flags */
+volatile u32 G_u32ApplicationFlags = 0;                /*!< @brief Global system application flags: set when application is successfully initialized */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* External global variables defined in other files (must indicate which file they are defined in) */

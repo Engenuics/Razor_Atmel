@@ -57,45 +57,45 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_xxDebug"
 ***********************************************************************************************************************/
 /* New variables */
-u32 G_u32DebugFlags;                                   /*!< Debug flag register */
+u32 G_u32DebugFlags;                                   /*!< @brief Debug flag register */
 
-u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE];     /*!< Space to latch characters for DebugScanf() */
-u8 G_u8DebugScanfCharCount = 0;                        /*!< Counter for # of characters in Debug_au8ScanfBuffer */
+u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE];     /*!< @brief Space to latch characters for DebugScanf() */
+u8 G_u8DebugScanfCharCount = 0;                        /*!< @brief Counter for # of characters in Debug_au8ScanfBuffer */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
+extern volatile u32 G_u32SystemTime1ms;                /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< @brief From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< @brief From main.c */
 
-extern u8 G_au8UtilMessageON[];                        /*!< From utilities.c */
-extern u8 G_au8UtilMessageOFF[];                       /*!< From utilities.c */
+extern u8 G_au8UtilMessageON[];                        /*!< @brief From utilities.c */
+extern u8 G_au8UtilMessageOFF[];                       /*!< @brief From utilities.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Debug_xx" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Debug_pfnStateMachine;                /*!< The Debug state machine function pointer */
-//static u32 Debug_u32Timeout;                           /*!< Timeout counter used across states */
+static fnCode_type Debug_pfnStateMachine;                /*!< @brief The Debug state machine function pointer */
+//static u32 Debug_u32Timeout;                           /*!< @brief Timeout counter used across states */
 
-static UartPeripheralType* Debug_Uart;                   /*!< Pointer to debug UART peripheral object */
-static u32 Debug_u32CurrentMessageToken;                 /*!< Token for current message */
-static u8 Debug_u8ErrorCode;                             /*!< Error code */
+static UartPeripheralType* Debug_Uart;                   /*!< @brief Pointer to debug UART peripheral object */
+static u32 Debug_u32CurrentMessageToken;                 /*!< @brief Token for current message */
+static u8 Debug_u8ErrorCode;                             /*!< @brief Error code */
 
-static u8 Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE];       /*!< Space for incoming characters of debug commands */
-static u8 *Debug_pu8RxBufferNextChar;                    /*!< Pointer to next spot in the Rxbuffer */
-static u8 *Debug_pu8RxBufferParser;                      /*!< Pointer to loop through the Rx buffer */
+static u8 Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE];       /*!< @brief Space for incoming characters of debug commands */
+static u8 *Debug_pu8RxBufferNextChar;                    /*!< @brief Pointer to next spot in the Rxbuffer */
+static u8 *Debug_pu8RxBufferParser;                      /*!< @brief Pointer to loop through the Rx buffer */
 
-static u8 Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]; /*!< Space to store chars as they build up to the next command */ 
-static u8 *Debug_pu8CmdBufferNextChar;                   /*!< Pointer to incoming char location in the command buffer */
-static u16 Debug_u16CommandSize;                         /*!< Number of characters in the command buffer */
+static u8 Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]; /*!< @brief Space to store chars as they build up to the next command */ 
+static u8 *Debug_pu8CmdBufferNextChar;                   /*!< @brief Pointer to incoming char location in the command buffer */
+static u16 Debug_u16CommandSize;                         /*!< @brief Number of characters in the command buffer */
 
-static u8 Debug_u8Command;                               /*!< A validated command number */
+static u8 Debug_u8Command;                               /*!< @brief A validated command number */
 
-/*! Add commands by updating debug.h in the Command-Specific Definitions section, then update this list
+/*! @brief Add commands by updating debug.h in the Command-Specific Definitions section, then update this list
 with the function name to call for the corresponding command: */
 #ifdef EIE1
 DebugCommandType Debug_au8Commands[DEBUG_COMMANDS] = { {DEBUG_CMD_NAME00, DebugCommandPrepareList},
@@ -1208,6 +1208,7 @@ At the start of this state, the command buffer has a candidate command terminate
 There is a strict rule that commands are of the form en+cxx where xx is any number
 from 0 to DEBUG_COMMANDS, so parsing can be done based on that rule.  All other 
 strings are invalid.  
+
 */
 void DebugSM_CheckCmd(void)        
 {
@@ -1279,6 +1280,7 @@ void DebugSM_CheckCmd(void)
 @fn void DebugSM_ProcessCmd(void)         
 
 @brief Carry out the debug instruction. 
+
 */
 void DebugSM_ProcessCmd(void)         
 {
@@ -1298,6 +1300,7 @@ void DebugSM_ProcessCmd(void)
 
 Attempt to print an error message.  However if the Debug UART has failed, then 
 it obviously cannot print a message to tell you that.
+
 */
 void DebugSM_Error(void)         
 {

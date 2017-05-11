@@ -30,7 +30,7 @@ TYPES
 - Adc12ChannelType {ADC12_CH0 ... ADC12_CH7}
 
 PUBLIC FUNCTIONS
-- void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_)
+- void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type pfUserCallback_)
 - bool Adc12StartConversion(Adc12ChannelType eAdcChannel_)
 
 PROTECTED FUNCTIONS
@@ -47,28 +47,28 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_xxAdc12"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32Adc12Flags;                          /*!< Global state flags */
+volatile u32 G_u32Adc12Flags;                          /*!< @brief Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
+extern volatile u32 G_u32SystemTime1ms;                /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< @brief From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< @brief From main.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Adc12_xx" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Adc12_pfnStateMachine;              /*!< The state machine function pointer */
-//static u32 Adc12_u32Timeout;                         /*!< Timeout counter used across states */
+static fnCode_type Adc12_pfnStateMachine;              /*!< @brief The state machine function pointer */
+//static u32 Adc12_u32Timeout;                         /*!< @brief Timeout counter used across states */
 
-static Adc12ChannelType Adc12_aeChannels[] = ADC_CHANNEL_ARRAY;  /*!< Available channels defined in configuration.h */
-static fnCode_u16_type Adc12_afCallbacks[8];           /*!< ADC12 ISR callback function pointers */
+static Adc12ChannelType Adc12_aeChannels[] = ADC_CHANNEL_ARRAY;  /*!< @brief Available channels defined in configuration.h */
+static fnCode_u16_type Adc12_apfCallbacks[8];          /*!< @brief ADC12 ISR callback function pointers */
 
-static bool Adc12_bAdcAvailable;                       /*!< Binary semaphore to control access to the ADC12 peripheral */
+static bool Adc12_bAdcAvailable;                       /*!< @brief Binary semaphore to control access to the ADC12 peripheral */
 
 
 /**********************************************************************************************************************
@@ -80,7 +80,7 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*!---------------------------------------------------------------------------------------------------------------------
-@fn void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_)
+@fn void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type pfUserCallback_)
 
 @brief Assigns callback for the client application.  
 
@@ -102,13 +102,13 @@ void UserApp1Initialize(void)
 
 Requires:
 @param eAdcChannel_ is the channel to which the callback will be assigned
-@param fpUserCallback_ is the function address (name) for the user's callback
+@param pfUserCallback_ is the function address (name) for the user's callback
 
 Promises:
-- Adc12_fpCallbackCh<eAdcChannel_> ADC global value loaded with fpUserCallback_
+- Adc12_fpCallbackCh<eAdcChannel_> ADC global value loaded with pfUserCallback_
 
 */
-void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCallback_)
+void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type pfUserCallback_)
 {
   bool bChannelValid = FALSE;
 
@@ -124,7 +124,7 @@ void Adc12AssignCallback(Adc12ChannelType eAdcChannel_, fnCode_u16_type fpUserCa
   /* If the channel is valid, then assign the new callback function */
   if(bChannelValid)
   {
-    Adc12_afCallbacks[eAdcChannel_] = fpUserCallback_;
+    Adc12_apfCallbacks[eAdcChannel_] = pfUserCallback_;
   }
   else
   {
@@ -221,9 +221,9 @@ void Adc12Initialize(void)
   AT91C_BASE_ADC12B->ADC12B_IDR  = ADC12B_IDR_INIT;
   
   /* Set all the callbacks to default */
-  for(u8 i = 0; i < (sizeof(Adc12_afCallbacks) / sizeof(fnCode_u16_type)); i++)
+  for(u8 i = 0; i < (sizeof(Adc12_apfCallbacks) / sizeof(fnCode_u16_type)); i++)
   {
-    Adc12_afCallbacks[i] = Adc12DefaultCallback;
+    Adc12_apfCallbacks[i] = Adc12DefaultCallback;
   }
   
   /* Mark the ADC semaphore as available */
@@ -304,7 +304,7 @@ void ADCC0_IrqHandler(void)
     {
       /* Read the channel's result register (clears EOC bit / interrupt) and send to callback */
       u16Adc12Result = AT91C_BASE_ADC12B->ADC12B_CDR[Adc12_aeChannels[i]];
-      Adc12_afCallbacks[Adc12_aeChannels[i]](u16Adc12Result);
+      Adc12_apfCallbacks[Adc12_aeChannels[i]](u16Adc12Result);
       
       /* Disable the channel and exit the loop since only one channel can be set */
       AT91C_BASE_ADC12B->ADC12B_CHDR = (1 << Adc12_aeChannels[i]);

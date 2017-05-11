@@ -1,28 +1,49 @@
-/**********************************************************************************************************************
-File: interrupts.c                                                               
+/*!*********************************************************************************************************************
+@file interrupts.c                                                               
+@brief Definitions for main system interrupts.
 
-Description:
-Interrupt definitions for use with LED sign controller firmware.
+------------------------------------------------------------------------------------------------------------------------
+GLOBALS
+- NONE
+
+CONSTANTS
+- NONE
+
+TYPES
+- IRQn_Type IRQ (see the peripheral interrupt number table)
+
+PUBLIC FUNCTIONS
+- NONE
+
+PROTECTED FUNCTIONS
+- void InterruptSetup(void)
+
+Redefinition of WEAK defines in exceptions.c:
+- void HardFault_Handler(void);
+- void SysTick_Handler(void);
+- void PIOA_IrqHandler(void);
+- void PIOB_IrqHandler(void);
+
 ***********************************************************************************************************************/
 
 #include "configuration.h"
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_"
+All Global variable names shall start with "G_xxISR"
 ***********************************************************************************************************************/
 /* New variables */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword)  */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
+extern volatile u32 G_u32SystemTime1ms;                /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< @brief From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< @brief From main.c */
 
-extern volatile bool G_abButtonDebounceActive[TOTAL_BUTTONS];      /* From buttons.c    */
-extern volatile u32 G_au32ButtonDebounceTimeStart[TOTAL_BUTTONS];  /* From buttons.c    */
+extern volatile bool G_abButtonDebounceActive[TOTAL_BUTTONS];      /*!<@brief  From buttons.c    */
+extern volatile u32 G_au32ButtonDebounceTimeStart[TOTAL_BUTTONS];  /*!<@brief  From buttons.c    */
 
 
 /***********************************************************************************************************************
@@ -35,18 +56,29 @@ Variables names shall start with "ISR_" and be declared as static.
 Interrupt Service Routine Definitions
 ***********************************************************************************************************************/
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: InterruptSetup
+/*--------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
 
-Description:
-Sets up interrupt priorities in the NVIC and enables required interrupts.
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void InterruptSetup(void)
+
+@brief Sets up interrupt priorities in the NVIC and enables required interrupts.
+
 Note that other interrupt sources may be enabled outside of this function.
+As this should be the first interrupt-related function that is called in
+the system, we can conclude that clearing all the pending flags should
+work since no peripheral interrupt sources should be connected yet.  However
+this is not a requirement.
+
 
 Requires:
-  - All peripherals for which interrupts are enabled here should be configured
+- IRQn_Type enum is sequentially orderred interrupt values starting at 0
 
 Promises:
-  - Interrupt priorities are set 
+- Interrupt priorities are set 
+- All NVIC pending flags are cleared
+
 */
 void InterruptSetup(void)
 {
@@ -54,36 +86,38 @@ void InterruptSetup(void)
                                                 IPR3_INIT, IPR4_INIT, IPR5_INIT,
                                                 IPR6_INIT, IPR7_INIT};
   
-  /* Set interrupt priorities */
-  for(u8 i = 0; i < PRIORITY_REGISTERS; i++)
-  {
-    ((u32*)(AT91C_BASE_NVIC->NVIC_IPR))[i] = au32PriorityConfig[i];
-  }
-  
   /* Disable all interrupts and ensure pending bits are clear */
   for(u8 i = 0; i < SAM3U2_INTERRUPT_SOURCES; i++)
   {
     NVIC_DisableIRQ( (IRQn_Type)i );
     NVIC_ClearPendingIRQ( (IRQn_Type) i);
   } 
-    
+
+  /* Set interrupt priorities */
+  for(u8 i = 0; i < PRIORITY_REGISTERS; i++)
+  {
+    ((u32*)(AT91C_BASE_NVIC->NVIC_IPR))[i] = au32PriorityConfig[i];
+  }
+      
 } /* end InterruptSetup(void) */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-ISR: HardFault_Handler
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn ISR void HardFault_Handler(void)
+ 
+@brief A non-maskable (always available) core interrupt that occurs when 
+something extraordinary occurs.  
 
-Description:
-A non-maskable (always available) core interrupt that occurs when something extraordinary
-event.  In many cases, this is referencing an invalid address, but can be other events
-of various levels of mystery.  
+In many cases, this is referencing an invalid address, but can be other 
+events of various levels of mystery.  
 
 Requires:
-  -
+-
 
 Promises:
-  - Red LED is on, all others off
-  - Code held
+- Red LED is on, all others off
+- Code is held here for debug purposes
+
 */
 void HardFault_Handler(void)
 {
@@ -127,19 +161,24 @@ void HardFault_Handler(void)
 } /* end HardFault_Handler() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-ISR: SysTick_Handler
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn ISR void SysTick_Handler(void)
 
-Description:
-Updates the global ms timer.  This interrupt is always enabled and running in 
+@brief Updates the global ms timer.  
+
+This interrupt is always enabled and running in 
 the system and is essential for system timing and sleep wakeup.
 This ISR should be as fast as possible!
 
 Requires:
+- NONE
 
 Promises:
-  - G_u32SystemTime1ms counter is incremented by 1
-  - System tick interrupt pending flag is cleared
+- System tick interrupt pending flag is cleared
+- G_u32SystemFlags _SYSTEM_SLEEPING cleared
+
+@param G_u32SystemTime1ms counter is incremented by 1
+
 */
 void SysTick_Handler(void)
 {
@@ -159,20 +198,21 @@ void SysTick_Handler(void)
 } /* end SysTickHandler(void) */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-ISR: PIOA_IrqHandler
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn ISR void PIOA_IrqHandler(void)
 
-Description:
-Parses the PORTA GPIO interrupts and handles them appropriately.  Note that all PORTA GPIO
-interrupts are ORed and will trigger this handler, therefore any expected interrupt that is enabled
-must be parsed out and handled.
+@brief Parses the PORTA GPIO interrupts and handles them appropriately.  
+
+Note that all PORTA GPIO interrupts are ORed and will trigger this handler, 
+therefore any expected interrupt that is enabled must be parsed out and handled.
 
 Requires:
-  - The button IO bits match the interrupt flag locations
+- The button IO bits match the interrupt flag locations
 
 Promises:
-  - Buttons: sets the active button's debouncing flag, clears the interrupt
-    and initializes the button's debounce timer.
+- Buttons: sets the active button's debouncing flag, clears the interrupt
+  and initializes the button's debounce timer.
+
 */
 void PIOA_IrqHandler(void)
 {
@@ -215,20 +255,21 @@ void PIOA_IrqHandler(void)
 } /* end PIOA_IrqHandler() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-ISR: PIOB_IrqHandler
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn ISR void PIOB_IrqHandler(void)
 
-Description:
-Parses the PORTB GPIO interrupts and handles them appropriately.  Note that all PORTB GPIO
-interrupts are ORed and will trigger this handler, therefore any expected interrupt that is enabled
-must be parsed out and handled.
+@brief Parses the PORTB GPIO interrupts and handles them appropriately.  
+
+Note that all PORTB GPIO interrupts are ORed and will trigger this handler, 
+therefore any expected interrupt that is enabled must be parsed out and handled.
 
 Requires:
-  - The button IO bits match the interrupt flag locations
+- The button IO bits match the interrupt flag locations
 
 Promises:
-  - Buttons: sets the active button's debouncing flag, clears the interrupt
-    and initializes the button's debounce timer.
+- Buttons: sets the active button's debouncing flag, clears the interrupt
+  and initializes the button's debounce timer.
+
 */
 void PIOB_IrqHandler(void)
 {
@@ -266,7 +307,6 @@ void PIOB_IrqHandler(void)
   } /* end button interrupt checking */
 
   /* Clear the PIOB pending flag and exit */
-  //NVIC->ICPR[0] = (1 << IRQn_PIOB);
   NVIC_ClearPendingIRQ(IRQn_PIOB);
   
 } /* end PIOB_IrqHandler() */
