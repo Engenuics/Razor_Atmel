@@ -33,6 +33,7 @@ Includes
 #include <string.h>
 #include "AT91SAM3U4.h"
 #include "exceptions.h"
+#include "interrupts.h"
 #include "core_cm3.h"
 #include "main.h"
 #include "typedefs.h"

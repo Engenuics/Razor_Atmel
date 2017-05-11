@@ -2365,9 +2365,6 @@
             <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\drivers\exceptions.c</name>
             </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\interrupts.c</name>
-            </file>
         </group>
     </group>
     <group>

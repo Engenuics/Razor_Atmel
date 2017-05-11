@@ -113,14 +113,16 @@ void ClockSetup(void)
 
 @brief Puts the system into sleep mode.
 
-Right now, sleep mode is just a for loop that does nothing for 1ms.
-So it's more like "lazy" mode...
+Right now, sleep mode is just a for loop that does nothing
+for 1ms of time. So it's more like "lazy" mode, even though
+it's running full speed and burning power.
 
 Requires:
 - Main clock is 48MHz
+- The "for" loop is 4 instruction cycles
 
 Promises:
-- Roughly 1ms of time will be wasted
+- Processor will block to kill the desired time
 
 */
 void SystemSleep(void)
@@ -128,10 +130,8 @@ void SystemSleep(void)
   /* Set the sleep flag (which doesn't do anything yet) */
   G_u32SystemFlags |= _SYSTEM_SLEEPING;
 
-  /* Kill 1ms worth of instructions.  At a clock rate of 48MHz, there
-  are 48000000 clock ticks per second or 48,000 clock ticks per ms.
-  The tighest loop we can write takes 4 clock ticks, so use 12,000 */
-  for(u32 i = 0; i < 12000; i++);
+  /* Kill the desired number of instructions */
+  for(u32 i = 0; i < SLEEP_CYCLES; i++);
 
   /* Clear the sleep flag */
   G_u32SystemFlags |= _SYSTEM_SLEEPING;
@@ -182,7 +182,7 @@ Promises:
 void GpioSetup(void)
 {
   /* Set all of the pin function registers in port A */
-  AT91C_BASE_PIOA->PIO_PER  = 0x00000001;
+  AT91C_BASE_PIOA->PIO_PER  =  0x00000001;
   AT91C_BASE_PIOA->PIO_PDR  = ~0x00000001;  
   
 } /* end GpioSetup() */

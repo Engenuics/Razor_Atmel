@@ -56,17 +56,13 @@ void main(void)
   while(1)
   {
     WATCHDOG_BONE();
-        
-    HEARTBEAT_OFF();
 
+    /* System sleep */
     do
     {
-      /* System sleep */
       SystemSleep();
     } while(G_u32SystemFlags & _SYSTEM_SLEEPING);
-
-    HEARTBEAT_ON();
-    
+   
   } /* end while(1) main super loop */
   
 } /* end main() */
