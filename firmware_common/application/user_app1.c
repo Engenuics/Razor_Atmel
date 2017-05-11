@@ -17,7 +17,6 @@ To start a new task using this user_app1 as a template:
 10. Delete this text (between the dashed lines) and update the Description below to describe your task
 ----------------------------------------------------------------------------------------------------------------------
 
-
 ------------------------------------------------------------------------------------------------------------------------
 GLOBALS
 - NONE
@@ -32,7 +31,9 @@ PUBLIC FUNCTIONS
 - NONE
 
 PROTECTED FUNCTIONS
-- NONE
+- void UserApp1Initialize(void)
+- void UserApp1RunActiveState(void)
+
 
 **********************************************************************************************************************/
 
