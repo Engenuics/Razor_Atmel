@@ -2077,103 +2077,13 @@
         <group>
             <name>Include</name>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\adc12.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\ant.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\ant_api.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\antdefines.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\antmessage.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\buttons.h</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\drivers\exceptions.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\interrupts.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\drivers\lcd_nhd-c0220biz.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\leds.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\messaging.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\sam3u_i2c.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\sam3u_ssp.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\sam3u_uart.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\drivers\sdcard.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\timer.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\utilities.h</name>
             </file>
         </group>
         <group>
             <name>Source</name>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\adc12.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\ant.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\ant_api.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\buttons.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\firmware_common\drivers\exceptions.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\interrupts.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\drivers\lcd_nhd-c0220biz.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\leds.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\messaging.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\sam3u_i2c.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\sam3u_ssp.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\sam3u_uart.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\drivers\sdcard.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\timer.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\drivers\utilities.c</name>
             </file>
         </group>
     </group>
@@ -2182,40 +2092,13 @@
         <group>
             <name>Include</name>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\debug.h</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\application\main.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\music.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app1.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app2.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app3.h</name>
             </file>
         </group>
         <group>
             <name>Source</name>
             <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\debug.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\application\main.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app1.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app2.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app3.c</name>
             </file>
         </group>
     </group>

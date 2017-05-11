@@ -55,9 +55,6 @@ typedef const ULONG uc32;   /*!< @brief EiE standard variable type name for read
 typedef const USHORT uc16;  /*!< @brief EiE standard variable type name for read-only unsigned 32-bit variables */
 typedef const USHORT uc8;   /*!< @brief EiE standard variable type name for read-only unsigned 32-bit variables */
 
-typedef void(*fnCode_type)(void);      /*!< @brief EiE standard variable type name for function pointer with no arguments */
-typedef void(*fnCode_u16_type)(u16 x); /*!< @brief EiE standard variable type name for function pointer with one u16 argument */
-
 
 #ifndef __cplusplus
 typedef enum {FALSE = 0, TRUE = !FALSE} bool;  /*!< @brief EiE standard variable type name for boolean */

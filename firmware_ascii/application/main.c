@@ -10,10 +10,8 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32SystemTime1ms = 0;                   /*!< Global system time incremented every ms, max 2^32 (~49 days) */
-volatile u32 G_u32SystemTime1s = 0;                    /*!< Global system time incremented every second, max 2^32 (~136 years) */
 volatile u32 G_u32SystemFlags = 0;                     /*!< Global system flags */
-volatile u32 G_u32ApplicationFlags = 0;                /*!< Global system application flags: set when application is successfully initialized */
+
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* External global variables defined in other files (must indicate which file they are defined in) */
@@ -31,12 +29,15 @@ Variable names shall start with "Main_" and be declared as static.
 
 Main has two sections:
 
-1. Initialization which is run once on power-up or reset.  All drivers and applications are setup here without timing
-contraints but must complete execution regardless of success or failure of starting the application. 
+1. Initialization which is run once on power-up or reset.  All drivers and 
+applications are setup here without timing contraints but must complete 
+execution regardless of success or failure of starting the application. 
 
-2. Super loop which runs infinitely giving processor time to each application.  The total loop time should not exceed
-1ms of execution time counting all application execution.  SystemSleep() will execute to complete the remaining time in
-the 1ms period.
+2. Super loop which runs infinitely giving processor time to each application.  
+The total loop time should not exceed 1ms of execution time counting all 
+application execution.  SystemSleep() will execute to complete the remaining 
+time in the 1ms period.
+
 ***********************************************************************************************************************/
 
 void main(void)
@@ -47,70 +48,20 @@ void main(void)
   WatchDogSetup(); /* During development, does not reset processor if timeout */
   GpioSetup();
   ClockSetup();
-  InterruptSetup();
-  SysTickSetup();
-
-  /* Driver initialization */
-  MessagingInitialize();
-  UartInitialize();
-  DebugInitialize();
-
-  /* Debug messages through DebugPrintf() are available from here */
-
-  ButtonInitialize();
-  TimerInitialize();  
-  SspInitialize();
-  TWIInitialize();
-  Adc12Initialize();
-  
-  LcdInitialize();
-  LedInitialize();
-  AntInitialize();
-  AntApiInitialize();
-  SdCardInitialize();
-
-  /* Application initialization */
-
-  UserApp1Initialize();
-  UserApp2Initialize();
-  UserApp3Initialize();
-
   
   /* Exit initialization */
-  SystemStatusReport();
   G_u32SystemFlags &= ~_SYSTEM_INITIALIZING;
     
   /* Super loop */  
   while(1)
   {
     WATCHDOG_BONE();
-    SystemTimeCheck();
-    
-    /* Drivers */
-    LedUpdate();
-    ButtonRunActiveState();
-    UartRunActiveState();
-    TimerRunActiveState(); 
-    SspRunActiveState();
-    TWIRunActiveState();
-    Adc12RunActiveState();
-    MessagingRunActiveState();
-    DebugRunActiveState();
-    LcdRunActiveState();
-    AntRunActiveState();
-    AntApiRunActiveState();
-    SdCardRunActiveState();
-
-    /* Applications */
-    UserApp1RunActiveState();
-    UserApp2RunActiveState();
-    UserApp3RunActiveState();
-    
+        
     HEARTBEAT_OFF();
 
     do
     {
-      /* System sleep until next Systick */
+      /* System sleep */
       SystemSleep();
     } while(G_u32SystemFlags & _SYSTEM_SLEEPING);
 
