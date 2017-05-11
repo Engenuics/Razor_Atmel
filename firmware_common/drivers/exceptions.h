@@ -41,9 +41,11 @@
 //         Types
 //------------------------------------------------------------------------------
 
-/// Function prototype for exception table items - interrupt handler.
-//typedef void( *IrqHandler )( void );
-//typedef void( *IntFunc )( void );
+/*! 
+@enum IntFunc
+@brief Function pointer defintion for interrupt handler functions.
+*/
+typedef void( *IntFunc )( void );
 
 /// Weak attribute
     #define WEAK __weak
