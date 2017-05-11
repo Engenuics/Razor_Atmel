@@ -18,7 +18,6 @@ characteristics and source impedence considerations.  So this is a mystery for
 now -- suggest the first sample is thrown out, or average it out with at least 16 samples
 per displayed result which will reduce the error down to 1 or 2 LSBs.  
 
-
 ------------------------------------------------------------------------------------------------------------------------
 GLOBALS
 - NONE

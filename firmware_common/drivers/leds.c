@@ -8,47 +8,50 @@ Blinking and PWMing of LEDs rely on the EIE operating system to provide timing a
 regular 1ms calls to LedUpdate().
 
 ------------------------------------------------------------------------------------------------------------------------
-API:
-LedNumberType: 
-  EIE1     - WHITE, PURPLE, BLUE, CYAN, GREEN, YELLOW, ORANGE, RED, LCD_RED, LCD_GREEN, LCD_BLUE
-  MPGL2_R01 - BLUE, GREEN, YELLOW, RED, LCD_BL
-  MPGL2     - BLUE0, BLUE1, BLUE2, BLUE3, GREEN0, GREEN1, GREEN2, GREEN3, RED0, RED1, RED2, RED3, LCD_BL
+GLOBALS
+- NONE
 
-LedRateType: LED_0_5HZ, LED_1HZ, LED_2HZ, LED_4HZ, LED_8HZ, 
-             LED_PWM_0, LED_PWM_5, ..., LED_PWM_100
-*Note that PWM values in LedRateType are continuous, thus stepping a variable of LedRateType by one will select the next 
-PWM level. However, decrementing past LED_PWM_0 or incrementing past LED_PWM_100 is undefined.
+CONSTANTS
+- NONE
 
+TYPES
+- LedNumberType:
 
-Public:
-void LedOn(LedNumberType eLED_)
-Turn the specified LED on. LED response is immediate.
-e.g. LedOn(BLUE);
+  EIE1  {WHITE, PURPLE, BLUE, CYAN, 
+         GREEN, YELLOW, ORANGE, RED, 
+         LCD_RED, LCD_GREEN, LCD_BLUE}
 
-void LedOff(LedNumberType eLED_)
-Turn the specified LED off. LED response is immediate.
-e.g. LedOff(BLUE);
+  MPGL2 {BLUE0, BLUE1, BLUE2, BLUE3, 
+         GREEN0, GREEN1, GREEN2, GREEN3, 
+         RED0, RED1, RED2, RED3, LCD_BL}
 
-void LedToggle(LedNumberType eLED_)
-Toggle the specified LED.  LED response is immediate. LED must be in NORMAL mode.
-e.g. LedToggle(BLUE);
+  MPGL2_R01 {BLUE, GREEN, YELLOW, RED, LCD_BL}
 
-void LedPWM(LedNumberType eLED_, LedRateType ePwmRate_)
-Sets up an LED for PWM mode.  PWM mode requires the main loop to be running at 1ms period.
-e.g. LedPWM(BLUE, LED_PWM_5);
+- LedRateType:
 
-void LedBlink(LedNumberType eLED_, LedRateType eBlinkRate_)
-Sets an LED to BLINK mode.  BLINK mode requires the main loop to be running at 1ms period.
-e.g. LedBlink(BLUE, LED_1HZ);
+  {LED_0_5HZ = 1000, LED_1HZ = 500, LED_2HZ = 250, LED_4HZ = 125, LED_8HZ = 63,
 
-Protected:
-void LedInitialize(void)
-Test all LEDs and initialize to OFF state.
+  LED_PWM_0 = 0, LED_PWM_5 = 1, LED_PWM_10 = 2, LED_PWM_15 = 3, LED_PWM_20 = 4, 
+  LED_PWM_25 = 5, LED_PWM_30 = 6, LED_PWM_35 = 7, LED_PWM_40 = 8, LED_PWM_45 = 9, 
+  LED_PWM_50 = 10, LED_PWM_55 = 11, LED_PWM_60 = 12, LED_PWM_65 = 13, LED_PWM_70 = 14, 
+  LED_PWM_75 = 15, LED_PWM_80 = 16, LED_PWM_85 = 17, LED_PWM_90 = 18, LED_PWM_95 = 19, 
+  LED_PWM_100 = 20} 
 
-DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
-USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
-INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
-RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
+*Note that PWM values in LedRateType are continuous, thus stepping a variable of 
+LedRateType by one will select the next PWM level. However, decrementing past 
+LED_PWM_0 or incrementing past LED_PWM_100 is undefined.
+
+PUBLIC FUNCTIONS
+- void LedOn(LedNumberType eLED_)
+- void LedOff(LedNumberType eLED_)
+- void LedToggle(LedNumberType eLED_)
+- void LedBlink(LedNumberType eLED_, LedRateType eBlinkRate_)
+- void LedPWM(LedNumberType eLED_, LedRateType ePwmRate_)
+
+PROTECTED FUNCTIONS
+- void LedInitialize(void)
+- void LedUpdate(void)
+
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -64,10 +67,10 @@ All Global variable names shall start with "G_xxLed"
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* External global variables defined in other files (must indicate which file they are defined in) */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
+extern volatile u32 G_u32SystemTime1ms;                /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;                 /*!< @brief From main.c */
+extern volatile u32 G_u32SystemFlags;                  /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;             /*!< @brief From main.c */
 
 
 /***********************************************************************************************************************
@@ -78,12 +81,12 @@ Variable names shall start with "Led_" and be declared as static.
 /************ %LED% EDIT BOARD-SPECIFIC GPIO DEFINITIONS BELOW ***************/
 
 #ifdef EIE1
-/* LED locations: order must correspond to the order set in LedNumberType in the header file. */
+/*! LED locations: order must correspond to the order set in LedNumberType in the header file. */
 static u32 Led_au32BitPositions[] = {PB_13_LED_WHT, PB_14_LED_PRP, PB_18_LED_BLU, PB_16_LED_CYN,
                                      PB_19_LED_GRN, PB_17_LED_YLW, PB_15_LED_ORG, PB_20_LED_RED,
                                      PB_10_LCD_BL_RED, PB_11_LCD_BL_GRN, PB_12_LCD_BL_BLU};
 
-/* Control array for all LEDs in system initialized for LedInitialize().  Array values correspond to LedConfigType fields: 
+/*! Control array for all LEDs in system initialized for LedInitialize().  Array values correspond to LedConfigType fields: 
      eMode         eRate      u16Count       eCurrentDuty     eActiveState     ePort      LedNumberType */
 static LedConfigType Leds_asLedArray[TOTAL_LEDS] = 
 {{LED_PWM_MODE, LED_PWM_100, LED_PWM_100, LED_PWM_DUTY_HIGH, LED_ACTIVE_HIGH, LED_PORTB}, /* WHITE      */
@@ -103,10 +106,10 @@ static LedConfigType Leds_asLedArray[TOTAL_LEDS] =
 #ifdef MPGL2
 
 #ifdef MPGL2_R01
-/* LED locations: order must correspond to the order set in LedNumberType in the header file. */
+/*! LED locations: order must correspond to the order set in LedNumberType in the header file. */
 static u32 Led_au32BitPositions[] = {PB_18_LED_BLU, PB_19_LED_GRN, PB_17_LED_YLW, PB_20_LED_RED, PB_11_LCD_BL};
 
-/* Control array for all LEDs in system initialized for LedInitialize().  Array values correspond to LedConfigType fields: 
+/*! Control array for all LEDs in system initialized for LedInitialize().  Array values correspond to LedConfigType fields: 
      eMode         eRate      u16Count       eCurrentDuty     eActiveState     ePort      LedNumberType */
 static LedConfigType Leds_asLedArray[TOTAL_LEDS] = 
 {{LED_PWM_MODE, LED_PWM_100, LED_PWM_100, LED_PWM_DUTY_HIGH, LED_ACTIVE_HIGH, LED_PORTB}, /* BLUE       */
@@ -116,13 +119,13 @@ static LedConfigType Leds_asLedArray[TOTAL_LEDS] =
  {LED_PWM_MODE, LED_PWM_100, LED_PWM_100, LED_PWM_DUTY_HIGH, LED_ACTIVE_HIGH, LED_PORTB}, /* LCD_BL     */
 };   
 #else
-/* LED locations: order must correspond to the order set in LedNumberType in the header file. */
+/*! LED locations: order must correspond to the order set in LedNumberType in the header file. */
 static u32 Led_au32BitPositions[] = {PB_20_LED0_RED, PB_17_LED1_RED, PB_19_LED2_RED, PB_18_LED3_RED,
                                      PA_29_LED0_GRN, PB_02_LED1_GRN, PA_26_LED2_GRN, PA_07_LED3_GRN,
                                      PB_01_LED0_BLU, PB_13_LED1_BLU, PA_06_LED2_BLU, PA_08_LED3_BLU,
                                      PB_05_LCD_BL};
 
-/* Control array for all LEDs in system initialized for LedInitialize().  Array values correspond to LedConfigType fields: 
+/*! Control array for all LEDs in system initialized for LedInitialize().  Array values correspond to LedConfigType fields: 
      eMode         eRate      u16Count       eCurrentDuty     eActiveState     ePort      LedNumberType */
 static LedConfigType Leds_asLedArray[TOTAL_LEDS] = 
 {{LED_PWM_MODE, LED_PWM_100, LED_PWM_100, LED_PWM_DUTY_HIGH, LED_ACTIVE_HIGH, LED_PORTB}, /* RED0       */
@@ -146,28 +149,39 @@ static LedConfigType Leds_asLedArray[TOTAL_LEDS] =
 /************ EDIT BOARD-SPECIFIC GPIO DEFINITIONS ABOVE ***************/
  
 
-/***********************************************************************************************************************
-* Function Definitions
-***********************************************************************************************************************/
+/**********************************************************************************************************************
+Function Definitions
+**********************************************************************************************************************/
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: LedOn
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LedOn(LedNumberType eLED_)
 
-Description:
-Turn the specified LED on.  Automatically takes care of the active low vs. active
-high LEDs.  
+@brief Turn the specified LED on.  
+
+This function automatically takes care of the active low vs. active high LEDs.
+The function works immediately (it does not require the main application
+loop to be running). 
+
+Currently it only supports one LED at a time.
+
+Example:
+
+LedOn(BLUE);
+
 
 Requires:
-  - eLED_ is a valid LED index
-  - Definitions in Leds_asLedArray[eLED_] are correct
+- Definitions in Leds_asLedArray[eLED_] are correct
+
+@param eLED_ is a valid LED index
 
 Promises:
-  - Requested LED is configured to be turned on next LedUpdate()
-  - Requested LED is always set to LED_NORMAL_MODE mode
+- eLED_ is turned on 
+- eLED_ is set to LED_NORMAL_MODE mode
+
 */
 void LedOn(LedNumberType eLED_)
 {
@@ -194,20 +208,31 @@ void LedOn(LedNumberType eLED_)
 } /* end LedOn() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: LedOff
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LedOff(LedNumberType eLED_)
 
-Description:
-Turn the specified LED off.  Automatically takes care of the active low vs. active
-high LEDs.  
+@brief Turn the specified LED off.
+
+This function automatically takes care of the active low vs. active high LEDs.
+It works immediately (it does not require the main application
+loop to be running). 
+
+Currently it only supports one LED at a time.
+
+Example:
+
+LedOff(BLUE);
+
 
 Requires:
-  - eLED_ is a valid LED index
-  - Definitions in Leds_asLedArray[eLED_] are correct
+- Definitions in Leds_asLedArray[eLED_] are correct
+
+@param eLED_ is a valid LED index
 
 Promises:
-  - Requested LED is turned off
-  - Requested LED is always set to LED_NORMAL_MODE mode
+- eLED_ is turned off 
+- eLED_ is set to LED_NORMAL_MODE mode
+
 */
 void LedOff(LedNumberType eLED_)
 {
@@ -234,19 +259,33 @@ void LedOff(LedNumberType eLED_)
 } /* end LedOff() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: LedToggle
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LedToggle(LedNumberType eLED_)
 
-Description:
-Toggle the specified LED.
+@brief Toggles the specified LED from on to off or vise-versa.
+
+LED must be in NORMAL mode or else the state may change due to PWM or blinking.
+This function automatically takes care of the active low vs. active high LEDs.
+It works immediately (it does not require the main application
+loop to be running). 
+
+Currently it only supports one LED at a time.
+
+Example:
+
+LedToggle(BLUE);
+
 
 Requires:
-  - eLED_ is a valid LED index
-  - eLED_ *should* be in LED_NORMAL_MODE
-  - Write access to PIOx_ODSR is enabled
+- Write access to PIOx_ODSR is enabled
+- eLED_ *should* be in LED_NORMAL_MODE
+
+@param eLED_ is a valid LED index
 
 Promises:
-  - Requested LED is toggled if the LED is in LED_NORMAL_MODE mode
+- eLED_ is toggled if the LED is in LED_NORMAL_MODE mode.  If 
+not in NORMAL mode, the behaviour is undefined.
+
 */
 void LedToggle(LedNumberType eLED_)
 {
@@ -257,19 +296,63 @@ void LedToggle(LedNumberType eLED_)
 } /* end LedToggle() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: LedPWM
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LedBlink(LedNumberType eLED_, LedRateType eBlinkRate_)
 
-Description:
-Sets an LED to PWM mode
+@brief Sets an LED to BLINK mode with the rate given.
+
+BLINK mode requires the main loop to be running at 1ms period. If the main
+loop timing is regularly off, the blinking timing may be affected although
+unlikely to a noticeable degree.  Use LedOff(eLED_) to stop PWM mode and 
+return to NORMAL mode.
+
+Example to blink the PURPLE LED at 1Hz:
+
+LedBlink(PURPLE, LED_1HZ);
+
 
 Requires:
-  - eLED_ is a valid LED index
-  - ePwmRate_ is an allowed duty cycle:
-    LED_PWM_0, LED_PWM_5, LED_PWM_10, ..., LED_PWM_95, LED_PWM_100
+@param eLED_ is a valid LED index
+@param eBlinkRate_ is an allowed blinking rate - use a LED_frequency from LedRateType
 
 Promises:
-  - Requested LED is set to PWM mode at the duty cycle specified
+- eLED_ is set to PWM mode at the duty cycle rate specified
+
+*/
+void LedBlink(LedNumberType eLED_, LedRateType eBlinkRate_)
+{
+	Leds_asLedArray[(u8)eLED_].eMode = LED_BLINK_MODE;
+	Leds_asLedArray[(u8)eLED_].eRate = eBlinkRate_;
+	Leds_asLedArray[(u8)eLED_].u16Count = eBlinkRate_;
+
+} /* end LedBlink() */
+
+
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LedPWM(LedNumberType eLED_, LedRateType ePwmRate_)
+
+@brief Sets an LED to PWM mode with the rate given.
+
+The PWM output is bit-bashed based on the 1ms system timing.  Therefore,
+PWM mode requires the main loop to be running properly. If the main 
+loop timing is longer than 1ms, noticeable glitches will be observed
+in the PWM signal to the LED.  Even if all applications are working properly,
+there still may be some jitter due to applications taking processor time.
+
+Use LedOff(eLED_) to stop PWM mode and return to NORMAL mode.
+
+Example to turn on the BLUE LED with 5% duty cycle:
+
+LedPWM(BLUE, LED_PWM_5);
+
+
+Requires:
+@param eLED_ is a valid LED index
+@param ePwmRate_ is an allowed duty cycle - use a PWM value from LedRateType
+
+Promises:
+- eLED_ is set to PWM mode at the duty cycle rate specified
+
 */
 void LedPWM(LedNumberType eLED_, LedRateType ePwmRate_)
 {
@@ -281,45 +364,27 @@ void LedPWM(LedNumberType eLED_, LedRateType ePwmRate_)
 } /* end LedPWM() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: LedBlink
-
-Description:
-Sets an LED to BLINK mode.
-
-Requires:
-  - eLED_ is a valid LED index
-  - eBlinkRate_ is an allowed frequency:
-    LED_0_5HZ, LED_1HZ, LED_2HZ, LED_4HZ, LED_8HZ
-
-Promises:
-  - Requested LED is set to BLINK mode at the rate specified
-*/
-void LedBlink(LedNumberType eLED_, LedRateType eBlinkRate_)
-{
-	Leds_asLedArray[(u8)eLED_].eMode = LED_BLINK_MODE;
-	Leds_asLedArray[(u8)eLED_].eRate = eBlinkRate_;
-	Leds_asLedArray[(u8)eLED_].u16Count = eBlinkRate_;
-
-} /* end LedBlink() */
-
-
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: LedInitialize
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LedInitialize(void)
 
-Description:
-Initialization of LED system paramters and visual LED check.
+@brief Initialization of LED system parameters and visual LED check.
+
+Use STARTUP_SOUND in configuration.h to enable or disable an irritating
+sound that happens when the LEDs are fading.  It is off by default.
+
 
 Requires:
-  - G_u32SystemTime1ms ticking
-  - All LEDs already initialized to LED_NORMAL_MODE mode ON
+- All LEDs already initialized to LED_PWM_MODE mode @ LED_PWM_100
+- G_u32SystemTime1ms ticking
 
 Promises:
-  - All LEDs in LED_NORMAL_MODE mode with OFF
+- All discrete LEDs in LED_NORMAL_MODE mode and OFF
+- Backlight LED(s) on for white backlight
+
 */
 void LedInitialize(void)
 {
@@ -400,20 +465,14 @@ void LedInitialize(void)
 #endif /* EIE1 */
   
 #endif /* STARTUP_SOUND */
-
  
-  /* The discrete LEDs are off and the backlight is on (white) -- this
-  is how we will exit the LED init.  But should we set all the LEDs to
-  NORMAL mode?  This would solve the LedToggle() problem described in 
-  LedBasic module.  So if the code below is added, then the module
-  information must be updated. */
-#if 0 
+  /* Set all the LEDs to NORMAL mode */
   for(u8 i = 0; i < TOTAL_LEDS; i++)
   {
     Leds_asLedArray[i].eMode = LED_NORMAL_MODE;
   }
-#endif
 
+  /* Backlight on and white */
 #ifdef EIE1
   LedOn(LCD_RED);
   LedOn(LCD_GREEN);
@@ -431,21 +490,19 @@ void LedInitialize(void)
 } /* end LedInitialize() */
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LedUpdate(void)
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: LedUpdate
+@brief Update all LEDs for the current cycle. 
 
-Description:
-Update all LEDs for the current cycle.
+This impacts only LEDs that are set to be blinking or PWM.
 
 Requires:
- - G_u32SystemTime1ms is counting
+- G_u32SystemTime1ms is counting
 
 Promises:
-   - All LEDs updated based on their counters
+- All LEDs updated based on their counters
+
 */
 void LedUpdate(void)
 {
@@ -505,7 +562,19 @@ void LedUpdate(void)
       }
     }
   } /* end for */
+  
 } /* end LedUpdate() */
+
+
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+
+
+/***********************************************************************************************************************
+State Machine Declarations
+***********************************************************************************************************************/
+/* Currently this task does not need to run as a state machine */
 
 
 
