@@ -137,7 +137,8 @@ static void UserApp1SM_Idle(void)
  u16DelayCounter++;
  if(u16DelayCounter == U16_TOGGLE_PERIOD)
  {
-   /* Toggle to the correct state */
+   /* Reset the counter and toggle the LED */
+   u16DelayCounter = 0;
    if(bLightIsOn)
    {
      HEARTBEAT_OFF();
