@@ -1,5 +1,7 @@
-/**********************************************************************************************************************
-File: user_app1.c                                                                
+/*!*********************************************************************************************************************
+@file user_app1.c                                                                
+@brief User's tasks / applications are written here.  This description
+should be replaced by something specific to the task.
 
 ----------------------------------------------------------------------------------------------------------------------
 To start a new task using this user_app1 as a template:
@@ -15,22 +17,22 @@ To start a new task using this user_app1 as a template:
 10. Delete this text (between the dashed lines) and update the Description below to describe your task
 ----------------------------------------------------------------------------------------------------------------------
 
-Description:
-This is a user_app1.c file template 
 
 ------------------------------------------------------------------------------------------------------------------------
-API:
+GLOBALS
+- NONE
 
-Public functions:
+CONSTANTS
+- NONE
 
+TYPES
+- NONE
 
-Protected System functions:
-void UserApp1Initialize(void)
-Runs required initialzation for the task.  Should only be called once in main init section.
+PUBLIC FUNCTIONS
+- NONE
 
-void UserApp1RunActiveState(void)
-Runs current task state.  Should only be called once in main loop.
-
+PROTECTED FUNCTIONS
+- NONE
 
 **********************************************************************************************************************/
 
@@ -41,26 +43,23 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_UserApp1"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32UserApp1Flags;                       /* Global state flags */
+volatile u32 G_u32UserApp1Flags;                          /*!< @brief Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
-
-extern u8 G_au8DebugScanfBuffer[DEBUG_SCANF_BUFFER_SIZE]; /*!< From debug.c */
-extern u8 G_u8DebugScanfCharCount;                        /*!< From debug.c */
+extern volatile u32 G_u32SystemTime1ms;                   /*!<@brief From main.c */
+extern volatile u32 G_u32SystemTime1s;                    /*!<@brief From main.c */
+extern volatile u32 G_u32SystemFlags;                     /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp1_StateMachine;              /*!< The state machine function pointer */
-//static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
+static fnCode_type UserApp1_StateMachine;                 /*!< @brief The state machine function pointer */
+//static u32 UserApp1_u32Timeout;                         /*!< @brief Timeout counter used across states */
 
 
 /**********************************************************************************************************************
@@ -68,24 +67,28 @@ Function Definitions
 **********************************************************************************************************************/
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions                                                                                                   */
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions                                                                                                */
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*--------------------------------------------------------------------------------------------------------------------
-Function: UserApp1Initialize
 
-Description:
+/*!--------------------------------------------------------------------------------------------------------------------
+@fn void UserApp1Initialize(void)
+
+@brief
 Initializes the State Machine and its variables.
 
+Should only be called once in main init section.
+
 Requires:
-  -
+- NONE
 
 Promises:
-  - 
+- NONE
+
 */
 void UserApp1Initialize(void)
 {
@@ -104,19 +107,20 @@ void UserApp1Initialize(void)
 } /* end UserApp1Initialize() */
 
   
-/*----------------------------------------------------------------------------------------------------------------------
-Function UserApp1RunActiveState()
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void UserApp1RunActiveState(void)
 
-Description:
-Selects and runs one iteration of the current state in the state machine.
+@brief Selects and runs one iteration of the current state in the state machine.
+
 All state machines have a TOTAL of 1ms to execute, so on average n state machines
 may take 1ms / n to execute.
 
 Requires:
-  - State machine function pointer points at current state
+- State machine function pointer points at current state
 
 Promises:
-  - Calls the function to pointed by the state machine function pointer
+- Calls the function to pointed by the state machine function pointer
+
 */
 void UserApp1RunActiveState(void)
 {
@@ -125,8 +129,8 @@ void UserApp1RunActiveState(void)
 } /* end UserApp1RunActiveState */
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions                                                                                                  */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -134,20 +138,27 @@ void UserApp1RunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for ??? */
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void UserApp1SM_Idle(void)
+
+@brief Wait for... 
+*/
 static void UserApp1SM_Idle(void)
 {
 
 } /* end UserApp1SM_Idle() */
     
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Handle an error */
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void UserApp1SM_Error(void)
+
+@brief Handle an error here.  For now, the task is just held in this state. 
+*/
 static void UserApp1SM_Error(void)          
 {
   
 } /* end UserApp1SM_Error() */
+
 
 
 

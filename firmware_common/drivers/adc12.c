@@ -244,7 +244,7 @@ void Adc12Initialize(void)
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    Adc12_pfnStateMachine = Adc12SM_FailedInit;
+    Adc12_pfnStateMachine = Adc12SM_Error;
   }
 
 } /* end Adc12Initialize() */
@@ -359,7 +359,6 @@ static void Adc12SM_Idle(void)
 } /* end Adc12SM_Idle() */
      
 
-#if 0
 /*!-------------------------------------------------------------------------------------------------------------------
 @fn static void Adc12SM_Error(void)          
 
@@ -369,15 +368,9 @@ static void Adc12SM_Error(void)
 {
   
 } /* end Adc12SM_Error() */
-#endif
 
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* State to sit in if init failed */
-static void Adc12SM_FailedInit(void)          
-{
-    
-} /* end Adc12SM_FailedInit() */
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
