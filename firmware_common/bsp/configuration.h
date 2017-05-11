@@ -7,6 +7,7 @@ specific features of the design. The definitions should be updated
 to match the target hardware.  
  
 Bookmarks:
+@@@@@ GPIO board-specific parameters  #GPIOLED
 
 
 ***********************************************************************************************************************/
@@ -39,6 +40,7 @@ Includes
 #include "typedefs.h"
 
 /* Common driver header files */
+#include "leds.h"         /* #GPIOLED */
 
 /* EIEF1-PCB-01 specific header files */
 #ifdef EIE1
@@ -57,6 +59,31 @@ Includes
 /* Common application header files */
 #include "user_app1.h"
 
+
+/***********************************************************************************************************************
+@@@@@ GPIO board-specific parameters
+***********************************************************************************************************************/
+/*----------------------------------------------------------------------------------------------------------------------
+%LED% LED Configuration  #GPIOLED                                                                                       
+------------------------------------------------------------------------------------------------------------------------
+Update the values below for the LEDs on the board.  Any name can be used for the LED definitions.
+Open the LED source.c and edit Led_au32BitPositions and Leds_asLedArray with the correct values for the LEDs in the system.  
+*/
+
+#ifdef EIE1
+#define TOTAL_LEDS            (u8)11        /*!< Total number of LEDs in the system */
+#endif /* EIE1 */
+
+
+#ifdef MPGL2
+
+#ifdef MPGL2_R01
+#define TOTAL_LEDS            (u8)5         /*!< Total number of LEDs in the system */
+#else
+#define TOTAL_LEDS            (u8)13        /*!< Total number of LEDs in the system */
+#endif /* MPGL2_R01 */
+
+#endif /* MPGL2 */
 
 
 

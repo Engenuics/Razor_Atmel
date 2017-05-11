@@ -213,6 +213,9 @@
       <file>
         <name>$PROJ_DIR$\..\..\firmware_common\drivers\interrupts.h</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_common\drivers\leds.h</name>
+      </file>
     </group>
     <group>
       <name>Source</name>
@@ -221,6 +224,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_common\drivers\interrupts.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\firmware_common\drivers\leds.c</name>
       </file>
     </group>
   </group>

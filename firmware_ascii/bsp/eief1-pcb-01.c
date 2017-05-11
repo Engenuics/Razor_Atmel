@@ -170,21 +170,59 @@ void WatchDogSetup(void)
 /*!---------------------------------------------------------------------------------------------------------------------
 @fn void GpioSetup(void)
 
-@brief Loads registers required to set up GPIO on the processor.
+@brief Loads all registers required to set up GPIO on the processor.
 
 Requires:
 - All configurations must match connected hardware.
 
 Promises:
-- Output pin for PA31_HEARTBEAT is configured
+- All I/O lines are set for their required function and start-state
 
 */
 void GpioSetup(void)
 {
   /* Set all of the pin function registers in port A */
-  AT91C_BASE_PIOA->PIO_PER  =  0x00000001;
-  AT91C_BASE_PIOA->PIO_PDR  = ~0x00000001;  
+  AT91C_BASE_PIOA->PIO_PER    = PIOA_PER_INIT;
+  AT91C_BASE_PIOA->PIO_PDR    = ~PIOA_PER_INIT;
+  AT91C_BASE_PIOA->PIO_OER    = PIOA_OER_INIT;
+  AT91C_BASE_PIOA->PIO_ODR    = ~PIOA_OER_INIT;
+  AT91C_BASE_PIOA->PIO_IFER   = PIOA_IFER_INIT;
+  AT91C_BASE_PIOA->PIO_IFDR   = ~PIOA_IFER_INIT;
+  AT91C_BASE_PIOA->PIO_MDER   = PIOA_MDER_INIT;
+  AT91C_BASE_PIOA->PIO_MDDR   = ~PIOA_MDER_INIT;
+  AT91C_BASE_PIOA->PIO_PPUER  = PIOA_PPUER_INIT;
+  AT91C_BASE_PIOA->PIO_PPUDR  = ~PIOA_PPUER_INIT;
+  AT91C_BASE_PIOA->PIO_OWER   = PIOA_OWER_INIT;
+  AT91C_BASE_PIOA->PIO_OWDR   = ~PIOA_OWER_INIT;
   
+  AT91C_BASE_PIOA->PIO_SODR   = PIOA_SODR_INIT;
+  AT91C_BASE_PIOA->PIO_CODR   = PIOA_CODR_INIT;
+  AT91C_BASE_PIOA->PIO_ABSR   = PIOA_ABSR_INIT;
+  AT91C_BASE_PIOA->PIO_SCIFSR = PIOA_SCIFSR_INIT;
+  AT91C_BASE_PIOA->PIO_DIFSR  = PIOA_DIFSR_INIT;
+  AT91C_BASE_PIOA->PIO_SCDR   = PIOA_SCDR_INIT;
+  
+  /* Set all of the pin function registers in port B */
+  AT91C_BASE_PIOB->PIO_PER    = PIOB_PER_INIT;
+  AT91C_BASE_PIOB->PIO_PDR    = ~PIOB_PER_INIT;
+  AT91C_BASE_PIOB->PIO_OER    = PIOB_OER_INIT;
+  AT91C_BASE_PIOB->PIO_ODR    = ~PIOB_OER_INIT;
+  AT91C_BASE_PIOB->PIO_IFER   = PIOB_IFER_INIT;
+  AT91C_BASE_PIOB->PIO_IFDR   = ~PIOB_IFER_INIT;
+  AT91C_BASE_PIOB->PIO_MDER   = PIOB_MDER_INIT;
+  AT91C_BASE_PIOB->PIO_MDDR   = ~PIOB_MDER_INIT;
+  AT91C_BASE_PIOB->PIO_PPUER  = PIOB_PPUER_INIT;
+  AT91C_BASE_PIOB->PIO_PPUDR  = ~PIOB_PPUER_INIT;
+  AT91C_BASE_PIOB->PIO_OWER   = PIOB_OWER_INIT;
+  AT91C_BASE_PIOB->PIO_OWDR   = ~PIOB_OWER_INIT;
+  
+  AT91C_BASE_PIOB->PIO_SODR   = PIOB_SODR_INIT;
+  AT91C_BASE_PIOB->PIO_CODR   = PIOB_CODR_INIT;
+  AT91C_BASE_PIOB->PIO_ABSR   = PIOB_ABSR_INIT;
+  AT91C_BASE_PIOB->PIO_SCIFSR = PIOB_SCIFSR_INIT;
+  AT91C_BASE_PIOB->PIO_DIFSR  = PIOB_DIFSR_INIT;
+  AT91C_BASE_PIOB->PIO_SCDR   = PIOB_SCDR_INIT;
+ 
 } /* end GpioSetup() */
 
 
