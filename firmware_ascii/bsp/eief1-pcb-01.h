@@ -15,6 +15,10 @@ Type Definitions
 * Constants
 ***********************************************************************************************************************/
 
+/* At a clock rate of 48MHz, there are 48,000,000 clock ticks per second or
+48,000 ticks per ms.  The tighest loop we can write takes 4 clock ticks,
+so we need to run that loop 12,000 times to kill 1 ms. */
+#define SLEEP_CYCLES        (u32)12000
 
 
 /***********************************************************************************************************************
