@@ -2097,11 +2097,17 @@
             <file>
                 <name>$PROJ_DIR$\..\application\main.h</name>
             </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app1.h</name>
+            </file>
         </group>
         <group>
             <name>Source</name>
             <file>
                 <name>$PROJ_DIR$\..\application\main.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\firmware_common\application\user_app1.c</name>
             </file>
         </group>
     </group>

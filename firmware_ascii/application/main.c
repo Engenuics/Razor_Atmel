@@ -49,6 +49,9 @@ void main(void)
   GpioSetup();
   ClockSetup();
   
+  /* Application Initialization */
+  UserApp1Initialize();
+  
   /* Exit initialization */
   G_u32SystemFlags &= ~_SYSTEM_INITIALIZING;
     
@@ -56,6 +59,7 @@ void main(void)
   while(1)
   {
     WATCHDOG_BONE();
+    UserApp1RunActiveState();
 
     /* System sleep */
     do
