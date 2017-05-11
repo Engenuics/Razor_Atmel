@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <Project>
     <WindowStorage>
         <ChildIdMap>
@@ -128,7 +128,7 @@
             <IarPane-34096>
                 <expressions>
                     <item>G_u32SystemTime1ms</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
@@ -145,7 +145,7 @@
             </IarPane-34096>
             <IarPane-34097>
                 <expressions>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
@@ -163,7 +163,7 @@
             <IarPane-34098>
                 <expressions>
                     <item>G_u32SystemTime1ms</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
@@ -180,7 +180,7 @@
             </IarPane-34098>
             <IarPane-34099>
                 <expressions>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>

@@ -1,8 +1,8 @@
-/******************************************************************************
- * @file:    core_cm3.h
- * @purpose: CMSIS Cortex-M3 Core Peripheral Access Layer Header File
- * @version: V1.10
- * @date:    24. Feb. 2009
+/*!*****************************************************************************
+ * @file: core_cm3.h
+ * @purpose CMSIS Cortex-M3 Core Peripheral Access Layer Header File
+ * @version V1.10
+ * @date    24. Feb. 2009
  *----------------------------------------------------------------------------
  *
  * Copyright (C) 2009 ARM Limited. All rights reserved.
@@ -17,22 +17,7 @@
  * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
  * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *
- ******************************************************************************/
-
-
-
-
-#ifndef __CM3_CORE_H__
-#define __CM3_CORE_H__
-
-
-#define __CM3_CMSIS_VERSION_MAIN  (0x01)                                                       /*!< [31:16] CMSIS HAL main version */
-#define __CM3_CMSIS_VERSION_SUB   (0x10)                                                       /*!< [15:0]  CMSIS HAL sub version  */
-#define __CM3_CMSIS_VERSION       ((__CM3_CMSIS_VERSION_MAIN << 16) | __CM3_CMSIS_VERSION_SUB) /*!< CMSIS HAL version number       */
-
-#define __CORTEX_M                (0x03)                                                       /*!< Cortex core                    */
-
-/**
+ *
  *  Lint configuration \n
  *  ----------------------- \n
  *
@@ -80,6 +65,17 @@
 /*lint -e750 */
 /*lint -e528 */
 /*lint -e751 */
+
+
+#ifndef __CM3_CORE_H__
+#define __CM3_CORE_H__
+
+
+#define __CM3_CMSIS_VERSION_MAIN  (0x01)                                                       /*!< [31:16] CMSIS HAL main version */
+#define __CM3_CMSIS_VERSION_SUB   (0x10)                                                       /*!< [15:0]  CMSIS HAL sub version  */
+#define __CM3_CMSIS_VERSION       ((__CM3_CMSIS_VERSION_MAIN << 16) | __CM3_CMSIS_VERSION_SUB) /*!< CMSIS HAL version number       */
+
+#define __CORTEX_M                (0x03)                                                       /*!< Cortex core                    */
 
 
 #include <stdint.h>                           /* Include standard types */
@@ -1127,7 +1123,7 @@ static __INLINE void NVIC_SetPendingIRQ(IRQn_Type IRQn)
   NVIC->ISPR[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F));                             /* set interrupt pending */
 }
 
-/**
+/*!
  * @brief  Clear the pending bit for an external interrupt
  *
  * @param  IRQn_Type IRQn is the Number of the interrupt
