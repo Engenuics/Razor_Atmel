@@ -1,41 +1,39 @@
-/***********************************************************************************************************************
-File: buttons.c                                                                
+/*!**********************************************************************************************************************
+@file buttons.c                                                                
+@brief Button functions and state machine.  
 
-Description:
-Button functions and state machine.  The application handles all debouncing and glitch filtering.
+The application handles all debouncing and glitch filtering.
+All buttons use interrupts to trigger the start and end
+of the action.
 
 ------------------------------------------------------------------------------------------------------------------------
-API:
-Types:
-EIE1: The argument u32Button_ is either BUTTON0, BUTTON1, BUTTON2, or BUTTON3.  
-MPG2: The argument u32Button_ is either BUTTON0 or BUTTON1.  
+GLOBALS
+- NONE
 
-Public:
-bool IsButtonPressed(u32 u32Button_)
-Returns TRUE if a particular button is currently pressed (and debounced).
+CONSTANTS
 
-bool WasButtonPressed(u32 u32Button_)
-Returns TRUE if a particular button was pressed since last time it was checked even if it is no longer pressed.
-ButtonAcknowledge is typically called immediately after WasButtonPressed() returns TRUE to clear the button
-pressed state.
+Preprocessor definitions are used to define symbols for
+all buttons.  Always use these symbols when using the
+API where a function requires a u32Button_ parameter.
 
-void ButtonAcknowledge(u32 u32Button_)
-Clears the New Press state of a button -- generally always called after WasButtonPressed() returns TRUE.
+EIE1: BUTTON0, BUTTON1, BUTTON2, or BUTTON3
 
-bool IsButtonHeld(u32 u32Button_, u32 u32ButtonHeldTime_)
-Returns TRUE if a button has been held for u32ButtonHeldTime_ time in milliseconds.
+MPG2: BUTTON0 or BUTTON1.  
+
+TYPES
+- NONE
+
+
+PUBLIC FUNCTIONS
+- bool IsButtonPressed(u32 u32Button_)
+- bool WasButtonPressed(u32 u32Button_)
+- void ButtonAcknowledge(u32 u32Button_)
+- bool IsButtonHeld(u32 u32Button_, u32 u32ButtonHeldTime_)
 
 Protected:
-void ButtonInitialize(void)
-Configures the button system for the product including enabling button GPIO interrupts.  
-
-u32 GetButtonBitLocation(u8 u8Button_, ButtonPortType ePort_)
-Returns the location of the button within its port (should be required only for interrupt service routines).  
-
-DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
-USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
-INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
-RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
+- void ButtonInitialize(void)
+- void ButtonRunActiveState(void)
+- u32 GetButtonBitLocation(u8 u8Button_, ButtonPortType ePort_)
 
 ***********************************************************************************************************************/
 
@@ -43,33 +41,33 @@ RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_<type>Button"
+All Global variable names shall start with "G_xxButton"
 ***********************************************************************************************************************/
 /* New variables */
-volatile bool G_abButtonDebounceActive[TOTAL_BUTTONS];           /* Flags for buttons being debounced */
-volatile u32 G_au32ButtonDebounceTimeStart[TOTAL_BUTTONS];       /* Button debounce start time */
+volatile bool G_abButtonDebounceActive[TOTAL_BUTTONS];      /*!< @brief Flags for buttons being debounced */
+volatile u32 G_au32ButtonDebounceTimeStart[TOTAL_BUTTONS];  /*!< @brief Button debounce start time */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
+extern volatile u32 G_u32SystemTime1ms;                     /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;                      /*!< @brief From main.c */
+extern volatile u32 G_u32SystemFlags;                       /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;                  /*!< @brief From main.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Button_" and be declared as static.
+Variable names shall start with "Button_xx" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Button_pfnStateMachine;                  /* The Button application state machine function pointer */
+static fnCode_type Button_pfnStateMachine;                  /*!< @brief The Button application state machine function pointer */
 
-static ButtonStateType Button_aeCurrentState[TOTAL_BUTTONS];/* Current pressed state of button */
-static ButtonStateType Button_aeNewState[TOTAL_BUTTONS];    /* New (pending) pressed state of button */
-static u32 Button_au32HoldTimeStart[TOTAL_BUTTONS];         /* System 1ms time when a button press started */
-static bool Button_abNewPress[TOTAL_BUTTONS];               /* Flags to indicate a button was pressed */    
+static ButtonStateType Button_aeCurrentState[TOTAL_BUTTONS];/*!< @brief Current pressed state of button */
+static ButtonStateType Button_aeNewState[TOTAL_BUTTONS];    /*!< @brief New (pending) pressed state of button */
+static u32 Button_au32HoldTimeStart[TOTAL_BUTTONS];         /*!< @brief System 1ms time when a button press started */
+static bool Button_abNewPress[TOTAL_BUTTONS];               /*!< @brief Flags to indicate a button was pressed */    
 
 
-/************ %BUTTON% EDIT BOARD-SPECIFIC GPIO DEFINITIONS BELOW ***************/
+/*!*********** %BUTTON% EDIT BOARD-SPECIFIC GPIO DEFINITIONS BELOW ***************/
 /* Add all of the GPIO pin names for the buttons in the system.  
 The order of the definitions below must match the order of the definitions provided in configuration.h */ 
 
@@ -147,9 +145,14 @@ Function: WasButtonPressed
 
 Description:
 Determines if a particular button was pressed since last time it was checked. 
+This is effectively a latching function so that button presses are
+not missed and are potentially available to multiple tasks.
+
 The button may or may not still be pressed when this inquiry is made.  Mulitple
 button presses are not tracked.  The user should call ButtonAcknowledge immediately
-following this function to clear the state.
+following this function to clear the state. If multiple tasks
+need the button information, only the last function
+should call ButtonAcknowledge.
 
 Requires:
   - u32 u32Button_ is a valid button index
@@ -176,7 +179,7 @@ bool WasButtonPressed(u32 u32Button_)
 Function: ButtonAcknowledge
 
 Description:
-Clears the New Press state of a button.
+Clears the New Press state of a button -- generally always called after WasButtonPressed() returns TRUE.
 
 Requires:
   - u32Button_ is a valid button index
@@ -197,6 +200,7 @@ Function: IsButtonHeld
 Description:
 Queries to see if a button has been held for a certain time.  The button
 must still be pressed when this function is called if it is to return TRUE.
+This is a non-latching function.
 
 Requires:
   - u32Button_ is a valid button index
