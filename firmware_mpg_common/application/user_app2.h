@@ -40,7 +40,7 @@ typedef struct
 Constants / Definitions
 **********************************************************************************************************************/
 //#define USER_LIST_EXAMPLE         /* Define to load a default User LED command list */
-//#define USER_KNIGHT_RIDER         /* Define to load the Knight Rider User LED command list */
+#define DEMO_KNIGHT_RIDER         /* Define to load the Knight Rider DEMO LED command list */
 
 
 #define MAX_LIST_SIZE             (u8)200               /* Maximum number of list entries (100 commands, each with START and END */
