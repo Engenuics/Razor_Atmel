@@ -5,7 +5,8 @@ Description:
 Provides a Tera-Term driven system to display, read and write an LED command list.
 
 Test1.
-Test2.
+Test2 from Engenuics.
+
 ------------------------------------------------------------------------------------------------------------------------
 API:
 
