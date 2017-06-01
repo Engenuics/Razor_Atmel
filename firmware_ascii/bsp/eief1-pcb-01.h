@@ -15,18 +15,11 @@ Type Definitions
 * Constants
 ***********************************************************************************************************************/
 
-/* At a clock rate of 48MHz, there are 48,000,000 clock ticks per second or
-48,000 ticks per ms.  The tighest loop we can write takes 4 clock ticks,
-so we need to run that loop 12,000 times to kill 1 ms. */
-#define SLEEP_CYCLES        (u32)12000
 
 
 /***********************************************************************************************************************
 * Macros
 ***********************************************************************************************************************/
-#define WATCHDOG_BONE()     (AT91C_BASE_WDTC->WDTC_WDCR = WDT_CR_FEED)       /*!< @brief Resets the watch dog countdown timer*/
-#define HEARTBEAT_ON()      (AT91C_BASE_PIOA->PIO_CODR = PA_31_HEARTBEAT)    /*!< @brief Turns on Heartbeat LED */
-#define HEARTBEAT_OFF()     (AT91C_BASE_PIOA->PIO_SODR = PA_31_HEARTBEAT)    /*!< @brief Turns off Heartbeat LED */
 
 
 /***********************************************************************************************************************
@@ -41,10 +34,6 @@ so we need to run that loop 12,000 times to kill 1 ms. */
 /*------------------------------------------------------------------------------------------------------------------*/
 /*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
-void ClockSetup(void);
-void SystemSleep(void);
-void WatchDogSetup(void);
-void GpioSetup(void);
 
 
 /***********************************************************************************************************************
@@ -52,8 +41,6 @@ void GpioSetup(void);
 ***********************************************************************************************************************/
 /* Hardware Definition for PCB EIEF1-PCB-01 */
 
-/* Port A bit positions */
-#define PA_31_HEARTBEAT         (u32)0x80000000
 
 
 /*! @cond DOXYGEN_EXCLUDE */

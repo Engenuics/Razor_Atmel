@@ -74,10 +74,7 @@ Promises:
 
 */
 void UserApp1Initialize(void)
-{
-  /* Start in a known state #EMBC */
-  HEARTBEAT_OFF();
-  
+{ 
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -130,29 +127,6 @@ State Machine Function Definitions
 */
 static void UserApp1SM_Idle(void)
 {
- static bool bLightIsOn = FALSE;
- static u16 u16DelayCounter = 0;
- 
- /* Increment and check the counter to see if it's time to toggle */
- u16DelayCounter++;
- if(u16DelayCounter == U16_TOGGLE_PERIOD)
- {
-   /* Reset the counter and toggle the LED */
-   u16DelayCounter = 0;
-   if(bLightIsOn)
-   {
-     HEARTBEAT_OFF();
-   }
-   else
-   {
-     HEARTBEAT_ON();
-   }
-   
-   /* Flip the status flag.  This is not technically
-   correct since C does not have a real bool type so a
-   warning is generated if you don't type case it back to bool */
-   bLightIsOn = (bool)!bLightIsOn;
- }
  
 } /* end UserApp1SM_Idle() */
     
