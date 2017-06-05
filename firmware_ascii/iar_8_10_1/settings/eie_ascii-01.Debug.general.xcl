@@ -1,12 +1,12 @@
-"C:\Program Files\IAR Systems\EWARM_8_10_1\arm\bin\armproc.dll" 
+"C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\bin\armproc.dll" 
 
-"C:\Program Files\IAR Systems\EWARM_8_10_1\arm\bin\armsim2.dll" 
+"C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\bin\armsim2.dll" 
 
-"D:\EiE\EiE Git\Razor_Atmel\firmware_ascii\iar_8_10_1\Debug\Exe\eie_ascii-01.out" 
+"D:\EiE\EiE_Git\Razor_Atmel\firmware_ascii\iar_8_10_1\Debug\Exe\eie_ascii-01.out" 
 
---plugin "C:\Program Files\IAR Systems\EWARM_8_10_1\arm\bin\armbat.dll" 
+--plugin "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\bin\armbat.dll" 
 
---device_macro "C:\Program Files\IAR Systems\EWARM_8_10_1\arm\config\debugger\Atmel\SAM3U.dmac" 
+--device_macro "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\config\debugger\Atmel\SAM3U.dmac" 
 
 
 

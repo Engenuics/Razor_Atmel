@@ -40,11 +40,11 @@
                 </option>
                 <option>
                     <name>MemOverride</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\Atmel\ATSAM3U2C.ddf</state>
+                    <state>$TOOLKIT_DIR$\config\debugger\Atmel\ATSAM3U2C.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>

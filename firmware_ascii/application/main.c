@@ -34,9 +34,16 @@ void main(void)
   u32 u32Counter = 0;
   
   /* Initialize the PIO registers required for our button (B0) and LED (B19) */
-  AT91C_BASE_PIOB->PIO_PER = 0x00080001; // Enables PIO control on B0 and B19
-  AT91C_BASE_PIOB->PIO_OER = 0x00080000; // Set the LED line as an output  
+  //AT91C_BASE_PIOB->PIO_PDR  = ~0x00080001; // Disables PIO control on B0 and B19
+  //AT91C_BASE_PIOB->PIO_ODR  = ~0x00080000; // Set the LED line as an output  
+  //AT91C_BASE_PIOB->PIO_OWDR = ~0x00080000; // All the processor to right to the LED pin
+
+  //AT91C_BASE_PIOB->PIO_WPMR = 0x50494F00; // Enables write access to PIO registers
+  AT91C_BASE_PMC->PMC_PCER  = 0x27FCED73;
+  AT91C_BASE_PIOB->PIO_PER  = 0x00080001; // Enables PIO control on B0 and B19
+  AT91C_BASE_PIOB->PIO_OER  = 0x00080000; // Set the LED line as an output  
   AT91C_BASE_PIOB->PIO_OWER = 0x00080000; // All the processor to right to the LED pin
+  //AT91C_BASE_PIOB->PIO_WPMR = 0x50494F01; // Locks write access to PIO registers
   
   while(1)
   {
