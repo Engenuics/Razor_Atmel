@@ -1148,7 +1148,7 @@
                 </option>
                 <option>
                     <name>GenRtcEnable</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>GenRtcCheckPtrsNonInstrFunc</name>

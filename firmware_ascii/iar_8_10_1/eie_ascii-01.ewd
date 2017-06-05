@@ -40,11 +40,11 @@
                 </option>
                 <option>
                     <name>MemOverride</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\config\debugger\Atmel\ATSAM3U2C.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\Atmel\ATSAM3U2C.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -84,7 +84,7 @@
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>ARMSIM_ID</state>
+                    <state>JLINK_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
