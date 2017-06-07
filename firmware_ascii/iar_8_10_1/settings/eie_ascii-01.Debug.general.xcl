@@ -6,8 +6,6 @@
 
 --plugin "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\bin\armbat.dll" 
 
---rtc_enable 
-
 --device_macro "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\config\debugger\Atmel\SAM3U.dmac" 
 
 --flash_loader "C:\Program Files (x86)\IAR Systems\EWARM_8_10_1\arm\config\flashloader\Atmel\sam3u2c\sam3u2c-flash.board" 
