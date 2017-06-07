@@ -34,7 +34,18 @@ void main(void)
   u32 u32Counter = 0;
   bool bLedOn = FALSE;
   
-  /* This initialization code runs only once when the processor boots */
+  /* Initialize GPIO registers to allow access to output B19 
+  and input B0 */
+  AT91C_BASE_PIOB->PIO_PER  = 0x00080001;
+  AT91C_BASE_PIOB->PIO_OER  = 0x00080000;
+  AT91C_BASE_PIOB->PIO_OWER = 0x00080000;
+  
+  /* Turn on the clock signal to PIOB */
+  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOB);
+  
+  /* Disable the watchdog */
+  AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDDIS;
+ 
 #if 1
   /* If a development board is connected, use the following to properly
   initialize all of the outputs */
@@ -43,27 +54,15 @@ void main(void)
   AT91C_BASE_PIOB->PIO_OWER = 0x01FFFE00;
   AT91C_BASE_PIOB->PIO_CODR = 0x01BFFE00;
 #endif
-
-  /* Turn on the clock signal to the PIOB peripheral */
-  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOB);
   
-  /* Disable the watchdog timer */
-  AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDDIS;
-  
-  /* Initialize the PIO registers required for our button (B0) and LED (B19) */
-  AT91C_BASE_PIOB->PIO_PER  = 0x00080001;  // Enables PIO control on B0 and B19
-  //AT91C_BASE_PIOB->PIO_PDR  = ~0x00080001; // Disables PIO control on all other port B pins
-
-  AT91C_BASE_PIOB->PIO_OER  = 0x00080000;  // Set the LED line as an output  
-
-  AT91C_BASE_PIOB->PIO_OWER = 0x00080000;  // Allow the processor to write to the LED pin
    
   /* This loop runs the embedded system forever */
   while(1)
   {
-    /* Check if the button is pressed */
-    if(!(AT91C_BASE_PIOB->PIO_PDSR & 0x00000001) )
+    /* Check bit 0 in PDSR */
+    if( !(AT91C_BASE_PIOB->PIO_PDSR & 0x00000001) )
     {
+      /* Button is pressed, so run the blink code */
       
       /* Check if the LED is on or off */
       if(bLedOn)
@@ -74,17 +73,17 @@ void main(void)
       }
       else
       {
-        /* The LED is off, so turn it on and update bLedOn*/
+        /* The LED is off, so turn it on and update bLedOn */
         AT91C_BASE_PIOB->PIO_SODR = 0x00080000;
         bLedOn = TRUE;
       }
     }
-    /* Button is not pressed */
+    /* Button is not pressed, so do nothing */
     else
     {
-      /* Make sure the LED is off and update bLedOn */
-      AT91C_BASE_PIOB->PIO_CODR = 0x00080000;
-      bLedOn = FALSE;
+      /* Make sure that the LED is off */
+        AT91C_BASE_PIOB->PIO_CODR = 0x00080000;
+        bLedOn = FALSE;      
     }
     
     for(u32 i = 0; i < 100000; i++)
@@ -95,7 +94,21 @@ void main(void)
     u32Counter++;
   } 
 
+  
+  
 
+
+
+
+
+
+
+
+
+
+
+  
+#if 0
   AT91C_BASE_PIOB->PIO_OER  = 0x00080000;  // Set the LED line as an output  
   AT91C_BASE_PIOB->PIO_ODR  = ~0x00080000; // Clear output from all other lines
 
@@ -112,6 +125,7 @@ void main(void)
       /* The bit is clear, so set it */
       AT91C_BASE_PIOB->PIO_SODR = 0x00080000;
     }
+#endif
   
 } /* end main() */
 
