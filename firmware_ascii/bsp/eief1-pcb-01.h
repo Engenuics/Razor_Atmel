@@ -1417,52 +1417,52 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
 
 /* PIO Output Write Enable Register
 0: No effect
-1: Enables writing PIO_ODSR for the I/O line.
+1: Enables writing PIO_ODSR directly for the I/O line.
 */
-#define PIOA_OWER_INIT (u32)0xB4010000
+#define PIOA_OWER_INIT (u32)0x00000000
 /* 
-    31 [1] PA_31_HEARTBEAT write enabled
-    30 [0] PA_30_AN_DEMO
-    29 [1] PA_29_BUZZER2 write enabled
-    28 [1] PA_28_BUZZER1 write enabled
+    31 [0] PA_31_HEARTBEAT write ODSR disabled
+    30 [0] PA_30_AN_DEMO write ODSR disabled
+    29 [0] PA_29_BUZZER2 write ODSR disabled
+    28 [0] PA_28_BUZZER1 write ODSR disabled
 
-    27 [0] PA_27_CLOCK_OUT
-    26 [1] PA_26_ANT_PWR_EN write enabled
-    25 [0] PA_25_ANT_USPI2_SCK
-    24 [0] PA_24_SD_USPI1_SCK
+    27 [0] PA_27_CLOCK_OUT write ODSR disabled
+    26 [0] PA_26_ANT_PWR_EN write ODSR disabled
+    25 [0] PA_25_ANT_USPI2_SCK write ODSR disabled
+    24 [0] PA_24_SD_USPI1_SCK write ODSR disabled
 
-    23 [0] PA_23_ANT_USPI2_MOSI
-    22 [0] PA_22_ANT_USPI2_MISO
-    21 [0] PA_21_SD_USPI1_MISO
-    20 [0] PA_20_SD_USPI1_MOSI
+    23 [0] PA_23_ANT_USPI2_MOSI write ODSR disabled
+    22 [0] PA_22_ANT_USPI2_MISO write ODSR disabled
+    21 [0] PA_21_SD_USPI1_MISO write ODSR disabled
+    20 [0] PA_20_SD_USPI1_MOSI write ODSR disabled
 
-    19 [0] PA_19_DEBUG_U0_PIMO
-    18 [0] PA_18_DEBUG_U0_POMI
-    17 [0] PA_17_BUTTON0
-    16 [1] PA_16_BLADE_CS write enabled
+    19 [0] PA_19_DEBUG_U0_PIMO write ODSR disabled
+    18 [0] PA_18_DEBUG_U0_POMI write ODSR disabled
+    17 [0] PA_17_BUTTON0 write ODSR disabled
+    16 [0] PA_16_BLADE_CS write ODSR disabled
 
-    15 [0] PA_15_BLADE_SCK
-    14 [0] PA_14_BLADE_MOSI
-    13 [0] PA_13_BLADE_MISO
-    12 [0] PA_12_BLADE_UPOMI
+    15 [0] PA_15_BLADE_SCK write ODSR disabled
+    14 [0] PA_14_BLADE_MOSI write ODSR disabled
+    13 [0] PA_13_BLADE_MISO write ODSR disabled
+    12 [0] PA_12_BLADE_UPOMI write ODSR disabled
 
-    11 [0] PA_11_BLADE_UPIMO
-    10 [0] PA_10_I2C_SCL
-    09 [0] PA_09_I2C_SDA
-    08 [0] PA_08_SD_CS_MCDA3
+    11 [0] PA_11_BLADE_UPIMO write ODSR disabled
+    10 [0] PA_10_I2C_SCL write ODSR disabled
+    09 [0] PA_09_I2C_SDA write ODSR disabled
+    08 [0] PA_08_SD_CS_MCDA3 write ODSR disabled
 
-    07 [0] PA_07_HSMCI_MCDA2
-    06 [0] PA_06_HSMCI_MCDA1
-    05 [0] PA_05_HSMCI_MCDA0
-    04 [0] PA_04_HSMCI_MCCDA
+    07 [0] PA_07_HSMCI_MCDA2 write ODSR disabled
+    06 [0] PA_06_HSMCI_MCDA1 write ODSR disabled
+    05 [0] PA_05_HSMCI_MCDA0 write ODSR disabled
+    04 [0] PA_04_HSMCI_MCCDA write ODSR disabled
 
-    03 [0] PA_03_HSMCI_MCCK
-    02 [0] PA_02_SD_DETECT
-    01 [0] PA_01_SD_WP
-    00 [0] PA_00_TP54
+    03 [0] PA_03_HSMCI_MCCK write ODSR disabled
+    02 [0] PA_02_SD_DETECT write ODSR disabled
+    01 [0] PA_01_SD_WP write ODSR disabled
+    00 [0] PA_00_TP54 write ODSR disabled
 */
 
-#define PIOB_OWER_INIT (u32)0x01FFFE0
+#define PIOB_OWER_INIT (u32)0x001FFC00
 /*
     31 [0] PB_31_
     30 [0] PB_30_
@@ -1472,37 +1472,37 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
     27 [0] PB_27_
     26 [0] PB_26_
     25 [0] PB_25_
-    24 [1] PB_24_ANT_SRDY write enabled
+    24 [0] PB_24_ANT_SRDY write ODSR disabled
 
-    23 [1] PB_23_ANT_MRDY write enabled
-    22 [1] PB_22_ANT_USPI2_CS write enabled
-    21 [1] PB_21_ANT_RESET write enabled
-    20 [1] PB_20_LED_RED write enabled
+    23 [0] PB_23_ANT_MRDY write ODSR disabled
+    22 [0] PB_22_ANT_USPI2_CS write ODSR disabled
+    21 [0] PB_21_ANT_RESET write ODSR disabled
+    20 [1] PB_20_LED_RED write ODSR enabled
 
-    19 [1] PB_19_LED_GRN write enabled
-    18 [1] PB_18_LED_BLU write enabled
-    17 [1] PB_17_LED_YLW write enabled
-    16 [1] PB_16_LED_CYN write enabled
+    19 [1] PB_19_LED_GRN write ODSR enabled
+    18 [1] PB_18_LED_BLU write ODSR enabled
+    17 [1] PB_17_LED_YLW write ODSR enabled
+    16 [1] PB_16_LED_CYN write ODSR enabled
 
-    15 [1] PB_15_LED_ORG write enabled
-    14 [1] PB_14_LED_PRP write enabled
-    13 [1] PB_13_LED_WHT write enabled
-    12 [1] PB_12_LCD_BL_BLU write enabled
+    15 [1] PB_15_LED_ORG write ODSR enabled
+    14 [1] PB_14_LED_PRP write ODSR enabled
+    13 [1] PB_13_LED_WHT write ODSR enabled
+    12 [1] PB_12_LCD_BL_BLU write ODSR enabled
 
-    11 [1] PB_11_LCD_BL_GRN write enabled
-    10 [1] PB_10_LCD_BL_RED write enabled
-    09 [1] PB_09_LCD_RST write enabled
-    08 [0] PB_08_TP62
+    11 [1] PB_11_LCD_BL_GRN write ODSR enabled
+    10 [1] PB_10_LCD_BL_RED write ODSR enabled
+    09 [0] PB_09_LCD_RST write ODSR disabled
+    08 [0] PB_08_TP62 write ODSR disabled
 
-    07 [0] PB_07_TP60
-    06 [0] PB_06_TP58
-    05 [0] PB_05_TP56
-    04 [0] PB_04_BLADE_AN1
+    07 [0] PB_07_TP60 write ODSR disabled
+    06 [0] PB_06_TP58 write ODSR disabled
+    05 [0] PB_05_TP56 write ODSR disabled
+    04 [0] PB_04_BLADE_AN1 write ODSR disabled
 
-    03 [0] PB_03_BLADE_AN0
-    02 [0] PB_02_BUTTON3
-    01 [0] PB_01_BUTTON2
-    00 [0] PB_00_BUTTON1
+    03 [0] PB_03_BLADE_AN0 write ODSR disabled
+    02 [0] PB_02_BUTTON3 write ODSR disabled
+    01 [0] PB_01_BUTTON2 write ODSR disabled
+    00 [0] PB_00_BUTTON1 write ODSR disabled
 */
 
 /* PIO Write Protect Mode Register PIO_WPMR

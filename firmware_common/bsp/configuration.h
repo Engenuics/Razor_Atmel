@@ -308,7 +308,7 @@ Board-specific ANT definitions are kept here
 #define ANT_SSP_FLAGS           G_u32Ssp2ApplicationFlags  /*!< Assigns the correct global Application Flags to a self-documenting symbol */
 
 /*! @cond DOXYGEN_EXCLUDE */
-#define ANT_MRDY_READ_REG      (AT91C_BASE_PIOB->PIO_ODSR & PB_23_ANT_MRDY) 
+#define ANT_MRDY_READ_REG      (AT91C_BASE_PIOB->PIO_PDSR & PB_23_ANT_MRDY) 
 #define ANT_MRDY_CLEAR_REG     (AT91C_BASE_PIOB->PIO_CODR = PB_23_ANT_MRDY)     
 #define ANT_MRDY_SET_REG       (AT91C_BASE_PIOB->PIO_SODR = PB_23_ANT_MRDY)
 
