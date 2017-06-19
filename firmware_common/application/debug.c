@@ -1,6 +1,15 @@
 /*!**********************************************************************************************************************
 @file debug.c 
-@brief Debugging functions and state machine.  
+@brief Debugging functions and state machine. 
+
+*** Note that there is a maximum of 32 message slots for all system messaging, 
+and every call to DebugPrintf takes one of those slots.  It tends to be easy 
+to queue 10-20 DebugPrintf messages in a single function before any of them
+get processed through the system.  In this case, you end up with unexpected
+behavior.  This will be fixed on a future version. ****
+
+Provides the terminal interface and also a local command-driven debugging
+system for teh system.
 
 Since the system is small, debugger commands will be strictly numerical, 
 though each command will have a string name that can
@@ -395,7 +404,7 @@ Promises:
 */
 void SystemStatusReport(void)
 {
-  u8 au8SystemPassed[] = "No failed tasks.";
+  u8 au8SystemPassed[] = "No failed tasks.\n\r";
   u8 au8SystemReady[] = "\n\rInitialization complete. Type en+c00 for debug menu.  Failed tasks:\n\r";
   u32 u32TaskFlagMaskBit = (u32)0x01;
   bool bNoFailedTasks = TRUE;

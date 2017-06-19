@@ -3,7 +3,7 @@ File: ant_api.c
 
 Description:
 ANT user interface.  No initialization or state machine required.  This file exposes the source code
-for all public functions that work with ant.c.  Seperating it keep sit a little more manageable.
+for all public functions that work with ant.c.  Seperating it keeps it a little more manageable.
 
 Once the ANT radio has been configured, all messaging from the ANT device is handled through 
 the incoming queue G_sAntApplicationMsgList.  The application is responsible for checking this
@@ -17,7 +17,7 @@ to be handled seperately as an add-on to this API.
 API:
 
 GLOBALS
-Three global variables give access to the latest ANT message data.
+Four global variables give access to the latest ANT message data.
 Copy the following definitions to your client task:
 
 // Globals for passing data from the ANT application to the API 
@@ -115,7 +115,7 @@ if(eAntCurrentState == ANT_CLOSED )
 }
 
 
-bool AntCloseChannelNumber(AntChannelNumberType eAntChannelToOpen)
+bool AntCloseChannelNumber(AntChannelNumberType eAntChannelToClose)
 Queues a request to close the specified channel.
 Returns TRUE if the message is successfully queued - this can be ignored or checked.  
 Application should monitor AntRadioStatusChannel() for actual channel status.
@@ -208,6 +208,8 @@ if(AntReadAppMessageBuffer())
 }
 
 
+
+
 ***********************************************************************************************************************/
 
 #include "configuration.h"
@@ -256,6 +258,7 @@ extern u8 G_au8AntSetChannelID[];                             /* From ant.c */
 extern u8 G_au8AntSetChannelPeriod[];                         /* From ant.c */
 extern u8 G_au8AntSetChannelRFFreq[];                         /* From ant.c */
 extern u8 G_au8AntSetChannelPower[];                          /* From ant.c */
+extern u8 G_au8AntSetSearchTimeout[];                         /* From ant.c */
 extern u8 G_au8AntLibConfig[];                                /* From ant.c */
 
 extern u8 G_au8AntBroadcastDataMessage[];                     /* From ant.c */
@@ -271,7 +274,8 @@ static u32 AntApi_u32Timeout;                       /* Timeout counter used acro
 
 /* Message for channel assignment.  Set ANT_ASSIGN_MESSAGES for number of messages. */
 static u8* AntApi_apu8AntAssignChannel[] = {G_au8AntSetNetworkKey, G_au8AntLibConfig, G_au8AntAssignChannel, G_au8AntSetChannelID, 
-                                            G_au8AntSetChannelPeriod, G_au8AntSetChannelRFFreq, G_au8AntSetChannelPower 
+                                            G_au8AntSetChannelPeriod, G_au8AntSetChannelRFFreq, G_au8AntSetChannelPower,
+                                            G_au8AntSetSearchTimeout
                                            }; 
 
 /***********************************************************************************************************************
@@ -365,12 +369,17 @@ bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_)
   G_au8AntSetChannelRFFreq[4] = AntCalculateTxChecksum(G_au8AntSetChannelRFFreq);
 
   /* Setup the channel power message */
-  G_au8AntSetChannelPower[2] = psAntSetupInfo_->AntChannel;
   G_au8AntSetChannelPower[3] = psAntSetupInfo_->AntTxPower;
   G_asAntChannelConfiguration[psAntSetupInfo_->AntChannel].AntTxPower = psAntSetupInfo_->AntTxPower;
 
   G_au8AntSetChannelPower[4] = AntCalculateTxChecksum(G_au8AntSetChannelPower);
      
+  /* Setup the the channel search timeout (currently set at default for infinite search) */
+  G_au8AntSetSearchTimeout[2] = psAntSetupInfo_->AntChannel;
+  G_au8AntSetSearchTimeout[3] = ANT_INFINITE_SEARCH_TIMEOUT;
+
+  G_au8AntSetSearchTimeout[4] = AntCalculateTxChecksum(G_au8AntSetSearchTimeout);
+  
   /* Set the next state to begin transferring */
   AntApi_u32Timeout = G_u32SystemTime1ms;
   AntApi_StateMachine = AntApiSM_AssignChannel;
@@ -674,6 +683,74 @@ bool AntReadAppMessageBuffer(void)
 } /* end AntReadAppMessageBuffer() */
 
 
+/*!-----------------------------------------------------------------------------/
+@fn: AntGetdBmAscii
+@brief Takes the binary RSSI value and writes back a string with the value in dBm.
+
+The string INCLUDES the sign (- or +, even though it will ALWAYS be - for ANT)
+but does NOT include the unit text dBm.  Leading 0s are always returned,
+thus the returned string is always three chars (no terminating NULL).
+
+Example:
+
+Requires:
+@param s8RssiValue_ is the signed 8-bit RSSI value to convert.  The number is
+two's complement.
+@param pu8Result_ points to a string with at least 3 bytes of space to write
+
+Promises:
+- *pu8Result_ receive the '-xx' where xx is the value in dBm (does not send
+a terminating NULL)
+
+*/
+void AntGetdBmAscii(s8 s8RssiValue_, u8* pu8Result_)
+{
+  u8 u8AbsoluteValue;
+  
+  /* Handle the positive number */
+  if(s8RssiValue_ >= 0)
+  {
+    /* Print '+' but only for numbers larger than 0 */
+    *pu8Result_ = '+';
+    if(s8RssiValue_ == 0)
+    {
+      *pu8Result_ = ' ';
+    }
+    
+    u8AbsoluteValue = (u8)s8RssiValue_;
+  }
+  /* Handle the negative number */
+  else
+  {
+    *pu8Result_ = '-';
+    
+    /* #EIE Task 2
+    s8RssiValue is a two's complement (bu(3) ma(3)) signed value
+    Convert to the unsigned absolute value u8AbsoluteValue
+    Example:
+    s8RssiValue_ = -50
+    u8AbsoluteValue = 50
+    Hint: what character is used to invert bits in C language?
+    */
+    u8AbsoluteValue = (u8)(~s8RssiValue_ + 1);
+  }
+  
+  /* Limit any display to two digit */
+  if(u8AbsoluteValue > 99)
+  {
+    u8AbsoluteValue = 99;
+  }
+  
+
+  /* Write the numeric value */
+  pu8Result_++;
+  *pu8Result_ = (u8AbsoluteValue / 10) + NUMBER_ASCII_TO_DEC;
+  pu8Result_++;
+  *pu8Result_ = (u8AbsoluteValue % 10) + NUMBER_ASCII_TO_DEC;
+  
+} /* end AntGetdBmAscii() */
+
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -769,7 +846,7 @@ static void  AntApiSM_AssignChannel(void)
       if(u8CurrentMessageToSend == ANT_ASSIGN_MESSAGES)
       {
         /* Print OK message and update the channel flags */
-        G_au8AntMessageAssign[12] = G_stMessageResponse.u8Channel;
+        G_au8AntMessageAssign[12] = G_stMessageResponse.u8Channel + NUMBER_ASCII_TO_DEC;
         DebugPrintf(G_au8AntMessageAssign);
         DebugPrintf(G_au8AntMessageOk);
         G_asAntChannelConfiguration[G_stMessageResponse.u8Channel].AntFlags |= _ANT_FLAGS_CHANNEL_CONFIGURED;

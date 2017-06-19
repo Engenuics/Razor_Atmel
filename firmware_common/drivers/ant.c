@@ -67,6 +67,8 @@ u8 G_au8AntSetChannelRFFreq[] = {MESG_CHANNEL_RADIO_FREQ_SIZE, MESG_CHANNEL_RADI
                                  0 /* AntFrequency */, CS};           
 u8 G_au8AntSetChannelPower[]  = {MESG_RADIO_TX_POWER_SIZE, MESG_RADIO_TX_POWER_ID, 0 /* AntChannel */, 
                                  0 /* AntTxPower */, CS};        
+u8 G_au8AntSetSearchTimeout[] = {MESG_CHANNEL_SEARCH_TIMEOUT_SIZE, MESG_CHANNEL_SEARCH_TIMEOUT_ID, 0 /* AntChannel */, 
+                                 0xFF /* SearchTime (0xFF = infinite) */, CS};        
 u8 G_au8AntLibConfig[]        = {MESG_LIB_CONFIG_SIZE, MESG_LIB_CONFIG_ID, 0, LIB_CONFIG_CHANNEL_ID_FLAG | LIB_CONFIG_RSSI_FLAG, CS};        
 
 u8 G_au8AntBroadcastDataMessage[] = {MESG_DATA_SIZE, MESG_BROADCAST_DATA_ID, CH, D_0, D_1, D_2, D_3, D_4, D_5, D_6, D_7, CS};
@@ -1265,11 +1267,12 @@ static u8 AntProcessMessage(void)
             }
             break;
 
+#if 0
           case MESG_ASSIGN_CHANNEL_ID:
             G_au8AntMessageAssign[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageAssign);
             break;
-
+#endif       
           case MESG_UNASSIGN_CHANNEL_ID:
             G_au8AntMessageUnassign[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageUnassign);
@@ -1282,7 +1285,7 @@ static u8 AntProcessMessage(void)
             break;
  
           default:
-            G_au8AntMessageUnhandled[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
+            G_au8AntMessageUnhandled[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + NUMBER_ASCII_TO_DEC;
             G_au8AntMessageUnhandled[24] = HexToASCIICharLower( (au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID] >> 4) & 0x0F );
             G_au8AntMessageUnhandled[25] = HexToASCIICharLower( (au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID] & 0x0F) );
             G_au8AntMessageUnhandled[36] = HexToASCIICharLower( (au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] >> 4) & 0x0F );
@@ -1309,7 +1312,7 @@ static u8 AntProcessMessage(void)
         {
           case RESPONSE_NO_ERROR: 
           {
-            AntTickExtended(RESPONSE_NO_ERROR);
+            AntTickExtended(au8MessageCopy);
             break;
           }
 
@@ -1403,7 +1406,7 @@ static u8 AntProcessMessage(void)
       /* If this is a slave device, then a data message received means it's time to send */
       if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_SLAVE)
       {
-        AntTickExtended(RESPONSE_NO_ERROR);
+        AntTickExtended(au8MessageCopy);
       }
       
       break;
@@ -1450,7 +1453,7 @@ Description:
 Queues an ANT_TICK message to the application message queue.
 
 Requires:
-  - u8Code_ is payload byte indicating system info that may be relavent to the application
+  - pu8AntMessage_ points to 
 
 Promises:
   - A MESSAGE_ANT_TICK is queued to G_sAntApplicationMsgList

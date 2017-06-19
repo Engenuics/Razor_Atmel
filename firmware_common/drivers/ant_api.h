@@ -12,7 +12,7 @@
 /**********************************************************************************************************************
 Constants
 **********************************************************************************************************************/
-#define ANT_ASSIGN_MESSAGES                 (u8)7    /* Number of messages in AntAssignChannel */       
+#define ANT_ASSIGN_MESSAGES                 (u8)8    /* Number of messages in AntAssignChannel */       
 
 #define ANT_OUTGOING_MESSAGE_BUFFER_SIZE    (u32)32
 #define ANT_APPLICATION_MESSAGE_BUFFER_SIZE (u32)32
@@ -80,6 +80,9 @@ bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
 bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
 
 bool AntReadAppMessageBuffer(void);
+
+void AntGetdBmAscii(s8 s8RssiValue_, u8* pu8Result_);
+
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
