@@ -155,7 +155,8 @@ and the peripheral is made ready to use in the application. The peripheral will 
 for different SSP modes.  The following modes are supported:
 SPI_MASTER: transmit and receive using peripheral DMA controller; transmit occurs through the Message API
 SPI_SLAVE: transmit through Message Task; receive set up per-byte using current and next DMA pointers and managed into circular buffer.
-SPI_SLAVE_FLOW_CONTROL:
+SPI_SLAVE_FLOW_CONTROL: transmit through interrupt-driven single byte transfers and call-back; receive using peripheral DMA controller 
+direct to task buffer.
 
 Requires:
   - SSP peripheral register initialization values in configuration.h must be set correctly; currently this does not support
@@ -334,8 +335,6 @@ Promises:
 */
 void SspAssertCS(SspPeripheralType* psSspPeripheral_)
 {
-  //u32 u32Test = psSspPeripheral_->u32CsPin;
-  //u32 u32Test2 = psSspPeripheral_->pCsGpioAddress->PIO_CODR;
   psSspPeripheral_->pCsGpioAddress->PIO_CODR = psSspPeripheral_->u32CsPin;
   
 } /* end SspAssertCS() */
@@ -784,7 +783,7 @@ void SspGenericHandler(void)
     /* Is the CS pin asserted now? */
     if( (SSP_psCurrentISR->pCsGpioAddress->PIO_PDSR & SSP_psCurrentISR->u32CsPin) == 0)
     {
-      /* Flag that CS is asserted */
+      /* Flag that CS is asserted and make sure TX and RX COMPLETE flags are clear */
       *SSP_pu32SspApplicationFlagsISR |= _SSP_CS_ASSERTED;
       *SSP_pu32SspApplicationFlagsISR &= ~(_SSP_TX_COMPLETE | _SSP_RX_COMPLETE);
     }
@@ -1037,7 +1036,7 @@ void SspSM_Idle(void)
         SSP_psCurrentSsp->fnSlaveTxFlowCallback();
       }
       
-      /* TRANSMIT SPI_MASTER_AUTO_CS, SPI_MASTER_MANUAL_CS, SPI_SLAVE NO FLOW CONTROL */
+      /* TRANSMIT SPI_MASTER_AUTO_CS, SPI_MASTER_MANUAL_CS, SPI_SLAVE (no flow control) */
       /* A Master or Slave device without flow control uses the PDC */
       else
       {

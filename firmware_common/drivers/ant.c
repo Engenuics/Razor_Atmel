@@ -723,7 +723,7 @@ static void AntRxMessage(void)
   {
     return;
   }
-  
+ 
   /* Initialize the receive timer and get a snapshot of current byte count */
   u32CurrentRxByteCount = Ant_u32RxByteCounter;
   Ant_u32RxTimer = 0;
@@ -731,7 +731,7 @@ static void AntRxMessage(void)
   /* If the Global _ANT_FLAGS_TX_INTERRUPTED flag has been set, then we have already read the TX_SYNC byte */
   if(G_u32AntFlags & _ANT_FLAGS_TX_INTERRUPTED)
   {
-    /* Clear flag and ddjust the starting byte counter since the message came in during AntTxMessage*/
+    /* Clear flag and adjust the starting byte counter since the message came in during AntTxMessage*/
     G_u32AntFlags &= ~_ANT_FLAGS_TX_INTERRUPTED;
     u32CurrentRxByteCount--;
     

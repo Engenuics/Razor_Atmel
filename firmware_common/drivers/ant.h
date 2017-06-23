@@ -163,10 +163,9 @@ Constants / Definitions
 #define _ANT_FLAGS_RESTART                (u32)0x00010000        /* An ANT restart message was received */
 
 /* Control flags */
-#define _ANT_FLAGS_FIRST_BYTE             (u32)0x02000000        /* The first byte in an ANT transmission is coming in */
-#define _ANT_FLAGS_RX_IN_PROGRESS         (u32)0x04000000        /* Set when an ANT frame reception starts */
-#define _ANT_FLAGS_TX_IN_PROGRESS         (u32)0x08000000        /* Set when an ANT frame transmission starts */
-#define _ANT_FLAGS_TX_INTERRUPTED         (u32)0x10000000        /* An attempt to transmit was interrupted */
+#define _ANT_FLAGS_RX_IN_PROGRESS         (u32)0x01000000        /* Set when an ANT frame reception starts */
+#define _ANT_FLAGS_TX_IN_PROGRESS         (u32)0x02000000        /* Set when an ANT frame transmission starts */
+#define _ANT_FLAGS_TX_INTERRUPTED         (u32)0x04000000        /* An attempt to transmit was interrupted */
 /* end G_u32AntFlags */
 
 
