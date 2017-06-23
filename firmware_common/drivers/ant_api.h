@@ -32,12 +32,16 @@ Application messages
 ANT_TICK communicates the message period to the application.  
 
 If ANT is running as a master, ANT_TICK occurs every time a broadcast or acknowledged
-data message is sent. 
+data message is sent once ANT returns the EVENT_TX. 
 
 If ANT is running as a slave, ANT_TICK occurs when ever a message is received from the
 master or if ANT misses a message that it was expecting based on the established timing 
 of a paired channel (EVENT_RX_FAIL event is generated).  This should be communicated 
-in case a missed message is important to any application using ANT.  
+in case a missed message is important to any application using ANT. 
+
+If RESPONSE TYPE is 1, then EVENT CODE is the corresponding EVENT
+If RESPONSE TYPE is not 1, then it is the message number of the initiating message
+and EVENT CODE is the RESPONSE CODE to that message.
 
 MSG_NAME  MSG_ID     D_0      D_1      D_2     D_3     D_4     D_5     D_6
 ANT_TICK   0xFF    CHANNEL  RESPONSE  EVENT   0xFF   MISSED  MISSED  MISSED

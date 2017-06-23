@@ -27,13 +27,13 @@ FIRMWARE_SUB_REV1: should be updated when a pull request is made to the MASTER b
 ***********************************************************************************************************************/
 /* G_u32ApplicationFlags */
 /* The order of these flags corresponds to the order of applications in SystemStatusReport() (debug.c) */
-#define _APPLICATION_FLAGS_LED          0x00000001        /*!< G_u32ApplicationFlags LedStateMachine */
-#define _APPLICATION_FLAGS_BUTTON       0x00000002        /*!< G_u32ApplicationFlags  ButtonStateMachine */
-#define _APPLICATION_FLAGS_DEBUG        0x00000004        /*!< G_u32ApplicationFlags  DebugStateMachine */
-#define _APPLICATION_FLAGS_LCD          0x00000008        /*!< G_u32ApplicationFlags  LcdStateMachine */
-#define _APPLICATION_FLAGS_ANT          0x00000010        /*!< G_u32ApplicationFlags  AntStateMachine */
-#define _APPLICATION_FLAGS_TIMER        0x00000020        /*!< G_u32ApplicationFlags  TimerStateMachine */
-#define _APPLICATION_FLAGS_ADC          0x00000040        /*!< G_u32ApplicationFlags  Adc12StateMachine */
+#define _APPLICATION_FLAGS_LED          0x00000001        /*!< G_u32ApplicationFlags LedStateMachine is initialized */
+#define _APPLICATION_FLAGS_BUTTON       0x00000002        /*!< G_u32ApplicationFlags ButtonStateMachine is initialized */
+#define _APPLICATION_FLAGS_DEBUG        0x00000004        /*!< G_u32ApplicationFlags DebugStateMachine is initialized */
+#define _APPLICATION_FLAGS_LCD          0x00000008        /*!< G_u32ApplicationFlags LcdStateMachine is initialized */
+#define _APPLICATION_FLAGS_ANT          0x00000010        /*!< G_u32ApplicationFlags AntStateMachine is initialized */
+#define _APPLICATION_FLAGS_TIMER        0x00000020        /*!< G_u32ApplicationFlags TimerStateMachine is initialized */
+#define _APPLICATION_FLAGS_ADC          0x00000040        /*!< G_u32ApplicationFlags Adc12StateMachine is initialized */
 
 #ifdef EIE1
 /* EIE1 specific application flags */

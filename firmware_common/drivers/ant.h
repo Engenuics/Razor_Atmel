@@ -1,16 +1,20 @@
-/*!*********************************************************************************************************************
+/*!********************************************************************************************************************
 @file ant.h                                                                
-@brief Header file for ANT implementation for Cortex-M3 / AP2 SPI EiE Razor development board
-
-Search "####" for ANT Channel ID defaults
+@brief Header file for ANT implementation for Cortex-M3 / nRF51422 with AP2 network processor 
+SPI EiE Razor development board
 **********************************************************************************************************************/
 
 #ifndef __ANT_H
 #define __ANT_H
 
-/*******************************************************************************
-* Type definitions
-*******************************************************************************/
+/**********************************************************************************************************************
+Run time switches
+**********************************************************************************************************************/
+//#define ANT_VERBOSE                 /*!< @brief Define to enable Debug reporting of ANT Events */
+
+/**********************************************************************************************************************
+Type definitions
+**********************************************************************************************************************/
 /*! 
 @enum AntChannelStatusType
 @brief Enum to define the status of an ANT channel 
@@ -115,10 +119,10 @@ typedef struct
 } AntOutgoingMessageListType;   
 
 
-/*******************************************************************************
-* Macros 
-*******************************************************************************/
-#define IS_SEN_ASSERTED()      (ANT_SSP_FLAGS & _SSP_CS_ASSERTED)   /*!< @brief Macro returns TRUE if SEN is asserted */        
+/**********************************************************************************************************************
+Macros 
+**********************************************************************************************************************/
+#define IS_SEN_ASSERTED()      (ANT_SSP_FLAGS & _SSP_CS_ASSERTED)   /*!< @brief Macro returns TRUE if SEN is asserted */
 #define ACK_SEN_ASSERTED()     (ANT_SSP_FLAGS &= ~_SSP_CS_ASSERTED) /*!< @brief Macro to clear the _SSP_CS_ASSERTED flag */         
 
 #define IS_MRDY_ASSERTED()     (ANT_MRDY_READ_REG == 0) /*!< @brief Macro returns TRUE if MRDY is asserted */
@@ -132,15 +136,15 @@ typedef struct
 #define ANT_RESET_DEASSERT()   (ANT_RESET_SET_REG)      /*!< @brief Macro to deassert the ANT RESET signal */
 
 
-/*******************************************************************************
-* Constants / Definitions
-*******************************************************************************/
+/**********************************************************************************************************************
+Constants / Definitions
+**********************************************************************************************************************/
 #define ANT_NUM_CHANNELS                  (u8)8                  /*!< @brief Maximum number of ANT channels in the system */
 #define ANT_RX_BUFFER_SIZE                (u16)256               /*!< @brief ANT incoming data buffer size */
-#define ANT_CONFIGURE_TIMEOUT_MS          (u32)2000              /*!< @brief Maximum time to send all channel configuration messages */
-#define ANT_INFINITE_SEARCH_TIMEOUT       (u8)0xFF               /*!< @brief Value for Set Search Timeout for infinite timeout */
 
 /*!@cond DOXYGEN_EXCLUDE */
+#define ANT_CONFIGURE_TIMEOUT_MS          (u32)2000              /*!< @brief Maximum time to send all channel configuration messages */
+#define ANT_INFINITE_SEARCH_TIMEOUT       (u8)0xFF               /*!< @brief Value for Set Search Timeout for infinite timeout */
 #define ANT_RESET_WAIT_MS                 (u32)100
 #define ANT_RESTART_DELAY_MS              (u32)1000
 #define ANT_MSG_TIMEOUT_MS                (u32)1000
@@ -218,56 +222,55 @@ typedef struct
 /*!@endcond */
 
 
-/*******************************************************************************
-* Function prototypes
-*******************************************************************************/
+/**********************************************************************************************************************
+Function prototypes
+**********************************************************************************************************************/
 
-/*------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------------*/
 /*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
-
-/*------------------------------------------------------------------------------------------------------------------*/
-/*! @protectedsection */                                                                                            
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* ANT Protected Interface-layer Functions */
-void AntInitialize(void);
-void AntRunActiveState(void);
-bool AntTxMessage(u8 *pu8AntTxMessage_);
-u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_);
-void AntTxFlowControlCallback(void);
-void AntRxFlowControlCallback(void);
+/* ANT Public Interface-layer Functions */
 u8 AntCalculateTxChecksum(u8* pu8Message_);
 bool AntQueueOutgoingMessage(u8 *pu8Message_);
 void AntDeQueueApplicationMessage(void);
 
 
-/*------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* ANT Protected Interface-layer Functions */
+void AntInitialize(void);
+void AntRunActiveState(void);
+
+void AntTxFlowControlCallback(void);
+void AntRxFlowControlCallback(void);
+
+
+/*--------------------------------------------------------------------------------------------------------------------*/
 /*! @privatesection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* ANT Private Serial-layer Functions */
-static void AntSyncSerialInitialize(void);
-static void AntSrdyPulse(void);
+/* ANT Private Interface-layer Functions */
+bool AntTxMessage(u8 *pu8AntTxMessage_);
 static void AntRxMessage(void);
 static void AntAbortMessage(void);
 static void AdvanceAntRxBufferCurrentChar(void);
 static void AdvanceAntRxBufferUnreadMsgPointer(void);
-static bool AntParseExtendedData(u8* pu8SourceMessage, AntExtendedDataType* psExtDataTarget_);
 
-
-/* ANT private Interface-layer Functions */
+static u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_);
 static u8 AntProcessMessage(void);
-static void AntTick(u8 u8Code_);
-static bool AntQueueApplicationMessage(AntApplicationMessageType eMessageType_, u8 *pu8DataSource_);
-
-static void AntTickExtended(u8* pu8AntMessage_);
+static bool AntParseExtendedData(u8* pu8SourceMessage_, AntExtendedDataType* psExtDataTarget_);
 static bool AntQueueExtendedApplicationMessage(AntApplicationMessageType eMessageType_, u8* pu8DataSource_, AntExtendedDataType* psExtData_);
+static void AntTickExtended(u8* pu8AntMessage_);
 static void AntDeQueueOutgoingMessage(void);
 
+/* ANT Private Serial-layer Functions */
+static void AntSyncSerialInitialize(void);
+static void AntSrdyPulse(void);
 
 /* ANT State Machine Definition */
-void AntSM_Idle(void);
-void AntSM_ReceiveMessage(void);
-void AntSM_TransmitMessage(void);
-void AntSM_NoResponse(void);
+static void AntSM_Idle(void);
+static void AntSM_ReceiveMessage(void);
+static void AntSM_TransmitMessage(void);
+static void AntSM_NoResponse(void);
 
 #endif /* __ANT_H */

@@ -91,8 +91,8 @@ static void AddNewMessageStatus(u32 u32Token_);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-void MessagingIdle(void);             
-void MessagingError(void);         
+static void MessagingSM_Idle(void);             
+static void MessagingSM_Error(void);         
 
 
 #endif /* __MESSAGING_H */

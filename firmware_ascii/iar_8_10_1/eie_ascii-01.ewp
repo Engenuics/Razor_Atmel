@@ -766,7 +766,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>D:\EiE\EiE_Git\Razor_Atmel\firmware_common\bsp\sam3u2-flash.icf</state>
+                    <state>$PROJ_DIR$\..\..\firmware_common\bsp\sam3u2-flash.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

@@ -635,17 +635,18 @@ is ANT_DATA or ANT_TICK and then use G_au8AntApiCurrentMessageBytes and
 G_sAntApiCurrentMessageExtData accordingly.
 
 Requires:
-  - 
+- NONE
 
 Promises:
-  - Returns TRUE if there is new data; 
-    G_u32AntApiCurrentMessageTimeStamp
-    G_eAntApiCurrentMessageClass
-    G_au8AntApiCurrentMessageBytes
-    G_sAntApiCurrentMessageExtData
-    are all updated with the oldest data from G_sAntApplicationMsgList and the message
-    is removed from the buffer.
-  - Returns FALSE if no new data is present (all variables unchanged)
+- Returns TRUE if there is new data; 
+  G_u32AntApiCurrentMessageTimeStamp
+  G_eAntApiCurrentMessageClass
+  G_au8AntApiCurrentMessageBytes
+  G_sAntApiCurrentMessageExtData
+  are all updated with the oldest data from G_sAntApplicationMsgList and the message
+  is removed from the buffer.
+- Returns FALSE if no new data is present (all variables unchanged)
+
 */
 bool AntReadAppMessageBuffer(void)
 {
@@ -700,7 +701,7 @@ two's complement.
 
 Promises:
 - *pu8Result_ receive the '-xx' where xx is the value in dBm (does not send
-a terminating NULL)
+  a terminating NULL)
 
 */
 void AntGetdBmAscii(s8 s8RssiValue_, u8* pu8Result_)
@@ -723,15 +724,6 @@ void AntGetdBmAscii(s8 s8RssiValue_, u8* pu8Result_)
   else
   {
     *pu8Result_ = '-';
-    
-    /* #EIE Task 2
-    s8RssiValue is a two's complement (bu(3) ma(3)) signed value
-    Convert to the unsigned absolute value u8AbsoluteValue
-    Example:
-    s8RssiValue_ = -50
-    u8AbsoluteValue = 50
-    Hint: what character is used to invert bits in C language?
-    */
     u8AbsoluteValue = (u8)(~s8RssiValue_ + 1);
   }
   
@@ -770,7 +762,7 @@ Promises:
 void AntApiInitialize(void)
 {
   /* If good initialization, set state to Idle */
-  if( 1 )
+  if( G_u32ApplicationFlags & _APPLICATION_FLAGS_ANT)
   {
     DebugPrintf("ANT API ready\n\r");
     AntApi_StateMachine = AntApiSM_Idle;

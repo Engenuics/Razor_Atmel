@@ -249,7 +249,6 @@ void ButtonInitialize(void)
 {
   u32 u32PortAInterruptMask = 0;
   u32 u32PortBInterruptMask = 0;
-  static u8 au8ButtonStartupMsg[] = "Button task ready\n\r";
   
   /* Setup default data for all of the buttons in the system */
   for(u8 i = 0; i < TOTAL_BUTTONS; i++)
@@ -289,7 +288,7 @@ void ButtonInitialize(void)
   /* Init complete: set function pointer and application flag */
   Button_pfnStateMachine = ButtonSM_Idle;
   G_u32ApplicationFlags |= _APPLICATION_FLAGS_BUTTON;
-  DebugPrintf(au8ButtonStartupMsg);
+  DebugPrintf("Button task ready\n\r");
 
 } /* end ButtonInitialize() */
 

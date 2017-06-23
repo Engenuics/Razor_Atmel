@@ -342,7 +342,7 @@ void MessagingInitialize(void)
   Msg_pNextStatus = &Msg_StatusQueue[0];
 
   G_u32MessagingFlags = 0;
-  Messaging_pfnStateMachine = MessagingIdle;
+  Messaging_pfnStateMachine = MessagingSM_Idle;
 
 } /* end MessagingInitialize() */
 
@@ -441,7 +441,7 @@ State Machine Function Definitions
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Do nothing for now */
-void MessagingIdle(void)
+static void MessagingSM_Idle(void)
 {
   static u32 u32CleaningTime = MSG_STATUS_CLEANING_TIME;
   
@@ -453,17 +453,17 @@ void MessagingIdle(void)
     /* ??? Probably should add clean of the main message queue to detect any messages that have become stuck */
   }
     
-} /* end MessagingIdle() */
+} /* end MessagingSM_Idle() */
 
-
+#if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-void MessagingError(void)          
+static void MessagingSM_Error(void)          
 {
-  Messaging_pfnStateMachine = MessagingIdle;
+  Messaging_pfnStateMachine = MessagingSM_Idle;
   
-} /* end MessagingError() */
-
+} /* end MessagingSM_Error() */
+#endif
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

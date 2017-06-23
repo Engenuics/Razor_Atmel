@@ -25,7 +25,7 @@ typedef struct
 Constants / Definitions
 ***********************************************************************************************************************/
 #define BUTTON_INIT_MSG_TIMEOUT         (u32)1000     /* Time in ms for init message to send */
-#define BUTTON_DEBOUNCE_TIME            (u32)25       /* Time in ms for button debouncing */
+#define BUTTON_DEBOUNCE_TIME            (u32)10       /* Time in ms for button debouncing */
 
 
 /***********************************************************************************************************************
