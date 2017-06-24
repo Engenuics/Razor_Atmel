@@ -410,7 +410,7 @@ static void UserApp1SM_RadioActive(void)
 
       if(G_sAntApiCurrentMessageExtData.u8Channel == 1)
       {
-        /* Each Slave tick triggers sending of a message */
+        /* Check the Event code and respond */
         switch (u8EventCode)
         {
           case EVENT_RX_FAIL_GO_TO_SEARCH:
