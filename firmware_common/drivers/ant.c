@@ -356,7 +356,7 @@ If failed or override:
 void AntInitialize(void)
 {
   /* Check for manual disabling of ANT with BUTTON3 press */
-  if( !(AT91C_BASE_PIOB->PIO_PDSR & PB_02_BUTTON3) )
+  if( ANT_BOOT_DISABLE() )
   {
     G_u32SystemFlags |= _SYSTEM_STARTUP_NO_ANT;
     DebugPrintf(G_au8AntMessageNoAnt);
@@ -436,9 +436,7 @@ void AntInitialize(void)
   if(G_u32SystemFlags & _SYSTEM_STARTUP_NO_ANT)
   {
     /* Change all ANT pins to the PIO controller */
-    AT91C_BASE_PIOA->PIO_PDR = ANT_PIOA_PINS;
     AT91C_BASE_PIOA->PIO_PER = ANT_PIOA_PINS;
-    AT91C_BASE_PIOB->PIO_PDR = ANT_PIOB_PINS;
     AT91C_BASE_PIOB->PIO_PER = ANT_PIOB_PINS;
 
     /* Disable all outputs (set to HiZ input) */

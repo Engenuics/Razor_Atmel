@@ -135,6 +135,8 @@ Macros
 #define ANT_RESET_ASSERT()     (ANT_RESET_CLEAR_REG)    /*!< @brief Macro to assert the ANT RESET signal */
 #define ANT_RESET_DEASSERT()   (ANT_RESET_SET_REG)      /*!< @brief Macro to deassert the ANT RESET signal */
 
+#define ANT_BOOT_DISABLE()     !(ANT_DISABLE_BUTTON)    /*!< @brief Macro to check if BUTTON3 is pressed which will disable ANT boot */
+
 
 /**********************************************************************************************************************
 Constants / Definitions

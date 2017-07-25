@@ -321,6 +321,8 @@ Board-specific ANT definitions are kept here
 #define ANT_PIOA_PINS          (u32)(PA_25_ANT_USPI2_SCK | PA_23_ANT_USPI2_MOSI | PA_22_ANT_USPI2_MISO)
 #define ANT_PIOB_PINS          (u32)(PB_21_ANT_RESET | PB_22_ANT_USPI2_CS | PB_23_ANT_MRDY | PB_24_ANT_SRDY)
 
+#define ANT_DISABLE_BUTTON     (AT91C_BASE_PIOB->PIO_PDSR & PB_02_BUTTON3)
+
 /*! @endcond */
 
 /***********************************************************************************************************************
