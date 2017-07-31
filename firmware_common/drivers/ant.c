@@ -355,7 +355,7 @@ If failed or override:
 */
 void AntInitialize(void)
 {
-  /* Check for manual disabling of ANT with BUTTON3 press */
+  /* Check for manual disabling of ANT */
   if( ANT_BOOT_DISABLE() )
   {
     G_u32SystemFlags |= _SYSTEM_STARTUP_NO_ANT;
