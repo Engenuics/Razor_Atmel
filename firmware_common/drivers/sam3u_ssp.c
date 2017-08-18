@@ -139,6 +139,7 @@ static u32 SSP_u32Int2Count = 0;                 /* Debug counter for SSP2 inter
 static u32 SSP_u32AntCounter = 0;                /* Debug counter */
 static u32 SSP_u32RxCounter = 0;                 /* Debug counter */
 
+
 /***********************************************************************************************************************
 Function Definitions
 ***********************************************************************************************************************/
@@ -820,7 +821,8 @@ void SspGenericHandler(void)
         u32Byte = __RBIT(u32Byte)>>24;
       }
     
-      SSP_psCurrentISR->pBaseAddress->US_THR = (u8)u32Byte; /* Clears interrupt flag */
+      /* Clears interrupt flag and invoke call back */
+      SSP_psCurrentISR->pBaseAddress->US_THR = (u8)u32Byte; 
       SSP_psCurrentISR->fnSlaveTxFlowCallback();
     }
     else
@@ -833,7 +835,7 @@ void SspGenericHandler(void)
       UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
       DeQueueMessage(&SSP_psCurrentISR->psTransmitBuffer);
  
-      /* Re-enable Rx interrupt and clean-up the operation */    
+      /* Re-enable Rx interrupt, clean-up the operation and make final call to callback */    
       SSP_psCurrentISR->pBaseAddress->US_IER = AT91C_US_RXRDY;
       *SSP_pu32SspApplicationFlagsISR |= _SSP_TX_COMPLETE; 
       SSP_psCurrentISR->fnSlaveTxFlowCallback();

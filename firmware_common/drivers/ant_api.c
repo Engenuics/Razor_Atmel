@@ -1,9 +1,8 @@
-/***********************************************************************************************************************
-File: ant_api.c                                                               
+/*!**********************************************************************************************************************
+@file ant_api.c   
+@brief ANT user interface.  No initialization or state machine required.  
 
-Description:
-ANT user interface.  No initialization or state machine required.  This file exposes the source code
-for all public functions that work with ant.c.  Seperating it keeps it a little more manageable.
+This file holds the source code for all public functions that work with ant.c.  
 
 Once the ANT radio has been configured, all messaging from the ANT device is handled through 
 the incoming queue G_sAntApplicationMsgList.  The application is responsible for checking this
@@ -12,22 +11,15 @@ the ANT messaging protocol.  This should be no problem on the regular 1ms loop t
 system (assuming ANT message rate is less than 1kHz).  Faster systems or burst messaging will need 
 to be handled seperately as an add-on to this API.
 
-
-------------------------------------------------------------------------------------------------------------------------
-API:
-
-GLOBALS
-Four global variables give access to the latest ANT message data.
 Copy the following definitions to your client task:
+// Globals for passing data from the ANT application to the API
 
-// Globals for passing data from the ANT application to the API 
 extern u32 G_u32AntApiCurrentMessageTimeStamp;                            // From ant_api.c
 extern AntApplicationMessageType G_eAntApiCurrentMessageClass;            // From ant_api.c
 extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];  // From ant_api.c
 extern AntExtendedDataType G_sAntApiCurrentMessageExtData;                // From ant_api.c
 
-TYPES
-Defined in ant.h but used throughout ant_api.c
+TYPES (defined in ant.h but used throughout ant_api.c)
 
 AntChannelNumberType (allowed to be indexed and type cast to sequentially access channels)
 {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
@@ -40,109 +32,27 @@ AntChannelStatusType
 AntApplicationMessageType
 {ANT_EMPTY, ANT_DATA, ANT_TICK}
 
-Structs
 AntExtendedDataType
 AntApplicationMsgListType
 AntAssignChannelInfoType
 
-*** ANT CONFIGURATION / STATUS FUNCTIONS ***
 
-AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_)
-Query the status of the specified channel.  
-Returns ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED
-ANT_CONFIGURED and ANT_CLOSED are actually the same state.
-e.g.
-AntChannelStatus eAntCurrentStatus;
-
-// Get the status of Channel 1
-eAntCurrentStatus = AntRadioStatusChannel(ANT_CHANNEL_1);
+------------------------------------------------------------------------------------------------------------------------
+GLOBALS
+- u32 G_u32AntApiCurrentMessageTimeStamp
+- AntApplicationMessageType G_eAntApiCurrentMessageClass
+- u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES]
+- AntExtendedDataType G_sAntApiCurrentMessageExtData
 
 
-bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_)
-Updates all configuration messages to completely configure an ANT channel with an application's 
-required parameters for communication.  The application should monitor AntRadioStatusChannel()
-to see if all of the configuration messages are sent and the channel is configured properly.
-e.g.
-  AntAssignChannelInfoType sChannelInfo;
+PUBLIC ANT CONFIGURATION / STATUS FUNCTIONS
 
-  if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
-  {
-    sChannelInfo.AntChannel = ANT_CHANNEL_0;
-    sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
-    sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-    sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-    
-    sChannelInfo.AntDeviceIdHi = 0x00;
-    sChannelInfo.AntDeviceIdLo = 0x01;
-    sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
-    sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
-    
-    sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
-    sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
-    
-    sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
-    for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
-    {
-      sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
-    }
-    
-    AntAssignChannel(&sChannelInfo);
-  }
-
-  // Go to a wait state that exits when AntRadioStatusChannel(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
-
-
-bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
-Queues message to unassign the specified ANT channel so it can be reconfigured.
-e.g.
-AntUnassignChannelNumber(ANT_CHANNEL_1)
-// Go to wait state that exists when AntRadioStatusChannel(ANT_CHANNEL_1) returns ANT_UNCONFIGURED
-
-
-bool AntOpenChannelNumber(AntChannelNumberType eAntChannelToOpen)
-Queues a request to open the specified channel.
-Returns TRUE if the channel is configured and the message is successfully queued - this can be ignored or checked.  
-Application should monitor AntRadioStatusChannel() for actual channel status.
-e.g.
-AntChannelStatusType eAntCurrentState;
-
-// Request to open channel only on an already closed channel.
-eAntCurrentState = AntChannelStatus(ANT_CHANNEL_1);
-
-if(eAntCurrentState == ANT_CLOSED )
-{
-   AntOpenChannelNumber(ANT_CHANNEL_1);
-}
-
-
-bool AntCloseChannelNumber(AntChannelNumberType eAntChannelToClose)
-Queues a request to close the specified channel.
-Returns TRUE if the message is successfully queued - this can be ignored or checked.  
-Application should monitor AntRadioStatusChannel() for actual channel status.
-e.g.
-AntChannelStatusType eAntCurrentState;
-
-// Request to close channel only on an open channel.
-if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_OPEN )
-{
-   AntCloseChannelNumber(ANT_CHANNEL_1);
-}
-
-bool AntOpenScanningChannel(void)
-Queues a request to open a scanning channel. Channel 0 setup parameters are used,
-but note that all channel resources are used by a scanning channel.  Trying to
-open a scanning channel if any other channel is open will fail.
-
-Returns TRUE if message is successfully queued - this can be ignored or checked.  
-Application should monitor AntRadioStatusChannel() for actual channel status.
-e.g.
-AntChannelStatusType eAntCurrentState;
-
-// Request to open channel only on an already closed channel.
-if(AntRadioStatusChannel(ANT_CHANNEL_SCANNING) == ANT_CLOSED )
-{
-   AntOpenScanningChannel();
-}
+- AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_)
+- bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_)
+- bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
+- bool AntOpenChannelNumber(AntChannelNumberType eAntChannelToOpen)
+- bool AntCloseChannelNumber(AntChannelNumberType eAntChannelToClose)
+- bool AntOpenScanningChannel(void)
 
 
 bool AntSendGenericMessage()
@@ -286,13 +196,42 @@ Function Definitions
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*------------------------------------------------------------------------------
-Function: AntAssignChannel
-Description:
-Updates all configuration messages to completely configure an ANT channel with an application's 
-required parameters for communication.  The ANT API state machine then sends and monitors the commands
-to ensure the requested channel is setup properly.  The application should monitor AntRadioStatusChannel()
-to see if the channel is configured properly.
+/*!------------------------------------------------------------------------------
+@fn AntAssignChannel
+@brief Updates all configuration messages to completely configure an ANT channel with an application's 
+required parameters for communication.  
+
+The application should monitor AntRadioStatusChannel()
+to see if all of the configuration messages are sent and the channel is configured properly.
+e.g.
+  AntAssignChannelInfoType sChannelInfo;
+
+  if(AntRadioStatusChannel(ANT_CHANNEL_0) == ANT_UNCONFIGURED)
+  {
+    sChannelInfo.AntChannel = ANT_CHANNEL_0;
+    sChannelInfo.AntChannelType = CHANNEL_TYPE_MASTER;
+    sChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
+    sChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
+    
+    sChannelInfo.AntDeviceIdHi = 0x00;
+    sChannelInfo.AntDeviceIdLo = 0x01;
+    sChannelInfo.AntDeviceType = ANT_DEVICE_TYPE_DEFAULT;
+    sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_DEFAULT;
+    
+    sChannelInfo.AntFrequency = ANT_FREQUENCY_DEFAULT;
+    sChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
+    
+    sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
+    for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+    {
+      sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
+    }
+    
+    AntAssignChannel(&sChannelInfo);
+  }
+
+  // Go to a wait state that exits when AntRadioStatusChannel(ANT_CHANNEL_0) no longer returns ANT_UNCONFIGURED)
+
 
 Requires:
   - psAntSetupInfo_ points to a complete AntAssignChannelInfoType with all the required channel information.
@@ -388,11 +327,13 @@ bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_)
 } /* end AntAssignChannel() */
 
 
-/*------------------------------------------------------------------------------
-Function: AntUnassignChannelNumber
+/*!------------------------------------------------------------------------------
+@fn AntUnassignChannelNumber
+@brief Queues message to unassign the specified ANT channel so it can be reconfigured.
 
-Description:
-Queues message to unassigns the specified ANT channel so it can be reconfigured.
+e.g.
+AntUnassignChannelNumber(ANT_CHANNEL_1)
+// Go to wait state that exists when AntRadioStatusChannel(ANT_CHANNEL_1) returns ANT_UNCONFIGURED
   
 Requires:
   - ANT channel is closed
@@ -417,12 +358,26 @@ bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
 
 /*------------------------------------------------------------------------------
 Function: AntOpenChannelNumber
+@brief Queues a request to open the specified channel.
 
-Description:
 Queues the Open Channel message on the configured ANT channel.  This does not actually indicate
 that the channel has been opened successfully -- the calling task must monitor _ANT_FLAGS_CHANNEL_OPEN
 to determine if channel opens successfully.
-  
+
+Returns TRUE if the channel is configured and the message is successfully queued - this can be ignored or checked.  
+Application should monitor AntRadioStatusChannel() for actual channel status.
+
+e.g.
+AntChannelStatusType eAntCurrentState;
+
+// Request to open channel only on an already closed channel.
+eAntCurrentState = AntChannelStatus(ANT_CHANNEL_1);
+
+if(eAntCurrentState == ANT_CLOSED )
+{
+   AntOpenChannelNumber(ANT_CHANNEL_1);
+}
+
 Requires:
   - eChannel_ is ANT_CHANNEL_0, ..., ANT_CHANNEL_7, ANT_CHANNEL_SCANNING
   - ANT channel to open should be correctly configured.
@@ -452,18 +407,26 @@ bool AntOpenChannelNumber(AntChannelNumberType eChannel_)
 
 
 /*------------------------------------------------------------------------------
-Function: AntOpenChannelNumber
+Function: AntOpenScanningChannel
+@brief Queues a request to open a scanning channel. 
 
-Description:
 Queues the Open Scan Channel message.  Scanning channels must use Channel 0
-and actually take all channel resources.  It is up to the user to ensure
+and takes all channel resources.  It is up to the user to ensure
 that the device is configured properly.  Attempting to open a scanning channel
 when other channels are already open will result in a failure.
 
-The return value does not actually indicate that the channel has been 
-opened successfully -- the calling task must monitor _ANT_FLAGS_CHANNEL_OPEN
-to determine if channel opens successfully.
-  
+Returns TRUE if message is successfully queued - this can be ignored or checked.  
+Application should monitor AntRadioStatusChannel() for actual channel status.
+
+e.g.
+AntChannelStatusType eAntCurrentState;
+
+// Request to open channel only on an already closed channel.
+if(AntRadioStatusChannel(ANT_CHANNEL_SCANNING) == ANT_CLOSED )
+{
+   AntOpenScanningChannel();
+}
+
 Requires:
   - ANT channel 0 should be correctly configured as a SLAVE.
 
@@ -486,15 +449,26 @@ bool AntOpenScanningChannel(void)
 
 
 
-/*------------------------------------------------------------------------------
-Function: AntCloseChannelNumber
+/*!------------------------------------------------------------------------------
+@fn AntCloseChannelNumber
+@brief Queues a request to close the specified channel.
 
-Description:
 Requests that an ANT channel is closed.  Issuing MESG_CLOSE_CHANNEL_ID does not
 guarantee that the channel closes, and ANT response to this message does not
 indicate that the channel is closed (a seperate message will be sent when the 
 channel actually closes which usually happens on the next ANT message period).
-  
+
+Returns TRUE if the message is successfully queued - this can be ignored or checked.  
+Application should monitor AntRadioStatusChannel() for actual channel status.
+e.g.
+AntChannelStatusType eAntCurrentState;
+
+// Request to close channel only on an open channel.
+if(AntRadioStatusChannel(ANT_CHANNEL_1) == ANT_OPEN )
+{
+   AntCloseChannelNumber(ANT_CHANNEL_1);
+}
+
 Requires:
   - eChannel_ is ANT_CHANNEL_0, ..., ANT_CHANNEL_7, ANT_CHANNEL_SCANNING
   - ANT channel is correctly configured and should be open.
@@ -519,13 +493,17 @@ bool AntCloseChannelNumber(AntChannelNumberType eChannel_)
 } /* end AntCloseChannelNumber() */
 
 
+/*!------------------------------------------------------------------------------
+@fn AntRadioStatusChannel
+@brief Query the status of the specified channel.  
 
+Returns ANT_UNCONFIGURED, ANT_CONFIGURED, ANT_OPENING, ANT_OPEN, ANT_CLOSING, ANT_CLOSED
+ANT_CONFIGURED and ANT_CLOSED are actually the same state.
+e.g.
+AntChannelStatus eAntCurrentStatus;
 
-/*------------------------------------------------------------------------------
-Function: AntRadioStatusChannel
-
-Description:
-Returns the current radio status of the specified channel to the application.
+// Get the status of Channel 1
+eAntCurrentStatus = AntRadioStatusChannel(ANT_CHANNEL_1);
   
 Requires:
   - G_u32AntFlags are up to date
@@ -559,7 +537,7 @@ AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_)
 } /* end AntRadioStatusChannel () */
 
 
-/***ANT DATA FUNCTIONS***/
+/***ANT DATA MESSAGE FUNCTIONS***/
 
 /*-----------------------------------------------------------------------------/
 Function: AntQueueBroadcastMessage

@@ -37,39 +37,6 @@ typedef enum {ANT_CHANNEL_0 = 0, ANT_CHANNEL_1, ANT_CHANNEL_2, ANT_CHANNEL_3,
               ANT_CHANNEL_SCANNING = 0} AntChannelNumberType;
 
 /*! 
-@struct AntExtendedDataType
-@brief Data struct for extended data information 
-*/
-typedef struct
-{
-  u8 u8Channel;                            /*!< @brief ANT channel number byte */
-  u8 u8Flags;                              /*!< @brief Extended data flags from the received message */
-  u16 u16DeviceID;                         /*!< @brief Device ID from the received message */
-  u8 u8DeviceType;                         /*!< @brief Device Type from the received message */
-  u8 u8TransType;                          /*!< @brief Transmission Type from the received message */
-  s8 s8RSSI;                               /*!< @brief RSSI from the received message */
-  u8 u8Dummy;                              /*!< @brief Pad for 4-byte alignment */
-} AntExtendedDataType;
-
-
-#define ANT_APPLICATION_MESSAGE_BYTES       (u8)8
-
-/*! 
-@struct AntApplicationMsgListType
-@brief Data struct for the ANT application API message information 
-*/
-typedef struct
-{
-  u32 u32TimeStamp;                                  /*!< @brief Current G_u32SystemTime1s */
-  AntApplicationMessageType eMessageType;            /*!< @brief Type of data */
-  u8 u8Channel;                                      /*!< @brief Channel to which the data applies */
-  u8 au8MessageData[ANT_APPLICATION_MESSAGE_BYTES];  /*!< @brief Array for message data */
-  AntExtendedDataType sExtendedData;                 /*!< @brief Struct of extended message data */
-  void *psNextMessage;                               /*!< @brief Pointer to AntDataMessageStructType */
-} AntApplicationMsgListType;
-
-
-/*! 
 @struct AntAssignChannelInfoType
 @brief Data struct to fully configure an ANT channel */
 typedef struct 
@@ -98,14 +65,36 @@ typedef struct
 
 
 /*! 
-@struct AntMessageResponseType
-@brief Data struct for an ANT response message */
+@struct AntExtendedDataType
+@brief Data struct for extended data information 
+*/
 typedef struct
 {
-  u8 u8Channel;                            /*!< @brief The ANT channel number */
-  u8 u8MessageNumber;                      /*!< @brief The message number to which the response refers */
-  u8 u8ResponseCode;                       /*!< @brief The associated response code / event code */
-} AntMessageResponseType;
+  u8 u8Channel;                            /*!< @brief ANT channel number byte */
+  u8 u8Flags;                              /*!< @brief Extended data flags from the received message */
+  u16 u16DeviceID;                         /*!< @brief Device ID from the received message */
+  u8 u8DeviceType;                         /*!< @brief Device Type from the received message */
+  u8 u8TransType;                          /*!< @brief Transmission Type from the received message */
+  s8 s8RSSI;                               /*!< @brief RSSI from the received message */
+  u8 u8Dummy;                              /*!< @brief Pad for 4-byte alignment */
+} AntExtendedDataType;
+
+
+#define ANT_APPLICATION_MESSAGE_BYTES       (u8)8
+
+/*! 
+@struct AntApplicationMsgListType
+@brief Data struct for the ANT application API message information 
+*/
+typedef struct
+{
+  u32 u32TimeStamp;                                  /*!< @brief Current G_u32SystemTime1s */
+  AntApplicationMessageType eMessageType;            /*!< @brief Type of data */
+  u8 u8Channel;                                      /*!< @brief Channel to which the data applies */
+  u8 au8MessageData[ANT_APPLICATION_MESSAGE_BYTES];  /*!< @brief Array for message data */
+  AntExtendedDataType sExtendedData;                 /*!< @brief Struct of extended message data */
+  void *psNextMessage;                               /*!< @brief Pointer to next AntApplicationMsgListType */
+} AntApplicationMsgListType;
 
 
 /*! 
@@ -115,8 +104,20 @@ typedef struct
 {
   u32 u32TimeStamp;                        /*!< @brief Current G_u32SystemTime1s */
   u8 au8MessageData[MESG_MAX_SIZE];        /*!< @brief Array for message data */
-  void *psNextMessage;                     /*!< @brief Pointer to AntDataMessageStructType */
+  void *psNextMessage;                     /*!< @brief Pointer to next AntOutgoingMessageListType */
 } AntOutgoingMessageListType;   
+
+
+/*! 
+@struct AntMessageResponseType
+@brief Data struct for an ANT response message */
+typedef struct
+{
+  u8 u8Channel;                            /*!< @brief The ANT channel number */
+  u8 u8MessageNumber;                      /*!< @brief The message number to which the response refers */
+  u8 u8ResponseCode;                       /*!< @brief The associated response code / event code */
+} AntMessageResponseType;
+
 
 
 /**********************************************************************************************************************

@@ -30,6 +30,7 @@ typedef struct
   u8* pu8RxBufferAddress;             /* Address to circular receive buffer */
   u8** ppu8RxNextByte;                /* Location of pointer to next byte to write in buffer for SPI_SLAVE_FLOW_CONTROL only */
   u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
+  u16 u16Pad;                         /* Preserve 4-byte alignment */
 } SspConfigurationType;
 
 typedef struct 
@@ -39,7 +40,6 @@ typedef struct
   u32 u32CsPin;                       /* Pin location for SSEL line */
   SspeBitOrderType eBitOrder;         /* MSB_FIRST or LSB_FIRST: this is only available in SPI_SLAVE_FLOW_CONTROL mode */
   SspModeType eSspMode;               /* Type of SPI configured */
-  u16 u16Pad;                         /* Preserve 4-byte alignment */
   u32 u32PrivateFlags;                /* Private peripheral flags */
   fnCode_type fnSlaveTxFlowCallback;  /* Callback function for SPI SLAVE transmit that uses flow control */
   fnCode_type fnSlaveRxFlowCallback;  /* Callback function for SPI SLAVE receive that uses flow control */
@@ -48,9 +48,9 @@ typedef struct
   u16 u16RxBufferSize;                /* Size of receive buffer in bytes */
   u16 u16RxBytes;                     /* Number of bytes to receive (DMA transfers) */
   u8 u8PeripheralId;                  /* Simple peripheral ID number */
-//  u8 u8Pad;                           /* Preserve 4-byte alignment */
+  u8 u8Pad;                           /* Preserve 4-byte alignment */
+  u16 u16Pad;                         /* Preserve 4-byte alignment */
   MessageType* psTransmitBuffer;      /* Pointer to the transmit message struct linked list */
-//  MessageType* psReceiveBuffer;       /* Pointer to the transmit message struct linked list */
   u32 u32CurrentTxBytesRemaining;     /* Counter for bytes remaining in current transfer */
   u8* pu8CurrentTxData;               /* Pointer to current location in the Tx buffer */
 } SspPeripheralType;

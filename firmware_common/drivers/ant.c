@@ -139,8 +139,9 @@ static SspPeripheralType* Ant_Ssp;                      /*!< @brief Pointer to A
 
 static u8 Ant_u8AntVersion[MESG_VERSION_SIZE];          /*!< @brief ANT device version string */
 
-static u8 Ant_au8AntRxBuffer[ANT_RX_BUFFER_SIZE];       /*!< @brief Space for verified received ANT messages */
-static u8 *Ant_pu8AntRxBufferNextChar;                  /*!< @brief Pointer to next char to be written in the AntRxBuffer */
+static u8 Ant_au8AntRxBuffer[ANT_RX_BUFFER_SIZE];       /*!< @brief Space for received ANT message bytes used by SSP */
+static u8 *Ant_pu8AntRxBufferNextChar;                  /*!< @brief Pointer to next char to be written in the AntRxBuffer used by SSP */
+
 static u8 *Ant_pu8AntRxBufferCurrentChar;               /*!< @brief Pointer to the current char in the AntRxBuffer */
 static u8 *Ant_pu8AntRxBufferUnreadMsg;                 /*!< @brief Pointer to unread chars in the AntRxBuffer */
 static u8 Ant_u8AntNewRxMessages;                       /*!< @brief Counter for number of new messages in AntRxBuffer */
@@ -774,8 +775,8 @@ static void AntRxMessage(void)
     /* Cycle SRDY to get the next byte (length) */
     AntSrdyPulse();
     
-    /* The SSP interrupts and Rx callback handle the rest of the reception until a full message is received. 
-    We know it is received when SEN is deasserted. */
+    /* We block here while the SSP interrupts and Rx callback handle the rest of the reception until a full 
+    message is received. We know it is received when SEN is deasserted. This takes about 500us */
     while( IS_SEN_ASSERTED() && (Ant_u32RxTimer < ANT_ACTIVITY_TIME_COUNT) )
     {
       Ant_u32RxTimer++;
@@ -1016,13 +1017,6 @@ static u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_)
   
   /* Process any message in the RxBuffer and return the result value */
   AntProcessMessage();
-  
-  if( bTimeout )
-  {
-    DebugPrintf("\r\nANT expected msg fail\n\r");
-    /* !!!! What clean-up should be done here?  Reset ANT and restart init? */
-  }
-
   return(u8ReturnValue);
 
 } /* end AntExpectResponse */
@@ -1685,8 +1679,18 @@ static void AntSyncSerialInitialize(void)
 
     /* Send out version request message and expect response */
     G_au8ANTGetVersion[4] = AntCalculateTxChecksum(&G_au8ANTGetVersion[0]);
-    AntTxMessage(&G_au8ANTGetVersion[0]);    
-    AntExpectResponse(MESG_VERSION_ID, ANT_MSG_TIMEOUT_MS);
+    AntTxMessage(&G_au8ANTGetVersion[0]);   
+    
+    if(AntExpectResponse(MESG_VERSION_ID, ANT_MSG_TIMEOUT_MS))
+    {
+      DebugPrintf("ANT init Version ID message failed\n\r");
+      bErrorStatus = TRUE;
+    }
+  }
+  
+  if(bErrorStatus)
+  {
+    DebugPrintf("ANT failed boot\n\r");
   }
  
 } /* end AntSyncSerialInitialize */
