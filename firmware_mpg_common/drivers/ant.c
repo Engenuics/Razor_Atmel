@@ -1309,7 +1309,7 @@ static u8 AntProcessMessage(void)
         {
           case RESPONSE_NO_ERROR: 
           {
-            AntTickExtended(RESPONSE_NO_ERROR);
+            AntTickExtended(au8MessageCopy);
             break;
           }
 
@@ -1403,7 +1403,7 @@ static u8 AntProcessMessage(void)
       /* If this is a slave device, then a data message received means it's time to send */
       if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_SLAVE)
       {
-        AntTickExtended(RESPONSE_NO_ERROR);
+        AntTickExtended(au8MessageCopy);
       }
       
       break;
