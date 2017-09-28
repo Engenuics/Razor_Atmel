@@ -889,12 +889,12 @@ Promises:
 */
 static void AntAbortMessage(void)
 {
-  __disable_interrupt();
+  __disable_irq();
   Ant_pu8AntRxBufferNextChar = &Ant_au8AntRxBuffer[0];
   Ant_pu8AntRxBufferCurrentChar = &Ant_au8AntRxBuffer[0];
   Ant_pu8AntRxBufferUnreadMsg = &Ant_au8AntRxBuffer[0];
   Ant_u8AntNewRxMessages = 0;
-  __enable_interrupt();
+  __enable_irq();
   
 } /* end AntAbortMessage() */
 
