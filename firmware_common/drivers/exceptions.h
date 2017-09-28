@@ -48,7 +48,14 @@
 typedef void( *IntFunc )( void );
 
 /// Weak attribute
-    #define WEAK __weak
+#if defined ( __ICCARM__ )
+	#define WEAK __weak
+#elif defined (  __GNUC__  )
+	#define WEAK __attribute__((weak))
+#else
+	#error "Unsupported compiler."
+#endif
+
 
 //------------------------------------------------------------------------------
 //         Global functions
