@@ -106,7 +106,7 @@ u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* u8Dat
 void UartInitialize(void);
 void UartRunActiveState(void);
 
-void UartManualMode(void);
+static void UartManualMode(void);
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
