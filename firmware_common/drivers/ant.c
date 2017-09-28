@@ -21,7 +21,7 @@ suggest anyone new to using ANT access it through ant_api.c
 GLOBALS
 - AntApplicationMsgListType *G_sAntApplicationMsgList
 - AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]
-- AntMessageResponseType G_stMessageResponse
+- AntMessageResponseType G_stAntMessageResponse
 - u32 G_u32AntFlags
 
 CONSTANTS
@@ -64,7 +64,7 @@ All Global variable names shall start with "G_<type>Ant"
 u32 G_u32AntFlags;                                    /*!< @brief Flag bits for ANT-related information */
 
 AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]; /*!< @brief Keeps track of all configured ANT channels */
-AntMessageResponseType G_stMessageResponse;           /*!< @brief Holds the latest message response info */
+AntMessageResponseType G_stAntMessageResponse;           /*!< @brief Holds the latest message response info */
 
 AntApplicationMsgListType *G_sAntApplicationMsgList;  /*!< @brief Public linked list of messages from ANT to the application */
 
@@ -555,8 +555,8 @@ void AntRxFlowControlCallback(void)
 @brief Send a message from the Host to the ANT device.  
 
 To do this, we must tell ANT that we have a message to send by asserting MRDY, 
-wait for ANT to acknowlege with SEN, then read a byte from ANT to confirm the 
-transmission can proceed.  If ANT happens to wants to send a message at the
+wait for ANT to acknowledge with SEN, then read a byte from ANT to confirm the 
+transmission can proceed.  If ANT wants to send a message at the
 same time, the byte it sends will be an Rx byte so the AntTxMessage must suspend 
 and go read the incoming message first.  The Tx process would restart after 
 ANT's message has been received by the host.
@@ -573,7 +573,7 @@ Requires:
        the checksum.
 
 Promises:
-- MRDY is deasserted
+- MRDY is de-asserted
 - Returns TRUE if the transmit message is queued successfully; Ant_u32CurrentTxMessageToken holds the message token
 - Returns FALSE if the transfer couldn't start or if receive message interrupted
   (G_u32AntFlags _ANT_FLAGS_TX_INTERRUPTED is set;  AntRxBufferCurrentChar pointing to the received byte).
@@ -1088,9 +1088,9 @@ static u8 AntProcessMessage(void)
       {
         /* We have a Channel Response: parse it out based on the message ID to which the 
         response applies and post the result */
-        G_stMessageResponse.u8Channel = u8Channel;
-        G_stMessageResponse.u8MessageNumber = au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID];
-        G_stMessageResponse.u8ResponseCode  = au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE];      
+        G_stAntMessageResponse.u8Channel = u8Channel;
+        G_stAntMessageResponse.u8MessageNumber = au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID];
+        G_stAntMessageResponse.u8ResponseCode  = au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE];      
         
         switch(au8MessageCopy[BUFFER_INDEX_RESPONSE_MESG_ID])
         {
@@ -1168,9 +1168,9 @@ static u8 AntProcessMessage(void)
             break;
           }
 
-          case EVENT_RX_FAIL: /* slave did not receive a message when expected */
+          case EVENT_RX_FAIL: /* Slave did not receive a message when expected */
           {
-            /* The slave missed a message it was expecting: communicate this to the
+            /* The Slave missed a message it was expecting: communicate this to the
             application in case it matters. Could also queue a debug message here. */
             if(++Ant_u8SlaveMissedMessageLow == 0)
             {
@@ -1188,9 +1188,9 @@ static u8 AntProcessMessage(void)
             break;
           }
 
-          case EVENT_RX_FAIL_GO_TO_SEARCH: /* slave has lost sync with Master (channel still open) */
+          case EVENT_RX_FAIL_GO_TO_SEARCH: /* Slave has lost sync with Master (channel still open) */
           {
-            /* The slave missed enough consecutive messages so it goes back to search: communicate this to the
+            /* The Slave missed enough consecutive messages so it goes back to search: communicate this to the
             application in case it matters. Could also queue a debug message here. */
             AntTickExtended(au8MessageCopy);
 #ifdef ANT_VERBOSE 
@@ -1201,7 +1201,7 @@ static u8 AntProcessMessage(void)
 
           case EVENT_TX: /* ANT has sent a data message */
           {
-            /* If this is a master device, then EVENT_TX means it's time to queue the 
+            /* If this is a Master device, then EVENT_TX means it's time to queue the 
             next message */
             if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_MASTER)
             {

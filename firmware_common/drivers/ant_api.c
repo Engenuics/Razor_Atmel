@@ -148,7 +148,7 @@ extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 extern u32 G_u32AntFlags;                                     /* From ant.c */
 extern AntApplicationMsgListType *G_sAntApplicationMsgList;   /* From ant.c */
 extern AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]; /* From ant.c */
-extern AntMessageResponseType G_stMessageResponse;            /* From ant.c */
+extern AntMessageResponseType G_stAntMessageResponse;            /* From ant.c */
 
 extern u8 G_au8AntMessageOk[];                                /* From ant.c */
 extern u8 G_au8AntMessageFail[];                              /* From ant.c */
@@ -807,19 +807,19 @@ static void  AntApiSM_AssignChannel(void)
   }
   
   /* Check message status */
-  if( u8CurrentMesssageId == G_stMessageResponse.u8MessageNumber )
+  if( u8CurrentMesssageId == G_stAntMessageResponse.u8MessageNumber )
   { 
-    if(G_stMessageResponse.u8ResponseCode == RESPONSE_NO_ERROR)
+    if(G_stAntMessageResponse.u8ResponseCode == RESPONSE_NO_ERROR)
     {
       /* Increment message pointer and check if complete */
       u8CurrentMessageToSend++;
       if(u8CurrentMessageToSend == ANT_ASSIGN_MESSAGES)
       {
         /* Print OK message and update the channel flags */
-        G_au8AntMessageAssign[12] = G_stMessageResponse.u8Channel + NUMBER_ASCII_TO_DEC;
+        G_au8AntMessageAssign[12] = G_stAntMessageResponse.u8Channel + NUMBER_ASCII_TO_DEC;
         DebugPrintf(G_au8AntMessageAssign);
         DebugPrintf(G_au8AntMessageOk);
-        G_asAntChannelConfiguration[G_stMessageResponse.u8Channel].AntFlags |= _ANT_FLAGS_CHANNEL_CONFIGURED;
+        G_asAntChannelConfiguration[G_stAntMessageResponse.u8Channel].AntFlags |= _ANT_FLAGS_CHANNEL_CONFIGURED;
 
         /* Clean up and exit this state */
         u8CurrentMessageToSend = 0;
@@ -837,7 +837,7 @@ static void  AntApiSM_AssignChannel(void)
     /* In either case, clean up the following: */
     bMessageInProgress = FALSE;
 
-  } /* end if( u8CurrentMesssageId == G_stMessageResponse.u8MessageNumber ) */
+  } /* end if( u8CurrentMesssageId == G_stAntMessageResponse.u8MessageNumber ) */
   
   /* Check for timeout */
   if(IsTimeUp(&AntApi_u32Timeout, ANT_ACTIVITY_TIME_COUNT) )
