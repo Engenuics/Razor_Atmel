@@ -1410,7 +1410,7 @@ static u8 AntProcessMessage(void)
       AntParseExtendedData(au8MessageCopy, &sExtendedData);
       AntQueueExtendedApplicationMessage(ANT_DATA, &au8MessageCopy[BUFFER_INDEX_MESG_DATA], &sExtendedData);
       
-      /* If this is a slave device, then a data message received means it's time to send */
+      /* If this is a Slave device, then a data message received means it's time to send */
       if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_SLAVE)
       {
         AntTickExtended(au8MessageCopy);
