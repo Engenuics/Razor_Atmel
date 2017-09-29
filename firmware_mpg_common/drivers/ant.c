@@ -1409,12 +1409,19 @@ static u8 AntProcessMessage(void)
       /* Parse the extended data and put the message to the application buffer */
       AntParseExtendedData(au8MessageCopy, &sExtendedData);
       AntQueueExtendedApplicationMessage(ANT_DATA, &au8MessageCopy[BUFFER_INDEX_MESG_DATA], &sExtendedData);
+ 
+#if 0 
+/* 2017-JUN-23 Don't think this should be here as it should be
+the application looking for data messages and deciding what
+that should be. If it is required, perhaps the call to AntTickExtended
+should be modified since au8MessageCopy doesn't have an EVENT CODE. */
       
-      /* If this is a Slave device, then a data message received means it's time to send */
+      /* If this is a slave device, then a data message received means it's time to send */
       if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_SLAVE)
       {
         AntTickExtended(au8MessageCopy);
       }
+#endif      
       
       break;
     } /* end case MESG_BROADCAST_DATA_ID */
@@ -1475,7 +1482,7 @@ static void AntTickExtended(u8* pu8AntMessage_)
   au8Message[ANT_TICK_MSG_CHANNEL_INDEX]          = *(pu8AntMessage_ + BUFFER_INDEX_CHANNEL_NUM);
   au8Message[ANT_TICK_MSG_RESPONSE_TYPE_INDEX]    = *(pu8AntMessage_ + BUFFER_INDEX_RESPONSE_MESG_ID);
   au8Message[ANT_TICK_MSG_EVENT_CODE_INDEX]       = *(pu8AntMessage_ + BUFFER_INDEX_RESPONSE_CODE);
-  au8Message[ANT_TICK_MSG_SENTINEL3_INDEX]        = MESSAGE_ANT_TICK;
+  au8Message[ANT_TICK_MSG_SENTINEL_INDEX]         = MESSAGE_ANT_TICK_SENTINEL;
   au8Message[ANT_TICK_MSG_MISSED_HIGH_BYTE_INDEX] = Ant_u8SlaveMissedMessageHigh;
   au8Message[ANT_TICK_MSG_MISSED_MID_BYTE_INDEX]  = Ant_u8SlaveMissedMessageMid;
   au8Message[ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX]  = Ant_u8SlaveMissedMessageLow;

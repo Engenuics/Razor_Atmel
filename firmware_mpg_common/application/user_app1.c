@@ -349,6 +349,10 @@ static void UserApp1SM_ChannelOpen(void)
     {
       UserApp1_u32DataMsgCount++;
       
+      /* We are synced with a device, so blue is solid */
+      LedOff(GREEN);
+      LedOn(BLUE);
+
       /* Check if the new data is the same as the old data and update as we go */
       bGotNewData = FALSE;
       for(u8 i = 0; i < ANT_APPLICATION_MESSAGE_BYTES; i++)
@@ -455,14 +459,6 @@ static void UserApp1SM_ChannelOpen(void)
         switch (u8LastState)
         {
 #ifdef MPG1
-          /* If we are synced with a device, blue is solid */
-          case RESPONSE_NO_ERROR:
-          {
-            LedOff(GREEN);
-            LedOn(BLUE);
-            break;
-          }
-
           /* If we are paired but missing messages, blue blinks */
           case EVENT_RX_FAIL:
           {
@@ -480,14 +476,6 @@ static void UserApp1SM_ChannelOpen(void)
           }
 #endif /* MPG 1 */
 #ifdef MPG2
-          /* If we are synced with a device, blue is solid */
-          case RESPONSE_NO_ERROR:
-          {
-            LedOff(GREEN0);
-            LedOn(BLUE0);
-            break;
-          }
-
           /* If we are paired but missing messages, blue blinks */
           case EVENT_RX_FAIL:
           {
