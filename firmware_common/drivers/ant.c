@@ -1571,7 +1571,7 @@ static void AntTickExtended(u8* pu8AntMessage_)
   au8Message[ANT_TICK_MSG_CHANNEL_INDEX]          = *(pu8AntMessage_ + BUFFER_INDEX_CHANNEL_NUM);
   au8Message[ANT_TICK_MSG_RESPONSE_TYPE_INDEX]    = *(pu8AntMessage_ + BUFFER_INDEX_RESPONSE_MESG_ID);
   au8Message[ANT_TICK_MSG_EVENT_CODE_INDEX]       = *(pu8AntMessage_ + BUFFER_INDEX_RESPONSE_CODE);
-  au8Message[ANT_TICK_MSG_SENTINEL3_INDEX]        = MESSAGE_ANT_TICK;
+  au8Message[ANT_TICK_MSG_SENTINEL_INDEX]         = MESSAGE_ANT_TICK_SENTINEL;
   au8Message[ANT_TICK_MSG_MISSED_HIGH_BYTE_INDEX] = Ant_u8SlaveMissedMessageHigh;
   au8Message[ANT_TICK_MSG_MISSED_MID_BYTE_INDEX]  = Ant_u8SlaveMissedMessageMid;
   au8Message[ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX]  = Ant_u8SlaveMissedMessageLow;
