@@ -144,14 +144,14 @@ void UserApp1Initialize(void)
   /* If good initialization, set state to Idle */
   if( AntAssignChannel(&sAntSetupData) )
   {
-    /* Channel is configured, so change LED to yellow */
+    /* Channel assignment is queued so start timer */
 #ifdef EIE1
-    LedOff(RED);
-    LedOn(YELLOW);
+    UserApp1_u32Timeout = G_u32SystemTime1ms;
+    LedOn(RED);
 #endif /* EIE1 */
     
 #ifdef MPG2
-    LedOn(GREEN0);
+    LedOn(RED0);
 #endif /* MPG2 */
     
     UserApp1_StateMachine = UserApp1SM_WaitChannelAssign;
@@ -210,11 +210,21 @@ static void UserApp1SM_WaitChannelAssign(void)
   /* Check if the channel assignment is complete */
   if(AntRadioStatusChannel(ANT_CHANNEL_USERAPP) == ANT_CONFIGURED)
   {
+#ifdef EIE1
+    LedOff(RED);
+    LedOn(YELLOW);
+#endif /* EIE1 */
+    
+#ifdef MPG2
+    LedOff(RED0);
+    LedOn(GREEN0);
+#endif /* MPG2 */
+
     UserApp1_StateMachine = UserApp1SM_Idle;
   }
   
   /* Monitor for timeout */
-  if( IsTimeUp(&UserApp1_u32Timeout, 3000) )
+  if( IsTimeUp(&UserApp1_u32Timeout, 5000) )
   {
     DebugPrintf("\n\r***Channel assignment timeout***\n\n\r");
     UserApp1_StateMachine = UserApp1SM_Error;
@@ -497,11 +507,17 @@ static void UserApp1SM_ChannelOpen(void)
           /* If the search times out, the channel should automatically close */
           case EVENT_RX_SEARCH_TIMEOUT:
           {
-            DebugPrintf("Search timeout\r\n");
+            DebugPrintf("Search timeout event\r\n");
             break;
           }
 
-          default:
+          case EVENT_CHANNEL_CLOSED:
+          {
+            DebugPrintf("Channel closed event\r\n");
+            break;
+          }
+
+            default:
           {
             DebugPrintf("Unexpected Event\r\n");
             break;

@@ -1309,6 +1309,7 @@ static u8 AntProcessMessage(void)
         {
           case RESPONSE_NO_ERROR: 
           {
+            /* Forward this event to the application */
             AntTickExtended(au8MessageCopy);
             break;
           }
@@ -1332,7 +1333,7 @@ static u8 AntProcessMessage(void)
 
           case EVENT_RX_FAIL_GO_TO_SEARCH: /* slave has lost sync with Master (channel still open) */
           {
-            /* The slave missed enough consecutive messages so it goes back to search: communicate this to the
+            /* The Slave missed enough consecutive messages so it goes back to search: communicate this to the
             application in case it matters. Could also queue a debug message here. */
             AntTickExtended(au8MessageCopy);
             break;
@@ -1344,7 +1345,8 @@ static u8 AntProcessMessage(void)
             next message */
             if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_MASTER)
             {
-              AntTickExtended(au8MessageCopy);
+             /* Forward this event to the application */
+             AntTickExtended(au8MessageCopy);
             }
             break;
           } 
@@ -1353,6 +1355,7 @@ static u8 AntProcessMessage(void)
           { 
             G_asAntChannelConfiguration[u8Channel].AntFlags |= _ANT_FLAGS_GOT_ACK;
 
+            /* Forward this event to the application */
             AntTickExtended(au8MessageCopy);
             break;
           } 
@@ -1366,7 +1369,7 @@ static u8 AntProcessMessage(void)
 
           case EVENT_RX_SEARCH_TIMEOUT: /* The ANT channel is going to close due to search timeout */
           {
-            /* Forward this to application */
+            /* Forward this event to the application */
             AntTickExtended(au8MessageCopy);
             break;
           }
@@ -1375,6 +1378,9 @@ static u8 AntProcessMessage(void)
           {
             DebugPrintf("Channel closed\n\r");
             G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+
+            /* We do not forward this event to the application since the AntChannelStatus should be used to check 
+            for a closed channel */
             break;
           }
           
@@ -1384,6 +1390,10 @@ static u8 AntProcessMessage(void)
             DebugPrintf(": unexpected channel event\n\r");
 
             G_u32AntFlags |= _ANT_FLAGS_UNEXPECTED_EVENT;
+
+            /* Forward this event to the application */
+            AntTickExtended(au8MessageCopy);
+
             break;
         } /* end Ant_pu8AntRxBufferUnreadMsg[EVENT_CODE_INDEX] */
       } /* end else RF event */
