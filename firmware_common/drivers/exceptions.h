@@ -65,78 +65,78 @@ typedef void( *IntFunc )( void );
 //         Exception Handlers
 //------------------------------------------------------------------------------
 
-extern WEAK void NMI_Handler( void );
-extern WEAK void HardFault_Handler( void );
-extern WEAK void MemManage_Handler( void );
-extern WEAK void BusFault_Handler( void );
-extern WEAK void UsageFault_Handler( void );
-extern WEAK void SVC_Handler( void );
-extern WEAK void DebugMon_Handler( void );
-extern WEAK void PendSV_Handler( void );
-extern WEAK void SysTick_Handler( void );
+void NMI_Handler( void );
+void HardFault_Handler( void );
+void MemManage_Handler( void );
+void BusFault_Handler( void );
+void UsageFault_Handler( void );
+void SVC_Handler( void );
+void DebugMon_Handler( void );
+void PendSV_Handler( void );
+void SysTick_Handler( void );
 void IrqHandlerNotUsed(void);
 
 
 // System Controller
-extern void SYS_IrqHandler(void);
+void SYS_IrqHandler(void);
 // SUPPLY CONTROLLER
-extern WEAK void SUPC_IrqHandler(void);
+void SUPC_IrqHandler(void);
 // RESET CONTROLLER
-extern WEAK void RSTC_IrqHandler(void);
+void RSTC_IrqHandler(void);
 // REAL TIME CLOCK
-extern WEAK void RTC_IrqHandler(void);
+void RTC_IrqHandler(void);
 // REAL TIME TIMER
-extern WEAK void RTT_IrqHandler(void);
+void RTT_IrqHandler(void);
 // WATCHDOG TIMER
-extern WEAK void WDT_IrqHandler(void);
+void WDT_IrqHandler(void);
 // PMC
-extern WEAK void PMC_IrqHandler(void);
+void PMC_IrqHandler(void);
 // EFC0
-extern WEAK void EFC0_IrqHandler(void);
+void EFC0_IrqHandler(void);
 // EFC1
-extern WEAK void EFC1_IrqHandler(void);
+void EFC1_IrqHandler(void);
 // DBGU
-extern WEAK void DBGU_IrqHandler(void);
+void DBGU_IrqHandler(void);
 // HSMC4
-extern WEAK void HSMC4_IrqHandler(void);
+void HSMC4_IrqHandler(void);
 // Parallel IO Controller A
-extern WEAK void PIOA_IrqHandler(void);
+void PIOA_IrqHandler(void);
 // Parallel IO Controller B
-extern WEAK void PIOB_IrqHandler(void);
+void PIOB_IrqHandler(void);
 // Parallel IO Controller C
-extern WEAK void PIOC_IrqHandler(void);
+void PIOC_IrqHandler(void);
 // USART 0
-extern WEAK void USART0_IrqHandler(void);
+void USART0_IrqHandler(void);
 // USART 1
-extern WEAK void USART1_IrqHandler(void);
+void USART1_IrqHandler(void);
 // USART 2
-extern WEAK void USART2_IrqHandler(void);
+void USART2_IrqHandler(void);
 // USART 3
-extern WEAK void USART3_IrqHandler(void);
+void USART3_IrqHandler(void);
 // Multimedia Card Interface
-extern WEAK void MCI0_IrqHandler(void);
+void MCI0_IrqHandler(void);
 // TWI 0
-extern WEAK void TWI0_IrqHandler(void);
+void TWI0_IrqHandler(void);
 // TWI 1
-extern WEAK void TWI1_IrqHandler(void);
+void TWI1_IrqHandler(void);
 // Serial Peripheral Interface 0
-extern WEAK void SPI0_IrqHandler(void);
+void SPI0_IrqHandler(void);
 // Serial Synchronous Controller 0
-extern WEAK void SSC0_IrqHandler(void);
+void SSC0_IrqHandler(void);
 // Timer Counter 0
-extern WEAK void TC0_IrqHandler(void);
+void TC0_IrqHandler(void);
 // Timer Counter 1
-extern WEAK void TC1_IrqHandler(void);
+void TC1_IrqHandler(void);
 // Timer Counter 2
-extern WEAK void TC2_IrqHandler(void);
+void TC2_IrqHandler(void);
 // PWM Controller
-extern WEAK void PWM_IrqHandler(void);
+void PWM_IrqHandler(void);
 // ADC controller0
-extern WEAK void ADCC0_IrqHandler(void);
+void ADCC0_IrqHandler(void);
 // ADC controller1
-extern WEAK void ADCC1_IrqHandler(void);
+void ADCC1_IrqHandler(void);
 // HDMA
-extern WEAK void HDMA_IrqHandler(void);
+void HDMA_IrqHandler(void);
 // USB Device High Speed UDP_HS
-extern WEAK void UDPD_IrqHandler(void);
+void UDPD_IrqHandler(void);
 
