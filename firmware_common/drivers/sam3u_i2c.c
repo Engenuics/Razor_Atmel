@@ -545,13 +545,13 @@ void TWISM_Idle(void)
       /* Set up to transmit the message */
       TWI_u32CurrentBytesRemaining = TWI0->pTransmitBuffer->u32Size;
       TWI_pu8CurrentTxData = TWI0->pTransmitBuffer->pu8Message;
+      TWI0->u32Flags |= (_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
       TWI0FillTxBuffer();    
       
       /* Update the message's status */
       UpdateMessageStatus(TWI0->pTransmitBuffer->u32Token, SENDING);
   
       /* Proceed to next state to let the current message send */
-      TWI0->u32Flags |= (_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
       TWI_StateMachine = TWISM_Transmitting;
     }
     else if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Direction == READ)
