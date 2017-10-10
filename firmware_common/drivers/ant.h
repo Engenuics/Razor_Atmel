@@ -252,7 +252,7 @@ void AntRxFlowControlCallback(void);
 /*! @privatesection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* ANT Private Interface-layer Functions */
-bool AntTxMessage(u8 *pu8AntTxMessage_);
+static bool AntTxMessage(u8 *pu8AntTxMessage_);
 static void AntRxMessage(void);
 static void AntAbortMessage(void);
 static void AdvanceAntRxBufferCurrentChar(void);

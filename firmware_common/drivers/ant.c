@@ -579,7 +579,7 @@ Promises:
   (G_u32AntFlags _ANT_FLAGS_TX_INTERRUPTED is set;  AntRxBufferCurrentChar pointing to the received byte).
 
 */
-bool AntTxMessage(u8 *pu8AntTxMessage_)
+static bool AntTxMessage(u8 *pu8AntTxMessage_)
 {
   u8 u8Byte;
   u32 u32Length;
