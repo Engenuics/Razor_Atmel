@@ -5,7 +5,7 @@
 This file holds the source code for all public functions that work with ant.c.  
 
 Once the ANT radio has been configured, all messaging from the ANT device is handled through 
-the incoming queue G_sAntApplicationMsgList.  The application is responsible for checking this
+the incoming queue G_psAntApplicationMsgList.  The application is responsible for checking this
 queue for messages that belong to it and must manage timing and handle appropriate updates per 
 the ANT messaging protocol.  This should be no problem on the regular 1ms loop timing of the main 
 system (assuming ANT message rate is less than 1kHz).  Faster systems or burst messaging will need 
@@ -146,7 +146,7 @@ extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
 extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 
 extern u32 G_u32AntFlags;                                     /* From ant.c */
-extern AntApplicationMsgListType *G_sAntApplicationMsgList;   /* From ant.c */
+extern AntApplicationMsgListType *G_psAntApplicationMsgList;   /* From ant.c */
 extern AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]; /* From ant.c */
 extern AntMessageResponseType G_stAntMessageResponse;            /* From ant.c */
 
@@ -506,7 +506,8 @@ AntChannelStatus eAntCurrentStatus;
 eAntCurrentStatus = AntRadioStatusChannel(ANT_CHANNEL_1);
   
 Requires:
-  - G_u32AntFlags are up to date
+ - eChannel_ is the ANT channel whose status is desired
+ - .AntFlags for the specified channel are up to date 
 
 Promises:
   - Returns one of {ANT_UNCONFIGURED, ANT_CONFIGURED (ANT_CLOSED), ANT_CLOSING, ANT_OPEN, ANT_CLOSED}
@@ -621,7 +622,7 @@ Promises:
   G_eAntApiCurrentMessageClass
   G_au8AntApiCurrentMessageBytes
   G_sAntApiCurrentMessageExtData
-  are all updated with the oldest data from G_sAntApplicationMsgList and the message
+  are all updated with the oldest data from G_psAntApplicationMsgList and the message
   is removed from the buffer.
 - Returns FALSE if no new data is present (all variables unchanged)
 
@@ -630,26 +631,26 @@ bool AntReadAppMessageBuffer(void)
 {
   u8 *pu8Parser;
   
-  if(G_sAntApplicationMsgList != NULL)
+  if(G_psAntApplicationMsgList != NULL)
   {
     /* Grab the single bytes */
-    G_u32AntApiCurrentMessageTimeStamp = G_sAntApplicationMsgList->u32TimeStamp;
-    G_eAntApiCurrentMessageClass = G_sAntApplicationMsgList->eMessageType;
+    G_u32AntApiCurrentMessageTimeStamp = G_psAntApplicationMsgList->u32TimeStamp;
+    G_eAntApiCurrentMessageClass = G_psAntApplicationMsgList->eMessageType;
     
     /* Copy over all the payload data */
-    pu8Parser = &(G_sAntApplicationMsgList->au8MessageData[0]);
+    pu8Parser = &(G_psAntApplicationMsgList->au8MessageData[0]);
     for(u8 i = 0; i < ANT_APPLICATION_MESSAGE_BYTES; i++)
     {
       G_au8AntApiCurrentMessageBytes[i] = *(pu8Parser + i);
     }
     
     /* Copy over the extended data */
-    G_sAntApiCurrentMessageExtData.u8Channel    = G_sAntApplicationMsgList->sExtendedData.u8Channel;
-    G_sAntApiCurrentMessageExtData.u8Flags      = G_sAntApplicationMsgList->sExtendedData.u8Flags;
-    G_sAntApiCurrentMessageExtData.u16DeviceID  = G_sAntApplicationMsgList->sExtendedData.u16DeviceID;
-    G_sAntApiCurrentMessageExtData.u8DeviceType = G_sAntApplicationMsgList->sExtendedData.u8DeviceType;
-    G_sAntApiCurrentMessageExtData.u8TransType  = G_sAntApplicationMsgList->sExtendedData.u8TransType;
-    G_sAntApiCurrentMessageExtData.s8RSSI       = G_sAntApplicationMsgList->sExtendedData.s8RSSI;
+    G_sAntApiCurrentMessageExtData.u8Channel    = G_psAntApplicationMsgList->sExtendedData.u8Channel;
+    G_sAntApiCurrentMessageExtData.u8Flags      = G_psAntApplicationMsgList->sExtendedData.u8Flags;
+    G_sAntApiCurrentMessageExtData.u16DeviceID  = G_psAntApplicationMsgList->sExtendedData.u16DeviceID;
+    G_sAntApiCurrentMessageExtData.u8DeviceType = G_psAntApplicationMsgList->sExtendedData.u8DeviceType;
+    G_sAntApiCurrentMessageExtData.u8TransType  = G_psAntApplicationMsgList->sExtendedData.u8TransType;
+    G_sAntApiCurrentMessageExtData.s8RSSI       = G_psAntApplicationMsgList->sExtendedData.s8RSSI;
     
     /* Done, so message can be removed from the buffer */
     AntDeQueueApplicationMessage();    

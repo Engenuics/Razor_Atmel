@@ -145,18 +145,19 @@ Constants / Definitions
 #define ANT_NUM_CHANNELS                  (u8)8                  /*!< @brief Maximum number of ANT channels in the system */
 #define ANT_RX_BUFFER_SIZE                (u16)256               /*!< @brief ANT incoming data buffer size */
 
-/*!@cond DOXYGEN_EXCLUDE */
 #define ANT_CONFIGURE_TIMEOUT_MS          (u32)2000              /*!< @brief Maximum time to send all channel configuration messages */
 #define ANT_INFINITE_SEARCH_TIMEOUT       (u8)0xFF               /*!< @brief Value for Set Search Timeout for infinite timeout */
+
+/*!@cond DOXYGEN_EXCLUDE */
 #define ANT_RESET_WAIT_MS                 (u32)100
 #define ANT_RESTART_DELAY_MS              (u32)1000
 #define ANT_MSG_TIMEOUT_MS                (u32)1000
 
 /* G_u32AntFlags */
 /* Error / event flags */
-#define _ANT_FLAGS_LENGTH_MISMATCH        (u32)0x00000001        /* Set when an Acked data message gets acked */
+#define _ANT_FLAGS_LENGTH_MISMATCH        (u32)0x00000001        /* Set when if counted Rx bytes != Length byte */
 #define _ANT_FLAGS_CMD_ERROR              (u32)0x00000002        /* A command received an error response  */
-#define _ANT_FLAGS_UNEXPECTED_EVENT       (u32)0x00000004        /* The message parser handled an unexpected message */
+#define _ANT_FLAGS_UNEXPECTED_EVENT       (u32)0x00000004        /* The message parser handled an unexpected event */
 #define _ANT_FLAGS_UNEXPECTED_MSG         (u32)0x00000008        /* The message parser handled an unexpected message */
 
 #define ANT_ERROR_FLAGS_MASK              (u32)0x0000FFFF        /* Mask out all error flags */

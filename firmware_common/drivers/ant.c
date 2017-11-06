@@ -19,7 +19,7 @@ suggest anyone new to using ANT access it through ant_api.c
 
 ------------------------------------------------------------------------------------------------------------------------
 GLOBALS
-- AntApplicationMsgListType *G_sAntApplicationMsgList
+- AntApplicationMsgListType *G_psAntApplicationMsgList
 - AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]
 - AntMessageResponseType G_stAntMessageResponse
 - u32 G_u32AntFlags
@@ -66,7 +66,7 @@ u32 G_u32AntFlags;                                    /*!< @brief Flag bits for 
 AntAssignChannelInfoType G_asAntChannelConfiguration[ANT_NUM_CHANNELS]; /*!< @brief Keeps track of all configured ANT channels */
 AntMessageResponseType G_stAntMessageResponse;           /*!< @brief Holds the latest message response info */
 
-AntApplicationMsgListType *G_sAntApplicationMsgList;  /*!< @brief Public linked list of messages from ANT to the application */
+AntApplicationMsgListType *G_psAntApplicationMsgList;  /*!< @brief Public linked list of messages from ANT to the application */
 
 /*! @cond DOXYGEN_EXCLUDE */
 u8 G_au8AntMessageOk[]     = "OK\n\r";
@@ -146,9 +146,9 @@ static u8 *Ant_pu8AntRxBufferCurrentChar;               /*!< @brief Pointer to t
 static u8 *Ant_pu8AntRxBufferUnreadMsg;                 /*!< @brief Pointer to unread chars in the AntRxBuffer */
 static u8 Ant_u8AntNewRxMessages;                       /*!< @brief Counter for number of new messages in AntRxBuffer */
 
-static u32 Ant_u32ApplicationMessageCount = 0;          /*!< @brief Counts messages queued on G_sAntApplicationMsgList */
-static AntOutgoingMessageListType *Ant_psDataOutgoingMsgList; /*!< @brief Linked list of outgoing ANT-formatted messages */
-static u32 Ant_u32OutgoingMessageCount = 0;             /*!< @brief Counts messages queued on Ant_psDataOutgoingMsgList */
+static u32 Ant_u32ApplicationMessageCount = 0;          /*!< @brief Counts messages queued on G_psAntApplicationMsgList */
+static AntOutgoingMessageListType *Ant_psOutgoingMsgList; /*!< @brief Linked list of outgoing ANT-formatted messages */
+static u32 Ant_u32OutgoingMessageCount = 0;             /*!< @brief Counts messages queued on Ant_psOutgoingMsgList */
 
 static u8 Ant_u8SlaveMissedMessageHigh = 0;             /*!< @brief Counter for missed messages if device is a slave */
 static u8 Ant_u8SlaveMissedMessageMid = 0;              /*!< @brief Counter for missed messages if device is a slave */
@@ -210,7 +210,7 @@ u8 AntCalculateTxChecksum(u8* pu8Message_)
 /*!-----------------------------------------------------------------------------
 @fn bool AntQueueOutgoingMessage(u8 *pu8Message_)
 
-@brief Creates a new ANT message structure and adds it into Ant_psDataOutgoingMsgList.
+@brief Creates a new ANT message structure and adds it into Ant_psOutgoingMsgList.
 
 If the list is full, the message is not added.
 The Outgoing message list is the list of messages sent from the Host to the ANT chip.
@@ -234,9 +234,6 @@ bool AntQueueOutgoingMessage(u8 *pu8Message_)
   AntOutgoingMessageListType *psNewDataMessage;
   AntOutgoingMessageListType *psListParser;
   
-  /* Add to the number of queued message */
-  Ant_DebugQueuedDataMessages++;
-
   /* Allocate space for the new message - always do maximum message size */
   psNewDataMessage = malloc( sizeof(AntOutgoingMessageListType) );
   if (psNewDataMessage == NULL)
@@ -245,6 +242,9 @@ bool AntQueueOutgoingMessage(u8 *pu8Message_)
     return(FALSE);
   }
   
+  /* Add to the number of queued message */
+  Ant_DebugQueuedDataMessages++;
+
   /* Fill in all the fields of the newly allocated message structure */
   u8Length = *pu8Message_ + 3;
   for(u8 i = 0; i < u8Length; i++)
@@ -256,16 +256,16 @@ bool AntQueueOutgoingMessage(u8 *pu8Message_)
   psNewDataMessage->psNextMessage = NULL;
 
   /* Insert into an empty list */
-  if(Ant_psDataOutgoingMsgList == NULL)
+  if(Ant_psOutgoingMsgList == NULL)
   {
-    Ant_psDataOutgoingMsgList = psNewDataMessage;
+    Ant_psOutgoingMsgList = psNewDataMessage;
     Ant_u32OutgoingMessageCount++;
   }
 
   /* Otherwise traverse the list to find the end where the new message will be inserted */
   else
   {
-    psListParser = Ant_psDataOutgoingMsgList;
+    psListParser = Ant_psOutgoingMsgList;
     while(psListParser->psNextMessage != NULL)  
     {
       psListParser = psListParser->psNextMessage;
@@ -294,23 +294,23 @@ bool AntQueueOutgoingMessage(u8 *pu8Message_)
 /*!-----------------------------------------------------------------------------
 @fn void AntDeQueueApplicationMessage(void)
 
-@brief Releases the first message in G_sAntApplicationMsgList 
+@brief Releases the first message in G_psAntApplicationMsgList 
 
 Requires:
-- G_sAntApplicationMsgList points to the start of the list which is the entry to remove
+- G_psAntApplicationMsgList points to the start of the list which is the entry to remove
 
 Promises:
-- G_sAntApplicationMsgList = G_sAntApplicationMsgList.
+- G_psAntApplicationMsgList = G_psAntApplicationMsgList.
 
 */
 void AntDeQueueApplicationMessage(void)
 {
   AntApplicationMsgListType *psMessageToKill;
   
-  if(G_sAntApplicationMsgList != NULL)
+  if(G_psAntApplicationMsgList != NULL)
   {
-    psMessageToKill = G_sAntApplicationMsgList;
-    G_sAntApplicationMsgList = G_sAntApplicationMsgList->psNextMessage;
+    psMessageToKill = G_psAntApplicationMsgList;
+    G_psAntApplicationMsgList = G_psAntApplicationMsgList->psNextMessage;
 
     /* The doomed message is properly disconnected, so kill it */
     free(psMessageToKill);
@@ -361,6 +361,17 @@ void AntInitialize(void)
   {
     G_u32SystemFlags |= _SYSTEM_STARTUP_NO_ANT;
     DebugPrintf(G_au8AntMessageNoAnt);
+
+    /* Float all of the ANT interface lines so that the J-Link programmer 
+    or other firmware will not be impacted by the Host MCU */
+    AT91C_BASE_PIOA->PIO_PER = ANT_PIOA_PINS;
+    AT91C_BASE_PIOB->PIO_PER = ANT_PIOB_PINS;
+
+    /* Disable all outputs (set to HiZ input) */
+    AT91C_BASE_PIOA->PIO_ODR = ANT_PIOA_PINS;
+    AT91C_BASE_PIOB->PIO_ODR = ANT_PIOB_PINS;
+    
+    Ant_pfnStateMachine = AntSM_NoResponse;
   }
   /* Otherwise try to start up ANT normally */
   else
@@ -370,8 +381,8 @@ void AntInitialize(void)
     
     /* Announce on the debug port that ANT setup is starting and intialize pointers */
     DebugPrintf(G_au8AntMessageInit);
-    G_sAntApplicationMsgList = 0;
-    Ant_psDataOutgoingMsgList = 0;
+    G_psAntApplicationMsgList = 0;
+    Ant_psOutgoingMsgList = 0;
   
     /* Initialize the G_asAntChannelConfiguration data struct */
     for(u8 i = 0; i < ANT_NUM_CHANNELS; i++)
@@ -429,24 +440,11 @@ void AntInitialize(void)
       /* The ANT device is not responding -- it may be dead, or it may not yet
       be loaded with any firmware */
       DebugPrintf(G_au8AntMessageInitFail);
+
+      Ant_pfnStateMachine = AntSM_NoResponse;
     }
   }
   
-  /* Float all of the ANT interface lines so that the J-Link programmer 
-  or other firmware will not be impacted by the Host MCU */
-  if(G_u32SystemFlags & _SYSTEM_STARTUP_NO_ANT)
-  {
-    /* Change all ANT pins to the PIO controller */
-    AT91C_BASE_PIOA->PIO_PER = ANT_PIOA_PINS;
-    AT91C_BASE_PIOB->PIO_PER = ANT_PIOB_PINS;
-
-    /* Disable all outputs (set to HiZ input) */
-    AT91C_BASE_PIOA->PIO_ODR = ANT_PIOA_PINS;
-    AT91C_BASE_PIOB->PIO_ODR = ANT_PIOB_PINS;
-    
-    Ant_pfnStateMachine = AntSM_NoResponse;
-  }
-
 } /* end AntInitialize() */
 
 
@@ -1025,7 +1023,7 @@ static u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_)
 /*!------------------------------------------------------------------------------
 @fn static u8 AntProcessMessage(void)
 
-@brief Reads the lastest received Ant message and updates system information accordingly. 
+@brief Reads the latest received Ant message and updates system information accordingly. 
   
 Requires:
 - Ant_u8AntNewRxMessages holds the number of unprocessed messages in the message queue
@@ -1172,11 +1170,14 @@ static u8 AntProcessMessage(void)
           {
             /* The Slave missed a message it was expecting: communicate this to the
             application in case it matters. Could also queue a debug message here. */
-            if(++Ant_u8SlaveMissedMessageLow == 0)
+            Ant_u8SlaveMissedMessageLow++;
+            if(Ant_u8SlaveMissedMessageLow == 0)
             {
-              if(++Ant_u8SlaveMissedMessageMid == 0)
+              Ant_u8SlaveMissedMessageMid++;
+              if(Ant_u8SlaveMissedMessageMid == 0)
               {
-                ++Ant_u8SlaveMissedMessageHigh;
+                Ant_u8SlaveMissedMessageHigh++;
+                /* Let this overflow without action */
               }
             }
             
@@ -1280,7 +1281,12 @@ static u8 AntProcessMessage(void)
 /* 2017-JUN-23 Don't think this should be here as it should be
 the application looking for data messages and deciding what
 that should be. If it is required, perhaps the call to AntTickExtended
-should be modified since au8MessageCopy doesn't have an EVENT CODE. */
+should be modified since au8MessageCopy doesn't have an EVENT CODE. 
+      
+There are some legacy applications that will fail if this is removed, so
+we'll keep the code available until those can be updated.  Do not rely on
+this for future development. */
+      
       /* If this is a slave device, then a data message received means it's time to send */
       if(G_asAntChannelConfiguration[u8Channel].AntChannelType == CHANNEL_TYPE_SLAVE)
       {
@@ -1344,7 +1350,7 @@ extended information, so this code is commented out but in the correct location 
 
 Requires:
 @param pu8SourceMessage_ points to an ANT message buffer that holds a complete ANT data
-       message structure except for SYNC byte.  antmessage.h Buffer Indices an then be used.
+       message structure except for SYNC byte; therefore buffer indices from antmessage.h can be used.
 @param psExtDataTarget_ points to the target AntExtendedDataType structure
 
 Promises:
@@ -1448,7 +1454,7 @@ static bool AntParseExtendedData(u8* pu8SourceMessage_, AntExtendedDataType* psE
 /*!-----------------------------------------------------------------------------/
 @fn static bool AntQueueExtendedApplicationMessage(AntApplicationMessageType eMessageType_, u8* pu8DataSource_, AntExtendedDataType* psExtData_)
 
-@brief Creates a new ANT data message structure and adds it to G_sAntApplicationMsgList.
+@brief Creates a new ANT message structure and adds it to G_psAntApplicationMsgList.
 
 The Application list is used to communicate message information between the ANT driver and
 the ANT_API simplified interface task.  It has room for ANT_APPLICATION_MESSAGE_BUFFER_SIZE
@@ -1492,7 +1498,7 @@ static bool AntQueueExtendedApplicationMessage(AntApplicationMessageType eMessag
     psNewMessage->au8MessageData[i] = *(pu8DataSource_ + i);
   }
   
-  /* Copy basic items */
+  /* Fill basic items */
   psNewMessage->u32TimeStamp  = G_u32SystemTime1ms;
   psNewMessage->eMessageType  = eMessageType_;
   
@@ -1507,16 +1513,16 @@ static bool AntQueueExtendedApplicationMessage(AntApplicationMessageType eMessag
   psNewMessage->psNextMessage = NULL;
 
   /* Insert into an empty list */
-  if(G_sAntApplicationMsgList == NULL)
+  if(G_psAntApplicationMsgList == NULL)
   {
-    G_sAntApplicationMsgList = psNewMessage;
+    G_psAntApplicationMsgList = psNewMessage;
     Ant_u32ApplicationMessageCount++;
   }
 
   /* Otherwise traverse the list to find the end where the new message will be inserted */
   else
   {
-    psListParser = G_sAntApplicationMsgList;
+    psListParser = G_psAntApplicationMsgList;
     while(psListParser->psNextMessage != NULL) 
     {
       psListParser = psListParser->psNextMessage;
@@ -1558,7 +1564,7 @@ Requires:
       (i.e. no SYNC byte) 
 
 Promises:
-- A MESSAGE_ANT_TICK is queued to G_sAntApplicationMsgList
+- A MESSAGE_ANT_TICK is queued to G_psAntApplicationMsgList
 
 */
 static void AntTickExtended(u8* pu8AntMessage_)
@@ -1595,13 +1601,13 @@ static void AntTickExtended(u8* pu8AntMessage_)
 /*!-----------------------------------------------------------------------------/
 @fn static void AntDeQueueOutgoingMessage(void)
 
-@brief Removes the oldest entry of Ant_psDataOutgoingMsgList.
+@brief Removes the oldest entry of Ant_psOutgoingMsgList.
 
 Requires:
 - NONE 
 
 Promises:
-- Ant_psDataOutgoingMsgList = Ant_psDataOutgoingMsgList->psNextMessage 
+- Ant_psOutgoingMsgList = Ant_psOutgoingMsgList->psNextMessage 
   and the memory is freed
 
 */
@@ -1609,10 +1615,10 @@ static void AntDeQueueOutgoingMessage(void)
 {
   AntOutgoingMessageListType *psMessageToKill;
   
-  if(Ant_psDataOutgoingMsgList != NULL)
+  if(Ant_psOutgoingMsgList != NULL)
   {
-    psMessageToKill = Ant_psDataOutgoingMsgList;
-    Ant_psDataOutgoingMsgList = Ant_psDataOutgoingMsgList->psNextMessage;
+    psMessageToKill = Ant_psOutgoingMsgList;
+    Ant_psOutgoingMsgList = Ant_psOutgoingMsgList->psNextMessage;
   
     /* The doomed message is properly disconnected, so kill it */
     free(psMessageToKill);
@@ -1782,10 +1788,10 @@ static void AntSM_Idle(void)
   
   /* Send a message if the system is ready and there is one to send */ 
   else if( (Ant_u32CurrentTxMessageToken == 0 ) && 
-           (Ant_psDataOutgoingMsgList != NULL) )
+           (Ant_psOutgoingMsgList != NULL) )
   {
     /* Give the message to AntTx which will set Ant_u32CurrentTxMessageToken */
-    if(AntTxMessage(Ant_psDataOutgoingMsgList->au8MessageData))
+    if(AntTxMessage(Ant_psOutgoingMsgList->au8MessageData))
     {
       Ant_u32TxTimer = G_u32SystemTime1ms;
       Ant_pfnStateMachine = AntSM_TransmitMessage;
@@ -1826,13 +1832,13 @@ handshaking transaction has been completed and transmit to ANT is verified and u
 */
 static void AntSM_TransmitMessage(void)
 {
-  static u8 au8TxTimeoutMsg[] = "\n\rTransmit message timeout\n\r";
   MessageStateType eCurrentMsgStatus;
   
   eCurrentMsgStatus = QueryMessageStatus(Ant_u32CurrentTxMessageToken);
   switch(eCurrentMsgStatus)
   {
     case TIMEOUT:
+       DebugPrintf("\n\rTransmit message timeout\n\r");
       /* Fall through */
       
     case COMPLETE:
@@ -1848,10 +1854,10 @@ static void AntSM_TransmitMessage(void)
         Ant_u32TxTimer++;
       }
 
-      /* If we timed out, then ANT is likely stuck so print error and unstick ANT */
+      /* If we timed out, then ANT is likely stuck */
       if(Ant_u32RxTimer > ANT_ACTIVITY_TIME_COUNT)
       {
-        DebugPrintf(au8TxTimeoutMsg);
+        /* Try to unstick ANT !!!! Should have a timeout for this */
         while( IS_SEN_ASSERTED() )
         {
           AntSrdyPulse();
