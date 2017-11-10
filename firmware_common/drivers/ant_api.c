@@ -741,7 +741,7 @@ Promises:
 void AntApiInitialize(void)
 {
   /* If good initialization, set state to Idle */
-  if( G_u32ApplicationFlags & _APPLICATION_FLAGS_ANT)
+  if(G_u32ApplicationFlags & _APPLICATION_FLAGS_ANT)
   {
     DebugPrintf("ANT API ready\n\r");
     AntApi_StateMachine = AntApiSM_Idle;

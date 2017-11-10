@@ -1561,7 +1561,7 @@ so if that changes it should be thought about carefully.
 
 Requires:
 @param pu8AntMessage_ points to an ANT message that starts with the LENGTH 
-      (i.e. no SYNC byte) 
+(i.e. no SYNC byte) 
 
 Promises:
 - A MESSAGE_ANT_TICK is queued to G_psAntApplicationMsgList
