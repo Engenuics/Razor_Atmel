@@ -68,6 +68,10 @@ State Machine Declarations
 static void UserApp1SM_AntChannelAssign(void);
 static void UserApp1SM_Idle(void);    
 
+static void UserApp1SM_AntWaitCloseChannel(void);
+static void UserApp1SM_AntWaitUnassignChannel(void);
+static void UserApp1SM_AntWaitAssign(void);       
+
 static void UserApp1SM_Error(void);         
 
 

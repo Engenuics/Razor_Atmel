@@ -195,19 +195,16 @@ static void UserApp1SM_AntChannelAssign()
 } /* end UserApp1SM_AntChannelAssign */
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for ??? */
+/* Continuously look for button presses / releases to change the corresponding
+message values; display any data received from the Slave;
+Count the messages sent and queue the updated message every ANT_TICK.
+*/
 static void UserApp1SM_Idle(void)
 {
   static u8 au8TestMessage[] = {0, 0, 0, 0, 0xA5, 0, 0, 0};
   u8 au8DataContent[] = "xxxxxxxxxxxxxxxx";
   
-  /* Check all the buttons and update au8TestMessage according to the button state */ 
-  au8TestMessage[0] = 0x00;
-  if( IsButtonPressed(BUTTON0) )
-  {
-    au8TestMessage[0] = 0xff;
-  }
-  
+  /* Check buttons 1-3 and update au8TestMessage according to the button state */ 
   au8TestMessage[1] = 0x00;
   if( IsButtonPressed(BUTTON1) )
   {
@@ -263,8 +260,88 @@ static void UserApp1SM_Idle(void)
       AntQueueBroadcastMessage(ANT_CHANNEL_USERAPP, au8TestMessage);
     }
   } /* end AntReadData() */
+
+  /* Button 0 closes the channel and begins a sequence to unconfigure the channel */
+  if( WasButtonPressed(BUTTON0) )
+  {
+    ButtonAcknowledge(BUTTON0);
+    DebugPrintf("\n\rClosing channel\n\r");
+    AntCloseChannelNumber(ANT_CHANNEL_USERAPP);
+    
+    UserApp1_u32Timeout = G_u32SystemTime1ms;
+    UserApp1_StateMachine = UserApp1SM_AntWaitCloseChannel;    
+  }
+  
   
 } /* end UserApp1SM_Idle() */
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for ANT channel to close */
+static void UserApp1SM_AntWaitCloseChannel(void)
+{
+  if( AntRadioStatusChannel(ANT_CHANNEL_USERAPP) == ANT_CLOSED)
+  {
+    /* Channel close is successful, so queue unassign */
+    AntUnassignChannelNumber(ANT_CHANNEL_USERAPP);
+    UserApp1_u32Timeout = G_u32SystemTime1ms;
+    UserApp1_StateMachine = UserApp1SM_AntWaitUnassignChannel;
+  }
+  
+  /* Watch for time out */
+  if(IsTimeUp(&UserApp1_u32Timeout, 3000))
+  {
+    DebugPrintf(UserApp1_au8MessageFail);
+    UserApp1_StateMachine = UserApp1SM_Error;    
+  }
+     
+} /* end UserApp1SM_AntWaitCloseChannel */
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for ANT channel to unassign */
+static void UserApp1SM_AntWaitUnassignChannel(void)
+{
+  if( AntRadioStatusChannel(ANT_CHANNEL_USERAPP) == ANT_UNCONFIGURED)
+  {
+    /* Channel unnassign is successful, go to idle */
+    DebugPrintf("\n\rChannel unassigned\n\r");
+    UserApp1_StateMachine = UserApp1SM_AntWaitAssign;
+  }
+  
+  /* Watch for time out */
+  if(IsTimeUp(&UserApp1_u32Timeout, 3000))
+  {
+    DebugPrintf(UserApp1_au8MessageFail);
+    UserApp1_StateMachine = UserApp1SM_Error;    
+  }
+     
+} /* end UserApp1SM_AntWaitUnassignChannel */
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for channel to be re-assigned */
+static void UserApp1SM_AntWaitAssign(void)          
+{
+  if(WasButtonPressed(BUTTON0))
+  {
+    ButtonAcknowledge(BUTTON0);
+    
+    /* Attempt to queue the ANT channel setup */
+    if( AntAssignChannel(&UserApp1_sChannelInfo) )
+    {
+      UserApp1_u32Timeout = G_u32SystemTime1ms;
+      UserApp1_StateMachine = UserApp1SM_AntChannelAssign;
+    }
+    else
+    {
+      /* The task isn't properly initialized, so shut it down and don't run */
+      DebugPrintf(UserApp1_au8MessageFail);
+      UserApp1_StateMachine = UserApp1SM_Error;
+    }
+  }
+  
+} /* end UserApp1SM_AntWaitAssign() */
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/

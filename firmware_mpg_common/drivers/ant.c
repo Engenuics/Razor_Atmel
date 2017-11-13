@@ -1261,7 +1261,8 @@ static u8 AntProcessMessage(void)
             /* Only change the flags if the command was successful */
             if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
             {
-              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+// 2017-11-13              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN;
             }
             break;
 

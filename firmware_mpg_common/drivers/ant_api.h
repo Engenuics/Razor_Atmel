@@ -100,7 +100,7 @@ void AntApiRunActiveState(void);
 State Machine Declarations
 ***********************************************************************************************************************/
 static void AntApiSM_Idle(void);    
-static void  AntApiSM_AssignChannel(void);       
+static void AntApiSM_AssignChannel(void);       
 
 static void AntApiSM_Error(void);         
 static void AntApiSM_FailedInit(void);        
