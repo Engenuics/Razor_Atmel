@@ -64,10 +64,10 @@ Variable names shall start with "Adc12_xx" and be declared as static.
 static fnCode_type Adc12_pfnStateMachine;              /*!< @brief The state machine function pointer */
 //static u32 Adc12_u32Timeout;                         /*!< @brief Timeout counter used across states */
 
+static bool Adc12_bAdcAvailable;                       /*!< @brief Binary semaphore to control access to the ADC12 peripheral */
+
 static Adc12ChannelType Adc12_aeChannels[] = ADC_CHANNEL_ARRAY;  /*!< @brief Available channels defined in configuration.h */
 static fnCode_u16_type Adc12_apfCallbacks[8];          /*!< @brief ADC12 ISR callback function pointers */
-
-static bool Adc12_bAdcAvailable;                       /*!< @brief Binary semaphore to control access to the ADC12 peripheral */
 
 
 /**********************************************************************************************************************
@@ -88,6 +88,9 @@ must have one u16 parameter where the result is passed.  Define the function tha
 will be used for the callback, then assign this during user task initialization.
 
 Different callbacks may be assigned for each channel. 
+
+*** To mitigate the chance of indefinitely holding control of
+the ADC resource, new conversions shall not be started in this callback. ***
 
 Example:
 

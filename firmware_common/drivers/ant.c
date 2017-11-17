@@ -1112,11 +1112,17 @@ static u8 AntProcessMessage(void)
             G_au8AntMessageClose[12] = au8MessageCopy[BUFFER_INDEX_CHANNEL_NUM] + 0x30;
             DebugPrintf(G_au8AntMessageClose);
 
+#if 0 
+            /* 2017-11-13: Closing the channel is unique because a Closed Channel event
+            is generated once the channel is actually closed.  Therefore don't clear the
+            flag here, just clear it in when the event occurs. */
+            
             /* Only change the flags if the command was successful */
             if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
             {
-              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN;
             }
+#endif
             break;
     
           case MESG_UNASSIGN_CHANNEL_ID:
@@ -1126,7 +1132,13 @@ static u8 AntProcessMessage(void)
             /* Only change the flags if the command was successful */
             if( au8MessageCopy[BUFFER_INDEX_RESPONSE_CODE] == RESPONSE_NO_ERROR )
             {
-              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_OPEN_PENDING | _ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN); /* !!!! 2016-06-14 */
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~_ANT_FLAGS_CHANNEL_CONFIGURED;
+#if 0
+              /* 2017-11-13: None of these flags should be set at this point. */
+              G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_OPEN_PENDING | 
+                                                                   _ANT_FLAGS_CHANNEL_CLOSE_PENDING | 
+                                                                   _ANT_FLAGS_CHANNEL_OPEN); /* !!!! 2016-06-14 */
+#endif
             }
             break;
  
@@ -1248,7 +1260,7 @@ static u8 AntProcessMessage(void)
           case EVENT_CHANNEL_CLOSED: /* The ANT channel is now closed */
           {
             DebugPrintf("Channel closed\n\r");
-            G_asAntChannelConfiguration[u8Channel].AntFlags &= ~(_ANT_FLAGS_CHANNEL_CLOSE_PENDING | _ANT_FLAGS_CHANNEL_OPEN);
+            G_asAntChannelConfiguration[u8Channel].AntFlags &= ~_ANT_FLAGS_CHANNEL_OPEN;
 #ifdef ANT_VERBOSE 
             DebugPrintf("\n\rEVENT_CHANNEL_CLOSED\n\r");
 #endif

@@ -56,7 +56,6 @@ void main(void)
   DebugInitialize();
 
   /* Debug messages through DebugPrintf() are available from here */
-
   ButtonInitialize();
   TimerInitialize();  
   SspInitialize();

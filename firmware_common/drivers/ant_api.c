@@ -350,7 +350,6 @@ bool AntUnassignChannelNumber(AntChannelNumberType eChannel_)
 
   /* Update checksum and queue the unassign channel message */
   au8AntUnassignChannel[3] = AntCalculateTxChecksum(au8AntUnassignChannel);
-  G_asAntChannelConfiguration[eChannel_].AntFlags &= ~_ANT_FLAGS_CHANNEL_CONFIGURED;
   return( AntQueueOutgoingMessage(au8AntUnassignChannel) );
 
 } /* end AntUnassignChannelNumber() */
