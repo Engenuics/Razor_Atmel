@@ -810,9 +810,9 @@ static __INLINE void __disable_fault_irq()        { __ASM volatile ("cpsid f"); 
 static __INLINE void __WFI()                      { __ASM volatile ("wfi");   }
 static __INLINE void __WFE()                      { __ASM volatile ("wfe");   }
 static __INLINE void __SEV()                      { __ASM volatile ("sev");   }
-static __INLINE void __ISB(arg)                   { __ASM volatile ("isb");   }
-static __INLINE void __DSB(arg)                   { __ASM volatile ("dsb");   }
-static __INLINE void __DMB(arg)                   { __ASM volatile ("dmb");   }
+static __INLINE void __ISB()                      { __ASM volatile ("isb");   }
+static __INLINE void __DSB()                      { __ASM volatile ("dsb");   }
+static __INLINE void __DMB()                      { __ASM volatile ("dmb");   }
 static __INLINE void __CLREX()                    { __ASM volatile ("clrex"); }
 
 
