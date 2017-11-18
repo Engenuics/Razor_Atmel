@@ -47,13 +47,27 @@ void UserApp1RunActiveState(void);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
+static void UserApp1SM_WaitAssign(void);
+
 static void UserApp1SM_Idle(void);    
 static void UserApp1SM_Error(void);         
+
 
 
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
+#define U32_ASSIGN_TIMEOUT                    (u32)3000
+
+#define U8_ANT_WILDCARD                       (u8)0
+#define U8_ANT_CHANNEL_PERIOD_HI_ANTPLUS_HRM  (u8)(0x20)
+#define U8_ANT_CHANNEL_PERIOD_LO_ANTPLUS_HRM  (u8)(0x00)
+#define U8_DEVICE_TYPE_ANTPLUS_HRM            (u8)(0x78)
+#define U8_ANT_FREQUENCY_ANTPLUS              (u8)57
+#define AU8_ANT_PLUS_NETWORK_KEY              {0xB9, 0xA5, 0x21, 0xFB, 0xBD, 0x72, 0xC3, 0x45}
+
+#define E_USERAPP1_ANT_CHANNEL                (AntChannelNumberType)(ANT_CHANNEL_0)
+
 
 
 

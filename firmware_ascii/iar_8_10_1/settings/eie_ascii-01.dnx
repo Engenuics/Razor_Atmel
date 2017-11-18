@@ -2,6 +2,7 @@
 <settings>
     <DebugChecksum>
         <Checksum>3675295717</Checksum>
+
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -65,6 +66,7 @@
     </DisassembleMode>
     <Breakpoints2>
         <Count>0</Count>
+
     </Breakpoints2>
     <Aliases>
         <Count>0</Count>
