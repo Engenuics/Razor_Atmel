@@ -949,6 +949,9 @@ static void AdvanceAntRxBufferUnreadMsgPointer(void)
 @brief Waits a specified amount of time for a particular message to arrive from ANT in 
 response to a message sent to ANT. ***This function violates the 1ms system rule, 
 so should only be used during initialization.***
+
+The expected message could be a response event, or it could be the complete
+message that was expected.
   
 Requires:
 - A message had been sent to ANT to which a response should be coming in
@@ -1002,7 +1005,8 @@ static u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_)
     message and that the response is no error */
     if(Ant_u8AntNewRxMessages)
     {
-      /* Check if the response is an Event, the event is a reply to the expected message, and the reply is good.
+#if 0 
+     /* Check if the response is an Event, the event is a reply to the expected message, and the reply is good.
       Since Ant_pu8AntRxBufferUnreadMsg is pointing to the SYNC byte, add 1 when using BUFFER_INDEX values. */
       if( (*(Ant_pu8AntRxBufferUnreadMsg + MESG_ID_OFFSET) == MESG_RESPONSE_EVENT_ID) &&    
           (*(Ant_pu8AntRxBufferUnreadMsg + MESG_RESPONSE_MESG_ID_OFFSET) == u8ExpectedMessageID_) &&
@@ -1010,7 +1014,27 @@ static u8 AntExpectResponse(u8 u8ExpectedMessageID_, u32 u32TimeoutMS_)
       {
         u8ReturnValue = 0;
       }
-    }
+#endif
+      /* 2017-11-18 Fix to handle Events and responses but also just message replys so ExpectResponse will
+      still return correctly for regular messages */
+
+      /* Check if the response is an Event */
+      if( *(Ant_pu8AntRxBufferUnreadMsg + MESG_ID_OFFSET) == MESG_RESPONSE_EVENT_ID )
+      {
+        /* For Event messages, check if it is a reply to the expected message and the reply is good. */
+        if( (*(Ant_pu8AntRxBufferUnreadMsg + MESG_RESPONSE_MESG_ID_OFFSET) == u8ExpectedMessageID_) &&
+            (*(Ant_pu8AntRxBufferUnreadMsg + MESG_RESPONSE_CODE_OFFSET)    == RESPONSE_NO_ERROR   ) )
+        {
+          u8ReturnValue = 0;
+        }
+      }
+      /* If not an event, the message should be a response to the requested message */
+      else if ( *(Ant_pu8AntRxBufferUnreadMsg + MESG_ID_OFFSET) == u8ExpectedMessageID_)
+      {
+        u8ReturnValue = 0;
+      }
+        
+    } /* end if(!bTimeout) */
   }
   
   /* Process any message in the RxBuffer and return the result value */
@@ -1699,11 +1723,8 @@ static void AntSyncSerialInitialize(void)
     G_au8ANTGetVersion[4] = AntCalculateTxChecksum(&G_au8ANTGetVersion[0]);
     AntTxMessage(&G_au8ANTGetVersion[0]);   
     
-    if(AntExpectResponse(MESG_VERSION_ID, ANT_MSG_TIMEOUT_MS))
-    {
-      DebugPrintf("ANT init Version ID message failed\n\r");
-      bErrorStatus = TRUE;
-    }
+    /* Process the message through AntExpectResponse */
+    AntExpectResponse(MESG_VERSION_ID, ANT_MSG_TIMEOUT_MS);
   }
   
   if(bErrorStatus)
