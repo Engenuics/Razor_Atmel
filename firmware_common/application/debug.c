@@ -170,7 +170,7 @@ u32 DebugPrintf(u8* u8String_)
   u8* pu8Parser = u8String_;
   u32 u32Size = 0;
   
-  while(*pu8Parser != NULL)
+  while(*pu8Parser != '\0')
   {
     u32Size++;
     pu8Parser++;
