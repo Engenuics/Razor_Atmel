@@ -244,7 +244,7 @@ u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_)
   }
   
   /* Add the null and copy to destination */
-  au8AsciiNumber[u8CharCount] = NULL;
+  au8AsciiNumber[u8CharCount] = '\0';
   strcpy((char *)pu8AsciiString_, (const char*)au8AsciiNumber);
   
   return(u8CharCount);
@@ -275,14 +275,14 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_)
   do
   {
     /* Scan for the current character of pu8MatchString_ in pu8TargetString_ */
-    while( (*pu8MatchChar != *pu8TargetChar) && (*pu8TargetChar != NULL) && 
+    while( (*pu8MatchChar != *pu8TargetChar) && (*pu8TargetChar != '\0') &&
            (*pu8TargetChar != ASCII_LINEFEED) && (*pu8TargetChar != ASCII_CARRIAGE_RETURN) )
     {
       pu8TargetChar++;
     }
     
     /* Exit if we're at the end of the target string */
-    if( (*pu8TargetChar == NULL) || 
+    if( (*pu8TargetChar == '\0') ||
         (*pu8TargetChar == ASCII_LINEFEED) || (*pu8TargetChar == ASCII_CARRIAGE_RETURN) )
     {
       return(FALSE);
@@ -295,7 +295,7 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_)
       pu8TargetChar++;
       
       /* At the end of the match string? */
-      if( (*pu8MatchChar == NULL) || (*pu8MatchChar == ASCII_LINEFEED) || (*pu8MatchChar == ASCII_CARRIAGE_RETURN) )
+      if( (*pu8MatchChar == '\0') || (*pu8MatchChar == ASCII_LINEFEED) || (*pu8MatchChar == ASCII_CARRIAGE_RETURN) )
       {
         /* Check if the next character in pu8TargetChar is space, <CR>, <LF> or ':' */
         if( (*pu8TargetChar == ' ') ||
@@ -309,7 +309,7 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_)
     }
 
     /* At the end of the target string? */
-    if( (*pu8TargetChar == NULL) || (*pu8TargetChar == ASCII_LINEFEED) || (*pu8TargetChar == ASCII_CARRIAGE_RETURN) )
+    if( (*pu8TargetChar == '\0') || (*pu8TargetChar == ASCII_LINEFEED) || (*pu8TargetChar == ASCII_CARRIAGE_RETURN) )
     {
       return(FALSE);
     }
@@ -319,7 +319,7 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_)
     
     /* Reset match pointer back to the start of its string */
     pu8MatchChar = pu8MatchString_;
-  } while ( (*pu8TargetChar != NULL) && 
+  } while ( (*pu8TargetChar != '\0') &&
             (*pu8TargetChar != ASCII_LINEFEED) && (*pu8TargetChar != ASCII_CARRIAGE_RETURN) );
   
   /* If we get here, no match was found */

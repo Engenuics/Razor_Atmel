@@ -316,7 +316,7 @@ Requires:
 Promises:
   - 
 */
-inline void TimerDefaultCallback(void)
+static void TimerDefaultCallback(void)
 {
 } /* End TimerDefaultCallback() */
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
     <DebugChecksum>
-        <Checksum>4173531382</Checksum>
+        <Checksum>3675295717</Checksum>
+
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -31,6 +32,9 @@
         <CStepIntDis>_ 0</CStepIntDis>
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </JLinkDriver>
+    <watch_formats>
+        <Fmt0>{W}3:u8ExpectedMessageID_	4	0</Fmt0>
+    </watch_formats>
     <Trace1>
         <Enabled>0</Enabled>
         <ShowSource>1</ShowSource>
@@ -61,10 +65,8 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_common\drivers\ant.c}.1007.7" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_common\drivers\ant.c}.1699.5" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\firmware_common\drivers\ant.c}.1085.7" 0 0 1 "" 0 "" 0</Bp2>
-        <Count>3</Count>
+        <Count>0</Count>
+
     </Breakpoints2>
     <Aliases>
         <Count>0</Count>
