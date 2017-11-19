@@ -507,7 +507,6 @@ bool AntCloseChannelNumber(AntChannelNumberType eChannel_)
 
   /* Update the checksum value and queue the close channel message*/
   au8AntCloseChannel[3] = AntCalculateTxChecksum(au8AntCloseChannel);
-  G_asAntChannelConfiguration[eChannel_].AntFlags |= _ANT_FLAGS_CHANNEL_CLOSE_PENDING;
   
   return( AntQueueOutgoingMessage(au8AntCloseChannel) );
 
