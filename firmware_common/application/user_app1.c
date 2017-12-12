@@ -54,12 +54,6 @@ extern volatile u32 G_u32SystemTime1s;                    /*!<@brief From main.c
 extern volatile u32 G_u32SystemFlags;                     /*!< @brief From main.c */
 extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.c */
 
-// Globals for passing data from the ANT application to the API
-extern u32 G_u32AntApiCurrentMessageTimeStamp;                            // From ant_api.c
-extern AntApplicationMessageType G_eAntApiCurrentMessageClass;            // From ant_api.c
-extern u8 G_au8AntApiCurrentMessageBytes[ANT_APPLICATION_MESSAGE_BYTES];  // From ant_api.c
-extern AntExtendedDataType G_sAntApiCurrentMessageExtData;                // From ant_api.c
-
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -67,8 +61,6 @@ Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;                 /*!< @brief The state machine function pointer */
 static u32 UserApp1_u32Timeout;                           /*!< @brief Timeout counter used across states */
-
-static AntAssignChannelInfoType UserApp1_sAntChannelInfo;
 
 
 /**********************************************************************************************************************
@@ -101,67 +93,15 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-  u8 au8AntNetworkKey[] = AU8_ANT_PLUS_NETWORK_KEY;
-  
-  /* All LEDs off with purple BL */
-  LedOff(WHITE);
-  LedOff(PURPLE);
-  LedOff(BLUE);
-  LedOff(CYAN);
-  LedOff(GREEN);
-  LedOff(YELLOW);
-  LedOff(ORANGE);
-  LedOff(RED);
-  LedOff(LCD_GREEN);
-  LedOn(LCD_BLUE);
-  LedOn(LCD_RED);
-
-  /* Welcome the user */
-  LCDCommand(LCD_CLEAR_CMD);
-  LCDMessage(LINE1_START_ADDR, "**ANT+ HR MONITOR**");
-  
-  /* Cute little startup animation... */
-  for(u8 i = 0; i < 20; i++)
+  /* If good initialization, set state to Idle */
+  if( 1 )
   {
-    /* Print a star, then wait */
-    LCDMessage( (LINE2_START_ADDR + i), "*");
-    for(u32 j = 0; j < 100000; j++);
-  }
-  for(u32 i = 0; i < 1000000; i++);
-  
-  /* Load values to the ANT channel setup struct for an ANT+ HRM receiver */
-  UserApp1_sAntChannelInfo.AntChannel = E_USERAPP1_ANT_CHANNEL;
-  UserApp1_sAntChannelInfo.AntChannelType = CHANNEL_TYPE_SLAVE;
-  UserApp1_sAntChannelInfo.AntChannelPeriodHi = ANT_CHANNEL_PERIOD_HI_DEFAULT;
-  UserApp1_sAntChannelInfo.AntChannelPeriodLo = ANT_CHANNEL_PERIOD_LO_DEFAULT;
-  
-  UserApp1_sAntChannelInfo.AntDeviceIdHi = U8_ANT_WILDCARD;
-  UserApp1_sAntChannelInfo.AntDeviceIdLo = U8_ANT_WILDCARD;
-  UserApp1_sAntChannelInfo.AntDeviceType = U8_DEVICE_TYPE_ANTPLUS_HRM;
-  UserApp1_sAntChannelInfo.AntTransmissionType = U8_ANT_WILDCARD;
-  
-  UserApp1_sAntChannelInfo.AntFrequency = U8_ANT_FREQUENCY_ANTPLUS;
-  UserApp1_sAntChannelInfo.AntTxPower = ANT_TX_POWER_DEFAULT;
-  
-  UserApp1_sAntChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
-  for(u8 i = 0; i < 8; i++)
-  {
-    UserApp1_sAntChannelInfo.AntNetworkKey[i] = au8AntNetworkKey[i];
-  }
-  
-  /* Queue channel assignment */
-  if( AntAssignChannel(&UserApp1_sAntChannelInfo) )
-  {
-    LedBlink(YELLOW, LED_2HZ);
-    DebugPrintf("Assigning channel\n\r");
-    
-    UserApp1_u32Timeout = G_u32SystemTime1ms;
-    UserApp1_StateMachine = UserApp1SM_WaitAssign;
+    UserApp1_StateMachine = UserApp1SM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp1_StateMachine = UserApp1SM_Error;
+    UserApp1_StateMachine = UserApp1SM_FailedInit;
   }
 
 } /* end UserApp1Initialize() */
@@ -197,61 +137,29 @@ void UserApp1RunActiveState(void)
 /**********************************************************************************************************************
 State Machine Function Definitions
 **********************************************************************************************************************/
-/*!-------------------------------------------------------------------------------------------------------------------
-@fn static void UserApp1SM_WaitAssign(void)
-
-@brief Wait for Ant channel to become ANT_CONFIGURED.
-
-YELLOW LED should be blinking in this state.
-LCD BL should be LCD_BLUE + LCD_RED
-*/
-static void UserApp1SM_WaitAssign(void)
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for ??? */
+static void UserApp2SM_Idle(void)
 {
-  if(AntRadioStatusChannel(E_USERAPP1_ANT_CHANNEL) == ANT_CONFIGURED)
-  {
-    DebugPrintf("ANT channel assigned and ready\n\r");
-    LedOn(YELLOW);
     
-    LCDCommand(LCD_CLEAR_CMD);
-    LCDMessage(LINE1_START_ADDR, "Activate HRM then");
-    LCDMessage(LINE2_START_ADDR, "press BTN0 to pair");
-    
-    UserApp1_StateMachine = UserApp1SM_Idle;
-  }
-  
-  while( !IsTimeUp(&UserApp1_u32Timeout, U32_ASSIGN_TIMEOUT) )
-  {
-    DebugPrintf("WaitAssign Timeout\n\r");
-    LedOff(YELLOW);
-    LedOff(LCD_BLUE);
-    LedOn(LCD_RED);
-
-    UserApp1_StateMachine = UserApp1SM_Error;
-  }
-
-} /* end UserApp1SM_WaitAssign() */
-
-
-/*!-------------------------------------------------------------------------------------------------------------------
-@fn static void UserApp1SM_Idle(void)
-
-@brief Wait for user to press BUTTON0 to connect to an HRM 
-*/
-static void UserApp1SM_Idle(void)
-{
-
-} /* end UserApp1SM_Idle() */
-    
-
-/*!-------------------------------------------------------------------------------------------------------------------
-@fn static void UserApp1SM_Error(void)
-
-@brief Handle an error here.  For now, the task is just held in this state. 
-*/
-static void UserApp1SM_Error(void)          
+} /* end UserApp2SM_Idle() */
+     
+#if 0
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Handle an error */
+static void UserApp2SM_Error(void)          
 {
   
-} /* end UserApp1SM_Error() */
+} /* end UserApp2SM_Error() */
+#endif
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* State to sit in if init failed */
+static void UserApp2SM_FailedInit(void)          
+{
+    
+} /* end UserApp2SM_FailedInit() */
 
 
 
