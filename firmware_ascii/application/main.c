@@ -106,11 +106,8 @@ void main(void)
     
     HEARTBEAT_OFF();
 
-    do
-    {
-      /* System sleep until next Systick */
-      SystemSleep();
-    } while(G_u32SystemFlags & _SYSTEM_SLEEPING);
+    /* System sleep until next Systick */
+    SystemSleep();
 
     HEARTBEAT_ON();
     

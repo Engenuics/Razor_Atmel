@@ -60,7 +60,7 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;                 /*!< @brief The state machine function pointer */
-static u32 UserApp1_u32Timeout;                           /*!< @brief Timeout counter used across states */
+//static u32 UserApp1_u32Timeout;                           /*!< @brief Timeout counter used across states */
 
 
 /**********************************************************************************************************************
@@ -101,7 +101,7 @@ void UserApp1Initialize(void)
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp1_StateMachine = UserApp1SM_FailedInit;
+    UserApp1_StateMachine = UserApp1SM_Error;
   }
 
 } /* end UserApp1Initialize() */
@@ -139,28 +139,18 @@ State Machine Function Definitions
 **********************************************************************************************************************/
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Wait for ??? */
-static void UserApp2SM_Idle(void)
+static void UserApp1SM_Idle(void)
 {
     
-} /* end UserApp2SM_Idle() */
+} /* end UserApp1SM_Idle() */
      
-#if 0
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
-static void UserApp2SM_Error(void)          
+static void UserApp1SM_Error(void)          
 {
   
-} /* end UserApp2SM_Error() */
-#endif
-
-
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* State to sit in if init failed */
-static void UserApp2SM_FailedInit(void)          
-{
-    
-} /* end UserApp2SM_FailedInit() */
-
+} /* end UserApp1SM_Error() */
 
 
 
