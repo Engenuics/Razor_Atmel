@@ -43,7 +43,7 @@ PROTECTED FUNCTIONS
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_xxAdc12"
+All Global variable names shall start with "G_<type>Adc12"
 ***********************************************************************************************************************/
 /* New variables */
 volatile u32 G_u32Adc12Flags;                          /*!< @brief Global state flags */
@@ -59,7 +59,7 @@ extern volatile u32 G_u32ApplicationFlags;             /*!< @brief From main.c *
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Adc12_xx" and be declared as static.
+Variable names shall start with "Adc12_<type>" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type Adc12_pfnStateMachine;              /*!< @brief The state machine function pointer */
 //static u32 Adc12_u32Timeout;                         /*!< @brief Timeout counter used across states */
