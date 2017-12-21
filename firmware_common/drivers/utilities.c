@@ -1,21 +1,28 @@
-/***********************************************************************************************************************
-File: utilities.c                                                                
+/*!**********************************************************************************************************************
+@file utilities.c                                                                
 
-Description:
-Various useful functions.
+@brief Various useful functions and definitions.
 
-API:
-bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
-Calculates if u32Period_ time has passed (in ms) using comparison of
-pu32SavedTick_ against G_u32SystemTime1ms.  
-e.g. do nothing until 1 second has elapsed
-u32ApplicationTimer = G_u32SystemTime1ms;
-if( !IsTimeUp(&u32ApplicationTimer, 1000)
-{
-  // Time has elapsed so update timer for next period and do whatever
-  u32ApplicationTimer = G_u32SystemTime1ms;
-}
+------------------------------------------------------------------------------------------------------------------------
+GLOBALS
+- NONE
 
+CONSTANTS
+- NONE
+
+TYPES
+- NONE
+
+PUBLIC FUNCTIONS
+- bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
+- u8 ASCIIHexCharToChar(u8);
+- u8 HexToASCIICharUpper(u8 u8Char_);
+- u8 HexToASCIICharLower(u8 u8Char_);
+- u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_);
+- bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_);
+
+PROTECTED FUNCTIONS
+- NONE
 
 ***********************************************************************************************************************/
 
@@ -23,13 +30,13 @@ if( !IsTimeUp(&u32ApplicationTimer, 1000)
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_xxUtil"
+All Global variable names shall start with "G_<type>Util"
 ***********************************************************************************************************************/
 /* New variables */
-u8 G_au8UtilMessageOK[]   = MESSAGE_OK;            /* Common "OK" message */
-u8 G_au8UtilMessageFAIL[] = MESSAGE_FAIL;          /* Common "FAIL" message */
-u8 G_au8UtilMessageON[]   = MESSAGE_ON;            /* Common "ON" message */
-u8 G_au8UtilMessageOFF[]  = MESSAGE_OFF;           /* Common "OFF" message */
+u8 G_au8UtilMessageOK[]   = MESSAGE_OK;            /*!< @brief Common "OK" message */
+u8 G_au8UtilMessageFAIL[] = MESSAGE_FAIL;          /*!< @brief Common "FAIL" message */
+u8 G_au8UtilMessageON[]   = MESSAGE_ON;            /*!< @brief Common "ON" message */
+u8 G_au8UtilMessageOFF[]  = MESSAGE_OFF;           /*!< @brief Common "OFF" message */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -42,7 +49,7 @@ extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Util_xx" and be declared as static.
+Variable names shall start with "Util_<type>" and be declared as static.
 ***********************************************************************************************************************/
 
 
@@ -50,23 +57,37 @@ Variable names shall start with "Util_xx" and be declared as static.
 Function Definitions
 ***********************************************************************************************************************/
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Public Functions */
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------
-Function: IsTimeUp
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
   
-Description:
-Checks if the difference between the current time and the saved time is greater
-than the period specified. The referenced current time is always G_u32SystemTime1ms.
+@brief Checks if the difference between the current G_u32SystemTime1ms and the 
+saved G_u32SystemTime1ms is greater than the period specified. 
+
+The referenced current time is always G_u32SystemTime1ms.  The function 
+handles rollover of G_u32SystemTime1ms.
+
+Example
+#define U32_PERIOD    (u32)1000
+
+u32 u32Timeout = G_u32SystemTime1ms;
+
+// other code runs for a while
+if( IsTimeUp(&u32Timeout, U32_PERIOD) )
+{
+  // Time is up so do something
+}
 
 Requires:
-  - *pu32SavedTick_ points to the saved tick value (in ms)
-  - u32Period_ is the desired period in ms
+@param *pu32SavedTick_ points to the saved tick value (in ms)
+@param u32Period_ is the desired period in ms
 
 Promises:
-  - Returns FALSE if u32Period_ has not elapsed
-  - Returns TRUE if u32Period_ has elapsed
+- Returns FALSE if u32Period_ has not elapsed
+- Returns TRUE if u32Period_ has elapsed
+
 */
 bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
 {
@@ -95,19 +116,19 @@ bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
 } /* end IsTimeUp() */
 
 
-/*-----------------------------------------------------------------------------/
-Function: ASCIIHexCharToChar
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn u8 ASCIIHexCharToChar(u8 u8Char_)
 
-Description:
-Determines the numerical value of a hexidecimal ASCII char of that number
+@brief Determines the numerical value of a hexidecimal ASCII char of that number
 ('0' - 'F' or '0' - 'f' -> 0 - 15).
 
 Requires:
-  - Standard ASCII table is in use
+- Standard ASCII table is in use
  
 Promises:
-  - If valid 0-9, A-F or a-f, returns the numerical value of the ASCII char
-  - Otherwise returns 0xff
+- If valid 0-9, A-F or a-f, returns the numerical value of the ASCII char
+- Otherwise returns 0xff
+
 */
 u8 ASCIIHexCharToChar(u8 u8Char_)
 {
@@ -125,19 +146,21 @@ u8 ASCIIHexCharToChar(u8 u8Char_)
 } /* end ASCIIHexChartoChar */
 
 
-/*-----------------------------------------------------------------------------/
-Function: HexToASCIICharUpper
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn u8 HexToASCIICharUpper(u8 u8Char_)
 
-Description:
-Determines the ASCII char of a single digit number
+@brief Determines the ASCII char of a single digit number
 0 - 15 -> '0' - 'F'
 
 Requires:
-  - Standard ASCII table is in use
- 
+- Standard ASCII table is in use
+
+@param u8Char is a number that is to be returned in uppercase ASCII
+
 Promises:
-  - If valid 0-15, returns the corresponding ASCII hex char 0-9, A-F
-  - Otherwise returns 0xff
+- If valid 0-15, returns the corresponding ASCII hex char 0-9, A-F
+- Otherwise returns 0xff
+
 */
 u8 HexToASCIICharUpper(u8 u8Char_)
 {
@@ -158,19 +181,21 @@ u8 HexToASCIICharUpper(u8 u8Char_)
 } /* end HexToASCIICharUpper */
 
 
-/*-----------------------------------------------------------------------------/
-Function: HexToASCIICharLower
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn u8 HexToASCIICharLower(u8 u8Char_)
 
-Description:
-Determines the ASCII char of a single digit number
+@brief Determines the ASCII char of a single digit number
 0 - 15 -> '0' - 'f'
 
 Requires:
-  - Standard ASCII table is in use
+- Standard ASCII table is in use
+
+@param u8Char is a number that is to be returned in lowercase ASCII
  
 Promises:
-  - If valid 0-15, returns the corresponding ASCII hex char 0-9, a-f
-  - Otherwise returns 0xFF
+- If valid 0-15, returns the corresponding ASCII hex char 0-9, a-f
+- Otherwise returns 0xFF
+
 */
 u8 HexToASCIICharLower(u8 u8Char_)
 {
@@ -191,19 +216,20 @@ u8 HexToASCIICharLower(u8 u8Char_)
 } /* end HexToASCIICharLower */
 
 
-/*-----------------------------------------------------------------------------/
-Function: NumberToAscii
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_)
 
-Description:
-Converts a long into an ASCII string.  Maximum of 10 digits + NULL.
+@brief Converts a long into an ASCII string.  Maximum of 10 digits + NULL.
 
 Requires:
-  - u32Number_ is the number to convert
-  - *pu8AsciiString_ points to the destination string location
+@param u32Number_ is the number to convert
+@param *pu8AsciiString_ points to the destination string location which must
+have sufficient space for the number.
  
 Promises:
-  - Null-terminated string of the number is loaded to pu8AsciiString_
-  - Returns the number of digits
+- Null-terminated string of the number is loaded to pu8AsciiString_
+- Returns the number of digits
+
 */
 u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_)
 {
@@ -252,20 +278,21 @@ u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_)
 } /* end NumberToAscii() */
 
 
-/*-----------------------------------------------------------------------------/
-Function: SearchString
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_)
 
-Description:
-Searches a string for another string.  Finds only an exact match of the string (case sensitive).
-Character following matched string must be space, <CR> or <LF>.
+@brief Searches a string for another string.  Finds only an exact match of the string (case sensitive).
+The character following matched string must be space, <CR> or <LF>.
 
 Requires:
-  - Standard ASCII table is in use
-  - pu8TargetString_ points to the start of a NULL, <CR> or <LF> terminated string to search
-  - pu8MatchString_ points to the start of a NULL, <CR> or <LF> terminated string to be found in pu8TargetString_
+- Standard ASCII table is in use
+
+@param pu8TargetString_ points to the start of a NULL, <CR> or <LF> terminated string to search
+@param pu8MatchString_ points to the start of a NULL, <CR> or <LF> terminated string to be found in pu8TargetString_
  
 Promises:
-  - Returns TRUE if the string is found
+- Returns TRUE if the string is found
+
 */
 bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_)
 {
@@ -329,11 +356,11 @@ bool SearchString(u8* pu8TargetString_, u8* pu8MatchString_)
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected Functions */
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 
