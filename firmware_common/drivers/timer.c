@@ -1,46 +1,27 @@
-/**********************************************************************************************************************
-File: timer.c                                                                
-
-Description:
-Provide easy access to setting up and running the Timer Counter (TC) Peripherals.
+/*!**********************************************************************************************************************
+@file timer.c                                                                
+@brief Provide easy access to setting up and running the Timer Counter (TC) Peripherals.
 
 ------------------------------------------------------------------------------------------------------------------------
-API:
+GLOBALS
+- NONE
 
-Public functions:
-void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
-e.g. 
-TimerSet(TIMER_CHANNEL1, 0xFFFF);
+CONSTANTS
+- NONE
 
-void TimerStart(TimerChannelType eTimerChannel_)
-e.g.
-TimeStart(TIMER_CHANNEL1);
+TYPES
+- TimerChannelType: TIMER_CHANNEL0, TIMER_CHANNEL1, TIMER_CHANNEL2
 
-void TimerStop(TimerChannelType eTimerChannel_)
-e.g.
-TimerStop(TIMER_CHANNEL1);
+PUBLIC FUNCTIONS
+- void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
+- void TimerStart(TimerChannelType eTimerChannel_)
+- void TimerStop(TimerChannelType eTimerChannel_)
+- u16 TimerGetTime(TimerChannelType eTimerChannel_)
+- void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallback_)
 
-u16 TimerGetTime(TimerChannelType eTimerChannel_)
-e.g.
-u16 u16Timer1CurrentValue;
-u16Timer1CurrentValue = TimerGetTime(TIMER_CHANNEL1);
-
-void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallback_)
-e.g.
-TimerAssignCallback(TIMER_CHANNEL1, UserAppCallback);
-where UserAppCallBack is defined in a user task:
-void UserAppCallBack(void)
-Note: any callback should execute as quickly as possible since it runs during
-the timer interrupt handler.
-
-
-Protected System functions:
-void TimerInitialize(void)
-Runs required initialzation for the task.  Should only be called once in main init section.
-
-void TimerRunActiveState(void)
-Runs current task state.  Should only be called once in main loop.
-
+PROTECTED FUNCTIONS
+- void TimerInitialize(void)
+- void TimerRunActiveState(void)
 
 **********************************************************************************************************************/
 
@@ -48,30 +29,28 @@ Runs current task state.  Should only be called once in main loop.
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_"
+All Global variable names shall start with "G_<type>Timer"
 ***********************************************************************************************************************/
 /* New variables */
-volatile u32 G_u32TimerFlags;                          /* Global state flags */
+volatile u32 G_u32TimerFlags;                      /*!< @brief Global state flags */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
+extern volatile u32 G_u32SystemTime1ms;            /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;             /*!< @brief From main.c */
+extern volatile u32 G_u32SystemFlags;              /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;         /*!< @brief From main.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Timer_" and be declared as static.
+Variable names shall start with "Timer_<type>" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Timer_StateMachine;            /* The state machine function pointer */
-static fnCode_type fpTimer1Callback;              /* Timer1 ISR callback function pointer */
+static fnCode_type Timer_StateMachine;            /*!< @brief The state machine function pointer */
+static fnCode_type fpTimer1Callback;              /*!< @brief Timer1 ISR callback function pointer */
 
-//static u32 Timer_u32Timeout;                      /* Timeout counter used across states */
-
-static u32 Timer_u32Timer1Counter = 0;            /* Track instances of The TC1 interrupt handler */
+static u32 Timer_u32Timer1Counter = 0;            /*!< @brief Track instances of The TC1 interrupt handler */
 
 
 /**********************************************************************************************************************
@@ -79,21 +58,21 @@ Function Definitions
 **********************************************************************************************************************/
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions                                                                                                   */
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: TimerSet
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
 
-Description
-Sets the timer tick period (interrupt rate).
+@brief Sets the timer tick period (interrupt rate).
 
 Requires:
-  - eTimerChannel_ holds a valid channel
-  - u16TimerValue_ x in ticks
+@param eTimerChannel_ holds a valid channel
+@param u16TimerValue_ x in ticks
 
 Promises:
-  - Updates TC_RC value with u16TimerValue_
+- Updates register TC_RC value with u16TimerValue_
+
 */
 void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
 {
@@ -107,18 +86,18 @@ void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
 } /* end TimerSet() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: TimerStart
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn void TimerStart(TimerChannelType eTimerChannel_)
 
-Description
-Starts the designated Timer.
+@brief Starts the designated Timer.
 
 Requires:
-  - eTimerChannel_ is the timer to start
+@param eTimerChannel_ is the timer to start
 
 Promises:
-  - Specified channel on Timer is set to run; if already running it remains running
-  - Does NOT reset the timer value
+- Specified channel on Timer is set to run; if already running it remains running
+- Does NOT reset the timer value
+
 */
 void TimerStart(TimerChannelType eTimerChannel_)
 {
@@ -132,18 +111,18 @@ void TimerStart(TimerChannelType eTimerChannel_)
 } /* end TimerStart() */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: TimerStop
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn void TimerStop(TimerChannelType eTimerChannel_)
 
-Description
-Stops the designated Timer.
+@brief Stops the designated Timer.
 
 Requires:
-  - eTimerChannel_ is the timer to stop
+@param eTimerChannel_ is the timer to stop
 
 Promises:
-  - Specified timer is stopped; if already stopped it remains stopped
-  - Does NOT reset the timer value
+- Specified timer is stopped; if already stopped it remains stopped
+- Does NOT reset the timer value
+
 */
 void TimerStop(TimerChannelType eTimerChannel_)
 {
@@ -157,21 +136,20 @@ void TimerStop(TimerChannelType eTimerChannel_)
 } /* end TimerStop */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: TimerGetTime
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn u16 TimerGetTime(TimerChannelType eTimerChannel_)
 
-Description
-Returns the current count.
+@brief Returns the current count.
 
 Requires:
-  - eTimerChannel_ is the timer to query
+@param eTimerChannel_ is the timer to query
 
 Promises:
-  - Current 16 bit timer value is returned
+- Current 16 bit timer value is returned
+
 */
 u16 TimerGetTime(TimerChannelType eTimerChannel_)
 {
- 
   /* Build the offset to the selected peripheral */
   u32 u32TimerBaseAddress = (u32)AT91C_BASE_TC0;
   u32TimerBaseAddress += (u32)eTimerChannel_;
@@ -182,18 +160,18 @@ u16 TimerGetTime(TimerChannelType eTimerChannel_)
 } /* end TimerGetTime */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function: TimerAssignCallback
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallback_)
 
-Description
-Allows user to specify a custom callback function for when the Timer interrupt occurs.
+@brief Allows user to specify a custom callback function for when the Timer interrupt occurs.
 
 Requires:
-  - eTimerChannel_ is the channel to which the callback will be assigned
-  - fpUserCallback_ is the function address (name) for the user's callback
+@param eTimerChannel_ is the channel to which the callback will be assigned
+@param fpUserCallback_ is the function address (name) for the user's callback
 
 Promises:
-  - fpTimerxCallback loaded with fpUserCallback_
+- fpTimerxCallback loaded with fpUserCallback_
+
 */
 void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallback_)
 {
@@ -222,20 +200,20 @@ void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCall
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions                                                                                                */
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*--------------------------------------------------------------------------------------------------------------------
-Function: TimerInitialize
+/*!--------------------------------------------------------------------------------------------------------------------
+@fn void TimerInitialize(void)
 
-Description:
-Initializes the State Machine and its variables.
+@brief Initializes the State Machine and its variables.
 
 Requires:
-  -
+- NONE
 
 Promises:
-  - Timer 1 is configured per timer.h INIT settings
+- Timer 1 is configured per timer.h INIT settings
+
 */
 void TimerInitialize(void)
 {
@@ -272,25 +250,26 @@ void TimerInitialize(void)
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    Timer_StateMachine = TimerSM_FailedInit;
+    Timer_StateMachine = TimerSM_Error;
   }
 
 } /* end TimerInitialize() */
 
   
-/*----------------------------------------------------------------------------------------------------------------------
-Function TimerRunActiveState()
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void TimerRunActiveState(void)
 
-Description:
-Selects and runs one iteration of the current state in the state machine.
+@brief Selects and runs one iteration of the current state in the state machine.
+
 All state machines have a TOTAL of 1ms to execute, so on average n state machines
 may take 1ms / n to execute.
 
 Requires:
-  - State machine function pointer points at current state
+- State machine function pointer points at current state
 
 Promises:
-  - Calls the function to pointed by the state machine function pointer
+- Calls the function to pointed by the state machine function pointer
+
 */
 void TimerRunActiveState(void)
 {
@@ -299,41 +278,21 @@ void TimerRunActiveState(void)
 } /* end TimerRunActiveState */
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions                                                                                                  */
-/*--------------------------------------------------------------------------------------------------------------------*/
-  
-/*----------------------------------------------------------------------------------------------------------------------
-Function TimerDefaultCallback()
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void TC1_IrqHandler(void)
 
-Description:
-An empty function that the Timer Callback points to.  Expected that the 
-user will set their own.
+@brief Parses the TC1 interrupts and handles them appropriately.  
+
+Note that all enabled TC1 interrupts are ORed and will trigger this handler, 
+therefore any expected interrupt that is enabled must be parsed out 
+and handled.
 
 Requires:
-  - 
+- NONE
 
 Promises:
-  - 
-*/
-static void TimerDefaultCallback(void)
-{
-} /* End TimerDefaultCallback() */
+- If Channel1 RC: Timer Channel 1 is reset
 
-
-/*----------------------------------------------------------------------------------------------------------------------
-ISR: TC1_IrqHandler
-
-Description:
-Parses the TC1 interrupts and handles them appropriately.  Note that all TC1
-interrupts are ORed and will trigger this handler, therefore any expected interrupt 
-that is enabled must be parsed out and handled.
-
-Requires:
-  - 
-
-Promises:
-  - If Channel1 RC: Timer Channel 1 is reset
 */
 void TC1_IrqHandler(void)
 {
@@ -350,13 +309,40 @@ void TC1_IrqHandler(void)
 } /* end TC1_IrqHandler() */
 
 
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+  
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn static void TimerDefaultCallback(void)
+
+@brief An empty function that the Timer Callback points to.  Expected that the 
+user will set their own.
+
+Requires:
+- NONE 
+
+Promises:
+- NONE 
+
+*/
+static void TimerDefaultCallback(void)
+{
+  
+} /* end TimerDefaultCallback() */
+
+
+
+
 /**********************************************************************************************************************
 State Machine Function Definitions
 **********************************************************************************************************************/
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a message to be queued */
-static void TimerSM_Idle(void)
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void TimerSM_Idle(void)
+
+@brief Wait for a message to be queued 
+*/static void TimerSM_Idle(void)
 {
    
 } /* end TimerSM_Idle() */
@@ -371,12 +357,6 @@ static void TimerSM_Error(void)
 } /* end TimerSM_Error() */
 #endif
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* State to sit in if init failed */
-static void TimerSM_FailedInit(void)          
-{
-    
-} /* end TimerSM_FailedInit() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

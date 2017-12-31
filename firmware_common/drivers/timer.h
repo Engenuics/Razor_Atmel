@@ -1,8 +1,6 @@
-/**********************************************************************************************************************
-File: timer.h                                                                
-
-Description:
-Header file for timer.c
+/*!**********************************************************************************************************************
+@file timer.h                                                                
+@brief Header file for timer.c
 
 **********************************************************************************************************************/
 
@@ -12,73 +10,70 @@ Header file for timer.c
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
+
+/*! 
+@enum TimerChannelType
+@brief Controlled list of available timer channels used in the member functions. 
+*/
 typedef enum {TIMER_CHANNEL0 = 0, TIMER_CHANNEL1 = 0x40, TIMER_CHANNEL2 = 0x80} TimerChannelType;
+
+
+/**********************************************************************************************************************
+Function Declarations
+**********************************************************************************************************************/
+
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @publicsection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_);
+void TimerStart(TimerChannelType eTimerChannel_);
+void TimerStop(TimerChannelType eTimerChannel_);
+u16 TimerGetTime(TimerChannelType eTimerChannel_);
+void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallBack_);
+
+
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+void TimerInitialize(void);
+void TimerRunActiveState(void);
+
+
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+static void TimerDefaultCallback(void);
+
+
+/***********************************************************************************************************************
+State Machine Declarations
+***********************************************************************************************************************/
+static void TimerSM_Idle(void);    
+static void TimerSM_Error(void);         
 
 
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
+
+/*! @cond DOXYGEN_EXCLUDE */
 /*----------------------------------------------------------------------------------------------------------------------
-Generic Timer Setup
+Timer Setup
 Internal timer clocks sources are based on MCK (48MHz)
 TIMER_CLOCK1 = MCK/2 (41.7ns / tick)
 TIMER_CLOCK2 = MCK/8 (167ns / tick)
 TIMER_CLOCK3 = MCK/32 (667ns / tick)
 TIMER_CLOCK4 = MCK/128 (2.67us / tick)
 TIMER_CLOCK5(1) SLCK
-*/
 
-/* TC Block Mode Register */
-#define TCB_BMR_INIT (u32)0x00100800
-/*
-    31 [0] Reserved
-    30 [0] "
-    29 [0] "
-    28 [0] "
-
-    27 [0] "
-    26 [0] "
-    25 [0] MAXFILT Filter period is 1 (not used)
-    24 [0] "
-
-    23 [0] "
-    22 [0] "
-    21 [0] "
-    20 [1] "
-
-    19 [0] FILTER IDX, PHA, PHB not filtered
-    18 [0] Reserved
-    17 [0] IDXPHB IDX pin drives TIOA1
-    16 [0] SWAP No swap between PHA and PHB
-
-    15 [0] INVIDX IDX directly drives quadrature logic
-    14 [0] INVB PHB directly drive quadrature decoder logic
-    13 [0] INVA PHA directly drive quadrature decoder logic
-    12 [0] EDGPHA Edges detected on PHA and PHB
-
-    11 [1] QDTRANS Quadrature decoding logic is inactive
-    10 [0] SPEEDEN Speed measure disabled
-    09 [0] POSEN Position measure disabled
-    08 [0] QDEN Quadrature decoder logic disabled
-
-    07 [0] Reserved
-    06 [0] "
-    05 [0] TC2XC2S TCLK2 connected to XC2
-    04 [0] "
-
-    03 [0] TC1XC1S TCLK1 connected to XC1
-    02 [0] "
-    01 [0] TC0XC0S TCLK0 connected to XC0
-    00 [0] "
-*/
-      
-
-/* Timer Channel 1 Setup
-Note:
-PA26 is an open pin avaialble as external clock input TCLK2 if set for Peripheral B function 
+PA0 is an open pin available for TIOB0
+PA26 is an open pin availble as external clock input TCLK2 if set for Peripheral B function 
 PB5 is an open pin available for TIOA1 I/O function if set for Peripheral A 
 PB6 is an open pin available for TIOB1 I/O function if set for Peripheral A 
+
 */
+
+/* Timer Channel 1 Setup */
 
 /* Default Timer 1 interrupt period of just about 100us (1 tick = 2.67us); max 65535 */
 #define TC1_RC_INIT (u32)37
@@ -166,41 +161,53 @@ PB6 is an open pin available for TIOB1 I/O function if set for Peripheral A
     00 [1] COVFS Counter Overflow interrupt disabled
 */
 
+/* TC Block Mode Register */
+#define TCB_BMR_INIT (u32)0x00100800
+/*
+    31 [0] Reserved
+    30 [0] "
+    29 [0] "
+    28 [0] "
 
-/**********************************************************************************************************************
-Function Declarations
-**********************************************************************************************************************/
+    27 [0] "
+    26 [0] "
+    25 [0] MAXFILT Filter period is 1 (not used)
+    24 [0] "
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions                                                                                                   */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_);
-void TimerStart(TimerChannelType eTimerChannel_);
-void TimerStop(TimerChannelType eTimerChannel_);
-u16 TimerGetTime(TimerChannelType eTimerChannel_);
-void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallBack_);
+    23 [0] "
+    22 [0] "
+    21 [0] "
+    20 [1] "
+
+    19 [0] FILTER IDX, PHA, PHB not filtered
+    18 [0] Reserved
+    17 [0] IDXPHB IDX pin drives TIOA1
+    16 [0] SWAP No swap between PHA and PHB
+
+    15 [0] INVIDX IDX directly drives quadrature logic
+    14 [0] INVB PHB directly drive quadrature decoder logic
+    13 [0] INVA PHA directly drive quadrature decoder logic
+    12 [0] EDGPHA Edges detected on PHA and PHB
+
+    11 [1] QDTRANS Quadrature decoding logic is inactive
+    10 [0] SPEEDEN Speed measure disabled
+    09 [0] POSEN Position measure disabled
+    08 [0] QDEN Quadrature decoder logic disabled
+
+    07 [0] Reserved
+    06 [0] "
+    05 [0] TC2XC2S TCLK2 connected to XC2
+    04 [0] "
+
+    03 [0] TC1XC1S TCLK1 connected to XC1
+    02 [0] "
+    01 [0] TC0XC0S TCLK0 connected to XC0
+    00 [0] "
+*/
+      
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions                                                                                                */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void TimerInitialize(void);
-void TimerRunActiveState(void);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions                                                                                                  */
-/*--------------------------------------------------------------------------------------------------------------------*/
-static void TimerDefaultCallback(void);
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-static void TimerSM_Idle(void);    
-
-static void TimerSM_Error(void);         
-static void TimerSM_FailedInit(void);        
+/*! @endcond */
 
 
 #endif /* __TIMER_H */
