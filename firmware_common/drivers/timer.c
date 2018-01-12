@@ -10,7 +10,7 @@ CONSTANTS
 - NONE
 
 TYPES
-- TimerChannelType: TIMER_CHANNEL0, TIMER_CHANNEL1, TIMER_CHANNEL2
+- TimerChannelType: TIMER0_CHANNEL0, TIMER0_CHANNEL1, TIMER0_CHANNEL2
 
 PUBLIC FUNCTIONS
 - void TimerSet(TimerChannelType eTimerChannel_, u16 u16TimerValue_)
@@ -47,8 +47,8 @@ extern volatile u32 G_u32ApplicationFlags;         /*!< @brief From main.c */
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Timer_<type>" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Timer_StateMachine;            /*!< @brief The state machine function pointer */
-static fnCode_type fpTimer1Callback;              /*!< @brief Timer1 ISR callback function pointer */
+static fnCode_type Timer_fpStateMachine;          /*!< @brief The state machine function pointer */
+static fnCode_type Timer_fpTimer1Callback;        /*!< @brief Timer1 ISR callback function pointer */
 
 static u32 Timer_u32Timer1Counter = 0;            /*!< @brief Track instances of The TC1 interrupt handler */
 
@@ -66,9 +66,13 @@ Function Definitions
 
 @brief Sets the timer tick period (interrupt rate).
 
+Based on the configuration value for the timer, each tick is 2.67us.  It is expected
+the user knows this and u16TimerValue_ holds a multiple of 2.67us that is
+desired to be timed.
+
 Requires:
 @param eTimerChannel_ holds a valid channel
-@param u16TimerValue_ x in ticks
+@param u16TimerValue_ is the number of ticks that will be timed
 
 Promises:
 - Updates register TC_RC value with u16TimerValue_
@@ -177,16 +181,16 @@ void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCall
 {
   switch(eTimerChannel_)
   {
-    case TIMER_CHANNEL0:
+    case TIMER0_CHANNEL0:
     {
       break;
     }
-    case TIMER_CHANNEL1:
+    case TIMER0_CHANNEL1:
     {
-      fpTimer1Callback = fpUserCallback_;
+      Timer_fpTimer1Callback = fpUserCallback_;
       break;
     }
-    case TIMER_CHANNEL2:
+    case TIMER0_CHANNEL2:
     {
       break;
     }
@@ -219,11 +223,11 @@ void TimerInitialize(void)
 {
   u8 au8TimerStarted[] = "Timer1 initialized\n\r";
 
-  /* Channel 0 settings not configured at this time */
-
-  /* Load the block configuration register */
-  AT91C_BASE_TCB1->TCB_BMR = TCB_BMR_INIT;
+  /* Load the block configuration registers */
+  AT91C_BASE_TCB0->TCB_BMR = TCB_BMR_INIT;
  
+  /* Channel 0 and 2 settings not configured at this time */
+
   /* Load Channel 1 settings and set the default callback */
   AT91C_BASE_TC1->TC_CMR = TC1_CMR_INIT;
   AT91C_BASE_TC1->TC_RC  = TC1_RC_INIT;
@@ -231,9 +235,7 @@ void TimerInitialize(void)
   AT91C_BASE_TC1->TC_IDR = TC1_IDR_INIT;
   AT91C_BASE_TC1->TC_CCR = TC1_CCR_INIT;
  
-  fpTimer1Callback = TimerDefaultCallback;
-
-  /* Channel 2 settings not configured at this time */
+  Timer_fpTimer1Callback = TimerDefaultCallback;
   
   /* If good initialization, set state to Idle */
   if( 1 )
@@ -241,7 +243,7 @@ void TimerInitialize(void)
     /* Enable required interrupts */
     NVIC_ClearPendingIRQ(IRQn_TC1);
     NVIC_EnableIRQ(IRQn_TC1);
-    Timer_StateMachine = TimerSM_Idle;
+    Timer_fpStateMachine = TimerSM_Idle;
     DebugPrintf(au8TimerStarted);
     
     /* Flag that the Timer task is ready */
@@ -250,7 +252,7 @@ void TimerInitialize(void)
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    Timer_StateMachine = TimerSM_Error;
+    Timer_fpStateMachine = TimerSM_Error;
   }
 
 } /* end TimerInitialize() */
@@ -273,7 +275,7 @@ Promises:
 */
 void TimerRunActiveState(void)
 {
-  Timer_StateMachine();
+  Timer_fpStateMachine();
 
 } /* end TimerRunActiveState */
 
@@ -300,7 +302,7 @@ void TC1_IrqHandler(void)
   if(AT91C_BASE_TC1->TC_SR & AT91C_TC_CPCS)
   {
     Timer_u32Timer1Counter++;
-    fpTimer1Callback();
+    Timer_fpTimer1Callback();
   }
 
   /* Clear the TC0 pending flag and exit */
@@ -348,14 +350,13 @@ State Machine Function Definitions
 } /* end TimerSM_Idle() */
      
 
-#if 0
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void TimerSM_Error(void)          
 {
   
 } /* end TimerSM_Error() */
-#endif
+
 
 
 

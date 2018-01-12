@@ -15,7 +15,7 @@ Type Definitions
 @enum TimerChannelType
 @brief Controlled list of available timer channels used in the member functions. 
 */
-typedef enum {TIMER_CHANNEL0 = 0, TIMER_CHANNEL1 = 0x40, TIMER_CHANNEL2 = 0x80} TimerChannelType;
+typedef enum {TIMER0_CHANNEL0 = 0, TIMER0_CHANNEL1 = 0x40, TIMER0_CHANNEL2 = 0x80} TimerChannelType;
 
 
 /**********************************************************************************************************************
