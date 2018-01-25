@@ -1,8 +1,6 @@
-/**********************************************************************************************************************
-File: messaging.h                                                                
-
-Description:
-This is a messaging .h file new source code header file.
+/*!**********************************************************************************************************************
+@file messaging.h                                                                
+@brief Header file for messaging.c
 **********************************************************************************************************************/
 
 #ifndef __MESSAGING_H
@@ -35,9 +33,16 @@ Queue size in bytes is TX_QUEUE_SIZE x MAX_TX_MESSAGE_LENGTH */
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
+/*! 
+@enum MessageStateType
+@brief Possible statuses of a message in the queue. 
+*/
 typedef enum {EMPTY = 0, WAITING, SENDING, RECEIVING, COMPLETE, TIMEOUT, ABANDONED, NOT_FOUND = 0xff} MessageStateType;
 
-/* Message struct for data messages */
+/*! 
+@enum MessageType
+@brief Message struct for data messages 
+*/
 typedef struct
 {
   u32 u32Token;                         /* Unigue token for this message */
@@ -46,32 +51,40 @@ typedef struct
   void* psNextMessage;                  /* Pointer to next message */
 } MessageType;
 
-typedef struct
+/*! 
+@enum MessageSlotType
+@brief Message node in the message list 
+*/
+  typedef struct
 {
   bool bFree;                           /* TRUE if message slot is available */
   MessageType Message;                  /* The slot's message */
-} MessageSlot;
+} MessageSlotType;
 
+/*! 
+@enum MessageStatusType
+@brief Message tracking information 
+*/
 typedef struct
 {
   u32 u32Token;                         /* Unigue token for this message; a token is never 0 */
   MessageStateType eState;              /* State of the message */
   u32 u32Timestamp;                     /* Time the message status was posted */          
-} MessageStatus;
+} MessageStatusType;
 
 
 /**********************************************************************************************************************
 * Function Declarations
 **********************************************************************************************************************/
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 MessageStateType QueryMessageStatus(u32 u32Token_);
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 void MessagingInitialize(void);
 void MessagingRunActiveState(void);
@@ -82,8 +95,8 @@ void DeQueueMessage(MessageType** pTargetQueue_);
 void UpdateMessageStatus(u32 u32Token_, MessageStateType eNewState_);
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 static void AddNewMessageStatus(u32 u32Token_);
 
@@ -93,6 +106,8 @@ State Machine Declarations
 ***********************************************************************************************************************/
 static void MessagingSM_Idle(void);             
 static void MessagingSM_Error(void);         
+
+
 
 
 #endif /* __MESSAGING_H */
