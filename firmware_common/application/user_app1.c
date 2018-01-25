@@ -41,7 +41,7 @@ PROTECTED FUNCTIONS
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_UserApp1"
+All Global variable names shall start with "G_<type>UserApp1"
 ***********************************************************************************************************************/
 /* New variables */
 volatile u32 G_u32UserApp1Flags;                          /*!< @brief Global state flags */
@@ -49,17 +49,17 @@ volatile u32 G_u32UserApp1Flags;                          /*!< @brief Global sta
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;                   /*!<@brief From main.c */
-extern volatile u32 G_u32SystemTime1s;                    /*!<@brief From main.c */
+extern volatile u32 G_u32SystemTime1ms;                   /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;                    /*!< @brief From main.c */
 extern volatile u32 G_u32SystemFlags;                     /*!< @brief From main.c */
 extern volatile u32 G_u32ApplicationFlags;                /*!< @brief From main.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "UserApp1_" and be declared as static.
+Variable names shall start with "UserApp1_<type>" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type UserApp1_StateMachine;                 /*!< @brief The state machine function pointer */
+static fnCode_type UserApp1_pfStateMachine;               /*!< @brief The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                           /*!< @brief Timeout counter used across states */
 
 
@@ -74,7 +74,6 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
-
 
 /*!--------------------------------------------------------------------------------------------------------------------
 @fn void UserApp1Initialize(void)
@@ -96,12 +95,12 @@ void UserApp1Initialize(void)
   /* If good initialization, set state to Idle */
   if( 1 )
   {
-    UserApp1_StateMachine = UserApp1SM_Idle;
+    UserApp1_pfStateMachine = UserApp1SM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp1_StateMachine = UserApp1SM_Error;
+    UserApp1_pfStateMachine = UserApp1SM_Error;
   }
 
 } /* end UserApp1Initialize() */
@@ -124,7 +123,7 @@ Promises:
 */
 void UserApp1RunActiveState(void)
 {
-  UserApp1_StateMachine();
+  UserApp1_pfStateMachine();
 
 } /* end UserApp1RunActiveState */
 
@@ -138,7 +137,7 @@ void UserApp1RunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for ??? */
+/* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
     

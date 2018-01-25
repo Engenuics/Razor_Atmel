@@ -470,7 +470,6 @@ void PWMSetupAudio(void)
 {
   /* Set all intialization values */
   AT91C_BASE_PWMC->PWMC_CLK = PWM_CLK_INIT;
-  AT91C_BASE_PWMC->PWMC_SCM = PWM_SCM_INIT;
   
   AT91C_BASE_PWMC_CH0->PWMC_CMR = PWM_CMR0_INIT;
   AT91C_BASE_PWMC_CH0->PWMC_CPRDR    = PWM_CPRD0_INIT; /* Set current frequency */

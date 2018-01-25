@@ -59,7 +59,7 @@ PROTECTED FUNCTIONS
 
 /***********************************************************************************************************************
 Global variable definitions with scope across entire project.
-All Global variable names shall start with "G_xxLed"
+All Global variable names shall start with "G_<type>Led"
 ***********************************************************************************************************************/
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* New variables (all shall start with G_xxLed*/
@@ -75,7 +75,7 @@ extern volatile u32 G_u32ApplicationFlags;             /*!< @brief From main.c *
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
-Variable names shall start with "Led_" and be declared as static.
+Variable names shall start with "Led_<type>" and be declared as static.
 ***********************************************************************************************************************/
 
 /************ %LED% EDIT BOARD-SPECIFIC GPIO DEFINITIONS BELOW ***************/
