@@ -54,13 +54,13 @@ Variable names shall start with "Msg_<type>" and be declared as static.
 static fnCode_type Messaging_pfnStateMachine;          /*!< @brief The state machine function pointer */
 static u32 Msg_u32Token;                               /*!< @brief Incrementing message token used for all external communications */
 
-static MessageSlotType Msg_asPool[TX_QUEUE_SIZE];      /*!< @brief Array of MessageSlotType used for the transmit queue */
+static MessageSlotType Msg_asPool[U8_TX_QUEUE_SIZE];   /*!< @brief Array of MessageSlotType used for the transmit queue */
 static u8 Msg_u8QueuedMessageCount;                    /*!< @brief Number of messages slots currently occupied */
 
 /* A separate status queue needs to be maintained since the message information in Msg_asPool will be lost when the message
 has been dequeued.  Applications must be able to query to determine the status of their message, particularly if
 it has been sent. */
-static MessageStatusType Msg_asStatusQueue[STATUS_QUEUE_SIZE]; /*!< @brief Array of MessageStatusType used to monitor message status */
+static MessageStatusType Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE]; /*!< @brief Array of MessageStatusType used to monitor message status */
 static MessageStatusType* Msg_psNextStatus;                    /*!< @brief Pointer to next available message status */
 
 
@@ -96,13 +96,13 @@ MessageStateType QueryMessageStatus(u32 u32Token_)
   
   /* Brute force search for the token - the queue will never be large enough on this system to require a more
   intelligent search algorithm */
-  while( (pListParser->u32Token != u32Token_) && (pListParser != &Msg_asStatusQueue[STATUS_QUEUE_SIZE]) )
+  while( (pListParser->u32Token != u32Token_) && (pListParser != &Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE]) )
   {
     pListParser++;
   }
 
   /* If the token was found pListParser is pointing at it, take appropriate action */
-  if(pListParser != &Msg_asStatusQueue[STATUS_QUEUE_SIZE])
+  if(pListParser != &Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE])
   {
     /* Save the status */
     eStatus = pListParser->eState;
@@ -151,7 +151,7 @@ u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8M
   u32 u32CurrentMessageSize = 0;
   
   /* Check for available space in the message pool */
-  if(Msg_u8QueuedMessageCount == TX_QUEUE_SIZE)
+  if(Msg_u8QueuedMessageCount == U8_TX_QUEUE_SIZE)
   {
     G_u32MessagingFlags |= _MESSAGING_TX_QUEUE_FULL;
     return(0);
@@ -165,7 +165,7 @@ u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8M
     Msg_u8QueuedMessageCount++;
     
     /* Flag if we're above the high watermark */
-    if(Msg_u8QueuedMessageCount >= TX_QUEUE_WATERMARK)
+    if(Msg_u8QueuedMessageCount >= U8_TX_QUEUE_WATERMARK)
     {
       G_u32MessagingFlags |= _MESSAGING_TX_QUEUE_ALMOST_FULL;
     }
@@ -186,10 +186,10 @@ u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8M
     psNewMessage = &(psSlotParser->Message);
   
     /* Check the message size and split the message up if necessary */
-    if(u32BytesRemaining > MAX_TX_MESSAGE_LENGTH)
+    if(u32BytesRemaining > U16_MAX_TX_MESSAGE_LENGTH)
     {
-      u32CurrentMessageSize = MAX_TX_MESSAGE_LENGTH;
-      u32BytesRemaining -= MAX_TX_MESSAGE_LENGTH;
+      u32CurrentMessageSize = U16_MAX_TX_MESSAGE_LENGTH;
+      u32BytesRemaining -= U16_MAX_TX_MESSAGE_LENGTH;
     }
     else
     {
@@ -276,13 +276,13 @@ void DeQueueMessage(MessageType** pTargetQueue_)
   
   /* Find the message's slot: this message pool is non-circular and the message must be one of the slots */
   psSlotParser = &Msg_asPool[0];
-  while( (&psSlotParser->Message != *pTargetQueue_) && (psSlotParser != &Msg_asPool[TX_QUEUE_SIZE]) )
+  while( (&psSlotParser->Message != *pTargetQueue_) && (psSlotParser != &Msg_asPool[U8_TX_QUEUE_SIZE]) )
   {
     psSlotParser++;
   }
 
   /* Make sure the message has been found */
-  if(psSlotParser == &Msg_asPool[TX_QUEUE_SIZE])
+  if(psSlotParser == &Msg_asPool[U8_TX_QUEUE_SIZE])
   {
     G_u32MessagingFlags |= _DEQUEUE_MSG_NOT_FOUND;
     return;
@@ -318,12 +318,12 @@ void MessagingInitialize(void)
   Msg_u32Token = 1;
 
   /* Ensure all message slots are deallocated and the message status queue is empty */
-  for(u16 i = 0; i < TX_QUEUE_SIZE; i++)
+  for(u16 i = 0; i < U8_TX_QUEUE_SIZE; i++)
   {
     Msg_asPool[i].bFree = TRUE;
   }
 
-  for(u16 i = 0; i < STATUS_QUEUE_SIZE; i++)
+  for(u16 i = 0; i < U8_STATUS_QUEUE_SIZE; i++)
   {
     Msg_asStatusQueue[i].u32Token = 0;
     Msg_asStatusQueue[i].eState = EMPTY;
@@ -378,13 +378,13 @@ void UpdateMessageStatus(u32 u32Token_, MessageStateType eNewState_)
   MessageStatusType* pListParser = &Msg_asStatusQueue[0];
   
   /* Search for the token */
-  while( (pListParser->u32Token != u32Token_) && (pListParser != &Msg_asStatusQueue[STATUS_QUEUE_SIZE]) )
+  while( (pListParser->u32Token != u32Token_) && (pListParser != &Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE]) )
   {
     pListParser++;
   }
 
   /* If the token was found, change the status */
-  if(pListParser != &Msg_asStatusQueue[STATUS_QUEUE_SIZE])
+  if(pListParser != &Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE])
   {
     pListParser->eState = eNewState_;
   }
@@ -421,7 +421,7 @@ static void AddNewMessageStatus(u32 u32Token_)
   
   /* Safely advance the pointer */
   Msg_psNextStatus++;
-  if(Msg_psNextStatus == &Msg_asStatusQueue[STATUS_QUEUE_SIZE])
+  if(Msg_psNextStatus == &Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE])
   {
     Msg_psNextStatus = &Msg_asStatusQueue[0];
   }

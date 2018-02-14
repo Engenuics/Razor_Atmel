@@ -944,7 +944,6 @@ void SspGenericHandler(void)
       {
         SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
       }
-      //SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
     }
   } /* end ENDTX interrupt handling */
 

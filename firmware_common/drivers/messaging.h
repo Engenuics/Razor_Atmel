@@ -17,17 +17,17 @@ Constants / Definitions
 #define _DEQUEUE_MSG_NOT_FOUND          (u32)0x00000008
   
 /* Tx buffer allocation: be aware of RAM usage when selecting the parameters below.
-Queue size in bytes is TX_QUEUE_SIZE x MAX_TX_MESSAGE_LENGTH */
+Queue size in bytes is U8_TX_QUEUE_SIZE x U16_MAX_TX_MESSAGE_LENGTH */
 
-#define TX_QUEUE_SIZE                   (u8)16         /* Number of messages allowed in the queue */
-#define MAX_TX_MESSAGE_LENGTH           (u16)128       /* Max bytes in message payload */
-#define TX_QUEUE_WATERMARK              (u8)(TX_QUEUE_SIZE - 2) /* Number of messages in the queue that will trigger a warning flag */
-#define STATUS_QUEUE_SIZE               (u8)64         /* Number of message statusi to maintain */
+#define U8_TX_QUEUE_SIZE                (u8)32         /* Number of messages allowed in the queue */
+#define U16_MAX_TX_MESSAGE_LENGTH       (u16)128       /* Max bytes in message payload */
+#define U8_TX_QUEUE_WATERMARK           (u8)(U8_TX_QUEUE_SIZE - 2) /* Number of messages in the queue that will trigger a warning flag */
+#define U8_STATUS_QUEUE_SIZE            (u8)64         /* Number of message statusi to maintain */
 
-#define MSG_STATUS_COMPLETE_TIME        (u32)1000      /* Max time in ms that a message status can sit in the status queue in a COMPLETE state */
-#define MSG_STATUS_WAITING_TIME         (u32)1000      /* Max time in ms that a message can sit in the queue in a WAITING state */
-#define MSG_STATUS_TIMEOUT_TIME         (u32)1500      /* Max time in ms that a message status can sit in the status queue in a TIMEOUT state */
-#define MSG_STATUS_CLEANING_TIME        (u32)1000      /* Time in ms between cleaning the message queue */
+#define U32_MSG_STATUS_COMPLETE_TIME    (u32)1000      /* Max time in ms that a message status can sit in the status queue in a COMPLETE state */
+#define U32_MSG_STATUS_WAITING_TIME     (u32)1000      /* Max time in ms that a message can sit in the queue in a WAITING state */
+#define U32_MSG_STATUS_TIMEOUT_TIME     (u32)1500      /* Max time in ms that a message status can sit in the status queue in a TIMEOUT state */
+#define U32_MSG_STATUS_CLEANING_TIME    (u32)1000      /* Time in ms between cleaning the message queue */
 
 
 /**********************************************************************************************************************
@@ -47,7 +47,7 @@ typedef struct
 {
   u32 u32Token;                         /* Unigue token for this message */
   u32 u32Size;                          /* Size of the data payload in bytes */
-  u8 pu8Message[MAX_TX_MESSAGE_LENGTH]; /* Data payload array */
+  u8 pu8Message[U16_MAX_TX_MESSAGE_LENGTH]; /* Data payload array */
   void* psNextMessage;                  /* Pointer to next message */
 } MessageType;
 
