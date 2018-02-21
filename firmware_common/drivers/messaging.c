@@ -5,8 +5,18 @@ smart queue system for outgoing data.
 
 Any message being transferred by a peripheral is kept here.  As the peripheral sends the message,
 it talks to messaging.c to get data and update the message status.  
+
 All interaction between the peripheral and this task is through unique message tokens that are assigned
 to every message queued to messaging.c
+
+The API is simplified and provides just a single function for high-level client tasks to check the
+status of their message based on a provided unique token.  If the status of a message is such that
+it will no longer change (i.e. COMPLETE, TIMOEOUT, ABANDONDED) then that message's status in the loop
+will be cleared automatically.  There is ample room in the message status array to keep sufficient message 
+status history given the processing time of the firmware.  However, the status array is circular so 
+message statuses can be lost eventually.  If a task waits too long and received a "NOT FOUND" status 
+because they have waited too long, the task should increase the frequency at which it queries the 
+message status.
 
 ------------------------------------------------------------------------------------------------------------------------
 GLOBALS
@@ -16,7 +26,7 @@ CONSTANTS
 - NONE
 
 TYPES
-- MessageStateType {EMPTY, WAITING, SENDING, RECEIVING, COMPLETE, 
+- MessageStateType {EMPTY, WAITING, SENDING, COMPLETE, 
                     TIMEOUT, ABANDONED, NOT_FOUND}
 
 PUBLIC FUNCTIONS
@@ -24,7 +34,7 @@ PUBLIC FUNCTIONS
 
 PROTECTED FUNCTIONS
 - void MessagingInitialize(void)
-- u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
+- u32 QueueMessage(MessageType** ppsTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
 - void DeQueueMessage(MessageType** pTargetQueue_)
 - void UpdateMessageStatus(u32 u32Token_, MessageStateType eNewState_)
 
@@ -52,6 +62,7 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "Msg_<type>" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type Messaging_pfnStateMachine;          /*!< @brief The state machine function pointer */
+
 static u32 Msg_u32Token;                               /*!< @brief Incrementing message token used for all external communications */
 
 static MessageSlotType Msg_asPool[U8_TX_QUEUE_SIZE];   /*!< @brief Array of MessageSlotType used for the transmit queue */
@@ -75,28 +86,31 @@ Function Definitions
 /*!---------------------------------------------------------------------------------------------------------------------
 @fn MessageStateType QueryMessageStatus(u32 u32Token_)
 
-@brief Checks the state of a message.  
+@brief Checks the state of a message and returns the current MessageStateType
 
-If the state is COMPLETE or TIMEOUT, the status is deleted from the message queue.
-Since the queue is quite short, most of the time it will hold very little entires.  New entries are always filled at the front,
-using a simple linear search starting at index 0.
+If the state is COMPLETE, TIMEOUT or ABANDONED, calling this function
+forces the associated status to be cleared from the message queue.
+Since the queue is quite short, most of the time it will hold very little entries.  
+New entries are always filled at the front, using a simple linear search starting at index 0.
 
 Requires:
 @param u32Token_ is the token (ID) of the message of interest
 
 Promises:
 - Returns MessageStateType indicating the status of the message
-- if the message is found in COMPLETE or TIMEOUT state, the status is removed from the queue
+- if the message is found in COMPLETE, TIMEOUT, or ABANDONED state, the status is removed from
+the queue and time-stamped for debugging purposes.
 
 */
 MessageStateType QueryMessageStatus(u32 u32Token_)
 {
-  MessageStateType eStatus   = NOT_FOUND;
+  MessageStateType eStatus = NOT_FOUND;
   MessageStatusType* pListParser = &Msg_asStatusQueue[0];
   
   /* Brute force search for the token - the queue will never be large enough on this system to require a more
   intelligent search algorithm */
-  while( (pListParser->u32Token != u32Token_) && (pListParser != &Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE]) )
+  while( (pListParser->u32Token != u32Token_) && 
+         (pListParser != &Msg_asStatusQueue[U8_STATUS_QUEUE_SIZE]) )
   {
     pListParser++;
   }
@@ -108,13 +122,15 @@ MessageStateType QueryMessageStatus(u32 u32Token_)
     eStatus = pListParser->eState;
 
     /* Release the slot if the message state is final (the client must deal with it now) */
-    if( (eStatus == COMPLETE) || (eStatus == TIMEOUT) )
+    if( (eStatus == COMPLETE) || (eStatus == TIMEOUT) || (eStatus == ABANDONED) )
     {
       pListParser->u32Token = 0;
       pListParser->eState = EMPTY;
+      pListParser->u32Timestamp = G_u32SystemTime1ms;
     }
   }
 
+  /* If the message was not found, the state is already set correctly, so just return */
   return(eStatus);
   
 } /* end QueryMessageStatus() */
@@ -125,15 +141,91 @@ MessageStateType QueryMessageStatus(u32 u32Token_)
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*!--------------------------------------------------------------------------------------------------------------------
-@fn u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
+@fn void MessagingInitialize(void)
 
+@brief Runs required initialization for the task.  
+
+Should only be called once in main init section.
+
+Requires:
+- No messaging in progress
+
+Promises:
+- Message queues are zeroed
+- Flags and state machine are initialized
+
+*/
+void MessagingInitialize(void)
+{
+  /* Initialize variables */
+  Msg_u8QueuedMessageCount = 0;
+  Msg_u32Token = 1;
+
+  /* Ensure all message slots are deallocated and the message status queue is empty */
+  for(u8 i = 0; i < U8_TX_QUEUE_SIZE; i++)
+  {
+    /* Clear the Slot value */
+    Msg_asPool[i].bFree = TRUE;
+    
+    /* Clear the slot's message values */
+    Msg_asPool[i].Message.u32Token = 0;
+    Msg_asPool[i].Message.u32Size = 0;
+    Msg_asPool[i].Message.psNextMessage = NULL;
+    
+    /* Clear the slot's message's contents */
+    for(u16 j = 0; j < U16_MAX_TX_MESSAGE_LENGTH; j++)
+    {
+      *(Msg_asPool[i].Message.pu8Message + j) = 0;
+    }
+  }
+
+  /* Clear the message status queue */
+  for(u8 i = 0; i < U8_STATUS_QUEUE_SIZE; i++)
+  {
+    Msg_asStatusQueue[i].u32Token = 0;
+    Msg_asStatusQueue[i].eState = EMPTY;
+    Msg_asStatusQueue[i].u32Timestamp = 0;
+  }
+
+  Msg_psNextStatus = &Msg_asStatusQueue[0];
+
+  G_u32MessagingFlags = 0;
+  Messaging_pfnStateMachine = MessagingSM_Idle;
+
+} /* end MessagingInitialize() */
+
+
+/*!--------------------------------------------------------------------------------------------------------------------
+@fn void MessagingRunActiveState(void)
+
+@brief Selects and runs one iteration of the current state in the state machine.
+
+All state machines have a TOTAL of 1ms to execute, so on average n state machines
+may take 1ms / n to execute.
+
+Requires:
+- State machine function pointer points at current state
+
+Promises:
+- Calls the function to pointed by the state machine function pointer
+
+*/
+void MessagingRunActiveState(void)
+{
+  Messaging_pfnStateMachine();
+
+} /* end MessagingRunActiveState */
+
+
+/*!--------------------------------------------------------------------------------------------------------------------
+@fn u32 QueueMessage(MessageType** ppsTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
 
 @brief Allocates one of the positions in the message queue to the calling function's send queue.
 
 Requires:
 - Msg_asPool should not be full 
 
-@param  ppeTargetTxBuffer_ is the peripheral transmit buffer where the message will be queued
+@param  ppsTargetTxBuffer_ is the peripheral transmit buffer where the message will be queued
 @param  u32MessageSize_ is the size of the message data array in bytes
 @param  pu8MessageData_ points to the message data array
 
@@ -142,27 +234,44 @@ Promises:
 - If the message is created successfully, the message token is returned; otherwise, NULL is returned
 
 */
-u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
+u32 QueueMessage(MessageType** ppsTargetTxBuffer_, u32 u32MessageSize_, u8* pu8MessageData_)
 {
   MessageSlotType *psSlotParser;
   MessageType *psNewMessage;
   MessageType *psListParser;
+  u32 u32SlotsRequired;
   u32 u32BytesRemaining = u32MessageSize_;
   u32 u32CurrentMessageSize = 0;
   
-  /* Check for available space in the message pool */
-  if(Msg_u8QueuedMessageCount == U8_TX_QUEUE_SIZE)
+  /* Check for empty message */
+  if(u32MessageSize_ == 0)
+  {
+    return(0);
+  }
+
+  /* Carefully check for available space in the message pool */
+  u32SlotsRequired = (u32MessageSize_ / U16_MAX_TX_MESSAGE_LENGTH);
+  if( (u32MessageSize_ % U16_MAX_TX_MESSAGE_LENGTH) != 0 )
+  {
+    u32SlotsRequired++;
+  }
+
+  if( (Msg_u8QueuedMessageCount + u32SlotsRequired) > U8_TX_QUEUE_SIZE)
   {
     G_u32MessagingFlags |= _MESSAGING_TX_QUEUE_FULL;
     return(0);
   }
-
+  
   /* Space available, so proceed with allocation.  Though only one message is queued at a time, we
   use a while loop to handle messages that are too big and must be split into different slots.  The slots
   are always sequential and the message processor will send the bytes continuously across slots */
   while(u32BytesRemaining)
   {
+    /* Increment the message count.  Interrupts are disabled here since this global
+    can be accessed by an interrupt. */
+    __disable_irq();
     Msg_u8QueuedMessageCount++;
+    __enable_irq();
     
     /* Flag if we're above the high watermark */
     if(Msg_u8QueuedMessageCount >= U8_TX_QUEUE_WATERMARK)
@@ -208,18 +317,21 @@ u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8M
       *(psNewMessage->pu8Message + i) = *pu8MessageData_++;
     }
   
-    /* Link the new message into the client's transmit buffer */
+    /* Link the new message into the client's transmit buffer.  This must happen
+    with interrupts off since other functions can operate on the transmit buffer. */
+    __disable_irq();
+    
     /* Handle an empty list */
-    if(*ppeTargetTxBuffer_ == NULL)
+    if(*ppsTargetTxBuffer_ == NULL)
     {
-      *ppeTargetTxBuffer_ = psNewMessage;
+      *ppsTargetTxBuffer_ = psNewMessage;
     }
 
     /* Add the message to the end of the list */
     else
     {
       /* Find the last node */
-      psListParser =  *ppeTargetTxBuffer_;
+      psListParser = *ppsTargetTxBuffer_;
       while(psListParser->psNextMessage != NULL)
       {
         psListParser = psListParser->psNextMessage;
@@ -228,12 +340,16 @@ u32 QueueMessage(MessageType** ppeTargetTxBuffer_, u32 u32MessageSize_, u8* pu8M
       /* Found the end: add the new node */
       psListParser->psNextMessage = psNewMessage;
     }
-  
+    
+    /* Safe to re-enable interrupts */
+    __enable_irq();
+    
     /* Update the Public status of the message in the status queue */
     AddNewMessageStatus(Msg_u32Token);
   
     /* Increment message token and catch the rollover every 4 billion messages... Token 0 is not allowed. */
-    if(++Msg_u32Token == 0)
+    Msg_u32Token++;
+    if(Msg_u32Token == 0)
     {
       Msg_u32Token = 1;
     }
@@ -276,7 +392,8 @@ void DeQueueMessage(MessageType** pTargetQueue_)
   
   /* Find the message's slot: this message pool is non-circular and the message must be one of the slots */
   psSlotParser = &Msg_asPool[0];
-  while( (&psSlotParser->Message != *pTargetQueue_) && (psSlotParser != &Msg_asPool[U8_TX_QUEUE_SIZE]) )
+  while( (&psSlotParser->Message != *pTargetQueue_) && 
+         (psSlotParser != &Msg_asPool[U8_TX_QUEUE_SIZE]) )
   {
     psSlotParser++;
   }
@@ -297,70 +414,6 @@ void DeQueueMessage(MessageType** pTargetQueue_)
 
 
 /*!--------------------------------------------------------------------------------------------------------------------
-@fn void MessagingInitialize(void)
-
-@brief Runs required initialization for the task.  
-
-Should only be called once in main init section.
-
-Requires:
-- No messaging in progress
-
-Promises:
-- Message queues are zeroed
-- Flags and state machine are initialized
-
-*/
-void MessagingInitialize(void)
-{
-  /* Inititalize variables */
-  Msg_u8QueuedMessageCount = 0;
-  Msg_u32Token = 1;
-
-  /* Ensure all message slots are deallocated and the message status queue is empty */
-  for(u16 i = 0; i < U8_TX_QUEUE_SIZE; i++)
-  {
-    Msg_asPool[i].bFree = TRUE;
-  }
-
-  for(u16 i = 0; i < U8_STATUS_QUEUE_SIZE; i++)
-  {
-    Msg_asStatusQueue[i].u32Token = 0;
-    Msg_asStatusQueue[i].eState = EMPTY;
-    Msg_asStatusQueue[i].u32Timestamp = 0;
-  }
-
-  Msg_psNextStatus = &Msg_asStatusQueue[0];
-
-  G_u32MessagingFlags = 0;
-  Messaging_pfnStateMachine = MessagingSM_Idle;
-
-} /* end MessagingInitialize() */
-
-
-/*!--------------------------------------------------------------------------------------------------------------------
-@fn void MessagingRunActiveState(void)
-
-@brief Selects and runs one iteration of the current state in the state machine.
-
-All state machines have a TOTAL of 1ms to execute, so on average n state machines
-may take 1ms / n to execute.
-
-Requires:
-- State machine function pointer points at current state
-
-Promises:
-- Calls the function to pointed by the state machine function pointer
-
-*/
-void MessagingRunActiveState(void)
-{
-  Messaging_pfnStateMachine();
-
-} /* end MessagingRunActiveState */
-
-
-/*!--------------------------------------------------------------------------------------------------------------------
 @fn void UpdateMessageStatus(u32 u32Token_, MessageStateType eNewState_)
 
 @brief Changes the status of a message in the statue queue.
@@ -370,7 +423,7 @@ Requires:
 @param eNewState_ is the desired status setting for the message
 
 Promises:
-- eState of the message is set to eNewState_
+- if the token is found, the eState of the message is set to eNewState_
 
 */
 void UpdateMessageStatus(u32 u32Token_, MessageStateType eNewState_)
@@ -399,22 +452,24 @@ void UpdateMessageStatus(u32 u32Token_, MessageStateType eNewState_)
 /*!--------------------------------------------------------------------------------------------------------------------
 @fn static void AddNewMessageStatus(u32 u32Token_)
 
-@brief Adds a new mesage into the status queue.  
+@brief Adds a new message into the message status queue.  
 
-Due to the tendancy of applications to forget that they wrote
-a message here, this buffer is circular and will overwite the oldest message if it needs space for a 
+Due to the tendency of applications to forget that they wrote a message here, 
+this buffer is circular and will overwrite the oldest message if it needs space for a 
 new message.
 
 Requires:
-@param  u32Token_ is the message of interest
+- Msg_psNextStatus points to the next status location
+
+@param u32Token_ is the token of the message of interest
 
 Promises:
-- A new status is created indexed by u32Token_
+- A new status is created at Msg_psNextStatus indexed by u32Token_
 
 */
 static void AddNewMessageStatus(u32 u32Token_)
 {
-  /* Install the new message message */
+  /* Install the new message */
   Msg_psNextStatus->u32Token = u32Token_;
   Msg_psNextStatus->eState = WAITING;
   Msg_psNextStatus->u32Timestamp = G_u32SystemTime1ms;
@@ -440,12 +495,12 @@ State Machine Function Definitions
 */
 static void MessagingSM_Idle(void)
 {
-  static u32 u32CleaningTime = MSG_STATUS_CLEANING_TIME;
+  static u32 u32CleaningTime = U32_MSG_STATUS_CLEANING_TIME;
   
   /* Periodically check for stale messages */
   if(--u32CleaningTime == 0)
   {
-    u32CleaningTime = MSG_STATUS_CLEANING_TIME;
+    u32CleaningTime = U32_MSG_STATUS_CLEANING_TIME;
     
     /* ??? Probably should add clean of the main message queue to detect any messages that have become stuck */
   }

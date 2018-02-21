@@ -64,7 +64,7 @@ static TWIPeripheralType* TWI0;
 
 static u32 TWI_u32CurrentBytesRemaining;                        /* Down counter for number of bytes being clocked out */
 static u8* TWI_pu8CurrentTxData;                                /* Pointer to current message being clocked out */
-static TWIMessageQueueType TWI_MessageBuffer[TX_QUEUE_SIZE];    /* A circular buffer that stores queued msgs stop condition */
+static TWIMessageQueueType TWI_MessageBuffer[U8_TX_QUEUE_SIZE]; /* A circular buffer that stores queued msgs stop condition */
 static u8 TWI_MessageBufferNextIndex;                           /* A pointer to the next position to place a message */
 static u8 TWI_MessageBufferCurIndex;                            /* A pointer to the current message that is being processed */
 static u8 TWI_MessageQueueLength;                               /* Counter to track the number of messages stored in the queue */
@@ -91,7 +91,7 @@ Promises:
 */
 bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_)
 {
-  if(TWI_MessageQueueLength == TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
+  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
   {
     /* TWI Message Task Queue Full or the Tx transmit isn't complete */
     return FALSE;
@@ -111,7 +111,7 @@ bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_)
     /* Update array pointers and size */
     TWI_MessageBufferNextIndex++;
     TWI_MessageQueueLength++;
-    if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+    if(TWI_MessageBufferNextIndex == U8_TX_QUEUE_SIZE)
     {
       TWI_MessageBufferNextIndex = 0;
     }
@@ -145,7 +145,7 @@ Promises:
 */
 bool TWI0ReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_)
 {
-  if(TWI_MessageQueueLength == TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
+  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
   {
     /* TWI Message Task Queue Full or the Tx transmit isn't complete */
     return FALSE;
@@ -165,7 +165,7 @@ bool TWI0ReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_)
     /* Update array pointers and size */
     TWI_MessageBufferNextIndex++;
     TWI_MessageQueueLength++;
-    if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+    if(TWI_MessageBufferNextIndex == U8_TX_QUEUE_SIZE)
     {
       TWI_MessageBufferNextIndex = 0;
     }
@@ -202,7 +202,7 @@ u32 TWI0WriteByte(u8 u8SlaveAddress_, u8 u8Byte_, TWIStopType Send_)
   u32 u32Token;
   u8 u8Data = u8Byte_;
   
-  if(TWI_MessageQueueLength == TX_QUEUE_SIZE)
+  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE)
   {
     /* TWI Message Task Queue Full */
     return 0;
@@ -226,7 +226,7 @@ u32 TWI0WriteByte(u8 u8SlaveAddress_, u8 u8Byte_, TWIStopType Send_)
       /* Update array pointers and size */
       TWI_MessageBufferNextIndex++;
       TWI_MessageQueueLength++;
-      if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+      if(TWI_MessageBufferNextIndex == U8_TX_QUEUE_SIZE)
       {
         TWI_MessageBufferNextIndex = 0;
       }
@@ -266,7 +266,7 @@ u32 TWI0WriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TWIStopType Sen
 {
   u32 u32Token;
     
-  if(TWI_MessageQueueLength == TX_QUEUE_SIZE)
+  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE)
   {
     /* Queue Message in message system */
     return 0;
@@ -290,7 +290,7 @@ u32 TWI0WriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TWIStopType Sen
       /* Update array pointers and size */
       TWI_MessageBufferNextIndex++;
       TWI_MessageQueueLength++;
-      if(TWI_MessageBufferNextIndex == TX_QUEUE_SIZE)
+      if(TWI_MessageBufferNextIndex == U8_TX_QUEUE_SIZE)
       {
         TWI_MessageBufferNextIndex = 0;
       }
@@ -631,7 +631,7 @@ void TWISM_Transmitting(void)
     /* Update queue pointers */
     TWI_MessageBufferCurIndex++;
     TWI_MessageQueueLength--;
-    if(TWI_MessageBufferCurIndex == TX_QUEUE_SIZE)
+    if(TWI_MessageBufferCurIndex == U8_TX_QUEUE_SIZE)
     {
       TWI_MessageBufferCurIndex = 0;
     }
@@ -665,7 +665,7 @@ void TWISM_Receiving(void)
     /* Update queue pointers */
     TWI_MessageBufferCurIndex++;
     TWI_MessageQueueLength--;
-    if(TWI_MessageBufferCurIndex == TX_QUEUE_SIZE)
+    if(TWI_MessageBufferCurIndex == U8_TX_QUEUE_SIZE)
     {
       TWI_MessageBufferCurIndex = 0;
     }
@@ -693,7 +693,7 @@ void TWISM_Error(void)
       /* Remove the message from buffer queue */
       TWI_MessageBufferCurIndex++;
       TWI_MessageQueueLength--;
-      if(TWI_MessageBufferCurIndex == TX_QUEUE_SIZE)
+      if(TWI_MessageBufferCurIndex == U8_TX_QUEUE_SIZE)
       {
         TWI_MessageBufferCurIndex = 0;
       }

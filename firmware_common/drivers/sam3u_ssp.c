@@ -131,7 +131,7 @@ static SspPeripheralType* SSP_psCurrentSsp;      /* Current SSP peripheral being
 static SspPeripheralType* SSP_psCurrentISR;      /* Current SSP peripheral being processed in ISR */
 static u32* SSP_pu32SspApplicationFlagsISR;      /* Current SSP application status flags in ISR */
 
-//static u8 SSP_au8Dummies[MAX_TX_MESSAGE_LENGTH]; /* Array of dummy bytes sent to receive bytes from a slave */
+//static u8 SSP_au8Dummies[U16_MAX_TX_MESSAGE_LENGTH]; /* Array of dummy bytes sent to receive bytes from a slave */
 
 static u32 SSP_u32Int0Count = 0;                 /* Debug counter for SSP0 interrupts */
 static u32 SSP_u32Int1Count = 0;                 /* Debug counter for SSP1 interrupts */
@@ -486,7 +486,7 @@ bool SspReadData(SspPeripheralType* psSspPeripheral_, u16 u16Size_)
   u8 au8MsgTooBig[] = "\r\nSSP message to large\n\r";
   
   /* Do not allow if requested size is too large */
-  if(u16Size_ > MAX_TX_MESSAGE_LENGTH)
+  if(u16Size_ > U16_MAX_TX_MESSAGE_LENGTH)
   {
     DebugPrintf(au8MsgTooBig);
     return FALSE;
@@ -604,7 +604,7 @@ void SspInitialize(void)
   SSP_psCurrentSsp                = &SSP_Peripheral0;
   
   /* Fill the dummy array with SSP_DUMMY bytes */
-  //memset(SSP_au8Dummies, SSP_DUMMY_BYTE, MAX_TX_MESSAGE_LENGTH);
+  //memset(SSP_au8Dummies, SSP_DUMMY_BYTE, U16_MAX_TX_MESSAGE_LENGTH);
 
   /* Set application pointer */
   Ssp_pfnStateMachine = SspSM_Idle;

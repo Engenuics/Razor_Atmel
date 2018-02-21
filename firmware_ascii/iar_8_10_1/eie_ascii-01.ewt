@@ -2346,9 +2346,6 @@
     <group>
         <name>_CMSIS</name>
         <file>
-            <name>$PROJ_DIR$\..\..\firmware_common\cmsis\core_cm3.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\firmware_common\cmsis\core_cm3.h</name>
         </file>
     </group>
