@@ -70,7 +70,7 @@ typedef struct
 */
 typedef struct
 {
-  u32 u32Token;                         /* Unigue token for this message; a token is never 0 */
+  u32 u32Token;                         /* Uniqe token for this message; a token is never 0 */
   MessageStateType eState;              /* State of the message */
   u32 u32Timestamp;                     /* Time the message status was posted */          
 } MessageStatusType;

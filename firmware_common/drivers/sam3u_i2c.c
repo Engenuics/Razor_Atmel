@@ -466,7 +466,7 @@ static void TWIManualMode(void)
   while(TWI_u32Flags &_TWI_INIT_MODE)
   {
     TWI_StateMachine();
-    IsTimeUp(&TWI_u32Timer, 1);
+    while( !IsTimeUp(&TWI_u32Timer, 1) );
   }
       
 } /* end TWIManualMode() */

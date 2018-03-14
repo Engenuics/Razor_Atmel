@@ -660,7 +660,7 @@ void SspManualMode(void)
     Ssp_pfnStateMachine();
     
     SSP_u32Timer = G_u32SystemTime1ms;
-    IsTimeUp(&SSP_u32Timer, 1);
+    while( !IsTimeUp(&SSP_u32Timer, 1) );
   }
       
 } /* end SspManualMode() */

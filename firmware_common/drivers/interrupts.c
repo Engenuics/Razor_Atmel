@@ -112,7 +112,7 @@ In many cases, this is referencing an invalid address, but can be other
 events of various levels of mystery.  
 
 Requires:
--
+- NONE
 
 Promises:
 - Red LED is on, all others off
