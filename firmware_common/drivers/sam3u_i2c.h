@@ -49,19 +49,19 @@ typedef struct
 Constants / Definitions
 **********************************************************************************************************************/
 /* TWI_u32Flags (TWI application flags) */
-#define _TWI_INIT_MODE                 (u32)0x00000001   /* Set to push a transmit cycle during initialization mode */
+#define _TWI_INIT_MODE                 (u32)0x00000001     /* Set to push a transmit cycle during initialization mode */
 
-#define _TWI_ERROR_NACK                (u32)0x01000000   /* Set if a NACK is received */
-#define _TWI_ERROR_INTERRUPT           (u32)0x02000000   /* Set if an unexpected interrupt occurs */
+#define _TWI_ERROR_NACK                (u32)0x01000000     /* Set if a NACK is received */
+#define _TWI_ERROR_INTERRUPT           (u32)0x02000000     /* Set if an unexpected interrupt occurs */
 
 /* end of TWI_u32Flags */
 
-#define TWI_ERROR_FLAG_MASK            (u32)0xFF000000   /* AND to TWI_u32Flags to get just error flags */
+#define TWI_ERROR_FLAG_MASK            (u32)0xFF000000     /* AND to TWI_u32Flags to get just error flags */
 
-#define MAX_ATTEMPTS                   (u8)3             /* Number of attempts to send TWI msg */
+#define MAX_ATTEMPTS                   (u8)3               /* Number of attempts to send TWI msg */
 
-#define TWI_TX_FIFO_SIZE               (u8)1             /* Size of the peripheral's transmit FIFO in bytes */
-#define TWI_RX_FIFO_SIZE               (u8)1             /* Size of the peripheral's receive FIFO in bytes */
+#define TWI_TX_FIFO_SIZE               (u8)1               /* Size of the peripheral's transmit FIFO in bytes */
+#define TWI_RX_FIFO_SIZE               (u8)1               /* Size of the peripheral's receive FIFO in bytes */
 
 #define TWI_INIT_MSG_TIMEOUT           (u32)1000           /* Time in ms for init message to send */
 

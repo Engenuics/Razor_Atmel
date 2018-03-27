@@ -15,7 +15,7 @@ TYPES
 
 PUBLIC FUNCTIONS
 - bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
-- u8 ASCIIHexCharToChar(u8);
+- u8 ASCIIHexCharToNum(u8);
 - u8 HexToASCIICharUpper(u8 u8Char_);
 - u8 HexToASCIICharLower(u8 u8Char_);
 - u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_);
@@ -117,7 +117,7 @@ bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_)
 
 
 /*!---------------------------------------------------------------------------------------------------------------------
-@fn u8 ASCIIHexCharToChar(u8 u8Char_)
+@fn u8 ASCIIHexCharToNum(u8 u8Char_)
 
 @brief Determines the numerical value of a hexidecimal ASCII char of that number
 ('0' - 'F' or '0' - 'f' -> 0 - 15).
@@ -130,7 +130,7 @@ Promises:
 - Otherwise returns 0xff
 
 */
-u8 ASCIIHexCharToChar(u8 u8Char_)
+u8 ASCIIHexCharToNum(u8 u8Char_)
 {
   if( (u8Char_ >= '0') && (u8Char_ <= '9') )
     return(u8Char_ - NUMBER_ASCII_TO_DEC);

@@ -233,7 +233,7 @@ void DebugPrintNumber(u32 u32Number_)
   u8 u8CharCount = 0;
   u32 u32Temp, u32Divider = 1000000000;
   u8 *pu8Data;
-
+  
   /* Parse out all the digits, start counting after leading zeros */
   for(u8 index = 0; index < 10; index++)
   {

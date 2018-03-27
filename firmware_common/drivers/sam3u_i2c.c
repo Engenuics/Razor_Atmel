@@ -22,7 +22,7 @@ All of these functions return a value that should be checked to ensure the opera
 
 Both TWI0ReadByte and TWI0ReadData require that pu8RxBuffer is large enough to hold the data
 As well it is assumed, that since you know the amount of data to be sent, a stop can be sent
-when all bytes have benn received (and not tie the data and clock line low).
+when all bytes have been received (and not tie the data and clock line low).
 
 WriteByte and WriteData have the option to hold the lines low as it waits for more data 
 to be queue. If a stop condition is not sent only Writes can follow until a stop condition is
@@ -99,11 +99,11 @@ bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_)
   else
   {
     /* Queue Relevant data for TWI register setup */
-    TWI_MessageBuffer[TWI_MessageBufferNextIndex].Direction     = READ;
-    TWI_MessageBuffer[TWI_MessageBufferNextIndex].u32Size       = 1;
-    TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Address     = u8SlaveAddress_;
-    TWI_MessageBuffer[TWI_MessageBufferNextIndex].pu8RxBuffer   = pu8RxBuffer_;
-    TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Attempts    = 0;
+    TWI_MessageBuffer[TWI_MessageBufferNextIndex].Direction   = READ;
+    TWI_MessageBuffer[TWI_MessageBufferNextIndex].u32Size     = 1;
+    TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Address   = u8SlaveAddress_;
+    TWI_MessageBuffer[TWI_MessageBufferNextIndex].pu8RxBuffer = pu8RxBuffer_;
+    TWI_MessageBuffer[TWI_MessageBufferNextIndex].u8Attempts  = 0;
     
     /* Not used by Receive */
     TWI_MessageBuffer[TWI_MessageBufferNextIndex].Stop = NA; 
@@ -529,7 +529,7 @@ State Machine Function Definitions
 ***********************************************************************************************************************/
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a transmit message to be queued.  Received data is handled in interrupts. */
+/* Wait for a message to be queued. */
 void TWISM_Idle(void)
 {
   if(TWI_MessageBufferNextIndex != TWI_MessageBufferCurIndex )
@@ -663,8 +663,8 @@ void TWISM_Receiving(void)
     TWI_StateMachine = TWISM_Idle;
     
     /* Update queue pointers */
-    TWI_MessageBufferCurIndex++;
     TWI_MessageQueueLength--;
+    TWI_MessageBufferCurIndex++;
     if(TWI_MessageBufferCurIndex == U8_TX_QUEUE_SIZE)
     {
       TWI_MessageBufferCurIndex = 0;

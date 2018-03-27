@@ -24,9 +24,6 @@ Constants / Definitions
 #define ASCII_LINEFEED          (u8)0x0A      /* ASCII LF char \n */
 #define ASCII_BACKSPACE         (u8)0x08      /* ASCII Backspace char */
 
-#define RESET_TARGET_TIMER      (u8)0x1       /* Switch for IsTimeUp to reset the reference timer */
-#define NO_RESET_TARGET_TIMER   (u8)0x0       /* Switch for IsTimeUp to not reset the reference timer */
-
 #define MESSAGE_OK              "OK\r\n"
 #define MESSAGE_OK_SIZE         (u8)(sizeof(MESSAGE_OK) - 1)
 
@@ -52,7 +49,7 @@ Constants / Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 bool IsTimeUp(u32 *pu32SavedTick_, u32 u32Period_);
-u8 ASCIIHexCharToChar(u8);
+u8 ASCIIHexCharToNum(u8);
 u8 HexToASCIICharUpper(u8 u8Char_);
 u8 HexToASCIICharLower(u8 u8Char_);
 u8 NumberToAscii(u32 u32Number_, u8* pu8AsciiString_);

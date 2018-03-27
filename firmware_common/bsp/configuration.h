@@ -463,7 +463,7 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
 /* USART Interrupt Disable Register - Page 743 */
 #define BLADE_US_IDR_INIT (u32)~BLADE_US_IER_INIT
 
-/* USART Baud Rate Generator Register - Page 752
+/* USART Baud Rate Generator Register
 BAUD = MCK / (8(2-OVER)(CD + FP / 8))
 => CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
 MCK = 48MHz
@@ -1114,7 +1114,7 @@ SPI mode to communicate with an SPI SD card.
 /* USART Interrupt Disable Register - Page 743 */
 #define SD_US_IDR_INIT (u32)~SD_US_IER_INIT
 
-/* USART Baud Rate Generator Register - Page 752
+/* USART Baud Rate Generator Register
 BAUD = MCK / CD 
 => CD = MCK / BAUD
 BAUD desired = 1 Mbps
