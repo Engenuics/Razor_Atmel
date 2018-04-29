@@ -1,18 +1,19 @@
-/**********************************************************************************************************************
-File: sam3u_uart.h                                                                
-
-Description:
-Header file for sam3u_uart.c
+/*!**********************************************************************************************************************
+@file sam3u_uart.h                                                                
+@brief Header file for sam3u_uart.c
 **********************************************************************************************************************/
 
 #ifndef __SAM3U_UART_H
 #define __SAM3U_UART_H
 
-#include "configuration.h"
-
 /**********************************************************************************************************************
 Type Definitions
 **********************************************************************************************************************/
+
+/*! 
+@struct UartConfigurationType
+@brief Task-provided parameters for a UART 
+*/
 typedef struct 
 {
   PeripheralType UartPeripheral;      /* Easy name of peripheral */
@@ -22,6 +23,10 @@ typedef struct
   fnCode_type fnRxCallback;           /* Callback function for receiving data */
 } UartConfigurationType;
 
+/*! 
+@struct UartPeripheralType
+@brief Complete configuration parameters for a UART resource 
+*/
 typedef struct 
 {
   AT91PS_USART pBaseAddress;          /* Base address of the associated peripheral */
@@ -37,9 +42,11 @@ typedef struct
   u8 u8Pad;
 } UartPeripheralType;
 
-/* u32PrivateFlags */
+/* u32PrivateFlags in UartPeripheralType */
 #define   _UART_PERIPHERAL_ASSIGNED     (u32)0x00000001   /* Set when the peripheral is in use */
 #define   _UART_PERIPHERAL_TX           (u32)0x00200000   /* Set when the peripheral is transmitting */
+/* end u32PrivateFlags */
+
 
 /**********************************************************************************************************************
 Constants / Definitions
@@ -51,7 +58,7 @@ Constants / Definitions
 #define _UART_STATUS_ERROR              (u32)0x00000008   /* Set if an error is flagged in LSR */
 /* end G_u32UartxApplicationFlags */
 
-/* Uart_u32Flags (UART application flags) */
+/* Uart_u32Flags (local UART application flags) */
 #define _UART_MANUAL_MODE               (u32)0x00000001   /* Set to push a transmit cycle during initialization mode */
 #define _UART_U0_SENDING                (u32)0x00000002   /* Set when the first Tx byte of the simple USART0 is loaded */
 
@@ -68,28 +75,13 @@ Constants / Definitions
 #define U8_UART_TX_FIFO_SIZE            (u8)1             /* Size of the peripheral's transmit FIFO in bytes */
 #define U8_UART_RX_FIFO_SIZE            (u8)1             /* Size of the peripheral's receive FIFO in bytes */
 
-/* The UART peripheral base addresses are essentially re-defined here because the defs in AT91SAM3U4.h can't be
-casted back to integers for comparisons as far as we could tell! */
-#define UART_BASE_DBGU                  (u32)0x400E0600
-#define UART_BASE_US0                   (u32)0x40090000
-#define UART_BASE_US1                   (u32)0x40094000
-#define UART_BASE_US2                   (u32)0x40098000
-#define UART_BASE_US3                   (u32)0x4009C000
-
-#define UART_INIT_MSG_TIMEOUT           (u32)1000           /* Time in ms for init message to send */
-
-
-/***********************************************************************************************************************
-Constants / Definitions
-***********************************************************************************************************************/
-
 
 /**********************************************************************************************************************
 * Function Declarations
 **********************************************************************************************************************/
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 bool Uart_putc(u8 u8Char_);
 bool Uart_getc(u8* pu8Byte_);
@@ -99,37 +91,35 @@ UartPeripheralType* UartRequest(UartConfigurationType* psUartConfig_);
 void UartRelease(UartPeripheralType* psUartPeripheral_);
 
 u32 UartWriteByte(UartPeripheralType* psUartPeripheral_, u8 u8Byte_);
-u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* u8Data_);
+u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* pu8Data_);
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 void UartInitialize(void);
 void UartRunActiveState(void);
 
 static void UartManualMode(void);
 
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-//static void UartFillTxBuffer(UartPeripheralType* UartPeripheral_);
-//static void UartReadRxBuffer(UartPeripheralType* psTargetUart_);
-
 void UART_IRQHandler(void);
 void UART0_IRQHandler(void);
 void UART1_IRQHandler(void);
 void UART2_IRQHandler(void);
-void UartGenericHandler(void);
+
+
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+static void UartGenericHandler(void);
 
 
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-void UartSM_Idle(void);
-void UartSM_Transmitting(void);
-void UartSM_Error(void);         
+static void UartSM_Idle(void);
+static void UartSM_Transmitting(void);
+static void UartSM_Error(void);         
 
 
 #endif /* __SAM3U_UART_H */

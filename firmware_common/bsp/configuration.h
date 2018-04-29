@@ -9,9 +9,7 @@ to match the target hardware.
 Bookmarks:
 
 !!!!! External module peripheral assignments
-
 @@@@@ GPIO board-specific parameters
-
 ##### Communication peripheral board-specific parameters
 
 

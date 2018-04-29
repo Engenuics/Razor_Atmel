@@ -52,7 +52,7 @@ PUBLIC FUNCTIONS
 - UartPeripheralType* UartRequest(UartConfigurationType* psUartConfig_)
 - void UartRelease(UartPeripheralType* psUartPeripheral_)
 - u32 UartWriteByte(UartPeripheralType* psUartPeripheral_, u8 u8Byte_)
-- u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* u8Data_)
+- u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* pu8Data_)
 
 PROTECTED FUNCTIONS
 - void UartInitialize(void);
@@ -445,7 +445,7 @@ u32 UartWriteByte(UartPeripheralType* psUartPeripheral_, u8 u8Byte_)
 
 
 /*!---------------------------------------------------------------------------------------------------------------------
-@fn u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* u8Data_)
+@fn u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* pu8Data_)
 
 @brief Queues an array of bytes for transfer on the target UART peripheral.  
 
@@ -453,7 +453,7 @@ Requires:
 @param psUartPeripheral_ has been requested and holds a valid pointer to a transmit buffer; even if a transmission is
        in progress, the node in the buffer that is currently being sent will not be destroyed during this function.
 @param u32Size_ is the number of bytes in the data array; should not be 0
-@param u8Data_ points to the first byte of the data array
+@param pu8Data_ points to the first byte of the data array
 
 Promises:
 - adds the data message at psUartPeripheral_->pTransmitBuffer that will be sent by the UART application
@@ -462,7 +462,7 @@ Promises:
   G_u32MessagingFlags can be checked for the reason
 
 */
-u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* u8Data_)
+u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* pu8Data_)
 {
   u32 u32Token;
   
@@ -473,7 +473,7 @@ u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* u8Dat
   }
 
   /* Attempt to queue message and get a response token */
-  u32Token = QueueMessage(&psUartPeripheral_->psTransmitBuffer, u32Size_, u8Data_);
+  u32Token = QueueMessage(&psUartPeripheral_->psTransmitBuffer, u32Size_, pu8Data_);
   if(u32Token)
   {
     /* If the system is initializing, manually cycle the UART task through one iteration to send the message */
@@ -605,7 +605,7 @@ void UartInitialize(void)
   Uart_sPeripheral2.u32PrivateFlags  = 0;
   Uart_sPeripheral2.u8PeripheralId   = AT91C_ID_US2;
   
-  Uart_psCurrentUart               = &Uart_sPeripheral;
+  Uart_psCurrentUart = &Uart_sPeripheral;
 
   /* Set application pointer */
   Uart_pfnStateMachine = UartSM_Idle;
@@ -633,11 +633,6 @@ void UartRunActiveState(void)
   Uart_pfnStateMachine();
 
 } /* end UartRunActiveState */
-
-
-/*------------------------------------------------------------------------------------------------------------------*/
-/*! @privatesection */                                                                                            
-/*--------------------------------------------------------------------------------------------------------------------*/
 
 
 /*!----------------------------------------------------------------------------------------------------------------------
@@ -837,6 +832,10 @@ void UART2_IRQHandler(void)
 } /* end UART2_IRQHandler() */
 
 
+/*------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*--------------------------------------------------------------------------------------------------------------------*/
+
 /*!----------------------------------------------------------------------------------------------------------------------
 @fn void UartGenericHandler(void)
 
@@ -852,7 +851,7 @@ Transmit: All data bytes in the transmit buffer are sent using DMA and interrupt
 the message status is updated.
 
 */
-void UartGenericHandler(void)
+static void UartGenericHandler(void)
 {
   /* ENDRX Interrupt when a byte has been received (RNCR is moved to RCR; RNPR is copied to RPR) */
   if( (Uart_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_ENDRX) && 
@@ -929,9 +928,12 @@ assume they won't.
 
 ***********************************************************************************************************************/
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for a transmit message to be queued.  Received data is handled in interrupts. */
-void UartSM_Idle(void)
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void UartSM_Idle(void)
+
+@brief Wait for a transmit message to be queued.  Received data is handled in interrupts. 
+*/
+static void UartSM_Idle(void)
 {
 #if USE_SIMPLE_USART0
   u8 u8Temp;
@@ -1021,7 +1023,7 @@ void UartSM_Idle(void)
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Transmit in progress until current bytes have reached 0.  On exit, the transmit message must be dequeued.
 */
-void UartSM_Transmitting(void)
+static void UartSM_Transmitting(void)
 {
   /* Check if all of the message bytes have completely finished sending */
   if( (Uart_u32CurrentTxBytesRemaining == 0) && 
@@ -1039,16 +1041,21 @@ void UartSM_Transmitting(void)
 } /* end UartSM_Transmitting() */
 #endif /* USE_SIMPLE_USART0 */
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Handle an error */
-void UartSM_Error(void)          
+
+#if 0 /* Not currently needed */
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void UartSM_Error(void)
+
+@brief Handle an error
+*/
+static void UartSM_Error(void)          
 {
   Uart_u32Flags &= ~UART_ERROR_FLAG_MASK;
   
   Uart_pfnStateMachine = UartSM_Idle;
   
 } /* end UartSM_Error() */
-
+#endif
           
           
           
