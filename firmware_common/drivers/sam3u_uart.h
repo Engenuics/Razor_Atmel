@@ -51,18 +51,18 @@ typedef struct
 /**********************************************************************************************************************
 Constants / Definitions
 **********************************************************************************************************************/
+#if 0
 /* G_u32UartxApplicationFlags */
 #define _UART_TX_COMPLETE               (u32)0x00000001   /* Set when expected bytes have been transmitted by DMA; cleared automatically when new message begins or can be cleared by application */
 #define _UART_RX_COMPLETE               (u32)0x00000002   /* Set when expected bytes have been received by DMA; cleared automatically on CS or can be cleared by application */
 #define _UART_RX_BUFFER_OVERRUN         (u32)0x00000004   /* Set if the Rx FIFO overruns */
 #define _UART_STATUS_ERROR              (u32)0x00000008   /* Set if an error is flagged in LSR */
 /* end G_u32UartxApplicationFlags */
+#endif
 
 /* Uart_u32Flags (local UART application flags) */
 #define _UART_MANUAL_MODE               (u32)0x00000001   /* Set to push a transmit cycle during initialization mode */
-#define _UART_U0_SENDING                (u32)0x00000002   /* Set when the first Tx byte of the simple USART0 is loaded */
 
-#define _UART_ERROR_INVALID_UART        (u32)0x01000000   /* Set if an undefined UART is attempted to be parsed */
 #define _UART_NO_ACTIVE_UARTS           (u32)0x02000000   /* Set if Uart_u8ActiveUarts is 0 when decremented */
 #define _UART_TOO_MANY_UARTS            (u32)0x04000000   /* Set if Uart_u8ActiveUarts is 0 when decremented */
 /* end of Uart_u32Flags */

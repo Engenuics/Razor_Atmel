@@ -15,25 +15,6 @@ accessible to your application.
 
 3. If the application no longer needs the UART resource, call UartRelease().  
 
-DATA TRANSFER:
-1. Received bytes on the allocated peripheral will be dropped into the application's designated receive
-buffer.  The buffer is written circularly, with no provision to monitor bytes that are overwritten.  The 
-application is responsible for processing all received data.  The application must provide its own parsing
-pointer to read the receive buffer and properly wrap around.  This pointer will not be impacted by the interrupt
-service routine that may add additional characters at any time.
-
-2. Transmitted data is queued using one of two functions, UartWriteByte() and UartWriteData().  Once the data
-is queued, it is sent as soon as possible.  Each UART resource has a transmit queue, but only one UART resource
-will send data at any given time from this state machine.  However, all UART resources may receive data simultaneously
-through their respective interrupt handlers based on interrupt priority.
-
-All receive functionality is automatic. Incoming bytes are deposited to the 
-buffer specified in psUartConfig_
-
-Both Tx and Rx use the peripheral DMA controller, though received bytes
-are always received one at a time to allow use of a circular buffer by the
-client task.
-
 ------------------------------------------------------------------------------------------------------------------------
 GLOBALS
 - G_u32UartApplicationFlags
@@ -93,7 +74,7 @@ static fnCode_type Uart_pfnStateMachine;         /*!< @brief The UART applicatio
 
 static u32 Uart_u32Timer;                        /*!< @brief Counter used across states */
 static u32 Uart_u32Flags;                        /*!< @brief Application flags for UART */
-static u8 Uart_u8ActiveUarts = 0;                /*!< @brief Counting semaphore for # of active UARTs */
+static u8 Uart_u8ActiveUarts;                    /*!< @brief Counting semaphore for # of active UARTs */
 
 static UartPeripheralType Uart_sPeripheral;      /*!< @brief UART peripheral object */
 static UartPeripheralType Uart_sPeripheral0;     /*!< @brief USART0 peripheral object (used as UART) */
@@ -102,7 +83,7 @@ static UartPeripheralType Uart_sPeripheral2;     /*!< @brief USART2 peripheral o
 
 static UartPeripheralType* Uart_psCurrentUart;   /*!< @brief Current UART peripheral being processed */
 static UartPeripheralType* Uart_psCurrentISR;    /*!< @brief Current UART peripheral being processed in ISR */
-static u32* Uart_pu32ApplicationFlagsISR;        /*!< @brief Current UART application status flags in ISR */
+//static u32* Uart_pu32ApplicationFlagsISR;        /*!< @brief Current UART application status flags in ISR */
 
 /* Buffers for simple UART implementation */
 #if USE_SIMPLE_USART0
@@ -366,13 +347,13 @@ UartPeripheralType* UartRequest(UartConfigurationType* psUartConfig_)
 @brief Releases a UART resource.  
 
 Requires:
-@param psUartPeripheral_ has the UART peripheral number, address of the RxBuffer, and the RxBuffer size and the calling
-       application is ready to start using the peripheral.
+@param psUartPeripheral_ has the UART peripheral number to be released
 
 Promises:
-- Resets peripheral object's pointers and data to safe values
-- Peripheral is disabled
-- Peripheral interrupts are disabled.
+- Disables the associated interrupts
+- Resets peripheral object's pointers
+- Any unsent messages are dumped and set to ABANDONED status
+- Main SM reset to Idle
 
 */
 void UartRelease(UartPeripheralType* psUartPeripheral_)
@@ -497,9 +478,6 @@ u32 UartWriteData(UartPeripheralType* psUartPeripheral_, u32 u32Size_, u8* pu8Da
 
 @brief Initializes the UART application and its variables.  
 
-UART0 is setup to be available immediately for debugging purposes.  The generic peripherals 
-themselves are not fully configured until requested by a calling application.
-
 Requires:
 - NONE 
 
@@ -511,7 +489,8 @@ Promises:
 void UartInitialize(void)
 {
   Uart_u32Flags = 0;
-
+  Uart_u8ActiveUarts = 0;
+  
 #ifdef USE_SIMPLE_USART0
   /* Setup USART0 for use as a basic debug port */
   
@@ -656,7 +635,9 @@ static void UartManualMode(void)
   
   while(Uart_u32Flags &_UART_MANUAL_MODE)
   {
-    Uart_pfnStateMachine();
+    UartRunActiveState();
+    MessagingRunActiveState();
+
     Uart_u32Timer = G_u32SystemTime1ms;
     while( !IsTimeUp(&Uart_u32Timer, 1) );
   }
@@ -748,7 +729,7 @@ void UART_IRQHandler(void)
 {
   /* Set the current ISR pointers to UART targets */
   Uart_psCurrentISR = &Uart_sPeripheral;                       
-  Uart_pu32ApplicationFlagsISR = &G_u32UartApplicationFlags;   
+  //Uart_pu32ApplicationFlagsISR = &G_u32UartApplicationFlags;   
   Uart_u32IntCount++;
 
   /* Go to common UART interrupt using Uart_psCurrentISR since the SSP cannot interrupt itself */
@@ -773,7 +754,7 @@ void UART0_IRQHandler(void)
 {
   /* Set the current ISR pointers to UART0 targets */
   Uart_psCurrentISR = &Uart_sPeripheral0;                         
-  Uart_pu32ApplicationFlagsISR = &G_u32Uart0ApplicationFlags;     
+  //Uart_pu32ApplicationFlagsISR = &G_u32Uart0ApplicationFlags;     
   Uart_u32Int0Count++;
 
   /* Go to common interrupt */
@@ -798,7 +779,7 @@ void UART1_IRQHandler(void)
 {
   /* Set the current ISR pointers to UART1 targets */
   Uart_psCurrentISR = &Uart_sPeripheral1;                          
-  Uart_pu32ApplicationFlagsISR = &G_u32Uart1ApplicationFlags;     
+  //Uart_pu32ApplicationFlagsISR = &G_u32Uart1ApplicationFlags;     
   Uart_u32Int1Count++;
 
   /* Go to common interrupt */
@@ -823,7 +804,7 @@ void UART2_IRQHandler(void)
 {
   /* Set the current ISR pointers to UART2 targets */
   Uart_psCurrentISR = &Uart_sPeripheral2;                          
-  Uart_pu32ApplicationFlagsISR = &G_u32Uart2ApplicationFlags;     
+  //Uart_pu32ApplicationFlagsISR = &G_u32Uart2ApplicationFlags;     
   Uart_u32Int2Count++;
 
   /* Go to common interrupt */
@@ -837,7 +818,7 @@ void UART2_IRQHandler(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*!----------------------------------------------------------------------------------------------------------------------
-@fn void UartGenericHandler(void)
+@fn static void UartGenericHandler(void)
 
 @brief Common handler for all expected UART interrupts regardless of base peripheral
 
@@ -858,7 +839,7 @@ static void UartGenericHandler(void)
       (Uart_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_ENDRX) )
   {
     /* Flag that a byte has arrived */
-    *Uart_pu32ApplicationFlagsISR |= _UART_RX_COMPLETE;
+    //*Uart_pu32ApplicationFlagsISR |= _UART_RX_COMPLETE;
 
     /* Update the "next" DMA pointer to the next valid Rx location with wrap-around check */
     Uart_psCurrentISR->pBaseAddress->US_RNPR++;
@@ -903,19 +884,17 @@ static void UartGenericHandler(void)
     
   } /* end of ENDTX interrupt processing */
   
-} /* end SspGenericHandler() */
+} /* end UartGenericHandler() */
 
 
 /***********************************************************************************************************************
 State Machine Function Definitions
 
 The UART state machine monitors messaging activity on the available UART peripherals.  It manages outgoing messages and will
-transmit any bytes that has been queued.  Only one message will be transferred at once (e.g. UART1 and UART2 will not both 
-send at the same time, though both peripherals will continue to receive simultaneously).
-Since all transmit and receive bytes are transferred using interrupts, the SM does not have to worry about prioritizing.
+transmit any bytes that has been queued.  
 
-Transmitting on USART 0:
-When Uart_pu8U0TxBufferUnsentChar doesn't match Uart_pu8U0TxBufferNextChar, then we know that there is data to send.
+Transmitting:
+When TxBufferUnsentChar doesn't match Uart_pu8U0TxBufferNextChar, then we know that there is data to send.
 Data transfer is initiated by writing the first byte and setting the _Uart_U0_SENDING flag to keep the USART state machine 
 busy sending all of the current data on the USART.  The interrupt service routine will be responsible for clearing the
 bit which will allow the SM to return to Idle.  
@@ -969,7 +948,7 @@ static void UartSM_Idle(void)
     Uart_psCurrentUart->u32PrivateFlags |= _UART_PERIPHERAL_TX;    
       
     /* Load the PDC counter and pointer registers */
-    Uart_psCurrentUart->pBaseAddress->US_TPR = (unsigned int)Uart_psCurrentUart->psTransmitBuffer->pu8Message; /* CHECK */
+    Uart_psCurrentUart->pBaseAddress->US_TPR = (unsigned int)Uart_psCurrentUart->psTransmitBuffer->pu8Message;
     Uart_psCurrentUart->pBaseAddress->US_TCR = Uart_psCurrentUart->psTransmitBuffer->u32Size;
 
     /* When TCR is loaded, the ENDTX flag is cleared so it is safe to enable the interrupt */

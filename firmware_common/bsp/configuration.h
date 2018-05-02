@@ -14,7 +14,6 @@ Bookmarks:
 
 
 Quick references:
-
 DEBUG UART IS 115200-8-N-1
 
 ANT BOARDTEST CHANNEL CONFIG: 
@@ -113,10 +112,10 @@ Includes
 !!!!! External device peripheral assignments
 ***********************************************************************************************************************/
 /* Peripheral assignments */
-#define BLADE_UART                  UART
 #define DEBUG_UART                  USART0
-#define BLADE_SPI                   SPI
+#define BLADE_UART                  UART
 #define ANT_SPI                     USART2
+#define BLADE_SPI                   SPI
 
 #ifdef EIE1
 #define SD_SSP                      USART1
@@ -338,7 +337,7 @@ Blade UART Setup
 
 The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
 */
-/* USART Control Register - Page 734 */
+/* USART Control Register */
 #define BLADE_US_CR_INIT (u32)0x00000050
 /*
     31 - 20 [0] Reserved
@@ -369,8 +368,8 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
     00 [0] "
 */
 
-/* USART Mode Register - page 737 */
-#define BLADE_US_MR_INIT (u32)0x004008C0
+/* USART Mode Register */
+#define BLADE_US_MR_INIT (u32)0x000008C0
 /*
     31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
     30 [0] MODSYNC Manchester start bit N/A
@@ -383,7 +382,7 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
     24 [0] "
 
     23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
+    22 [0] VAR_SYNC sync field 
     21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
     20 [0] INACK NACK generated (N/A for async)
 
@@ -414,8 +413,8 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
 */
 
 
-/* USART Interrupt Enable Register - Page 741 */
-#define BLADE_US_IER_INIT (u32)0x00000000
+/* USART Interrupt Enable Register */
+#define BLADE_US_IER_INIT (u32)0x00000008
 /*
     31 [0] Reserved
     30 [0] "
@@ -450,15 +449,15 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
     07 [0] PARE Parity Error interrupt not enabled
     06 [0] FRAME Framing Error interrupt not enabled
     05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
+    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled yet
 
-    03 [0] ENDRX End of Receiver Transfer (PDC) interrupt enabled
+    03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
     02 [0] RXBRK Break Received interrupt not enabled
     01 [0] TXRDY Transmitter Ready interrupt not enabled
     00 [0] RXRDY Receiver Ready interrupt not enabled
 */
 
-/* USART Interrupt Disable Register - Page 743 */
+/* USART Interrupt Disable Register */
 #define BLADE_US_IDR_INIT (u32)~BLADE_US_IER_INIT
 
 /* USART Baud Rate Generator Register
@@ -508,7 +507,7 @@ Debug UART Setup
 
 Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
 */
-/* USART Control Register - Page 734 */
+/* USART Control Register */
 #define DEBUG_US_CR_INIT (u32)0x00000050
 /*
     31 - 20 [0] Reserved
@@ -539,8 +538,8 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
     00 [0] "
 */
 
-/* USART Mode Register - page 737 */
-#define DEBUG_US_MR_INIT (u32)0x004008C0
+/* USART Mode Register */
+#define DEBUG_US_MR_INIT (u32)0x000008C0
 /*
     31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
     30 [0] MODSYNC Manchester start bit N/A
@@ -553,8 +552,8 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
     24 [0] "
 
     23 [0] INVDATA data is not inverted
-    22 [1] VAR_SYNC sync field is updated on char to US_THR
-    21 [0] DSNACK delicious! NACK is sent on ISO line immeidately on parity error
+    22 [0] VAR_SYNC sync field 
+    21 [0] DSNACK delicious! NACK is sent on ISO line immediately on parity error
     20 [0] INACK NACK generated (N/A for async)
 
     19 [0] OVER 16x oversampling
@@ -584,7 +583,7 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
 */
 
 
-/* USART Interrupt Enable Register - Page 741 */
+/* USART Interrupt Enable Register */
 #define DEBUG_US_IER_INIT (u32)0x00000008
 /*
     31 [0] Reserved
@@ -620,7 +619,7 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
     07 [0] PARE Parity Error interrupt not enabled
     06 [0] FRAME Framing Error interrupt not enabled
     05 [0] OVRE Overrun Error interrupt not enabled
-    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt enabled
+    04 [0] ENDTX End of Transmitter Transfer (PDC) interrupt not enabled yet
 
     03 [1] ENDRX End of Receiver Transfer (PDC) interrupt enabled
     02 [0] RXBRK Break Received interrupt not enabled
@@ -628,10 +627,10 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
     00 [0] RXRDY Receiver Ready interrupt enabled
 */
 
-/* USART Interrupt Disable Register - Page 743 */
+/* USART Interrupt Disable Register */
 #define DEBUG_US_IDR_INIT (u32)~DEBUG_US_IER_INIT
 
-/* USART Baud Rate Generator Register - Page 752
+/* USART Baud Rate Generator Register 
 BAUD = MCK / (8(2-OVER)(CD + FP / 8))
 => CD = (MCK / (8(2-OVER)BAUD)) - (FP / 8)
 MCK = 48MHz
