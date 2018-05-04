@@ -60,8 +60,8 @@ void main(void)
   TimerInitialize();  
   SspInitialize();
   TWIInitialize();
-  Adc12Initialize();
   
+  Adc12Initialize();
   LcdInitialize();
   LedInitialize();
   AntInitialize();
@@ -104,11 +104,9 @@ void main(void)
     UserApp2RunActiveState();
     UserApp3RunActiveState();
     
-    HEARTBEAT_OFF();
-
     /* System sleep until next Systick */
+    HEARTBEAT_OFF();
     SystemSleep();
-
     HEARTBEAT_ON();
     
   } /* end while(1) main super loop */

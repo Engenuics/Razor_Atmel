@@ -45,12 +45,15 @@ void SystemStatusReport(void);
 /*--------------------------------------------------------------------------------------------------------------------*/
 void DebugInitialize(void);                   
 void DebugRunActiveState(void);
+
 void DebugRxCallback(void);
 
 
 /*------------------------------------------------------------------------------------------------------------------*/
 /*! @privatesection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
+inline static void AdvanceTokenCounter(void);
+
 static void DebugCommandPrepareList(void);           
 static void DebugCommandDummy(void);
 
@@ -78,9 +81,11 @@ static void DebugSM_Error(void);
 /***********************************************************************************************************************
 * Constants / Definitions
 ***********************************************************************************************************************/
-#define DEBUG_RX_BUFFER_SIZE           (u16)128             /*!< @brief Size of debug buffer for incoming messages */
-#define DEBUG_CMD_BUFFER_SIZE           (u8)64              /*!< @brief Size of debug buffer for a command */
-#define DEBUG_SCANF_BUFFER_SIZE         (u8)128             /*!< @brief Size of buffer for scanf messages */
+#define DEBUG_RX_BUFFER_SIZE           (u16)128            /*!< @brief Size of debug buffer for incoming messages */
+#define DEBUG_CMD_BUFFER_SIZE          (u8)64              /*!< @brief Size of debug buffer for a command */
+#define DEBUG_SCANF_BUFFER_SIZE        (u8)128             /*!< @brief Size of buffer for scanf messages */
+#define DEBUG_TOKEN_ARRAY_SIZE         (u8)16              /*!< @brief Number of cached tokens */
+
 
 /* G_u32DebugFlags */
 #define _DEBUG_LED_TEST_ENABLE         (u32)0x00000001      /*!< @brief G_u32DebugFlags set if LED test is enabled */

@@ -395,8 +395,6 @@ void LedInitialize(void)
   u32 u32Buzzer2Frequency = 500;
   u32 u32StepSize = (u32Buzzer1Frequency - u32Buzzer2Frequency) / 20;
 
-  static u8 au8LedStartupMsg[] = "LED functions ready\n\r";
-
 #if MPGL2
   /* Test code for checking LEDs */
 #if 0
@@ -485,7 +483,7 @@ void LedInitialize(void)
 
   /* Final setup and report that LED system is ready */
   G_u32ApplicationFlags |= _APPLICATION_FLAGS_LED;
-  DebugPrintf(au8LedStartupMsg);
+  DebugPrintf("LED functions ready\n\r");
   
 } /* end LedInitialize() */
 

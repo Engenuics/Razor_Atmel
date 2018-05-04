@@ -86,17 +86,18 @@ static fnCode_type Debug_pfnStateMachine;                /*!< @brief The Debug s
 //static u32 Debug_u32Timeout;                           /*!< @brief Timeout counter used across states */
 
 static UartPeripheralType* Debug_Uart;                   /*!< @brief Pointer to debug UART peripheral object */
-static u32 Debug_u32CurrentMessageToken;                 /*!< @brief Token for current message */
 static u8 Debug_u8ErrorCode;                             /*!< @brief Error code */
 
 static u8 Debug_au8RxBuffer[DEBUG_RX_BUFFER_SIZE];       /*!< @brief Space for incoming characters of debug commands */
 static u8 *Debug_pu8RxBufferNextChar;                    /*!< @brief Pointer to next spot in the Rxbuffer */
 static u8 *Debug_pu8RxBufferParser;                      /*!< @brief Pointer to loop through the Rx buffer */
 
+static u32 Debug_au32MsgTokens[DEBUG_TOKEN_ARRAY_SIZE];  /*!< @brief Message tokens for transfers */
+static u8 Debug_u8TokenCounter;                          /*!< @brief Number of stored tokens */
+
 static u8 Debug_au8CommandBuffer[DEBUG_CMD_BUFFER_SIZE]; /*!< @brief Space to store chars as they build up to the next command */ 
 static u8 *Debug_pu8CmdBufferNextChar;                   /*!< @brief Pointer to incoming char location in the command buffer */
 static u16 Debug_u16CommandSize;                         /*!< @brief Number of characters in the command buffer */
-
 static u8 Debug_u8Command;                               /*!< @brief A validated command number */
 
 /*! @brief Add commands by updating debug.h in the Command-Specific Definitions section, then update this list
@@ -276,7 +277,7 @@ void DebugPrintNumber(u32 u32Number_)
   UartWriteData(Debug_Uart, u8CharCount, pu8Data);
   free(pu8Data);
   
-} /* end DebugDebugPrintNumber() */
+} /* end DebugPrintNumber() */
 
 
 /*!----------------------------------------------------------------------------------------------------------------------
@@ -487,6 +488,13 @@ void DebugInitialize(void)
 
   /* Initailze the command array as needed */
   Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0]; 
+  
+  /* Initialize the token counter and array */
+  Debug_u8TokenCounter = 0;
+  for (u8 i = 0; i < DEBUG_TOKEN_ARRAY_SIZE; i++)
+  {
+    Debug_au32MsgTokens[i] = 0;
+  }
 
   /* Request the UART resource to be used for the Debug application */
   sUartConfig.UartPeripheral     = DEBUG_UART;
@@ -567,6 +575,31 @@ void DebugRxCallback(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 /*!----------------------------------------------------------------------------------------------------------------------
+@fn inline static void AdvanceTokenCounter(void)
+
+@brief Safely increments Debug_u8TokenCounter.
+
+The Debug task keeps track of the messages it queues so it can clear them from the
+messaging status array.  
+
+Requires:
+- Do not call from ISR
+
+Promises:
+- Debug_u8TokenCounter is incremeted or wrapped if it at end
+*/
+inline static void AdvanceTokenCounter(void)
+{
+  Debug_u8TokenCounter++;
+  if(Debug_u8TokenCounter == DEBUG_TOKEN_ARRAY_SIZE)
+  {
+    Debug_u8TokenCounter = 0;
+  }
+  
+} /* end AdvanceTokenCounter() */
+
+
+/*!----------------------------------------------------------------------------------------------------------------------
 @fn static void DebugCommandPrepareList(void)
 
 @brief Queues the entire list of debug commands available in the system so 
@@ -602,14 +635,14 @@ static void DebugCommandPrepareList(void)
     /* Get the command number in ASCII */
     if(i >= 10)
     {
-      au8CommandLine[0] = (i / 10) + 0x30;
+      au8CommandLine[0] = (i / 10) + NUMBER_ASCII_TO_DEC;
     }
     else
     {
-      au8CommandLine[0] = 0x30;
+      au8CommandLine[0] = NUMBER_ASCII_TO_DEC;
     }
     
-    au8CommandLine[1] = (i % 10) + 0x30;
+    au8CommandLine[1] = (i % 10) + NUMBER_ASCII_TO_DEC;
     
     /* Read the command name */
     for(u8 j = 0; j < DEBUG_CMD_NAME_LENGTH; j++)
@@ -1090,13 +1123,14 @@ void DebugSM_Idle(void)
 {
   bool bCommandFound = FALSE;
   u8 u8CurrentByte;
+  u8 u8Counter;
   static u8 au8BackspaceSequence[] = {ASCII_BACKSPACE, ' ', ASCII_BACKSPACE};
   static u8 au8CommandOverflow[] = "\r\n*** Command too long ***\r\n\n";
   
   /* Parse any new characters that have come in until no more chars or a command is found */
   while( (Debug_pu8RxBufferParser != Debug_pu8RxBufferNextChar) && (bCommandFound == FALSE) )
   {
-    /* Grab a copy of the current byte and echo it back */
+    /* Grab a copy of the current byte */
     u8CurrentByte = *Debug_pu8RxBufferParser;
         
     /* Process the character */
@@ -1116,6 +1150,7 @@ void DebugSM_Idle(void)
         }
         else
         {
+          /* Process for scanf */
           if(G_u8DebugScanfCharCount != 0)
           {
             G_u8DebugScanfCharCount--;
@@ -1131,9 +1166,10 @@ void DebugSM_Idle(void)
         }
                 
         /* Send the Backspace sequence to clear the character on the terminal */
-        DebugPrintf(au8BackspaceSequence);
+        Debug_au32MsgTokens[Debug_u8TokenCounter] = DebugPrintf(au8BackspaceSequence);
+        AdvanceTokenCounter();
         break;
-      }
+      } /* end case(ASCII_BACKSPACE) */
 
       /* Carriage return: change states to process new command and fall through to echo character */
       case(ASCII_CARRIAGE_RETURN): 
@@ -1145,7 +1181,7 @@ void DebugSM_Idle(void)
         }
         
         /* Fall through to default */        
-      }
+      } /* end case(ASCII_CARRIAGE_RETURN) */
         
       /* Add to command buffer and echo */
       default: 
@@ -1158,7 +1194,8 @@ void DebugSM_Idle(void)
         }
         
         /* Echo the character back to the terminal */
-        UartWriteByte(Debug_Uart, u8CurrentByte);
+        Debug_au32MsgTokens[Debug_u8TokenCounter] = UartWriteByte(Debug_Uart, u8CurrentByte);
+        AdvanceTokenCounter();
         
         /* As long as Passthrough mode is not active, then update the command buffer */
         if( !( G_u32DebugFlags & _DEBUG_PASSTHROUGH) )
@@ -1175,13 +1212,14 @@ void DebugSM_Idle(void)
             Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
             Debug_u16CommandSize = 0;
 
-            Debug_u32CurrentMessageToken = DebugPrintf(au8CommandOverflow);
+            Debug_au32MsgTokens[Debug_u8TokenCounter] = DebugPrintf(au8CommandOverflow);
+            AdvanceTokenCounter();
           }
         }
         break;
-      }
+      } /* end default */
 
-    } /* end switch (u8RxChar) */
+    } /* end switch (u8CurrentByte) */
 
     /* If the LED test is active, toggle LEDs based on characters */
     if(G_u32DebugFlags & _DEBUG_LED_TEST_ENABLE)
@@ -1199,9 +1237,12 @@ void DebugSM_Idle(void)
   } /* end while */
   
   /* Clear out any completed messages (Query automatically removes if complete ) */
-  if(Debug_u32CurrentMessageToken != 0)
+  u8Counter = 0;
+  while ( (u8Counter < DEBUG_TOKEN_ARRAY_SIZE) &&
+          (Debug_au32MsgTokens[u8Counter] != 0) )
   {
-    QueryMessageStatus(Debug_u32CurrentMessageToken);
+    QueryMessageStatus(Debug_au32MsgTokens[u8Counter]);
+    u8Counter++;
   }
     
 } /* end DebugSM_Idle() */
@@ -1221,7 +1262,7 @@ strings are invalid.
 void DebugSM_CheckCmd(void)        
 {
   static u8 au8CommandHeader[] = "en+c";
-  static u8 au8InvalidCommand[] = "\nInvalid command\n\n\r"; 
+  static u8 au8InvalidCommand[] = "\nInvalid command.  Use en+c##\n\n\r"; 
   bool bGoodCommand = TRUE;
   u8 u8Index;
   s8 s8Temp;
@@ -1245,14 +1286,14 @@ void DebugSM_CheckCmd(void)
     bGoodCommand = FALSE;
 
     /* Verify the next char is a digit */
-    s8Temp = Debug_au8CommandBuffer[u8Index++] - 0x30;
+    s8Temp = Debug_au8CommandBuffer[u8Index++] - NUMBER_ASCII_TO_DEC;
   
     if( (s8Temp >= 0) && (s8Temp <= 9) )
     {
       Debug_u8Command = s8Temp * 10;
   
       /* Verify the next char is a digit */
-      s8Temp = Debug_au8CommandBuffer[u8Index++] - 0x30;
+      s8Temp = Debug_au8CommandBuffer[u8Index++] - NUMBER_ASCII_TO_DEC;
       if( (s8Temp >= 0) && (s8Temp <= 9) )
       {
         Debug_u8Command += s8Temp;
@@ -1278,7 +1319,7 @@ void DebugSM_CheckCmd(void)
     Debug_pfnStateMachine = DebugSM_Idle;
   }
 
-  /* Reset the command buffer */
+  /* Reset the command buffer next char pointer */
   Debug_pu8CmdBufferNextChar = &Debug_au8CommandBuffer[0];
 
 } /* end DebugSM_CheckCmd() */

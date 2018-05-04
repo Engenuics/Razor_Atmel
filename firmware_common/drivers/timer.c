@@ -221,8 +221,6 @@ Promises:
 */
 void TimerInitialize(void)
 {
-  u8 au8TimerStarted[] = "Timer1 initialized\n\r";
-
   /* Load the block configuration registers */
   AT91C_BASE_TCB0->TCB_BMR = TCB_BMR_INIT;
  
@@ -244,7 +242,7 @@ void TimerInitialize(void)
     NVIC_ClearPendingIRQ(IRQn_TC1);
     NVIC_EnableIRQ(IRQn_TC1);
     Timer_fpStateMachine = TimerSM_Idle;
-    DebugPrintf(au8TimerStarted);
+    DebugPrintf("Timer1 initialized\n\r");
     
     /* Flag that the Timer task is ready */
     G_u32ApplicationFlags |= _APPLICATION_FLAGS_TIMER;
