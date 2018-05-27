@@ -48,10 +48,10 @@ typedef enum {EMPTY = 0, WAITING, SENDING, COMPLETE, TIMEOUT, ABANDONED, NOT_FOU
 */
 typedef struct
 {
-  u32 u32Token;                         /* Unique token for this message */
-  u32 u32Size;                          /* Size of the data payload in bytes */
-  u8 pu8Message[U16_MAX_TX_MESSAGE_LENGTH]; /* Data payload array */
-  void* psNextMessage;                  /* Pointer to next message */
+  u32 u32Token;                             /*!< @brief Unique token for this message */
+  u32 u32Size;                              /*!< @brief Size of the data payload in bytes */
+  u8 pu8Message[U16_MAX_TX_MESSAGE_LENGTH]; /*!< @brief Data payload array */
+  void* psNextMessage;                      /*!< @brief Pointer to next message */
 } MessageType;
 
 /*! 
@@ -60,8 +60,8 @@ typedef struct
 */
   typedef struct
 {
-  bool bFree;                           /* TRUE if message slot is available */
-  MessageType Message;                  /* The slot's message */
+  bool bFree;                               /*!< @brief TRUE if message slot is available */
+  MessageType Message;                      /*!< @brief The slot's message */
 } MessageSlotType;
 
 /*! 
@@ -70,9 +70,9 @@ typedef struct
 */
 typedef struct
 {
-  u32 u32Token;                         /* Uniqe token for this message; a token is never 0 */
-  MessageStateType eState;              /* State of the message */
-  u32 u32Timestamp;                     /* Time the message status was posted */          
+  u32 u32Token;                             /*!< @brief Unique token for this message; a token is never 0 */
+  MessageStateType eState;                  /*!< @brief State of the message */
+  u32 u32Timestamp;                         /*!< @brief Time the message status was posted */          
 } MessageStatusType;
 
 

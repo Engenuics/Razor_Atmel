@@ -838,9 +838,6 @@ static void UartGenericHandler(void)
   if( (Uart_psCurrentISR->pBaseAddress->US_IMR & AT91C_US_ENDRX) && 
       (Uart_psCurrentISR->pBaseAddress->US_CSR & AT91C_US_ENDRX) )
   {
-    /* Flag that a byte has arrived */
-    //*Uart_pu32ApplicationFlagsISR |= _UART_RX_COMPLETE;
-
     /* Update the "next" DMA pointer to the next valid Rx location with wrap-around check */
     Uart_psCurrentISR->pBaseAddress->US_RNPR++;
     if(Uart_psCurrentISR->pBaseAddress->US_RNPR == (u32)(Uart_psCurrentISR->pu8RxBuffer + ( (u32)(Uart_psCurrentISR->u16RxBufferSize) & 0x0000FFFF ) ) )

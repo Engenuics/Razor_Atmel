@@ -689,11 +689,12 @@ static bool AntTxMessage(u8 *pu8AntTxMessage_)
 
 @brief Completely receive a message from ANT to the Host.  
 
-Incoming bytes are deposited directly into the receive
-buffer from the SSP ISR which should be extremely fast and complete in a maximum of 500us.  
+Incoming bytes are deposited directly into the receive buffer from the SSP ISR 
+which should be extremely fast and complete in a maximum of 500us.  
 
 Requires:
 - _SSP_CS_ASSERTED is set indicating a message is ready to come in 
+- ANT SSP receive interrupt is active
 - G_u32AntFlags _ANT_FLAGS_TX_INTERRUPTED is set if the system wanted to transmit
   but ANT wanted to send a message at the same time (so MESG_TX_SYNC has already 
   been received); _SSP_RX_COMPLETE must still be set from this.

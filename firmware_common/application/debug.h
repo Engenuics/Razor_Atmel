@@ -16,8 +16,8 @@ Type Definitions
 */
 typedef struct
 {
-  u8 *pu8CommandName;
-  fnCode_type DebugFunction;
+  u8 *pu8CommandName;               /*!< @brief Pointer to command mnemonic */
+  fnCode_type DebugFunction;        /*!< @brief Function pointer to command function */
 } DebugCommandType;
 
 
@@ -81,10 +81,10 @@ static void DebugSM_Error(void);
 /***********************************************************************************************************************
 * Constants / Definitions
 ***********************************************************************************************************************/
-#define DEBUG_RX_BUFFER_SIZE           (u16)128            /*!< @brief Size of debug buffer for incoming messages */
-#define DEBUG_CMD_BUFFER_SIZE          (u8)64              /*!< @brief Size of debug buffer for a command */
-#define DEBUG_SCANF_BUFFER_SIZE        (u8)128             /*!< @brief Size of buffer for scanf messages */
-#define DEBUG_TOKEN_ARRAY_SIZE         (u8)16              /*!< @brief Number of cached tokens */
+#define DEBUG_RX_BUFFER_SIZE           (u16)128             /*!< @brief Size of debug buffer for incoming messages */
+#define DEBUG_CMD_BUFFER_SIZE          (u8)64               /*!< @brief Size of debug buffer for a command */
+#define DEBUG_SCANF_BUFFER_SIZE        (u8)128              /*!< @brief Size of buffer for scanf messages */
+#define DEBUG_TOKEN_ARRAY_SIZE         (u8)16               /*!< @brief Number of cached tokens */
 
 
 /* G_u32DebugFlags */
@@ -114,9 +114,9 @@ static void DebugSM_Error(void);
 /***********************************************************************************************************************
 * Command-Specific Definitions
 ***********************************************************************************************************************/
-#define DEBUG_CMD_PREFIX_LENGTH   (u8)4              /*!< @brief Size of command list prefix "00: " */
-#define DEBUG_CMD_NAME_LENGTH     (u8)32             /*!< @brief Max size for command name */
-#define DEBUG_CMD_POSTFIX_LENGTH  (u8)3              /*!< @brief Size of command list postfix "<CR><LF>\0" */
+#define DEBUG_CMD_PREFIX_LENGTH   (u8)4                     /*!< @brief Size of command list prefix "00: " */
+#define DEBUG_CMD_NAME_LENGTH     (u8)32                    /*!< @brief Max size for command name */
+#define DEBUG_CMD_POSTFIX_LENGTH  (u8)3                     /*!< @brief Size of command list postfix "<CR><LF>\0" */
 
 /* New commands must update the definitions below. Valid commands are in the range
 00 - 99.  Command name string is a maximum of DEBUG_CMD_NAME_LENGTH characters. */
@@ -152,6 +152,10 @@ static void DebugSM_Error(void);
 
 
 #endif /* __DEBUG_H */
+
+
+
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/

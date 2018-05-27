@@ -3,7 +3,6 @@
 @brief Definitions for musical notes
 ***********************************************************************************************************************/
 
-
 /* Note lengths */
 #define MEASURE_TIME              (u16)2000  /* Time in ms for 1 measure (1 full note) - should be divisible by 16 */
 #define FULL_NOTE                 (u16)(MEASURE_TIME)
