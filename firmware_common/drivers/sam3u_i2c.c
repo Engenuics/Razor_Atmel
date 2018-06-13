@@ -41,6 +41,7 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_"
 ***********************************************************************************************************************/
 /* New variables */
+u32 G_u32Twi0ApplicationFlags;                   /*!< @brief Status flags meant for application using this peripheral */
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
@@ -54,13 +55,13 @@ extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "TWI_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type TWI_StateMachine;              /* The TWI application state machine function pointer */
+static fnCode_type TWI_pfnStateMachine;           /* The TWI application state machine function pointer */
 
 static u32 TWI_u32Timer;                          /* Counter used across states */
 static u32 TWI_u32Flags;                          /* Application flags for TWI */
 
 static TWIPeripheralType TWI_Peripheral0;         /* TWI0 peripheral object */
-static TWIPeripheralType* TWI0;
+//static TWIPeripheralType* TWI0;
 
 static u32 TWI_u32CurrentBytesRemaining;                        /* Down counter for number of bytes being clocked out */
 static u8* TWI_pu8CurrentTxData;                                /* Pointer to current message being clocked out */
@@ -91,7 +92,7 @@ Promises:
 */
 bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_)
 {
-  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
+  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE || (TWI_Peripheral0.u32Flags & _TWI_TRANS_NOT_COMP))
   {
     /* TWI Message Task Queue Full or the Tx transmit isn't complete */
     return FALSE;
@@ -145,7 +146,7 @@ Promises:
 */
 bool TWI0ReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_)
 {
-  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE || (TWI0->u32Flags & _TWI_TRANS_NOT_COMP))
+  if(TWI_MessageQueueLength == U8_TX_QUEUE_SIZE || (TWI_Peripheral0.u32Flags & _TWI_TRANS_NOT_COMP))
   {
     /* TWI Message Task Queue Full or the Tx transmit isn't complete */
     return FALSE;
@@ -193,7 +194,7 @@ Requires:
   - Initialization of the task
 
 Promises:
-  - Creates a 1-byte message at TWI0->pTransmitBuffer that will be sent by the TWI application
+  - Creates a 1-byte message at TWI_Peripheral0.pTransmitBuffer that will be sent by the TWI application
     when it is available.
   - Returns the message token assigned to the message
 */
@@ -210,7 +211,7 @@ u32 TWI0WriteByte(u8 u8SlaveAddress_, u8 u8Byte_, TWIStopType Send_)
   else
   {
     /* Queue Message in message system */
-    u32Token = QueueMessage(&TWI0->pTransmitBuffer, 1, &u8Data);
+    u32Token = QueueMessage(&TWI_Peripheral0.pTransmitBuffer, 1, &u8Data);
     if(u32Token)
     {
       /* Queue Relevant data for TWI register setup */
@@ -257,7 +258,7 @@ Requires:
   - u8Data_ points to the first byte of the data array
 
 Promises:
-  - adds the data message at TWI_Peripheral0->pTransmitBuffer buffer that will be sent by the TWI application
+  - adds the data message at TWI_Peripheral0.pTransmitBuffer buffer that will be sent by the TWI application
     when it is available.
   - Returns the message token assigned to the message; 0 is returned if the message cannot be queued in which case
     G_u32MessagingFlags can be checked for the reason
@@ -274,7 +275,7 @@ u32 TWI0WriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TWIStopType Sen
   else
   {
     /* Queue Message in message system */
-    u32Token = QueueMessage(&TWI0->pTransmitBuffer, u32Size_, u8Data_);
+    u32Token = QueueMessage(&TWI_Peripheral0.pTransmitBuffer, u32Size_, u8Data_);
     if(u32Token)
     {
       /* Queue Relevant data for TWI register setup */
@@ -332,7 +333,7 @@ void TWIInitialize(void)
   AT91C_BASE_PMC->PMC_PCER |= (1<<u32TargetPerpipheralNumber);
   
   TWI_u32Flags = 0;
-  TWI0 = &TWI_Peripheral0;
+  //TWI0 = &TWI_Peripheral0;
   TWI_MessageBufferNextIndex = 0;
   TWI_MessageBufferCurIndex = 0;
   TWI_MessageQueueLength = 0;
@@ -344,16 +345,16 @@ void TWIInitialize(void)
   TWI_Peripheral0.u32Flags        = 0;
 
   /* Software reset of peripheral */
-  TWI0->pBaseAddress->TWI_CR   |= _TWI_CR_SWRST_BIT;
+  TWI_Peripheral0.pBaseAddress->TWI_CR |= _TWI_CR_SWRST_BIT;
   TWI_u32Timer = G_u32SystemTime1ms;
   while( !IsTimeUp(&TWI_u32Timer, 5) );
   
   /* Configure Peripheral */
-  TWI0->pBaseAddress->TWI_CWGR = TWI0_CWGR_INIT;
-  TWI0->pBaseAddress->TWI_CR   = TWI0_CR_INIT;
-  TWI0->pBaseAddress->TWI_MMR  = TWI0_MMR_INIT;
-  TWI0->pBaseAddress->TWI_IER  = TWI0_IER_INIT;
-  TWI0->pBaseAddress->TWI_IDR  = TWI0_IDR_INIT;
+  TWI_Peripheral0.pBaseAddress->TWI_CWGR = TWI0_CWGR_INIT;
+  TWI_Peripheral0.pBaseAddress->TWI_CR   = TWI0_CR_INIT;
+  TWI_Peripheral0.pBaseAddress->TWI_MMR  = TWI0_MMR_INIT;
+  TWI_Peripheral0.pBaseAddress->TWI_IER  = TWI0_IER_INIT;
+  TWI_Peripheral0.pBaseAddress->TWI_IDR  = TWI0_IDR_INIT;
   
   /* Enable TWI interrupts */
   NVIC_ClearPendingIRQ( (IRQn_Type)u32TargetPerpipheralNumber );
@@ -363,7 +364,7 @@ void TWIInitialize(void)
   TWI_pu8CurrentTxData           = NULL;
 
   /* Set application pointer */
-  TWI_StateMachine = TWISM_Idle;
+  TWI_pfnStateMachine = TWISM_Idle;
   
 } /* end TWIInitialize() */
 
@@ -384,7 +385,7 @@ Promises:
 */
 void TWIRunActiveState(void)
 {
-  TWI_StateMachine();
+  TWI_pfnStateMachine();
 
 } /* end TWIRunActiveState */
 
@@ -420,7 +421,7 @@ static void TWI0FillTxBuffer(void)
   /* Use the active global variables to fill up the transmit FIFO */
   while( (u8ByteCount != 0) && (TWI_u32CurrentBytesRemaining != 0) )
   {
-    TWI0->pBaseAddress->TWI_THR = *TWI_pu8CurrentTxData;
+    TWI_Peripheral0.pBaseAddress->TWI_THR = *TWI_pu8CurrentTxData;
     TWI_pu8CurrentTxData++;
     TWI_u32CurrentBytesRemaining--;
     u8ByteCount--;
@@ -430,16 +431,16 @@ static void TWI0FillTxBuffer(void)
   FIFO empty interrupt */
   if(TWI_u32CurrentBytesRemaining == 0)
   {
-    TWI0->pBaseAddress->TWI_IDR = AT91C_TWI_TXRDY_MASTER;
+    TWI_Peripheral0.pBaseAddress->TWI_IDR = AT91C_TWI_TXRDY_MASTER;
     if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Stop == STOP)
     {
-      TWI0->pBaseAddress->TWI_CR |= _TWI_CR_STOP_BIT;
+      TWI_Peripheral0.pBaseAddress->TWI_CR |= _TWI_CR_STOP_BIT;
     }
   }
   /* Otherwise make sure transmit interrupts are enabled */
   else
   {
-    TWI0->pBaseAddress->TWI_IER = AT91C_TWI_TXRDY_MASTER;
+    TWI_Peripheral0.pBaseAddress->TWI_IER = AT91C_TWI_TXRDY_MASTER;
   }
   
 } /* end TWIFillTxBuffer() */
@@ -465,7 +466,7 @@ static void TWIManualMode(void)
   
   while(TWI_u32Flags &_TWI_INIT_MODE)
   {
-    TWI_StateMachine();
+    TWI_pfnStateMachine();
     while( !IsTimeUp(&TWI_u32Timer, 1) );
   }
       
@@ -501,19 +502,19 @@ void TWI0_IrqHandler(void)
     
   }
   /* Receiving Bytes */
-  else if(u32InterruptStatus & _TWI_SR_RXRDY && ( TWI0->u32Flags & _TWI_RECEIVING ) )
+  else if(u32InterruptStatus & _TWI_SR_RXRDY && ( TWI_Peripheral0.u32Flags & _TWI_RECEIVING ) )
   {
-    *TWI0->pu8RxBuffer = TWI0->pBaseAddress->TWI_RHR;
-    TWI0->pu8RxBuffer++;
+    *TWI_Peripheral0.pu8RxBuffer = TWI_Peripheral0.pBaseAddress->TWI_RHR;
+    TWI_Peripheral0.pu8RxBuffer++;
     TWI_u32CurrentBytesRemaining--;
     
     if(TWI_u32CurrentBytesRemaining == 1)
     {
-      TWI0->pBaseAddress->TWI_CR |= _TWI_CR_STOP_BIT;
+      TWI_Peripheral0.pBaseAddress->TWI_CR |= _TWI_CR_STOP_BIT;
     }
   }
   /* Transmitting Bytes */
-  else if(u32InterruptStatus & _TWI_SR_TXRDY && ( TWI0->u32Flags & _TWI_TRANSMITTING ) )
+  else if(u32InterruptStatus & _TWI_SR_TXRDY && ( TWI_Peripheral0.u32Flags & _TWI_TRANSMITTING ) )
   {
     /* There is more data queued and peripheral ready */
     TWI0FillTxBuffer();
@@ -534,49 +535,49 @@ void TWISM_Idle(void)
 {
   if(TWI_MessageBufferNextIndex != TWI_MessageBufferCurIndex )
   {
-    TWI0->pBaseAddress->TWI_MMR = TWI0_MMR_INIT;
-    TWI0->pBaseAddress->TWI_CR = TWI0_CR_INIT;
+    TWI_Peripheral0.pBaseAddress->TWI_MMR = TWI0_MMR_INIT;
+    TWI_Peripheral0.pBaseAddress->TWI_CR = TWI0_CR_INIT;
     
     if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Direction == WRITE)
     {
       /* insert new address */
-      TWI0->pBaseAddress->TWI_MMR |= ((TWI_MessageBuffer[TWI_MessageBufferCurIndex].u8Address << _TWI_MMR_ADDRESS_SHIFT));
+      TWI_Peripheral0.pBaseAddress->TWI_MMR |= ((TWI_MessageBuffer[TWI_MessageBufferCurIndex].u8Address << _TWI_MMR_ADDRESS_SHIFT));
       
       /* Set up to transmit the message */
-      TWI_u32CurrentBytesRemaining = TWI0->pTransmitBuffer->u32Size;
-      TWI_pu8CurrentTxData = TWI0->pTransmitBuffer->pu8Message;
-      TWI0->u32Flags |= (_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
+      TWI_u32CurrentBytesRemaining = TWI_Peripheral0.pTransmitBuffer->u32Size;
+      TWI_pu8CurrentTxData = TWI_Peripheral0.pTransmitBuffer->pu8Message;
+      TWI_Peripheral0.u32Flags |= (_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
       TWI0FillTxBuffer();    
       
       /* Update the message's status */
-      UpdateMessageStatus(TWI0->pTransmitBuffer->u32Token, SENDING);
+      UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, SENDING);
   
       /* Proceed to next state to let the current message send */
-      TWI_StateMachine = TWISM_Transmitting;
+      TWI_pfnStateMachine = TWISM_Transmitting;
     }
     else if(TWI_MessageBuffer[TWI_MessageBufferCurIndex].Direction == READ)
     {
       /* insert new address and set Read bit */
-      TWI0->pBaseAddress->TWI_MMR |= (((TWI_MessageBuffer[TWI_MessageBufferCurIndex].u8Address) << _TWI_MMR_ADDRESS_SHIFT) & _TWI_MMR_MREAD_BIT);
+      TWI_Peripheral0.pBaseAddress->TWI_MMR |= (((TWI_MessageBuffer[TWI_MessageBufferCurIndex].u8Address) << _TWI_MMR_ADDRESS_SHIFT) & _TWI_MMR_MREAD_BIT);
       
       /* Grab number of desired bytes and the pointer to store the buffer */
       TWI_u32CurrentBytesRemaining = TWI_MessageBuffer[TWI_MessageBufferCurIndex].u32Size;
-      TWI0->pu8RxBuffer = TWI_MessageBuffer[TWI_MessageBufferCurIndex].pu8RxBuffer;
+      TWI_Peripheral0.pu8RxBuffer = TWI_MessageBuffer[TWI_MessageBufferCurIndex].pu8RxBuffer;
       
       if(TWI_u32CurrentBytesRemaining == 1)
       {
         /* Start and Stop need to be set at same time */
-        TWI0->pBaseAddress->TWI_CR |= (_TWI_CR_START_BIT | _TWI_CR_STOP_BIT);
+        TWI_Peripheral0.pBaseAddress->TWI_CR |= (_TWI_CR_START_BIT | _TWI_CR_STOP_BIT);
       }
       else
       {
         /* Just start bit, stop will be handled by interrupt */
-        TWI0->pBaseAddress->TWI_CR |= _TWI_CR_START_BIT;
+        TWI_Peripheral0.pBaseAddress->TWI_CR |= _TWI_CR_START_BIT;
       }
       
       /* Proceed to receiving state and set flag */
-      TWI0->u32Flags |= _TWI_RECEIVING;
-      TWI_StateMachine = TWISM_Receiving;
+      TWI_Peripheral0.u32Flags |= _TWI_RECEIVING;
+      TWI_pfnStateMachine = TWISM_Receiving;
       
     }  
     
@@ -584,7 +585,7 @@ void TWISM_Idle(void)
     if(TWI_u32Flags & TWI_ERROR_FLAG_MASK)
     {
       /* Reset peripheral parser and go to error state */
-      TWI_StateMachine = TWISM_Error;
+      TWI_pfnStateMachine = TWISM_Error;
     }
   }
 } /* end TWISM_Idle() */
@@ -600,33 +601,33 @@ void TWISM_Transmitting(void)
   {
     /* Check if all of the message bytes have completely finished sending and transmission complete */
     if( (TWI_u32CurrentBytesRemaining == 0) && 
-        (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXRDY) &&
-        (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXCOMP) )
+        (TWI_Peripheral0.pBaseAddress->TWI_SR & _TWI_SR_TXRDY) &&
+        (TWI_Peripheral0.pBaseAddress->TWI_SR & _TWI_SR_TXCOMP) )
     {
       /*  Clear flags */
-      TWI0->u32Flags &= ~(_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
+      TWI_Peripheral0.u32Flags &= ~(_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
     }
   }
   else
   {
     /* Check if all of the message bytes have completely finished sending */
     if( (TWI_u32CurrentBytesRemaining == 0) && 
-        (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXRDY) )
+        (TWI_Peripheral0.pBaseAddress->TWI_SR & _TWI_SR_TXRDY) )
     { 
       /* Clear flag */
-      TWI0->u32Flags &= ~_TWI_TRANSMITTING;
+      TWI_Peripheral0.u32Flags &= ~_TWI_TRANSMITTING;
     }
   }
   
-  if( !(TWI0->u32Flags & _TWI_TRANSMITTING) )
+  if( !(TWI_Peripheral0.u32Flags & _TWI_TRANSMITTING) )
   {
     /* Update the status queue and then dequeue the message */
-    UpdateMessageStatus(TWI0->pTransmitBuffer->u32Token, COMPLETE);
-    DeQueueMessage(&TWI0->pTransmitBuffer);
+    UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, COMPLETE);
+    DeQueueMessage(&TWI_Peripheral0.pTransmitBuffer);
     
     /* Make sure _TWI_INIT_MODE flag is clear in case this was a manual cycle */
     TWI_u32Flags &= ~_TWI_INIT_MODE;
-    TWI_StateMachine = TWISM_Idle;
+    TWI_pfnStateMachine = TWISM_Idle;
     
     /* Update queue pointers */
     TWI_MessageBufferCurIndex++;
@@ -641,7 +642,7 @@ void TWISM_Transmitting(void)
   if(TWI_u32Flags & TWI_ERROR_FLAG_MASK)
   {
     /* Reset peripheral parser and go to error state */
-    TWI_StateMachine = TWISM_Error;
+    TWI_pfnStateMachine = TWISM_Error;
   }
   
 } /* end TWISM_Transmitting() */
@@ -652,15 +653,15 @@ void TWISM_Transmitting(void)
 void TWISM_Receiving(void)
 {
   if( (TWI_u32CurrentBytesRemaining == 0) &&
-      (TWI0->pBaseAddress->TWI_SR & _TWI_SR_RXRDY) &&
-      (TWI0->pBaseAddress->TWI_SR & _TWI_SR_TXCOMP) )
+      (TWI_Peripheral0.pBaseAddress->TWI_SR & _TWI_SR_RXRDY) &&
+      (TWI_Peripheral0.pBaseAddress->TWI_SR & _TWI_SR_TXCOMP) )
   {
     /* Clear flag */
-    TWI0->u32Flags &= ~_TWI_RECEIVING;
+    TWI_Peripheral0.u32Flags &= ~_TWI_RECEIVING;
     
     /* Make sure _TWI_INIT_MODE flag is clear in case this was a manual cycle */
     TWI_u32Flags &= ~_TWI_INIT_MODE;
-    TWI_StateMachine = TWISM_Idle;
+    TWI_pfnStateMachine = TWISM_Idle;
     
     /* Update queue pointers */
     TWI_MessageQueueLength--;
@@ -675,7 +676,7 @@ void TWISM_Receiving(void)
   if(TWI_u32Flags & TWI_ERROR_FLAG_MASK)
   {
     /* Reset peripheral parser and go to error state */
-    TWI_StateMachine = TWISM_Error;
+    TWI_pfnStateMachine = TWISM_Error;
   }  
   
 }
@@ -698,21 +699,21 @@ void TWISM_Error(void)
         TWI_MessageBufferCurIndex = 0;
       }
       
-      if( TWI0->u32Flags & _TWI_TRANSMITTING )
+      if( TWI_Peripheral0.u32Flags & _TWI_TRANSMITTING )
       {
         /* Dequeue Msg and Update Status */ 
-        UpdateMessageStatus(TWI0->pTransmitBuffer->u32Token, ABANDONED);
-        DeQueueMessage(&TWI0->pTransmitBuffer);
+        UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, ABANDONED);
+        DeQueueMessage(&TWI_Peripheral0.pTransmitBuffer);
       }
     }
 
     /* Reset the msg flags */
-    TWI0->u32Flags = 0;
+    TWI_Peripheral0.u32Flags = 0;
   }
   
   /* Return to Idle */
   TWI_u32Flags &= ~TWI_ERROR_FLAG_MASK;
-  TWI_StateMachine = TWISM_Idle;
+  TWI_pfnStateMachine = TWISM_Idle;
   
 } /* end TWISM_Error() */
 

@@ -47,7 +47,7 @@ Type Definitions
 This provides self-documentation when indexing peripherals and when assigning
 better names for devices that make use of the peripherals.
 */
-typedef enum {SPI, UART, USART0, USART1, USART2, USART3} PeripheralType;
+typedef enum {TWI0, SPI0, UART, USART0, USART1, USART2, USART3} PeripheralType;
 
 
 /**********************************************************************************************************************
@@ -75,6 +75,7 @@ Includes
 #include "timer.h" 
 
 #include "sam3u_i2c.h"
+#include "sam3u_spi.h"
 #include "sam3u_ssp.h"
 #include "sam3u_uart.h"
 #include "adc12.h"
@@ -114,8 +115,9 @@ Includes
 /* Peripheral assignments */
 #define DEBUG_UART                  USART0
 #define BLADE_UART                  UART
+#define BLADE_SPI                   SPI0
+#define BLADE_I2C                   TWI0
 #define ANT_SPI                     USART2
-#define BLADE_SPI                   SPI
 
 #ifdef EIE1
 #define SD_SSP                      USART1
@@ -125,52 +127,68 @@ Includes
 #define LCD_SPI                     USART1
 #endif
 
+/* Global status flags for SPI peripherals */
+#define BLADE_SPI_FLAGS             G_u32Spi0ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
+#define SD_SSP_FLAGS                G_u32Ssp1ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
+#define ANT_SSP_FLAGS               G_u32Ssp2ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
+
+
 /*! @cond DOXYGEN_EXCLUDE */
+
 /* %UART% Configuration */
+
 /* Blade UART Peripheral Allocation (UART) */
-#define UART_US_CR_INIT             BLADE_US_CR_INIT
-#define UART_US_MR_INIT             BLADE_US_MR_INIT
-#define UART_US_IER_INIT            BLADE_US_IER_INIT
-#define UART_US_IDR_INIT            BLADE_US_IDR_INIT
-#define UART_US_BRGR_INIT           BLADE_US_BRGR_INIT
+#define UART_US_CR_INIT             BLADE_UART_US_CR_INIT
+#define UART_US_MR_INIT             BLADE_UART_US_MR_INIT
+#define UART_US_IER_INIT            BLADE_UART_US_IER_INIT
+#define UART_US_IDR_INIT            BLADE_UART_US_IDR_INIT
+#define UART_US_BRGR_INIT           BLADE_UART_US_BRGR_INIT
 
 #define UART_IRQHandler             DBGU_IrqHandler
 #define BLADE_UART_PERIPHERAL       AT91C_ID_DBGU
 
-
 /* Debug UART Peripheral Allocation (USART0) */
-#define USART0_US_CR_INIT           DEBUG_US_CR_INIT
-#define USART0_US_MR_INIT           DEBUG_US_MR_INIT
-#define USART0_US_IER_INIT          DEBUG_US_IER_INIT
-#define USART0_US_IDR_INIT          DEBUG_US_IDR_INIT
-#define USART0_US_BRGR_INIT         DEBUG_US_BRGR_INIT
+#define USART0_US_CR_INIT           DEBUG_UART_US_CR_INIT
+#define USART0_US_MR_INIT           DEBUG_UART_US_MR_INIT
+#define USART0_US_IER_INIT          DEBUG_UART_US_IER_INIT
+#define USART0_US_IDR_INIT          DEBUG_UART_US_IDR_INIT
+#define USART0_US_BRGR_INIT         DEBUG_UART_US_BRGR_INIT
 
 #define UART0_IRQHandler            USART0_IrqHandler
 #define DEBUG_UART_PERIPHERAL       AT91C_ID_US0
 
-#if 0
-/* %SPI% Blade SPI Peripheral Allocation */
-#define SD_BASE_PORT                AT91C_BASE_PIOA
-#define SD_CS_PIN                   PA_08_SD_CS_MCDA3
-#define USART1_US_CR_INIT           SD_US_CR_INIT
-#define USART1_US_MR_INIT           SD_US_MR_INIT
-#define USART1_US_IER_INIT          SD_US_IER_INIT
-#define USART1_US_IDR_INIT          SD_US_IDR_INIT
-#define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
 
-#define SPI_IRQHandler              SPI_IrqHandler
-#endif
+/* %SPI% Configuration */
+
+/* %SPI% Blade SPI Peripheral Allocation (SPI0) */
+#define BLADE_BASE_PORT             AT91C_BASE_PIOA
+#define BLADE_CS_PIN                PA_16_BLADE_CS
+#define BLADE_SPI_FLAGS             G_u32Spi0ApplicationFlags
+#define BLADE_SPI_PERIPHERAL        AT91C_ID_SPI0
+
+#define SPI0_CR_INIT                BLADE_SPI_CR_INIT
+#define SPI0_MR_INIT                BLADE_SPI_MR_INIT
+#define SPI0_IER_INIT               BLADE_SPI_IER_INIT
+#define SPI0_IDR_INIT               BLADE_SPI_IDR_INIT
+#define SPI0_CSR0_INIT              BLADE_SPI_CSR0_INIT
+#define SPI0_CSR1_INIT              BLADE_SPI_CSR1_INIT
+#define SPI0_CSR2_INIT              BLADE_SPI_CSR2_INIT
+#define SPI0_CSR3_INIT              BLADE_SPI_CSR3_INIT
+
+#define SPI0_IRQHandler             SPI0_IrqHandler
+
+
+/* %SSP% Configuration */
 
 #ifdef EIE1
-/* %SSP% Configuration */
 /* SD SPI Peripheral Allocation (USART1) */
 #define SD_BASE_PORT                AT91C_BASE_PIOA
 #define SD_CS_PIN                   PA_08_SD_CS_MCDA3
-#define USART1_US_CR_INIT           SD_US_CR_INIT
-#define USART1_US_MR_INIT           SD_US_MR_INIT
-#define USART1_US_IER_INIT          SD_US_IER_INIT
-#define USART1_US_IDR_INIT          SD_US_IDR_INIT
-#define USART1_US_BRGR_INIT         SD_US_BRGR_INIT
+#define USART1_US_CR_INIT           SD_SPI_US_CR_INIT
+#define USART1_US_MR_INIT           SD_SPI_US_MR_INIT
+#define USART1_US_IER_INIT          SD_SPI_US_IER_INIT
+#define USART1_US_IDR_INIT          SD_SPI_US_IDR_INIT
+#define USART1_US_BRGR_INIT         SD_SPI_US_BRGR_INIT
 
 #define SSP1_IRQHandler             USART1_IrqHandler
 #endif /* EIE1 */
@@ -182,26 +200,25 @@ Includes
 #define LCD_SPI                     USART1
 #define LCD_BASE_PORT               AT91C_BASE_PIOB
 #define LCD_CS_PIN                  PB_12_LCD_CS
-#define USART1_US_CR_INIT           LCD_US_CR_INIT
-#define USART1_US_MR_INIT           LCD_US_MR_INIT
-#define USART1_US_IER_INIT          LCD_US_IER_INIT
-#define USART1_US_IDR_INIT          LCD_US_IDR_INIT
-#define USART1_US_BRGR_INIT         LCD_US_BRGR_INIT
+#define USART1_US_CR_INIT           LCD_SPI_US_CR_INIT
+#define USART1_US_MR_INIT           LCD_SPI_US_MR_INIT
+#define USART1_US_IER_INIT          LCD_SPI_US_IER_INIT
+#define USART1_US_IDR_INIT          LCD_SPI_US_IDR_INIT
+#define USART1_US_BRGR_INIT         LCD_SPI_US_BRGR_INIT
 
 #define SSP1_IRQHandler             USART1_IrqHandler
 #endif /* MPGL2 */
 
 /* ANT SPI Peripheral Allocation (USART2) */
-#define USART2_US_CR_INIT           ANT_US_CR_INIT
-#define USART2_US_MR_INIT           ANT_US_MR_INIT
-#define USART2_US_IER_INIT          ANT_US_IER_INIT
-#define USART2_US_IDR_INIT          ANT_US_IDR_INIT
-#define USART2_US_BRGR_INIT         ANT_US_BRGR_INIT
-
-#define SSP2_IRQHandler             USART2_IrqHandler
-
 #define ANT_SPI_CS_GPIO             AT91C_BASE_PIOB
 #define ANT_SPI_CS_PIN              PB_22_ANT_USPI2_CS
+#define USART2_US_CR_INIT           ANT_SPI_US_CR_INIT
+#define USART2_US_MR_INIT           ANT_SPI_US_MR_INIT
+#define USART2_US_IER_INIT          ANT_SPI_US_IER_INIT
+#define USART2_US_IDR_INIT          ANT_SPI_US_IDR_INIT
+#define USART2_US_BRGR_INIT         ANT_SPI_US_BRGR_INIT
+
+#define SSP2_IRQHandler             USART2_IrqHandler
 
 /* Blade I²C (TWI0) / Accelerometer (MPGL2_R01 only) */
 /* Currently configured directly in sam3u_i2c.c */
@@ -338,7 +355,7 @@ Blade UART Setup
 The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) .
 */
 /* USART Control Register */
-#define BLADE_US_CR_INIT (u32)0x00000050
+#define BLADE_UART_US_CR_INIT (u32)0x00000050
 /*
     31 - 20 [0] Reserved
 
@@ -369,7 +386,7 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
 */
 
 /* USART Mode Register */
-#define BLADE_US_MR_INIT (u32)0x000008C0
+#define BLADE_UART_US_MR_INIT (u32)0x000008C0
 /*
     31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
     30 [0] MODSYNC Manchester start bit N/A
@@ -414,7 +431,7 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
 
 
 /* USART Interrupt Enable Register */
-#define BLADE_US_IER_INIT (u32)0x00000008
+#define BLADE_UART_US_IER_INIT (u32)0x00000008
 /*
     31 [0] Reserved
     30 [0] "
@@ -458,7 +475,7 @@ The Blade UART is used for the daughter board interface (serial: 115.2k, 8-N-1) 
 */
 
 /* USART Interrupt Disable Register */
-#define BLADE_US_IDR_INIT (u32)~BLADE_US_IER_INIT
+#define BLADE_UART_US_IDR_INIT (u32)~BLADE_UART_US_IER_INIT
 
 /* USART Baud Rate Generator Register
 BAUD = MCK / (8(2-OVER)(CD + FP / 8))
@@ -471,7 +488,7 @@ BAUD desired = 115200 bps
 Set FP = 0, CD = 26
 
 */
-#define BLADE_US_BRGR_INIT (u32)0x0000001A
+#define BLADE_UART_US_BRGR_INIT (u32)0x0000001A
 /*
     31-20 [0] Reserved
 
@@ -508,7 +525,7 @@ Debug UART Setup
 Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
 */
 /* USART Control Register */
-#define DEBUG_US_CR_INIT (u32)0x00000050
+#define DEBUG_UART_US_CR_INIT (u32)0x00000050
 /*
     31 - 20 [0] Reserved
 
@@ -539,7 +556,7 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
 */
 
 /* USART Mode Register */
-#define DEBUG_US_MR_INIT (u32)0x000008C0
+#define DEBUG_UART_US_MR_INIT (u32)0x000008C0
 /*
     31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
     30 [0] MODSYNC Manchester start bit N/A
@@ -584,7 +601,7 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
 
 
 /* USART Interrupt Enable Register */
-#define DEBUG_US_IER_INIT (u32)0x00000008
+#define DEBUG_UART_US_IER_INIT (u32)0x00000008
 /*
     31 [0] Reserved
     30 [0] "
@@ -628,7 +645,7 @@ Debug is used for the terminal (serial: 115.2k, 8-N-1) debugging interface.
 */
 
 /* USART Interrupt Disable Register */
-#define DEBUG_US_IDR_INIT (u32)~DEBUG_US_IER_INIT
+#define DEBUG_UART_US_IDR_INIT (u32)~DEBUG_UART_US_IER_INIT
 
 /* USART Baud Rate Generator Register 
 BAUD = MCK / (8(2-OVER)(CD + FP / 8))
@@ -645,7 +662,7 @@ BAUD desired = 115200 bps
 Set FP = 0, CD = 26 = 0x1A
 
 */
-#define DEBUG_US_BRGR_INIT (u32)0x0000001A
+#define DEBUG_UART_US_BRGR_INIT (u32)0x0000001A
 /*
     31-20 [0] Reserved
 
@@ -679,6 +696,163 @@ Set FP = 0, CD = 26 = 0x1A
 
 
 /*----------------------------------------------------------------------------------------------------------------------
+%SPI%  Configuration                                                                                                  
+----------------------------------------------------------------------------------------------------------------------*/
+/*! @cond DOXYGEN_EXCLUDE */
+/*----------------------------------------------------------------------------------------------------------------------
+Blade SPI Setup 
+
+SPI mode to communicate with a Slave device on the Blade connector. 
+*/
+/* SPI Control Register */
+#define BLADE_SPI_CR_INIT (u32)0x00000002
+/*
+    31 - 28 [0] Reserved
+
+    27 [0] Reserved
+    26 [0] "
+    25 [0] "
+    24 [0] LASTXFER not required
+
+    23 - 8 [0] Reserved
+
+    07 [0] SWRST not reset
+    06 [0] Reserved
+    05 [0] "
+    04 [0] "
+
+    03 [0] Reserved
+    02 [0] "
+    01 [1] SPIDIS SPI disabled for now
+    00 [0] SPIEN SPI not enabled yet
+*/
+
+/* SPI Mode Register */
+#define BLADE_SPI_MR_INIT (u32)0x00000021
+/*
+    31 [0] DLYBCS Delay Between Chip Selects not applicable
+    30 [0] "
+    29 [0] "
+    28 [0] "
+
+    27 [0] "
+    26 [0] "
+    25 [0] "
+    24 [0] "
+
+    23 [0] Reserved
+    22 [0] "
+    21 [0] "
+    20 [0] "
+
+    19 [0] PCS Peripheral Chip Select select CS0
+    18 [0] "
+    17 [0] "
+    16 [0] "
+
+    15 - 08 [0] Reserved 
+
+    07 [0] LLB Local Loopback disabled
+    06 [0] Reserved
+    05 [1] WDRBT Wait Data Before Transfer enabled
+    04 [0] MODFDIS Mode Fault not disabled
+
+    03 [0] Reserved
+    02 [0] PCSDEC chip select direct connect
+    01 [0] PS Fixed Peripheral Select
+    00 [1] MSTR Master mode
+*/
+
+/* SPI Interrupt Enable Register */
+#define BLADE_SPI_IER_INIT (u32)0x00000000
+/*
+    31 - 12 [0] Reserved 
+
+    11 [0] Reserved
+    10 [0] UNDES not enabled
+    09 [0] TXEMPTY not enabled
+    08 [0] NSSR not enabled
+
+    07 [0] Reserved
+    06 [0] "
+    05 [0] "
+    04 [0] "
+
+    03 [0] OVRES not enabled
+    02 [0] MODF not enabled
+    01 [0] TDRE not enabled yet
+    00 [0] RDRF not enabled yet
+*/
+
+/* SPI Interrupt Disable Register  */
+#define BLADE_SPI_IDR_INIT (u32)~BLADE_SPI_IER_INIT
+
+/* SPI Baud Rate Generator Register
+BAUD = MCK / SCBR 
+=> SCBR = MCK / BAUD
+BAUD desired = 1 Mbps
+=> SCBR = 48
+
+Delay before SPCK: target 10us
+DLYBS = SPCK x MCK = 10us x 48MHz = 480
+
+Delay between transfers: target 3us (3 clock ticks)
+Delay = (32 x DLYBCT) / MCK
+DLYBCT = (3us x 48MHz) / 32
+DLYBCT = 4.5 (round up to 5)
+*/
+#define BLADE_SPI_CSR0_INIT (u32)0x05303001
+/*
+    31 [0] DLYBCT Delay between transfers = 5 (0x05)
+    30 [0] "
+    29 [0] "
+    28 [0] "
+
+    27 [0] "
+    26 [1] "
+    25 [0] "
+    24 [1] "
+
+    23 [0] DLYBS Delay before SCK 1us => 48 (0x30)
+    22 [0] "
+    21 [1] "
+    20 [1] "
+
+    19 [0] "
+    18 [0] "
+    17 [0] "
+    16 [0] "
+
+    15 [0] SCBR Serial clock baud rate => 48 (0x30)
+    14 [0] "
+    13 [1] "
+    12 [1] "
+
+    11 [0] "
+    10 [0] "
+    09 [0] "
+    08 [0] "
+
+    07 [0] BITS 8 bits per transfer
+    06 [0] "
+    05 [0] "
+    04 [0] "
+
+    03 [0] CSAAT CS rises after data tranfer
+    02 [0] CSNAAT CS not active after transfer 
+    01 [0] NCPHA Clock phase leading edge
+    00 [1] CPOL Clock polarity high when inactive
+*/
+
+/* Only a single Slave is used, so other CSRs are the same as CSR0 */
+#define BLADE_SPI_CSR1_INIT (u32)0x05303001
+#define BLADE_SPI_CSR2_INIT (u32)0x05303001
+#define BLADE_SPI_CSR3_INIT (u32)0x05303001
+
+/*! @endcond */
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 %SSP%  Configuration                                                                                                  
 ----------------------------------------------------------------------------------------------------------------------*/
 /*! @cond DOXYGEN_EXCLUDE */
@@ -688,8 +862,8 @@ LCD USART Setup in SSP mode
 
 SPI mode to communicate with an SPI LCD screen. 
 */
-/* USART Control Register - Page 734 */
-#define LCD_US_CR_INIT (u32)0x00000060
+/* USART Control Register */
+#define LCD_SPI_US_CR_INIT (u32)0x00000060
 /*
     31 - 20 [0] Reserved
 
@@ -719,8 +893,8 @@ SPI mode to communicate with an SPI LCD screen.
     00 [0] "
 */
 
-/* USART Mode Register - page 737 */
-#define LCD_US_MR_INIT (u32)0x004518CE
+/* USART Mode Register */
+#define LCD_SPI_US_MR_INIT (u32)0x004518CE
 /*
     31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
     30 [0] MODSYNC Manchester start bit N/A
@@ -764,8 +938,8 @@ SPI mode to communicate with an SPI LCD screen.
 */
 
 
-/* USART Interrupt Enable Register - Page 741 */
-#define LCD_US_IER_INIT (u32)0x00000000
+/* USART Interrupt Enable Register */
+#define LCD_SPI_US_IER_INIT (u32)0x00000000
 /*
     31 [0] Reserved
     30 [0] "
@@ -808,8 +982,8 @@ SPI mode to communicate with an SPI LCD screen.
     00 [0] RXRDY Receiver Ready interrupt not enabled
 */
 
-/* USART Interrupt Disable Register - Page 743 */
-#define LCD_US_IDR_INIT (u32)~LCD_US_IER_INIT
+/* USART Interrupt Disable Register */
+#define LCD_SPI_US_IDR_INIT (u32)~LCD_SPI_US_IER_INIT
 
 /* USART Baud Rate Generator Register - Page 752
 BAUD = MCK / CD 
@@ -817,7 +991,7 @@ BAUD = MCK / CD
 BAUD desired = 1 Mbps
 => CD = 48
 */
-#define LCD_US_BRGR_INIT (u32)0x00000030  /* VERIFY SPI CLOCK! */
+#define LCD_SPI_US_BRGR_INIT (u32)0x00000030 
 /*
     31-20 [0] Reserved
 
@@ -852,8 +1026,8 @@ BAUD desired = 1 Mbps
 ANT USART Setup in SSP
 SPI slave mode to communicate with an ANT device. 
 */
-/* USART Control Register - Page 734 */
-#define ANT_US_CR_INIT (u32)0x00000050
+/* USART Control Register */
+#define ANT_SPI_US_CR_INIT (u32)0x00000050
 /*
     31 - 20 [0] Reserved
 
@@ -883,8 +1057,8 @@ SPI slave mode to communicate with an ANT device.
     00 [0] "
 */
 
-/* USART Mode Register - page 737 */
-#define ANT_US_MR_INIT (u32)0x004118FF
+/* USART Mode Register */
+#define ANT_SPI_US_MR_INIT (u32)0x004118FF
 /*
     31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
     30 [0] MODSYNC Manchester start bit N/A
@@ -928,8 +1102,8 @@ SPI slave mode to communicate with an ANT device.
 */
 
 
-/* USART Interrupt Enable Register - Page 741 */
-#define ANT_US_IER_INIT (u32)0x00080000
+/* USART Interrupt Enable Register */
+#define ANT_SPI_US_IER_INIT (u32)0x00080000
 /*
     31 [0] Reserved
     30 [0] "
@@ -973,14 +1147,14 @@ SPI slave mode to communicate with an ANT device.
 */
 
 /* USART Interrupt Disable Register - Page 743 */
-#define ANT_US_IDR_INIT (u32)~ANT_US_IER_INIT
+#define ANT_SPI_US_IDR_INIT (u32)~ANT_SPI_US_IER_INIT
 
 /* USART Baud Rate Generator Register - Page 752
 !!!!! Not applicable for slave (note that incoming clock cannot 
 exceed MCLK/6 = 8MHz.  To date, ANT devices communicate at 500kHz
 or 2MHz, so no issues.
 */
-#define ANT_US_BRGR_INIT (u32)0x00000000  
+#define ANT_SPI_US_BRGR_INIT (u32)0x00000000  
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -989,7 +1163,7 @@ SD USART Setup in SSP mode
 SPI mode to communicate with an SPI SD card. 
 */
 /* USART Control Register - Page 734 */
-#define SD_US_CR_INIT (u32)0x00000050
+#define SD_SPI_US_CR_INIT (u32)0x00000050
 /*
     31 - 20 [0] Reserved
 
@@ -1020,7 +1194,7 @@ SPI mode to communicate with an SPI SD card.
 */
 
 /* USART Mode Register - page 737 */
-#define SD_US_MR_INIT (u32)0x004518CE
+#define SD_SPI_US_MR_INIT (u32)0x004518CE
 /*
     31 [0] ONEBIT start frame delimiter is COMMAND or DATA SYNC
     30 [0] MODSYNC Manchester start bit N/A
@@ -1065,7 +1239,7 @@ SPI mode to communicate with an SPI SD card.
 
 
 /* USART Interrupt Enable Register - Page 741 */
-#define SD_US_IER_INIT (u32)0x00000000
+#define SD_SPI_US_IER_INIT (u32)0x00000000
 /*
     31 [0] Reserved
     30 [0] "
@@ -1109,7 +1283,7 @@ SPI mode to communicate with an SPI SD card.
 */
 
 /* USART Interrupt Disable Register - Page 743 */
-#define SD_US_IDR_INIT (u32)~SD_US_IER_INIT
+#define SD_SPI_US_IDR_INIT (u32)~SD_SPI_US_IER_INIT
 
 /* USART Baud Rate Generator Register
 BAUD = MCK / CD 
@@ -1117,7 +1291,7 @@ BAUD = MCK / CD
 BAUD desired = 1 Mbps
 => CD = 48
 */
-#define SD_US_BRGR_INIT (u32)0x00000030  /* VERIFY SPI CLOCK! */
+#define SD_SPI_US_BRGR_INIT (u32)0x00000030  /* VERIFY SPI CLOCK! */
 /*
     31-20 [0] Reserved
 

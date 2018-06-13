@@ -93,13 +93,19 @@ the callbacks and manage flow control lines.
 
 ------------------------------------------------------------------------------------------------------------------------
 GLOBALS
-- NONE
+- G_u32Ssp0ApplicationFlags
+- G_u32Ssp1ApplicationFlags
+- G_u32Ssp2ApplicationFlags
 
 CONSTANTS
 - NONE
 
 TYPES
-- Adc12ChannelType {ADC12_CH0 ... ADC12_CH7}
+- SspBitOrderType
+- SspModeType
+- SspRxStatusType
+- SspConfigurationType
+- SspPeripheralType
 
 PUBLIC FUNCTIONS
 - SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
@@ -193,10 +199,10 @@ configured in different ways for different SSP modes.  The following modes are s
 SPI_MASTER: transmit and receive using peripheral DMA controller; transmit occurs 
 through the Message API
 
-SPI_SLAVE: transmit through Message Task; receive set up per-byte using current 
+SSP_SLAVE: transmit through Message Task; receive set up per-byte using current 
 and next DMA pointers and managed into circular buffer.
 
-SPI_SLAVE_FLOW_CONTROL: transmit through interrupt-driven single byte transfers 
+SSP_SLAVE_FLOW_CONTROL: transmit through interrupt-driven single byte transfers 
 and call-back; receive using peripheral DMA controller direct to task buffer.
 
 Requires:
@@ -288,16 +294,17 @@ SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
   psRequestedSsp->pBaseAddress->US_BRGR = u32TargetBRGR;
   
   /* Special considerations for SPI Slaves */
-  if(psRequestedSsp->eSspMode == SPI_SLAVE)
+  if(psRequestedSsp->eSspMode == SSP_SLAVE)
   {
-    /* Preset the PDC receive pointers and counters; the receive buffer must be starting from [0] and be at least 2 bytes long)*/
+    /* Preset the PDC receive pointers and counters; the receive buffer must be starting 
+    from [0] and be at least 2 bytes long)*/
     psRequestedSsp->pBaseAddress->US_RPR  = (u32)psSspConfig_->pu8RxBufferAddress;
     psRequestedSsp->pBaseAddress->US_RNPR = (u32)(psSspConfig_->pu8RxBufferAddress + 1);
     psRequestedSsp->pBaseAddress->US_RCR  = 1;
     psRequestedSsp->pBaseAddress->US_RNCR = 1;
-    psRequestedSsp->ppu8RxNextByte = NULL; /* not used for SPI_SLAVE */
+    psRequestedSsp->ppu8RxNextByte = NULL; /* not used for SSP_SLAVE */
     
-    /* Preset the PDC transmit registers to return predicatable SPI dummy bytes
+    /* Preset the PDC transmit registers to return predictable SPI dummy bytes
     if the Slave is receiving. These will be changed if the Slave transmit is queued
     by the application.  */
     psRequestedSsp->pBaseAddress->US_TPR  = (u32)&SSP_u8Dummies; 
@@ -311,7 +318,7 @@ SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
   }
 
   /* Special considerations for SPI Slaves with Flow Control */
-  if(psRequestedSsp->eSspMode == SPI_SLAVE_FLOW_CONTROL)
+  if(psRequestedSsp->eSspMode == SSP_SLAVE_FLOW_CONTROL)
   {
     /* Enable the CS interrupt */
     psRequestedSsp->pBaseAddress->US_IER = AT91C_US_CTSIC;
@@ -332,10 +339,10 @@ SspPeripheralType* SspRequest(SspConfigurationType* psSspConfig_)
 @brief Releases an SSP resource.  
 
 Requires:
+- Receive operation is not in progress
 
 @param psSspPeripheral_ has the SSP peripheral number, address of the RxBuffer, 
-and the RxBuffer size and the calling application is ready to start using the 
-peripheral.
+and the RxBuffer.
 
 Promises:
 - Resets peripheral object's pointers and data to safe values
@@ -346,7 +353,7 @@ Promises:
 void SspRelease(SspPeripheralType* psSspPeripheral_)
 {
   /* Check to see if the peripheral is already released */
-  if(psSspPeripheral_->pu8RxBuffer == NULL)
+  if( !(psSspPeripheral_->u32PrivateFlags) & _SSP_PERIPHERAL_ASSIGNED )
   {
     return;
   }
@@ -380,9 +387,11 @@ void SspRelease(SspPeripheralType* psSspPeripheral_)
 /*!---------------------------------------------------------------------------------------------------------------------
 @fn void SspAssertCS(SspPeripheralType* psSspPeripheral_)
 
-@brief Asserts (CLEARS) the CS line on the target SSP peripheral.  
+@brief Master mode manual CS only. Asserts (CLEARS) the CS line on the target SSP peripheral.  
 
 Requires:
+- eSspMode should be SSP_MASTER_MANUAL_CS or function does nothing.
+
 @param psSspPeripheral_ is the SSP peripheral to use and it has already been requested.
 
 Promises:
@@ -391,7 +400,10 @@ Promises:
 */
 void SspAssertCS(SspPeripheralType* psSspPeripheral_)
 {
-  psSspPeripheral_->pCsGpioAddress->PIO_CODR = psSspPeripheral_->u32CsPin;
+  if( psSspPeripheral_->eSspMode == SSP_MASTER_MANUAL_CS )
+  {
+    psSspPeripheral_->pCsGpioAddress->PIO_CODR = psSspPeripheral_->u32CsPin;
+  }
   
 } /* end SspAssertCS() */
 
@@ -399,9 +411,11 @@ void SspAssertCS(SspPeripheralType* psSspPeripheral_)
 /*!---------------------------------------------------------------------------------------------------------------------
 @fn void SspDeAssertCS(SspPeripheralType* psSspPeripheral_)
 
-@brief Deasserts (SETS) the CS line on the target SSP peripheral.  
+@brief Master mode only. Deasserts (SETS) the CS line on the target SSP peripheral.  
 
 Requires:
+- eSspMode should be SSP_MASTER_MANUAL_CS or function does nothing.
+
 @param psSspPeripheral_ is the SSP peripheral to use and it has already been requested.
 
 Promises:
@@ -410,7 +424,10 @@ Promises:
 */
 void SspDeAssertCS(SspPeripheralType* psSspPeripheral_)
 {
-  psSspPeripheral_->pCsGpioAddress->PIO_SODR = psSspPeripheral_->u32CsPin;
+  if( psSspPeripheral_->eSspMode == SSP_MASTER_MANUAL_CS )
+  {
+    psSspPeripheral_->pCsGpioAddress->PIO_SODR = psSspPeripheral_->u32CsPin;
+  } 
   
 } /* end SspDessertCS() */
 
@@ -421,6 +438,8 @@ void SspDeAssertCS(SspPeripheralType* psSspPeripheral_)
 @brief Queues a single byte for transfer on the target SSP peripheral.  
 
 Requires:
+- A receive request cannot be in progress
+
 @param psSspPeripheral_ is the SSP peripheral to use and it has already been requested.
 @param u8Byte_ is the byte to send
 
@@ -435,7 +454,13 @@ u32 SspWriteByte(SspPeripheralType* psSspPeripheral_, u8 u8Byte_)
 {
   u32 u32Token;
   u8 u8Data = u8Byte_;
-  
+
+  /* Make sure no receive function is already in progress based on the bytes in the buffer */
+  if( psSspPeripheral_->u16RxBytes != 0)
+  {
+    return(0);
+  }
+
   u32Token = QueueMessage(&psSspPeripheral_->psTransmitBuffer, 1, &u8Data);
   if( u32Token != 0 )
   {
@@ -458,6 +483,8 @@ u32 SspWriteByte(SspPeripheralType* psSspPeripheral_, u8 u8Byte_)
 @brief Queues a data array for transfer on the target SSP peripheral.  
 
 Requires:
+- A receive request cannot be in progress
+
 @param psSspPeripheral_ is the SSP peripheral to use and it has already been requested.
 @param u32Size_ is the number of bytes in the data array
 @param u8Data_ points to the first byte of the data array
@@ -472,6 +499,12 @@ Promises:
 u32 SspWriteData(SspPeripheralType* psSspPeripheral_, u32 u32Size_, u8* pu8Data_)
 {
   u32 u32Token;
+
+  /* Make sure no receive function is already in progress based on the bytes in the buffer */
+  if( psSspPeripheral_->u16RxBytes != 0)
+  {
+    return(0);
+  }
 
   u32Token = QueueMessage(&psSspPeripheral_->psTransmitBuffer, u32Size_, pu8Data_);
   if( u32Token == 0 )
@@ -494,9 +527,11 @@ u32 SspWriteData(SspPeripheralType* psSspPeripheral_, u32 u32Size_, u8* pu8Data_
 @fn bool SspReadByte(SspPeripheralType* psSspPeripheral_)
 
 @brief Master mode only.  Queues a request for a single byte from the Slave on 
-the target SSP peripheral.  
+the target SSP peripheral.  There cannot be pending writes.
 
 Requires:
+- Master mode 
+
 @param psSspPeripheral_ is the SSP peripheral to use and it has already been requested.
 
 Promises:
@@ -507,8 +542,15 @@ Promises:
 */
 bool SspReadByte(SspPeripheralType* psSspPeripheral_)
 {
-  /* Make sure no receive function is already in progress based on the bytes in the buffer */
-  if( psSspPeripheral_->u16RxBytes != 0)
+  /* Confirm Master Mode */
+  if( (psSspPeripheral_->eSspMode == SSP_SLAVE) || 
+      (psSspPeripheral_->eSspMode == SSP_SLAVE_FLOW_CONTROL) )
+  {
+    return FALSE;
+  }
+
+  /* Make sure no Tx or Rx function is already in progress */
+  if( (psSspPeripheral_->u16RxBytes != 0) || (psSspPeripheral_->psTransmitBuffer != NULL) )
   {
     return FALSE;
   }
@@ -526,6 +568,8 @@ bool SspReadByte(SspPeripheralType* psSspPeripheral_)
 @brief Master mode only. Prepares to get multiple bytes from the Slave on the target SSP peripheral.  
 
 Requires:
+- Master mode 
+
 @param psSspPeripheral_ is the SSP peripheral to use and it has already been requested.
 @param u32Size_ is the number of bytes to receive
 
@@ -536,18 +580,23 @@ Promises:
 */
 bool SspReadData(SspPeripheralType* psSspPeripheral_, u16 u16Size_)
 {
-  u8 au8MsgTooBig[] = "\r\nSSP message too large\n\r";
-  
+  /* Confirm Master Mode */
+  if( (psSspPeripheral_->eSspMode == SSP_SLAVE) || 
+      (psSspPeripheral_->eSspMode == SSP_SLAVE_FLOW_CONTROL) )
+  {
+    return FALSE;
+  }
+
+  /* Make sure no Tx or Rx function is already in progress */
+  if( (psSspPeripheral_->u16RxBytes != 0) || (psSspPeripheral_->psTransmitBuffer != NULL) )
+  {
+    return FALSE;
+  }
+
   /* Do not allow if requested size is too large */
   if(u16Size_ > U16_MAX_TX_MESSAGE_LENGTH)
   {
-    DebugPrintf(au8MsgTooBig);
-    return FALSE;
-  }
-  
-  /* Make sure no receive function is already in progress based on the bytes in the buffer */
-  if( psSspPeripheral_->u16RxBytes != 0)
-  {
+    DebugPrintf("\r\nSSP message too large\n\r");
     return FALSE;
   }
   
@@ -572,6 +621,13 @@ Promises:
 */
 SspRxStatusType SspQueryReceiveStatus(SspPeripheralType* psSspPeripheral_)
 {
+  /* Confirm Master Mode */
+  if( (psSspPeripheral_->eSspMode == SSP_SLAVE) || 
+      (psSspPeripheral_->eSspMode == SSP_SLAVE_FLOW_CONTROL) )
+  {
+    return SSP_RX_INVALID;
+  }
+
   /* Check for no current bytes queued */
   if(psSspPeripheral_->u16RxBytes == 0)
   {
@@ -624,41 +680,44 @@ Promises:
 */
 void SspInitialize(void)
 {
-  static u8 au8SspStartupMessage[] = "SSP Peripherals Ready\n\r";
-  
   /* Initialize the SSP peripheral structures */
   SSP_Peripheral0.pBaseAddress     = AT91C_BASE_US0;
+  SSP_Peripheral0.u8PeripheralId   = AT91C_ID_US0;
   SSP_Peripheral0.pCsGpioAddress   = NULL;
   SSP_Peripheral0.psTransmitBuffer = NULL;
   SSP_Peripheral0.pu8RxBuffer      = NULL;
   SSP_Peripheral0.u16RxBufferSize  = 0;
   SSP_Peripheral0.ppu8RxNextByte   = NULL;
   SSP_Peripheral0.u32PrivateFlags  = 0;
-  SSP_Peripheral0.u8PeripheralId   = AT91C_ID_US0;
   
   SSP_Peripheral1.pBaseAddress     = AT91C_BASE_US1;
+  SSP_Peripheral1.u8PeripheralId   = AT91C_ID_US1;
   SSP_Peripheral1.pCsGpioAddress   = NULL;
   SSP_Peripheral1.psTransmitBuffer = NULL;
   SSP_Peripheral1.pu8RxBuffer      = NULL;
   SSP_Peripheral1.u16RxBufferSize  = 0;
   SSP_Peripheral1.ppu8RxNextByte   = NULL;
   SSP_Peripheral1.u32PrivateFlags  = 0;
-  SSP_Peripheral1.u8PeripheralId   = AT91C_ID_US1;
 
   SSP_Peripheral2.pBaseAddress     = AT91C_BASE_US2;
+  SSP_Peripheral2.u8PeripheralId   = AT91C_ID_US2;
   SSP_Peripheral2.pCsGpioAddress   = NULL;
   SSP_Peripheral2.psTransmitBuffer = NULL;
   SSP_Peripheral2.pu8RxBuffer      = NULL;
   SSP_Peripheral2.u16RxBufferSize  = 0;
   SSP_Peripheral2.ppu8RxNextByte   = NULL;
   SSP_Peripheral2.u32PrivateFlags  = 0;
-  SSP_Peripheral2.u8PeripheralId   = AT91C_ID_US2;
 
+  /* Init starting SSP and clear all flags */
   SSP_psCurrentSsp = &SSP_Peripheral0;
+  SSP_u32Flags = 0;
+  G_u32Ssp0ApplicationFlags = 0;
+  G_u32Ssp1ApplicationFlags = 0;
+  G_u32Ssp2ApplicationFlags = 0;
   
   /* Set application pointer */
   Ssp_pfnStateMachine = SspSM_Idle;
-  DebugPrintf(au8SspStartupMessage);
+  DebugPrintf("SSP Peripherals Ready\n\r");
 
 } /* end SspInitialize() */
 
@@ -852,7 +911,7 @@ static void SspGenericHandler(void)
       *SSP_pu32SspApplicationFlagsISR &= ~(_SSP_TX_COMPLETE | _SSP_RX_COMPLETE);
       
       /* If a no flow control Slave is receiving, then it should be ready to respond with dummy bytes */
-      if(SSP_psCurrentISR->eSspMode == SPI_SLAVE)
+      if(SSP_psCurrentISR->eSspMode == SSP_SLAVE)
       {
         if(SSP_psCurrentISR->psTransmitBuffer == NULL)
         {
@@ -860,8 +919,8 @@ static void SspGenericHandler(void)
         }
       }
 
-      /* No flow control Slaves should have their RXRDY interrupt enabled */
-      if(SSP_psCurrentISR->eSspMode == SPI_SLAVE_FLOW_CONTROL)
+      /* Flow control Slaves should have their RXRDY interrupt enabled */
+      if(SSP_psCurrentISR->eSspMode == SSP_SLAVE_FLOW_CONTROL)
       {
         SSP_psCurrentISR->pBaseAddress->US_IER |= AT91C_US_RXRDY;
       }
@@ -871,14 +930,7 @@ static void SspGenericHandler(void)
     {
       /* Flag that CS is deasserted */
       *SSP_pu32SspApplicationFlagsISR &= ~_SSP_CS_ASSERTED;
-     
-      /* Make sure PDC counters are reset for next transmission on Slave - no flow control devices only */
-      if(SSP_psCurrentISR->eSspMode == SPI_SLAVE)
-      {
-        SSP_psCurrentISR->pBaseAddress->US_RCR = 1;
-        SSP_psCurrentISR->pBaseAddress->US_RNCR = 1;
-      }
-      
+                 
       /* If a transmit was interrupted, then the message needs to be aborted. */
       if(SSP_psCurrentISR->u32PrivateFlags & _SSP_PERIPHERAL_TX)
       {
@@ -889,9 +941,22 @@ static void SspGenericHandler(void)
         UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, ABANDONED);
         DeQueueMessage(&SSP_psCurrentISR->psTransmitBuffer);
    
+        *SSP_pu32SspApplicationFlagsISR |= _SSP_TX_COMPLETE; 
+        
+      }
+
+      /* Make sure PDC counters are reset for next transmission on Slave - no flow control devices only */
+      if(SSP_psCurrentISR->eSspMode == SSP_SLAVE)
+      {
+        SSP_psCurrentISR->pBaseAddress->US_RCR = 1;
+        SSP_psCurrentISR->pBaseAddress->US_RNCR = 1;
+      }
+
+      /* Special case for an interrupted flow control mode */
+      if(SSP_psCurrentISR->eSspMode == SSP_SLAVE_FLOW_CONTROL)
+      {
         /* Re-enable Rx interrupt, clean-up the operation */    
         SSP_psCurrentISR->pBaseAddress->US_IER = AT91C_US_RXRDY;
-        *SSP_pu32SspApplicationFlagsISR |= _SSP_TX_COMPLETE; 
       }
       
     } /* end of CS de-asserted */
@@ -914,14 +979,13 @@ static void SspGenericHandler(void)
       u32Byte = 0x000000FF & *SSP_psCurrentISR->pu8CurrentTxData;
 
       /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
-      if(SSP_psCurrentISR->eBitOrder == LSB_FIRST)
+      if(SSP_psCurrentISR->eBitOrder == SSP_LSB_FIRST)
       {
         u32Byte = __RBIT(u32Byte) >> 24;
       }
     
-      /* Clears interrupt flag and invoke callback */
+      /* Clear interrupt flag */
       SSP_psCurrentISR->pBaseAddress->US_THR = (u8)u32Byte; 
-      SSP_psCurrentISR->fnSlaveTxFlowCallback();
     }
     else
     {
@@ -929,15 +993,18 @@ static void SspGenericHandler(void)
       SSP_psCurrentISR->pBaseAddress->US_IDR = AT91C_US_TXEMPTY;
       
       /* Clean up the message status and flags */
-      SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_TX;  
+      *SSP_pu32SspApplicationFlagsISR |= _SSP_TX_COMPLETE; 
       UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
       DeQueueMessage(&SSP_psCurrentISR->psTransmitBuffer);
+      SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_TX;  
  
-      /* Re-enable Rx interrupt, clean-up the operation and make final call to callback */    
+      /* Re-enable Rx interrupt and make final call to callback */    
       SSP_psCurrentISR->pBaseAddress->US_IER = AT91C_US_RXRDY;
-      *SSP_pu32SspApplicationFlagsISR |= _SSP_TX_COMPLETE; 
-      SSP_psCurrentISR->fnSlaveTxFlowCallback();
     }
+    
+    /* Both cases use the callback */
+    SSP_psCurrentISR->fnSlaveTxFlowCallback();
+    
   } /* end AT91C_US_TXEMPTY */
   
   
@@ -949,7 +1016,7 @@ static void SspGenericHandler(void)
     u32Byte = 0x000000FF & SSP_psCurrentISR->pBaseAddress->US_RHR;
 
     /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
-    if(SSP_psCurrentISR->eBitOrder == LSB_FIRST)
+    if(SSP_psCurrentISR->eBitOrder == SSP_LSB_FIRST)
     {
       u32Byte = __RBIT(u32Byte)>>24;
     }
@@ -976,8 +1043,8 @@ static void SspGenericHandler(void)
       (u32Current_CSR & AT91C_US_ENDRX) )
   {
     /* Master mode and Slave mode operate differently */
-    if( (SSP_psCurrentISR->eSspMode == SPI_MASTER_AUTO_CS) ||
-        (SSP_psCurrentISR->eSspMode == SPI_MASTER_MANUAL_CS) ) 
+    if( (SSP_psCurrentISR->eSspMode == SSP_MASTER_AUTO_CS) ||
+        (SSP_psCurrentISR->eSspMode == SSP_MASTER_MANUAL_CS) ) 
     {
       /* Reset the byte counter and clear the RX flag */
       SSP_psCurrentISR->u16RxBytes = 0;
@@ -985,8 +1052,8 @@ static void SspGenericHandler(void)
       SSP_psCurrentISR->u32PrivateFlags |=  _SSP_PERIPHERAL_RX_COMPLETE;
       SSP_u32RxCounter++;
       
-      /* Deassert CS for SPI_MASTER_AUTO_CS transfers */
-      if(SSP_psCurrentSsp->eSspMode == SPI_MASTER_AUTO_CS)
+      /* Deassert CS for SSP_MASTER_AUTO_CS transfers */
+      if(SSP_psCurrentSsp->eSspMode == SSP_MASTER_AUTO_CS)
       {
         SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
       }
@@ -1002,11 +1069,12 @@ static void SspGenericHandler(void)
       /* Flag that a byte has arrived */
       *SSP_pu32SspApplicationFlagsISR |= _SSP_RX_COMPLETE;
 
-      /* Update the pointer to the next valid Rx location (always leap-frogs the immediate next byte since it will be filled by the other DMA process */
+      /* Update the pointer to the next valid Rx location (always leap-frogs the immediate 
+      next byte since it will be filled by the other DMA process) */
       SSP_psCurrentISR->pBaseAddress->US_RNPR++;
       if(SSP_psCurrentISR->pBaseAddress->US_RPR == (u32)(SSP_psCurrentISR->pu8RxBuffer + (u32)SSP_psCurrentISR->u16RxBufferSize) )
       {
-        SSP_psCurrentISR->pBaseAddress->US_RPR = (u32)SSP_psCurrentISR->pu8RxBuffer;  /* !!!!! CHECK */
+        SSP_psCurrentISR->pBaseAddress->US_RPR = (u32)SSP_psCurrentISR->pu8RxBuffer;  
       }
       
       /* Write RNCR to 1 to clear the ENDRX flag */
@@ -1024,14 +1092,16 @@ static void SspGenericHandler(void)
     {
       /* Update this message token status and then DeQueue it */
       UpdateMessageStatus(SSP_psCurrentISR->psTransmitBuffer->u32Token, COMPLETE);
-      DeQueueMessage( &SSP_psCurrentISR->psTransmitBuffer );
+      DeQueueMessage(&SSP_psCurrentISR->psTransmitBuffer);
       SSP_psCurrentISR->u32PrivateFlags &= ~_SSP_PERIPHERAL_TX;
     }
  
     /* Master devices: Disable the transmitter and interrupt source. 
     No action for Slave devices as the PDC pointers are already reset back to 
-    SSP_u8Dummies due to the "Next" PDC registers and the transmitter stays on. */
-    if( !(SSP_psCurrentISR->eSspMode == SPI_SLAVE) )
+    SSP_u8Dummies due to the "Next" PDC registers and the transmitter stays on.
+    Flow control Slaves do not use PDC and thus will not generate this interrupt. */
+    if( (SSP_psCurrentISR->eSspMode == SSP_MASTER_AUTO_CS) ||
+        (SSP_psCurrentISR->eSspMode == SSP_MASTER_MANUAL_CS) )
     {
       SSP_psCurrentISR->pBaseAddress->US_PTCR = AT91C_PDC_TXTDIS;
       SSP_psCurrentISR->pBaseAddress->US_IDR  = AT91C_US_ENDTX;
@@ -1045,14 +1115,12 @@ static void SspGenericHandler(void)
       u32Timeout++;
     } 
     
-    if(SSP_psCurrentISR->eSspMode == SPI_MASTER_AUTO_CS)
+    /* Deassert chip select when the buffer and shift register are totally empty */
+    if(SSP_psCurrentSsp->eSspMode == SSP_MASTER_AUTO_CS)
     {
-      /* Deassert chip select when the buffer and shift register are totally empty */
-      if(SSP_psCurrentSsp->eSspMode == SPI_MASTER_AUTO_CS)
-      {
-        SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
-      }
+      SSP_psCurrentISR->pCsGpioAddress->PIO_SODR = SSP_psCurrentISR->u32CsPin;
     }
+    
   } /* end ENDTX interrupt handling */
 
   
@@ -1062,34 +1130,37 @@ static void SspGenericHandler(void)
 /***********************************************************************************************************************
 State Machine Function Definitions
 
-The SSP state machine monitors messaging activity on the available SSP Master peripherals.  It manages all SSP outgoing 
-messages and will transmit any message that has been queued.  All configured SSP peripherals can be transmitting and 
-receiving simultaneously.
+The SSP state machine monitors messaging activity on the available SSP Master peripherals.  
+It manages all SSP outgoing  messages and will transmit any message that has been queued.  
+All configured SSP peripherals can be transmitting and receiving simultaneously.
 ***********************************************************************************************************************/
 
 /*!-------------------------------------------------------------------------------------------------------------------
 @fn static void SspSM_Idle(void)
 
-@brief Wait for a transmit message to be queued -- this can include a dummy transmission to receive bytes.
+@brief Wait for a transmit message to be queued -- this can include a dummy transmission to 
+receive bytes.
 Half duplex transmissions are always assumed. Check one peripheral per iteration. 
 
 */
 static void SspSM_Idle(void)
 {
- static u8 au8SspErrorInvalidSsp[] = "Invalid SSP attempt\r\n";
- u32 u32Byte;
+  u32 u32Byte;
   
-  /* Check all SPI/SSP peripherals for message activity or skip the current peripheral if it is already busy.
+  /* Check all SPI/SSP peripherals for message activity or skip the current peripheral 
+  if it is already busy.
   Slave devices receive outside of the state machine.
-  For Master devices sending a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will point to the application transmit buffer.
-  For Master devices receiving a message, SSP_psCurrentSsp->u16RxBytes will != 0. Dummy bytes are sent.  */
+  For Master devices sending a message, SSP_psCurrentSsp->psTransmitBuffer->pu8Message will 
+  point to the application transmit buffer.
+  For Master devices receiving a message, SSP_psCurrentSsp->u16RxBytes will != 0. Dummy bytes 
+  are sent. */
   if( ( (SSP_psCurrentSsp->psTransmitBuffer != NULL) || (SSP_psCurrentSsp->u16RxBytes !=0) ) && 
      !(SSP_psCurrentSsp->u32PrivateFlags & (_SSP_PERIPHERAL_TX | _SSP_PERIPHERAL_RX)       ) 
     )
   {
-    /* For an SPI_MASTER_AUTO_CS device, start by asserting chip select 
-   (SPI_MASTER_MANUAL_CS devices should already have asserted CS in the user's task) */
-    if(SSP_psCurrentSsp->eSspMode == SPI_MASTER_AUTO_CS)
+    /* For an SSP_MASTER_AUTO_CS device, start by asserting chip select 
+   (SSP_MASTER_MANUAL_CS devices should already have asserted CS in the user's task) */
+    if(SSP_psCurrentSsp->eSspMode == SSP_MASTER_AUTO_CS)
     {
       SSP_psCurrentSsp->pCsGpioAddress->PIO_CODR = SSP_psCurrentSsp->u32CsPin;
     }
@@ -1123,18 +1194,19 @@ static void SspSM_Idle(void)
       UpdateMessageStatus(SSP_psCurrentSsp->psTransmitBuffer->u32Token, SENDING);
       SSP_psCurrentSsp->u32PrivateFlags |= _SSP_PERIPHERAL_TX;    
       
-      /* TRANSMIT SPI_SPI_SLAVE_FLOW_CONTROL */
-      /* A Slave device with flow control uses interrupt-driven single byte transfers */
-      if(SSP_psCurrentSsp->eSspMode == SPI_SLAVE_FLOW_CONTROL)
+      /* TRANSMIT SPI_SSP_SLAVE_FLOW_CONTROL */ 
+      if(SSP_psCurrentSsp->eSspMode == SSP_SLAVE_FLOW_CONTROL)
       {
-        /* At this point, CS is asserted and the Master is waiting for flow control.
-        Load in the message parameters. */
+        /* A Slave device with flow control uses interrupt-driven single byte transfers.
+        CS must be asserted for the Slave to have queued data to get to here. */
+
+        /* Load in the message parameters. */
         SSP_psCurrentSsp->u32CurrentTxBytesRemaining = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
         SSP_psCurrentSsp->pu8CurrentTxData = SSP_psCurrentSsp->psTransmitBuffer->pu8Message;
 
         /* If we need LSB first, use inline assembly to flip bits with a single instruction. */
         u32Byte = 0x000000FF & *SSP_psCurrentSsp->pu8CurrentTxData;
-        if(SSP_psCurrentSsp->eBitOrder == LSB_FIRST)
+        if(SSP_psCurrentSsp->eBitOrder == SSP_LSB_FIRST)
         {
           u32Byte = __RBIT(u32Byte)>>24;
         }
@@ -1148,10 +1220,12 @@ static void SspSM_Idle(void)
         SSP_psCurrentSsp->pBaseAddress->US_CR = (AT91C_US_TXEN);
         SSP_psCurrentSsp->pBaseAddress->US_THR = (u8)u32Byte;
         SSP_psCurrentSsp->pBaseAddress->US_IER = AT91C_US_TXEMPTY;
+        
+        /* Trigger the callback which should provide flow-control to start transmitting */
         SSP_psCurrentSsp->fnSlaveTxFlowCallback();
       }
       
-      /* TRANSMIT SPI_MASTER_AUTO_CS, SPI_MASTER_MANUAL_CS, SPI_SLAVE (no flow control) */
+      /* TRANSMIT SSP_MASTER_AUTO_CS, SSP_MASTER_MANUAL_CS, SSP_SLAVE (no flow control) */
       /* A Master or Slave device without flow control uses the PDC */
       else
       {
@@ -1186,7 +1260,7 @@ static void SspSM_Idle(void)
       break;
 
     default:
-      DebugPrintf(au8SspErrorInvalidSsp);
+      DebugPrintf("Invalid SSP attempt\r\n");
       SSP_psCurrentSsp = &SSP_Peripheral0;
       break;
   } /* end switch */

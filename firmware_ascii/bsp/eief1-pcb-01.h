@@ -465,7 +465,7 @@ counter must be set at 1280. */
 0: No effect
 1: Pin is controlled by PIO
 */
-#define PIOA_PER_INIT (u32)0x84030007
+#define PIOA_PER_INIT (u32)0x84030107
 /* 
     31 [1] PA_31_HEARTBEAT PIO control enabled
     30 [0] PA_30_AN_DEMO PIO control not enabled
@@ -495,7 +495,7 @@ counter must be set at 1280. */
     11 [0] PA_11_BLADE_UPIMO PIO control not enabled
     10 [0] PA_10_I2C_SCL PIO control not enabled
     09 [0] PA_09_I2C_SDA PIO control not enabled
-    08 [0] PA_08_SD_CS_MCDA3 PIO control not enabled
+    08 [1] PA_08_SD_CS_MCDA3 PIO control enabled
 
     07 [0] PA_07_HSMCI_MCDA2 PIO control not enabled
     06 [0] PA_06_HSMCI_MCDA1 PIO control not enabled

@@ -410,8 +410,8 @@ void AntInitialize(void)
     Ant_sSspConfig.SspPeripheral      = ANT_SPI;
     Ant_sSspConfig.pCsGpioAddress     = ANT_SPI_CS_GPIO;
     Ant_sSspConfig.u32CsPin           = ANT_SPI_CS_PIN;
-    Ant_sSspConfig.eBitOrder          = LSB_FIRST;
-    Ant_sSspConfig.eSspMode           = SPI_SLAVE_FLOW_CONTROL;
+    Ant_sSspConfig.eBitOrder          = SSP_LSB_FIRST;
+    Ant_sSspConfig.eSspMode           = SSP_SLAVE_FLOW_CONTROL;
     Ant_sSspConfig.fnSlaveTxFlowCallback = AntTxFlowControlCallback;
     Ant_sSspConfig.fnSlaveRxFlowCallback = AntRxFlowControlCallback;
     Ant_sSspConfig.pu8RxBufferAddress = Ant_au8AntRxBuffer;
