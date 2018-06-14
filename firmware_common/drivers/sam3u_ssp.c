@@ -138,9 +138,9 @@ Global variable definitions with scope across entire project.
 All Global variable names shall start with "G_<type>Ssp"
 ***********************************************************************************************************************/
 /* New variables */
-u32 G_u32Ssp0ApplicationFlags;                   /*!< @brief Status flags meant for application using this SSP peripheral */
-u32 G_u32Ssp1ApplicationFlags;                   /*!< @brief Status flags meant for application using this SSP peripheral */
-u32 G_u32Ssp2ApplicationFlags;                   /*!< @brief Status flags meant for application using this SSP peripheral */
+volatile u32 G_u32Ssp0ApplicationFlags;          /*!< @brief Status flags meant for application using this SSP peripheral */
+volatile u32 G_u32Ssp1ApplicationFlags;          /*!< @brief Status flags meant for application using this SSP peripheral */
+volatile u32 G_u32Ssp2ApplicationFlags;          /*!< @brief Status flags meant for application using this SSP peripheral */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -155,7 +155,7 @@ extern volatile u32 G_u32ApplicationFlags;       /*!< @brief From main.c */
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "SSP_<type>" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Ssp_pfnStateMachine;          /*!< @brief The SSP application state machine */
+static fnCode_type SSP_pfnStateMachine;          /*!< @brief The SSP application state machine */
 
 static u32 SSP_u32Timer;                         /*!< @brief Timeout counter used across states */
 static u32 SSP_u32Flags;                         /*!< @brief Application flags for SSP */
@@ -379,7 +379,7 @@ void SspRelease(SspPeripheralType* psSspPeripheral_)
   }
   
   /* Ensure the SM is in the Idle state */
-  Ssp_pfnStateMachine = SspSM_Idle;
+  SSP_pfnStateMachine = SspSM_Idle;
   
 } /* end SspRelease() */
 
@@ -716,7 +716,7 @@ void SspInitialize(void)
   G_u32Ssp2ApplicationFlags = 0;
   
   /* Set application pointer */
-  Ssp_pfnStateMachine = SspSM_Idle;
+  SSP_pfnStateMachine = SspSM_Idle;
   DebugPrintf("SSP Peripherals Ready\n\r");
 
 } /* end SspInitialize() */
@@ -739,7 +739,7 @@ Promises:
 */
 void SspRunActiveState(void)
 {
-  Ssp_pfnStateMachine();
+  SSP_pfnStateMachine();
 
 } /* end SspRunActiveState */
 
@@ -767,7 +767,7 @@ void SspManualMode(void)
   /* Run the SSP state machine so all SSP peripherals send their current message */  
   while(SSP_u32Flags & _SSP_MANUAL_MODE)
   {
-    Ssp_pfnStateMachine();
+    SSP_pfnStateMachine();
     MessagingRunActiveState();
     
     SSP_u32Timer = G_u32SystemTime1ms;
@@ -778,7 +778,7 @@ void SspManualMode(void)
 
 
 /*!----------------------------------------------------------------------------------------------------------------------
-@fn ISR SSP0_IRQHandler
+@fn ISR void SSP0_IRQHandler(void)
 
 @brief Initial handling of enabled SSP0 interrupts before generic handler. 
 
@@ -794,7 +794,7 @@ void SSP0_IRQHandler(void)
 {
   /* Set the current ISR pointers to SSP0 targets */
   SSP_psCurrentISR = &SSP_Peripheral0;                         
-  SSP_pu32SspApplicationFlagsISR = &G_u32Ssp0ApplicationFlags; 
+  SSP_pu32SspApplicationFlagsISR = (u32*)&G_u32Ssp0ApplicationFlags; 
   SSP_u32Int0Count++;
 
   /* Go to common SSP interrupt using psCurrentSspISR since the SSP cannot interrupt itself */
@@ -804,7 +804,7 @@ void SSP0_IRQHandler(void)
 
 
 /*!----------------------------------------------------------------------------------------------------------------------
-@fn ISR SSP1_IRQHandler
+@fn ISR void SSP1_IRQHandler(void)
 
 @brief Initial handling of enabled SSP1 interrupts before generic handler. 
 
@@ -820,7 +820,7 @@ void SSP1_IRQHandler(void)
 {
   /* Set the current ISR pointers to SSP1 targets */
   SSP_psCurrentISR = &SSP_Peripheral1;                      
-  SSP_pu32SspApplicationFlagsISR = &G_u32Ssp1ApplicationFlags; 
+  SSP_pu32SspApplicationFlagsISR = (u32*)&G_u32Ssp1ApplicationFlags; 
   SSP_u32Int1Count++;
 
   /* Go to common SSP interrupt using psCurrentSspISR since the SSP cannot interrupt itself */
@@ -830,7 +830,7 @@ void SSP1_IRQHandler(void)
 
 
 /*!----------------------------------------------------------------------------------------------------------------------
-@fn ISR SSP2_IRQHandler
+@fn ISR void SSP2_IRQHandler(void)
 
 @brief Initial handling of enabled SSP2 interrupts before generic handler. 
 
@@ -846,7 +846,7 @@ void SSP2_IRQHandler(void)
 {
   /* Set the current ISR pointers to SSP2 targets */
   SSP_psCurrentISR = &SSP_Peripheral2;                      
-  SSP_pu32SspApplicationFlagsISR = &G_u32Ssp2ApplicationFlags;
+  SSP_pu32SspApplicationFlagsISR = (u32*)&G_u32Ssp2ApplicationFlags;
   SSP_u32Int2Count++;
 
   /* Go to common SSP interrupt using psCurrentSspISR since the SSP cannot interrupt itself */
@@ -1140,6 +1140,7 @@ All configured SSP peripherals can be transmitting and receiving simultaneously.
 
 @brief Wait for a transmit message to be queued -- this can include a dummy transmission to 
 receive bytes.
+
 Half duplex transmissions are always assumed. Check one peripheral per iteration. 
 
 */
@@ -1268,6 +1269,7 @@ static void SspSM_Idle(void)
 } /* end SspSM_Idle() */
 
 
+#if 0
 /*!-------------------------------------------------------------------------------------------------------------------
 @fn static void SspSM_Error(void)          
 
@@ -1276,10 +1278,10 @@ static void SspSM_Idle(void)
 */
 static void SspSM_Error(void)          
 {
-  Ssp_pfnStateMachine = SspSM_Idle;
+  SSP_pfnStateMachine = SspSM_Idle;
   
 } /* end SspSM_Error() */
-
+#endif
         
 
 

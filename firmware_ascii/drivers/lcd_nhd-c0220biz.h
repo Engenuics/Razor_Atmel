@@ -1,42 +1,76 @@
-/******************************************************************************
-File: NHD-C0220BiZ_LCD.h                                                               
+/*!**********************************************************************************************************************
+@file lcd_nhd-c0220biz.h                                                               
 
-Description:
-Header file for Newhaven Display NHD-C0220BiZ-FS(RGB)-FBW-3VM LCD.
-
-DISCLAIMER: THIS CODE IS PROVIDED WITHOUT ANY WARRANTY OR GUARANTEES.  USERS MAY
-USE THIS CODE FOR DEVELOPMENT AND EXAMPLE PURPOSES ONLY.  ENGENUICS TECHNOLOGIES
-INCORPORATED IS NOT RESPONSIBLE FOR ANY ERRORS, OMISSIONS, OR DAMAGES THAT COULD
-RESULT FROM USING THIS FIRMWARE IN WHOLE OR IN PART.
-
+@brief Header file for lcd_nhd-c0220biz.c
 ******************************************************************************/
 
 #ifndef __LCD_C0220BIZ_H
 #define __LCD_C0220BIZ_H
 
+#include "configuration.h"
 
-#define LCD_ADDRESS                       (u8)0x3C              /* Address of the On board chip of the LCD */
-                                                                /* Careful!!!! - the documentation for the LCD says 0x78 however,
-                                                                   that includes the Read/Write Bit */
-/* Flag Bits */
-#define _LCD_FLAG_NEW_LCD_MSG             (u32)0x00000001      /* LCD should update with new message */
-#define _LCD_FLAGS_MESSAGE_IN_QUEUE       (u32)0x00000001      /* There is an LCD message in the MessageSenderQueue */
-#define _LCD_FLAGS_SM_MANUAL              (u32)0x00000004      /* Run the LCD SM in manual mode */
-#define _LCD_FLAGS_UPDATE_IN_PROGRESS     (u32)0x00000008      /* LCD update is currently in progress */
+/**********************************************************************************************************************
+Type Definitions
+**********************************************************************************************************************/
 
-#define LCD_CONTROL_COMMAND               (u8)0x00             /* Control byte to LCD command is coming */
-#define LCD_CONTROL_DATA                  (u8)0x40             /* Control byte to LCD command is coming */
 
-#define LCD_STARTUP_DELAY                 (u8)40               /* Time in ms to wait for LCD startup */
-#define LCD_CONTROL_COMMAND_DELAY         (u8)200              /* Time in ms to wait for LCD Command Instructions */
-#define LCD_INIT_MSG_DISP_TIME            (u32)1000
+/**********************************************************************************************************************
+Constants / Definitions
+**********************************************************************************************************************/
+/* Lcd_u32Flags */
+#define _LCD_FLAGS_SM_MANUAL              (u32)0x00000001      /*!< @brief Run the LCD SM in manual mode */
+/* end Lcd_u32Flags */
 
-#define LCD_MESSAGE_OVERHEAD_SIZE         (u8)1                /* Number of header bytes for an LCD message */
-#define LCD_MAX_LINE_DISPLAY_SIZE         (u8)20               /* Maximum message length displayable on a single line */ 
-#define LCD_MAX_MESSAGE_SIZE              (u8)40               /* Maximum message length on a single line of the 
-                                                                  display assuming message starts at far left of screen
-                                                                  Only 20 characters can be displayed and remaining characters 
-                                                                  will be off the screen but still in LCD RAM */
+#define U8_LCD_ADDRESS                    (u8)0x3C             /*!< @brief Address of the On board chip of the LCD */
+                                                               /* The documentation for the LCD says 0x78 however,
+                                                                  that includes the Read/Write Bit */
+
+#define LCD_CONTROL_COMMAND               (u8)0x00             /*!< @brief Control byte to LCD command is coming */
+#define LCD_CONTROL_DATA                  (u8)0x40             /*!< @brief Control byte to LCD command is coming */
+
+#define U8_LCD_MAX_LINE_DISPLAY_SIZE      (u8)20               /*!< @brief Maximum message length displayable on a single line */ 
+#define U8_LCD_MAX_MESSAGE_SIZE           (u8)40               /*!< @brief Maximum message length on a single line of the 
+                                                                    display assuming message starts at far left of screen
+                                                                    Only 20 characters can be displayed and remaining characters 
+                                                                    will be off the screen but still in LCD RAM */
+
+
+/* LCD Commands
+"CMD" requires RS = 0, R/W = 0 */
+#define		LCD_CLEAR_CMD				(u8)0x01		/*!< @brief Writes spaces to all chars */
+#define		LCD_HOME_CMD				(u8)0x02		/*!< @brief Puts cursor at 0x00 */
+
+#define		LCD_CURSOR_RT_CMD		(u8)0x06		/*!< @brief Cursor moves right after char */
+#define		LCD_CURSOR_LT_CMD		(u8)0x04		/*!< @brief Cursor moves left after char */
+#define   LCD_DISPLAY_RT_CMD  (u8)0x05    /*!< @brief Entire display shifts right after each write */
+#define   LCD_DISPLAY_LT_CMD  (u8)0x07    /*!< @brief Entire display shifts left after each write */
+
+#define		LCD_DISPLAY_CMD			(u8)0x08		/*!< @brief Root literal for managing display */
+#define		LCD_DISPLAY_ON			(u8)0x04		/*!< @brief OR with LCD_DISPLAY_CMD to turn display on */
+#define		LCD_DISPLAY_CURSOR	(u8)0x02		/*!< @brief OR with LCD_DISPLAY_CMD to turn cursor on */
+#define		LCD_DISPLAY_BLINK		(u8)0x01		/*!< @brief OR with LCD_DISPLAY_CMD to turn cursor blink on */
+
+#define		LCD_SHIFT_CMD				(u8)0x10		/*!< @brief Root literal for display / cursor shift commands */
+#define		LCD_SHIFT_DISPLAY		(u8)0x08		/*!< @brief Set to operate on dislay, clear for cursor */
+#define		LCD_SHIFT_RIGHT			(u8)0x04		/*!< @brief Set to shift right, clear to shift left */
+
+#define		LCD_ADDRESS_CMD			(u8)0x80		/*!< @brief Root literal to set the cursor position
+																			         Bottom 6 bits are address (0x00-0x27 and 0x40-0x67) */
+
+#define		LINE1_START_ADDR		(u8)0x00 		/*!< @brief Constant for defining cursor location for LINE1 */
+#define		LINE2_START_ADDR  	(u8)0x40 		/*!< @brief Constant for defining cursor location for LINE2 */
+#define   LINE1_END_ADDR      (u8)0x13    /*!< @brief Constant for last displayable character address in LINE1 */
+#define   LINE2_END_ADDR      (u8)0x53    /*!< @brief Constant for last displayable character address in LINE2 */
+#define   LINE1_END_ABSOLUTE  (u8)0x27    /*!< @brief Constant for last character RAM address in LINE1 */
+#define   LINE2_END_ABSOLUTE  (u8)0x67    /*!< @brief Constant for last character RAM address in LINE2 */
+
+
+/*! @cond DOXYGEN_EXCLUDE */
+#define U8_LCD_STARTUP_DELAY_MS           (u8)40     /* Time in ms to wait for LCD startup */
+#define U8_LCD_CONTROL_COMMAND_DELAY_MS   (u8)200    /* Time in ms to wait for LCD Command Instructions */
+
+#define U8_LCD_MESSAGE_OVERHEAD_SIZE      (u8)1      /* Number of header bytes for an LCD message */
+
 /*------------------------------------------------------------------------------
 Operational Notes:
 RS and R/W lines are controlled to enable various states:
@@ -56,9 +90,6 @@ and 0x40 - 0x67 (line 2), but only 20 chars can be displayed.  The extra
 space can be used for scrolling displays.
 */
 
-
-/* LCD Commands */
-/* "CMD" requires RS = 0, R/W = 0 */
 /* Data sheet initialization values */
 #define   NUM_CONTROL_CMD     (u8)6
 #define		LCD_FUNCTION_CMD		(u8)0x38		/* Literal to set 8-bit bus, 2-line, 5x8 chars, function table 00 */
@@ -68,62 +99,42 @@ space can be used for scrolling displays.
 #define   LCD_DISPLAY_SET_CMD (u8)0x5E    /* Set power, icon control, contrast */
 #define   LCD_FOLLOWER_CMD    (u8)0x6D    /* Set follower (not sure what this means!) */
 
-#define		LCD_CLEAR_CMD				(u8)0x01		/* Writes spaces to all chars */
-#define		LCD_HOME_CMD				(u8)0x02		/* Puts cursor at 0x00 */
+/*! @endcond */
 
-#define		LCD_CURSOR_RT_CMD		(u8)0x06		/* Cursor moves right after char */
-#define		LCD_CURSOR_LT_CMD		(u8)0x04		/* Cursor moves left after char */
-#define   LCD_DISPLAY_RT_CMD  (u8)0x05    /* Entire display shifts right after each write */
-#define   LCD_DISPLAY_LT_CMD  (u8)0x07    /* Entire display shifts left after each write */
-
-#define		LCD_DISPLAY_CMD			(u8)0x08		/* Root literal for managing display */
-#define		LCD_DISPLAY_ON			(u8)0x04		/* OR with LCD_DISPLAY_CMD to turn display on */
-#define		LCD_DISPLAY_CURSOR	(u8)0x02		/* OR with LCD_DISPLAY_CMD to turn cursor on */
-#define		LCD_DISPLAY_BLINK		(u8)0x01		/* OR with LCD_DISPLAY_CMD to turn cursor blink on */
-
-#define		LCD_SHIFT_CMD				(u8)0x10		/* Root literal for display / cursor shift commands */
-#define		LCD_SHIFT_DISPLAY		(u8)0x08		/* Set to operate on dislay, clear for cursor */
-#define		LCD_SHIFT_RIGHT			(u8)0x04		/* Set to shift right, clear to shift left */
-
-#define		LCD_ADDRESS_CMD			(u8)0x80		/* Root literal to set the cursor position */
-																			    /* Bottom 6 bits are address (0x00-0x27 and 0x40-0x67) */
-#define		LINE1_START_ADDR		(u8)0x00 		/* Constant for defining cursor location for LINE1 */
-#define		LINE2_START_ADDR  	(u8)0x40 		/* Constant for defining cursor location for LINE2 */
-#define   LINE1_END_ADDR      (u8)0x13    /* Constant for last displayable character address in LINE1 */
-#define   LINE2_END_ADDR      (u8)0x53    /* Constant for last displayable character address in LINE2 */
-#define   LINE1_END_ABSOLUTE  (u8)0x27    /* Constant for last character RAM address in LINE1 */
-#define   LINE2_END_ABSOLUTE  (u8)0x67    /* Constant for last character RAM address in LINE2 */
 
 /**********************************************************************************************************************
 * Function Declarations
 **********************************************************************************************************************/
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void LCDCommand(u8 u8Command_);
-void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_);
-void LCDMessage(u8 u8Address_, u8 *u8Message_);
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*! @publicsection */                                                                                            
+/*-------------------------------------------------------------------------------------------------------------------*/
+void LcdCommand(u8 u8Command_);
+void LcdClearChars(u8 u8Address_, u8 u8CharactersToClear_);
+void LcdMessage(u8 u8Address_, u8 *u8Message_);
 
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
+/*-------------------------------------------------------------------------------------------------------------------*/
 void LcdInitialize(void);
 void LcdRunActiveState(void);
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions */
-/*--------------------------------------------------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*-------------------------------------------------------------------------------------------------------------------*/
 
 
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-void LcdSM_Idle(void);
+static void LcdSM_Idle(void);
 
   
 #endif /* __LCD_C0220BIZ_H */
+
+
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/

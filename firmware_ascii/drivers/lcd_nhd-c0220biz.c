@@ -1,51 +1,35 @@
-/***********************************************************************************************************************
-File: lcd_nhd-c0220biz.c.c                                                                
+/*!**********************************************************************************************************************
+@file lcd_nhd-c0220biz.c                                                                
+@brief Driver for Newhaven Display NHD-C0220BiZ ASCII LCD.
 
-Description:
-Driver for Newhaven Display NHD-C0220BiZ ASCII LCD.
-
-This application requires an I²C resource to output data.
+This application requires an IIC (TWI) resource to output data.
 
 The displayable area of the screen is 20 characters x 2 lines, though the LCD RAM will accomodate
 40 characters per line (so can be used for scrolling text applications).
-Each character has a 1-byte address. Nmemonics are defined for the main locations
+Each character has a 1-byte address. Mnemonics are defined for the main locations
 
 Line #      Left most address             Last printed char           Right most address
   1       0x00 (LINE1_START_ADDR)       0x13 (LINE1_END_ADDR)       0x27 (LINE1_END_ABSOLUTE)      
   2       0x40 (LINE2_START_ADDR)       0x53 (LINE2_END_ADDR)       0x67 (LINE2_END_ABSOLUTE)      
 
 ------------------------------------------------------------------------------------------------------------------------
-API
-void LcdInitialize(void)
-Initializes the LCD task and manually sends a message to the LCD.
-This function must be run during the startup section of main.
-e.g.
-LcdInitialize();
+GLOBALS
+- NONE
 
-void LCDCommand(u8 u8Command_)
-Queues a command code to be sent to the LCD.  See the full command list in the header file.
-Some common commands are shown below.
-LCD_CLEAR_CMD				Writes spaces to all chars
-LCD_HOME_CMD				Puts cursor at 0x00
+CONSTANTS
+- See "LCD Commands" in lcd_nhd-c0220biz.h
 
-LCD_DISPLAY_CMD			Root literal for managing display
-LCD_DISPLAY_ON				OR with LCD_DISPLAY_CMD to turn display on
-LCD_DISPLAY_CURSOR		OR with LCD_DISPLAY_CMD to turn cursor on
-LCD_DISPLAY_BLINK			OR with LCD_DISPLAY_CMD to turn cursor blink on
+TYPES
+- NONE
 
-e.g. Turn display on with a solid (non-blinking) cursor
-LCDCommand(LCD_DISPLAY_CMD | LCD_DISPLAY_ON | LCD_DISPLAY_CURSOR);
+PUBLIC FUNCTIONS
+- void LcdCommand(u8 u8Command_)
+- void LcdMessage(u8 u8Address_, u8 *u8Message_)
+- void LcdClearChars(u8 u8Address_, u8 u8CharactersToClear_)
 
-void LCDMessage(u8 u8Address_, u8 *u8Message_)
-Sends a text message to the LCD to be printed at the address specified.  
-e.g. 
-u8 au8Message[] = "Hello world!";
-LCDMessage(LINE1_START_ADDR, au8Message);
+PROTECTED FUNCTIONS
+- void LcdInitialize(void)
 
-void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_)
-Clears a number of chars starting from the address specified.  This function does not span rows.
-e.g. Clear "world!" from the screen after the above example.
-LCDClearChars(LINE1_START_ADDR + 5, 6);
 
 ***********************************************************************************************************************/
 
@@ -60,19 +44,20 @@ All Global variable names shall start with "G_<type>Lcd"
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
-extern volatile u32 G_u32SystemTime1ms;                /*!< From main.c */
-extern volatile u32 G_u32SystemTime1s;                 /*!< From main.c */
-extern volatile u32 G_u32SystemFlags;                  /*!< From main.c */
-extern volatile u32 G_u32ApplicationFlags;             /*!< From main.c */
+extern volatile u32 G_u32SystemTime1ms;          /*!< @brief From main.c */
+extern volatile u32 G_u32SystemTime1s;           /*!< @brief From main.c */
+extern volatile u32 G_u32SystemFlags;            /*!< @brief From main.c */
+extern volatile u32 G_u32ApplicationFlags;       /*!< @brief From main.c */
 
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "Lcd_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type Lcd_StateMachine;
+static fnCode_type Lcd_pfnStateMachine;         /*!< @brief The application state machine */
 
-static u32 Lcd_u32Timer;
+static u32 Lcd_u32Timer;                        /*!< @brief Timeout counter used across states */
+//static u32 Lcd_u32Flags;                        /*!< @brief Application flags */
 
 
 /***********************************************************************************************************************
@@ -80,25 +65,38 @@ static u32 Lcd_u32Timer;
 ***********************************************************************************************************************/
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Public Functions */
+/*! @publicsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function LCDCommand
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn void LcdCommand(u8 u8Command_)
 
-Description:
-Queues a command char to be sent to the LCD using the TWI messaging function. 
+@brief Queues a command char to be sent to the LCD using the TWI messaging function. 
+
+Some common commands are shown below.
+LCD_CLEAR_CMD				Writes spaces to all chars
+LCD_HOME_CMD				Puts cursor at 0x00
+
+LCD_DISPLAY_CMD		  	Root literal for managing display
+| LCD_DISPLAY_ON				OR with LCD_DISPLAY_CMD to turn display on
+| LCD_DISPLAY_CURSOR		OR with LCD_DISPLAY_CMD to turn cursor on
+| LCD_DISPLAY_BLINK		OR with LCD_DISPLAY_CMD to turn cursor blink on
+
+e.g. Turn display on with a solid (non-blinking) cursor
+
+LcdCommand(LCD_DISPLAY_CMD | LCD_DISPLAY_ON | LCD_DISPLAY_CURSOR);
 
 Requires:
-	- u8Command_ is an acceptable command value for the LCD as taken from the
-    "LCD Commands" list in lcd_nhd_c0220biz.h header file.  The command must
-    be complete and include any optional bits.
+@param u8Command_ is an acceptable command value for the LCD as taken from the
+"LCD Commands" list in lcd_nhd_c0220biz.h header file.  The command must
+be complete and include any optional bits.
 
 Promises:
-  - The command is queued and will be sent to the LCD at the next
-    available time.
+- The command is queued and will be sent to the LCD at the next
+  available time.
+
 */
-void LCDCommand(u8 u8Command_)
+void LcdCommand(u8 u8Command_)
 {
   static u8 au8LCDWriteCommand[] = {LCD_CONTROL_COMMAND, 0x00};
 
@@ -106,7 +104,7 @@ void LCDCommand(u8 u8Command_)
   au8LCDWriteCommand[1] = u8Command_;
     
   /* Queue the command to the I²C application */
-  TWI0WriteData(LCD_ADDRESS, sizeof(au8LCDWriteCommand), &au8LCDWriteCommand[0], STOP);
+  TWI0WriteData(U8_LCD_ADDRESS, sizeof(au8LCDWriteCommand), &au8LCDWriteCommand[0], TWI_STOP);
 
   /* Add a delay during initialization to let the command send properly */
   if(G_u32SystemFlags & _SYSTEM_INITIALIZING )
@@ -114,34 +112,39 @@ void LCDCommand(u8 u8Command_)
     for(u32 i = 0; i < 100000; i++);
   }
   
-} /* end LCDCommand() */
+} /* end LcdCommand() */
 
-/*------------------------------------------------------------------------------
-Function: LCDMessage
 
-Description:
-Sends a text message to the LCD to be printed at the address specified.  
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn void LcdMessage(u8 u8Address_, u8 *u8Message_)
+
+@brief Sends a text message to the LCD to be printed at the address specified.  
+
+The message to display is no more than (40 - the selected display location) 
+characters in length.  Any characters not desired on screen that will not be 
+overwritten need to be erased first.
+
+e.g. 
+u8 au8Message[] = "Hello world!";
+LcdMessage(LINE1_START_ADDR, au8Message);
 
 Requires:
-  - LCD is initialized
-  - u8Message_ is a pointer to a NULL-terminated C-string
-	- The message to display is no more than (40 - the selected display location) 
-    characters in length
-  - Any characters not desired on screen that will not be overwritten need to 
-    be erased first
+- LCD is initialized
+
+@param u8Message_ is a pointer to a NULL-terminated C-string
 
 Promises:
-  - Message to set cursor address in the LCD is queued, then message data 
-    is queued to the LCD to be displayed. 
+- Message to set cursor address in the LCD is queued, then message data 
+  is queued to the LCD to be displayed. 
+
 */
-void LCDMessage(u8 u8Address_, u8 *u8Message_)
+void LcdMessage(u8 u8Address_, u8 *u8Message_)
 { 
   u8 u8Index; 
-  static u8 au8LCDMessage[LCD_MESSAGE_OVERHEAD_SIZE + LCD_MAX_MESSAGE_SIZE] = 
-                           {LCD_CONTROL_DATA};
+  static u8 au8LCDMessage[U8_LCD_MESSAGE_OVERHEAD_SIZE + U8_LCD_MAX_MESSAGE_SIZE] = {LCD_CONTROL_DATA};
   
   /* Set the cursor to the correct address */
-  LCDCommand(LCD_ADDRESS_CMD | u8Address_);
+  LcdCommand(LCD_ADDRESS_CMD | u8Address_);
   
   /* Fill the message */
   u8Index = 1;
@@ -151,35 +154,36 @@ void LCDMessage(u8 u8Address_, u8 *u8Message_)
   }
     
   /* Queue the message */
-  TWI0WriteData(LCD_ADDRESS, u8Index, au8LCDMessage, STOP);
+  TWI0WriteData(U8_LCD_ADDRESS, u8Index, au8LCDMessage, TWI_STOP);
 
-} /* end LCDMessage() */
+} /* end LcdMessage() */
 
 
-/*------------------------------------------------------------------------------
-Function: LCDClearChars
+/*!---------------------------------------------------------------------------------------------------------------------
+@fn void LcdClearChars(u8 u8Address_, u8 u8CharactersToClear_)
 
-Description:
-Clears a number of chars starting from the address specified.  This function is
+@brief Clears a number of chars starting from the address specified.  This function is
 not meant to span rows.
 
 Requires:
-  - LCD is initialized
-  - u8Address_ is the starting address where the first character will be cleared
-	- u8CharactersToClear_ is the number of characters to clear and does not cause 
-    the cursor to go past the available data RAM.
+- LCD is initialized
+
+@param u8Address_ is the starting address where the first character will be cleared
+@param u8CharactersToClear_ is the number of characters to clear and does not cause 
+the cursor to go past the available data RAM.
 
 Promises:
-  - Message to set cursor address in the LCD is queued, then message data 
-    consisting of all ' ' characters is queued to the LCD to be displayed. 
+- Message to set cursor address in the LCD is queued, then message data 
+  consisting of all ' ' characters is queued to the LCD to be displayed. 
+
 */
-void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_)
+void LcdClearChars(u8 u8Address_, u8 u8CharactersToClear_)
 { 
   u8 u8Index; 
-  static u8 au8LCDMessage[LCD_MESSAGE_OVERHEAD_SIZE + LCD_MAX_MESSAGE_SIZE] =  {LCD_CONTROL_DATA};
+  static u8 au8LCDMessage[U8_LCD_MESSAGE_OVERHEAD_SIZE + U8_LCD_MAX_MESSAGE_SIZE] =  {LCD_CONTROL_DATA};
   
   /* Set the cursor to the correct address */
-  LCDCommand(LCD_ADDRESS_CMD | u8Address_);
+  LcdCommand(LCD_ADDRESS_CMD | u8Address_);
   
   /* Fill the message characters with ' ' */
   for(u8Index = 0; u8Index < u8CharactersToClear_; u8Index++)
@@ -188,26 +192,26 @@ void LCDClearChars(u8 u8Address_, u8 u8CharactersToClear_)
   }
       
   /* Queue the message */
-  TWI0WriteData(LCD_ADDRESS, u8CharactersToClear_ + 1, au8LCDMessage, STOP);
+  TWI0WriteData(U8_LCD_ADDRESS, u8CharactersToClear_ + 1, au8LCDMessage, TWI_STOP);
       	
-} /* end LCDClearChars() */
+} /* end LcdClearChars() */
 
 
 /*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected Functions */
+/*! @protectedsection */                                                                                            
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-/*------------------------------------------------------------------------------
-Function: LcdInitialize
+/*!--------------------------------------------------------------------------------------------------------------------
+@fn void LcdInitialize(void)
 
-Description:
-Initializes the LCD task and manually sends a message to the LCD
+@brief Initializes the LCD task and manually sends a message to the LCD
 
 Requires:
-  - 
+- NONE
 
 Promises:
-  - LCD task Setup and LCD functions can now be called
+- LCD task Setup and LCD functions can now be called
+
 */
 void LcdInitialize(void)
 {
@@ -220,33 +224,33 @@ void LcdInitialize(void)
   u8 au8Welcome[] = "RAZOR SAM3U2 ASCII   ";
   
   /* State to Idle */
-  Lcd_StateMachine = LcdSM_Idle;
+  Lcd_pfnStateMachine = LcdSM_Idle;
   
   /* Turn on LCD wait 40 ms for it to setup */
   AT91C_BASE_PIOB->PIO_SODR = PB_09_LCD_RST;
   Lcd_u32Timer = G_u32SystemTime1ms;
-  while( !IsTimeUp(&Lcd_u32Timer, LCD_STARTUP_DELAY) );
+  while( !IsTimeUp(&Lcd_u32Timer, U8_LCD_STARTUP_DELAY_MS) );
   
   /* Send Control Command */
-  TWI0WriteByte(LCD_ADDRESS, LCD_CONTROL_COMMAND, NO_STOP);
+  TWI0WriteByte(U8_LCD_ADDRESS, LCD_CONTROL_COMMAND, TWI_NO_STOP);
   
   /* Send Control Commands */
-  TWI0WriteData(LCD_ADDRESS, NUM_CONTROL_CMD, &au8Commands[0], NO_STOP);
+  TWI0WriteData(U8_LCD_ADDRESS, NUM_CONTROL_CMD, &au8Commands[0], TWI_NO_STOP);
   
   /* Wait for 200 ms */
   Lcd_u32Timer = G_u32SystemTime1ms;
-  while( !IsTimeUp(&Lcd_u32Timer, LCD_CONTROL_COMMAND_DELAY) );
+  while( !IsTimeUp(&Lcd_u32Timer, U8_LCD_CONTROL_COMMAND_DELAY_MS) );
   
   /* Send Final Command to turn it on */
-  TWI0WriteByte(LCD_ADDRESS, LCD_DISPLAY_CMD | LCD_DISPLAY_ON, STOP);
+  TWI0WriteByte(U8_LCD_ADDRESS, LCD_DISPLAY_CMD | LCD_DISPLAY_ON, TWI_STOP);
 
   /* Blacklight - White */
   LedOn(LCD_RED);
   LedOn(LCD_GREEN);
   LedOn(LCD_BLUE);
   
-  TWI0WriteByte(LCD_ADDRESS, LCD_CONTROL_DATA, NO_STOP);
-  TWI0WriteData(LCD_ADDRESS, 20, &au8Welcome[0], STOP);
+  TWI0WriteByte(U8_LCD_ADDRESS, LCD_CONTROL_DATA, TWI_NO_STOP);
+  TWI0WriteData(U8_LCD_ADDRESS, 20, &au8Welcome[0], TWI_STOP);
    
   Lcd_u32Timer = G_u32SystemTime1ms;
   G_u32ApplicationFlags |= _APPLICATION_FLAGS_LCD;
@@ -254,23 +258,24 @@ void LcdInitialize(void)
 } /* end LcdInitialize */
 
 
-/*----------------------------------------------------------------------------------------------------------------------
-Function LcdRunActiveState()
+/*!----------------------------------------------------------------------------------------------------------------------
+@fn void LcdRunActiveState(void)
 
-Description:
-Selects and runs one iteration of the current state in the state machine.
+@brief Selects and runs one iteration of the current state in the state machine.
+
 All state machines have a TOTAL of 1ms to execute, so on average n state machines
 may take 1ms / n to execute.
 
 Requires:
-  - State machine function pointer points at current state
+- State machine function pointer points at current state
 
 Promises:
-  - Calls the function to pointed by the state machine function pointer
+- Calls the function to pointed by the state machine function pointer
+
 */
 void LcdRunActiveState(void)
 {
-  Lcd_StateMachine();
+  Lcd_pfnStateMachine();
 
 } /* end LcdRunActiveState */
 
@@ -279,19 +284,13 @@ void LcdRunActiveState(void)
 State Machine Function Declarations
 ***********************************************************************************************************************/
 
-/*------------------------------------------------------------------------------
-Function: LcdSM_Idle
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn LcdSM_Idle
 
-Description:
-Placeholder for some fancier functionality to come later.
+@brief Placeholder for some fancier functionality to come later.
 
-Requires:
-  - LCD is initialized
-
-Promises:
-  - 
 */
-void LcdSM_Idle(void)
+static void LcdSM_Idle(void)
 {
   
-}
+} /* end LcdSM_Idle() */
