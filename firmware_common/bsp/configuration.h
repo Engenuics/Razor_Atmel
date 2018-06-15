@@ -10,7 +10,10 @@ Bookmarks:
 
 !!!!! External module peripheral assignments
 @@@@@ GPIO board-specific parameters
-##### Communication peripheral board-specific parameters
+##### UART peripheral board-specific parameters
+$$$$$ SPI peripheral board-specific parameters
+%%%%% SSP peripheral board-specific parameters
+^^^^^ I²C peripheral board-specific parameters
 
 
 Quick references:
@@ -120,6 +123,7 @@ Includes
 #define ANT_SPI                     USART2
 
 #ifdef EIE1
+#define LCD_I2C                     TWI0
 #define SD_SSP                      USART1
 #endif
 
@@ -127,7 +131,7 @@ Includes
 #define LCD_SPI                     USART1
 #endif
 
-/* Global status flags for SPI peripherals */
+/* Global status flags for SPI/SSP peripherals */
 #define BLADE_SPI_FLAGS             G_u32Spi0ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 #define SD_SSP_FLAGS                G_u32Ssp1ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
 #define ANT_SSP_FLAGS               G_u32Ssp2ApplicationFlags  /*!< @brief Assigns the correct global Application Flags to a self-documenting symbol */
@@ -220,8 +224,16 @@ Includes
 
 #define SSP2_IRQHandler             USART2_IrqHandler
 
-/* Blade I²C (TWI0) / Accelerometer (MPGL2_R01 only) */
-/* Currently configured directly in sam3u_i2c.c */
+
+/* %I2C% Configuration */
+
+/* EiE I2C (TWI0) */
+#define TWI0_CR_INIT                EIE_TWI_CR_INIT
+#define TWI0_MMR_INIT               EIE_TWI_MMR_INIT
+#define TWI0_CWGR_INIT              EIE_TWI_CWGR_INIT
+#define TWI0_IER_INIT               EIE_TWI_IER_INIT
+
+#define TWI0_IRQHandler             Twi0_IrqHandler
 
 /*! @endcond */
 
@@ -340,14 +352,11 @@ Board-specific ANT definitions are kept here
 
 /*! @endcond */
 
-/***********************************************************************************************************************
-##### Communication peripheral board-specific parameters
-***********************************************************************************************************************/
-/*! @cond DOXYGEN_EXCLUDE */
 
-/*----------------------------------------------------------------------------------------------------------------------
-%UART%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
+/*! @cond DOXYGEN_EXCLUDE */
+/***********************************************************************************************************************
+##### UART peripheral board-specific parameters
+***********************************************************************************************************************/
 
 /*----------------------------------------------------------------------------------------------------------------------
 Blade UART Setup
@@ -692,13 +701,11 @@ Set FP = 0, CD = 26 = 0x1A
     00 [0] "
 */
 
-/*! @endcond */
 
+/***********************************************************************************************************************
+$$$$$ SPI peripheral board-specific parameters
+***********************************************************************************************************************/
 
-/*----------------------------------------------------------------------------------------------------------------------
-%SPI%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-/*! @cond DOXYGEN_EXCLUDE */
 /*----------------------------------------------------------------------------------------------------------------------
 Blade SPI Setup 
 
@@ -849,13 +856,10 @@ DLYBCT = 4.5 (round up to 5)
 #define BLADE_SPI_CSR2_INIT (u32)0x05303001
 #define BLADE_SPI_CSR3_INIT (u32)0x05303001
 
-/*! @endcond */
 
-
-/*----------------------------------------------------------------------------------------------------------------------
-%SSP%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-/*! @cond DOXYGEN_EXCLUDE */
+/***********************************************************************************************************************
+%%%%% SSP peripheral board-specific parameters
+***********************************************************************************************************************/
 
 /*----------------------------------------------------------------------------------------------------------------------
 LCD USART Setup in SSP mode
@@ -1321,27 +1325,25 @@ BAUD desired = 1 Mbps
     00 [0] "
 */
 
-/*! @endcond */
 
-
-/*----------------------------------------------------------------------------------------------------------------------
-%I2C%  Configuration                                                                                                  
-----------------------------------------------------------------------------------------------------------------------*/
-/*! @cond DOXYGEN_EXCLUDE */
+/***********************************************************************************************************************
+^^^^^ I²C (TWI) peripheral board-specific parameters
+***********************************************************************************************************************/
 
 /*----------------------------------------------------------------------------------------------------------------------
-I²C Master mode for ASCII LCD communication
+I²C Master mode for EiE development board (TWI0)
+ASCII: LCD and Blade
+Dot Matrix: Blade and R01 MPGL2 accelerometer
 */
 
-/*-------------------- TWI0 ---------------------*/
-/*Control Register*/
-#define TWI0_CR_INIT (u32)0x00000024
+/* Control Register */
+#define EIE_TWI_CR_INIT (u32)0x00000024
 /*
     31-8 [0] Reserved
 
     07 [0] SWRST - Software reset
     06 [0] QUICK - SMBUS Quick Command
-    05 [1] SVDIS - Slave mode disable - disabled
+    05 [1] SVDIS - Slave mode disabled
     04 [0] SVEN - Slave mode enable
 
     03 [0] MSDIS - Master mode disable
@@ -1350,13 +1352,13 @@ I²C Master mode for ASCII LCD communication
     00 [0] START - Start a transfer
 */
 
-/*Master Mode Register*/
-#define TWI0_MMR_INIT (u32)0x00000000
+/* Master Mode Register */
+#define EIE_TWI_MMR_INIT (u32)0x00000000
 /*
     31-24 [0] Reserved
     
     23 [0] Reserved
-    22 [0] DADR - device slave address - start with zero
+    22 [0] DADR - device Slave address - start with zero
     21 [0] "
     20 [0] "
 
@@ -1375,7 +1377,7 @@ I²C Master mode for ASCII LCD communication
     09 [0] IADRSZ - Internal device address - 0 = no internal device address
     08 [0] "
 
-    07-0 [0] Reserved
+    07-00 [0] Reserved
 */
 
 /* Clock Wave Generator Register */
@@ -1400,7 +1402,7 @@ I²C Master mode for ASCII LCD communication
        200 kHz - 0x00021D1D
        400 kHz - 0x00030707  *Maximum rate*
 */
-#define TWI0_CWGR_INIT (u32)0x00021D1D
+#define EIE_TWI_CWGR_INIT (u32)0x00021D1D
 /*
     31-20 [0] Reserved
     
@@ -1431,14 +1433,14 @@ I²C Master mode for ASCII LCD communication
 */
 
 /*Interrupt Enable Register*/
-#define TWI0_IER_INIT (u32)0x00000142
+#define EIE_TWI_IER_INIT (u32)0x00000100
 /*
     31-16 [0] Reserved
 
     15 [0] TXBUFE - Transmit Buffer Empty
     14 [0] RXBUFF - Receive Buffer Full
-    13 [0] ENDTX - End of Transmit Buffer
-    12 [0] ENDRX - End of Receive Buffer
+    13 [0] ENDTX - End of Transmit Buffer not enabled yet
+    12 [0] ENDRX - End of Receive Buffer not enabled yet
 
     11 [0] EOSACC - End of Slave Address
     10 [0] SCL_WS - Clock Wait State
@@ -1446,46 +1448,20 @@ I²C Master mode for ASCII LCD communication
     08 [1] NACK - Not Acknowledge
 
     07 [0] Reserved
-    06 [1] OVRE - Overrun Error
+    06 [0] OVRE - Overrun Error
     05 [0] GACC - General Call Access
     04 [0] SVACC - Slave Access
 
     03 [0] Reserved
     02 [0] TXRDY - Transmit Holding Register Ready
-    01 [1] RXRDY - Receive Holding Register Ready
+    01 [0] RXRDY - Receive Holding Register Ready
     00 [0] TXCOMP - Transmission Completed
 */
 
-/*Interrupt Disable Register*/
-#define TWI0_IDR_INIT (u32)0x0000FE35
-/*
-    31-16 [0] Reserved
 
-    15 [1] TXBUFE - Transmit Buffer Empty
-    14 [1] RXBUFF - Receive Buffer Full
-    13 [1] ENDTX - End of Transmit Buffer
-    12 [1] ENDRX - End of Receive Buffer
 
-    11 [1] EOSACC - End of Slave Address
-    10 [1] SCL_WS - Clock Wait State
-    09 [1] ARBLST - Arbitration Lost
-    08 [0] NACK - Not Acknowledge
-
-    07 [0] Reserved
-    06 [0] OVRE - Overrun Error
-    05 [1] GACC - General Call Access
-    04 [1] SVACC - Slave Access
-
-    03 [0] Reserved
-    02 [1] TXRDY - Transmit Holding Register Ready
-    01 [0] RXRDY - Receive Holding Register Ready
-    00 [1] TXCOMP - Transmission Completed
-*/
 
 /*! @endcond */
-
-
-
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/

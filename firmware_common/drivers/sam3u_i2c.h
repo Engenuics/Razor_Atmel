@@ -14,16 +14,16 @@ Type Definitions
 
 /*! 
 @enum TwiStopType
-@brief Type of behaviour for STOP condition during function operations 
+@brief Type of behaviour for STOP condition after message. 
 */
 typedef enum {TWI_STOP, TWI_NO_STOP, TWI_NA} TwiStopType;
 
 
 /*! 
-@enum SspBitOrderType
+@enum TwiMessageType
 @brief Controlled list to specify data transfer bit order. 
 */
-typedef enum {TWI_WRITE, TWI_READ} TwiMessageType;
+typedef enum {TWI_EMPTY, TWI_WRITE, TWI_READ} TwiMessageType;
 
 
 /*! 
@@ -34,15 +34,15 @@ typedef struct
 {
   AT91PS_TWI pBaseAddress;             /*!< @brief Base address of the associated peripheral */
   MessageType* pTransmitBuffer;        /*!< @brief Pointer to the transmit message struct linked list */
-  u8* pu8RxBuffer;                     /*!< @brief Pointer to receive buffer in user application */
   u32 u32PrivateFlags;                 /*!< @brief Private peripheral flags */
 } TwiPeripheralType;
 
 /* u32PrivateFlags definitions in TwiPeripheralType */
-#define   _TWI_STATUS_ERROR            (u32)0x00000001   /* Set if an error is flagged in LSR */
-#define   _TWI_TRANSMITTING            (u32)0x00000002   /* Peripheral is Transmitting */
-#define   _TWI_TRANS_NOT_COMP          (u32)0x00000004   /* Tx Transmit hasn't been completed */
-#define   _TWI_RECEIVING               (u32)0x00000008   /* Peripheral is Receiving */
+#define _TWI_TRANSMITTING             (u32)0x00000001   /* Peripheral is Transmitting */
+#define _TWI_RECEIVING                (u32)0x00000002   /* Peripheral is Receiving */
+#define _TWI_TRANS_NOT_COMP           (u32)0x00000004   /* Tx Transmit hasn't been completed */
+
+#define _TWI_ERROR_TX_MSG_SYNC        (u32)0x01000000  /*!< @brief Local Tx message token != queued token */
 /* end u32PrivateFlags */
 
 
@@ -52,14 +52,14 @@ typedef struct
 */
 typedef struct
 {
-  TwiMessageType Direction;            /*!< @brief Tx/Rx Message Type */
-  u32 u32Size;                         /*!< @brief Size of the transfer */
   u8 u8Address;                        /*!< @brief Slave address */
-  u8 u8Attempts;                       /*!< @brief Number of attempts taken to send msg */
-  TwiStopType Stop;                    /*!< @brief WRITE ONLY: STOP condition behaviour */               
-  u8* pu8RxBuffer;                     /*!< @brief READ ONLY: Pointer to receive buffer in user application */
+  u8 u8Pad;                       
+  TwiMessageType eDirection;           /*!< @brief Tx/Rx Message Type */
+  TwiStopType eStopType;               /*!< @brief TX ONLY: STOP condition behaviour */               
+  u32 u32MessageTaskToken;             /*!< @brief TX ONLY: Token corresponding to Message in message task */
+  u32 u32Size;                         /*!< @brief RX ONLY: Size of the transfer */
+  u8* pu8RxBuffer;                     /*!< @brief RX ONLY: Pointer to receive buffer in user application */
 } TwiMessageQueueType;
-
 
 
 /**********************************************************************************************************************
@@ -70,15 +70,15 @@ Constants / Definitions
 
 #define _TWI_ERROR_NACK                (u32)0x01000000     /*!< @brief Set if a NACK is received */
 #define _TWI_ERROR_INTERRUPT           (u32)0x02000000     /*!< @brief Set if an unexpected interrupt occurs */
+#define _TWI_ERROR_RX_TIMEOUT          (u32)0x04000000     /*!< @brief Set if a NACK is received */
 
 #define TWI_ERROR_FLAG_MASK            (u32)0xFF000000     /*!< @brief AND to TWI_u32Flags to get just error flags */
 /* end of TWI_u32Flags */
 
+#define U8_TWI_MSG_BUFFER_SIZE         (u8)32              /*!< @brief Max number of messages in the TWI msg buffer */
 
-
-#define U8_MAX_TWI_MSG_ATTEMPTS        (u8)3               /*!< @brief Number of attempts to send TWI msg */
-#define U8_TWI_TX_FIFO_SIZE            (u8)1               /*!< @brief Size of the peripheral's transmit FIFO in bytes */
-
+#define U8_NEXT_TRANSFER_DELAY_MS      (u8)1               /*!< @brief Time before next transfer will begin */
+#define U32_RX_TIMEOUT_MS              (u32)3000           /*!< @brief Max time allowed for Rx message */
 
 
 /*! @cond DOXYGEN_EXCLUDE */
@@ -115,19 +115,18 @@ Constants / Definitions
 /*-------------------------------------------------------------------------------------------------------------------*/
 /*! @publicsection */                                                                                            
 /*-------------------------------------------------------------------------------------------------------------------*/
-bool TWI0ReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_);
-bool TWI0ReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_);
-u32 TWI0WriteByte(u8 u8SlaveAddress_, u8 u8Byte_, TwiStopType Send_);
-u32 TWI0WriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TwiStopType Send_);
+bool TwiReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_);
+u32 TwiWriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TwiStopType Send_);
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /*! @protectedsection */                                                                                            
 /*-------------------------------------------------------------------------------------------------------------------*/
-void TWIInitialize(void);
-void TWIRunActiveState(void);
-void TWIManualMode(void);
-void TWI0_IRQHandler(void);
+void TwiInitialize(void);
+void TwiRunActiveState(void);
+void TwiManualMode(void);
+
+void TWI0_IrqHandler(void);
 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -139,11 +138,16 @@ static void TWI0FillTxBuffer(void);
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
-void TwiSM_Idle(void);
-void TwiSM_Transmitting(void);
-void TwiSM_Receiving(void);
+static void TwiSM_Idle(void);
+static void TwiSM_Transmitting(void);
 
-void TwiSM_Error(void);         
+static void TwiSM_PdcReceive(void);
+static void TwiSM_ReceiveLastByte(void);
+static void TwiSM_ReceiveComplete(void);
+
+static void TwiSM_NextTransferDelay(void);       
+
+static void TwiSM_Error(void);         
 
 
 

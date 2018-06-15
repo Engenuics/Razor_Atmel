@@ -104,7 +104,7 @@ void LcdCommand(u8 u8Command_)
   au8LCDWriteCommand[1] = u8Command_;
     
   /* Queue the command to the I²C application */
-  TWI0WriteData(U8_LCD_ADDRESS, sizeof(au8LCDWriteCommand), &au8LCDWriteCommand[0], TWI_STOP);
+  TwiWriteData(U8_LCD_ADDRESS, sizeof(au8LCDWriteCommand), &au8LCDWriteCommand[0], TWI_STOP);
 
   /* Add a delay during initialization to let the command send properly */
   if(G_u32SystemFlags & _SYSTEM_INITIALIZING )
@@ -154,7 +154,7 @@ void LcdMessage(u8 u8Address_, u8 *u8Message_)
   }
     
   /* Queue the message */
-  TWI0WriteData(U8_LCD_ADDRESS, u8Index, au8LCDMessage, TWI_STOP);
+  TwiWriteData(U8_LCD_ADDRESS, u8Index, au8LCDMessage, TWI_STOP);
 
 } /* end LcdMessage() */
 
@@ -192,7 +192,7 @@ void LcdClearChars(u8 u8Address_, u8 u8CharactersToClear_)
   }
       
   /* Queue the message */
-  TWI0WriteData(U8_LCD_ADDRESS, u8CharactersToClear_ + 1, au8LCDMessage, TWI_STOP);
+  TwiWriteData(U8_LCD_ADDRESS, u8CharactersToClear_ + 1, au8LCDMessage, TWI_STOP);
       	
 } /* end LcdClearChars() */
 
@@ -215,6 +215,7 @@ Promises:
 */
 void LcdInitialize(void)
 {
+  u8 u8Byte;
   u8 au8Commands[] = 
   {
     LCD_FUNCTION_CMD, LCD_FUNCTION2_CMD, LCD_BIAS_CMD, 
@@ -232,25 +233,27 @@ void LcdInitialize(void)
   while( !IsTimeUp(&Lcd_u32Timer, U8_LCD_STARTUP_DELAY_MS) );
   
   /* Send Control Command */
-  TWI0WriteByte(U8_LCD_ADDRESS, LCD_CONTROL_COMMAND, TWI_NO_STOP);
+  TwiWriteData(U8_LCD_ADDRESS, 1, LCD_CONTROL_COMMAND, TWI_NO_STOP);
   
   /* Send Control Commands */
-  TWI0WriteData(U8_LCD_ADDRESS, NUM_CONTROL_CMD, &au8Commands[0], TWI_NO_STOP);
+  TwiWriteData(U8_LCD_ADDRESS, sizeof(au8Commands), &au8Commands[0], TWI_NO_STOP);
   
   /* Wait for 200 ms */
   Lcd_u32Timer = G_u32SystemTime1ms;
   while( !IsTimeUp(&Lcd_u32Timer, U8_LCD_CONTROL_COMMAND_DELAY_MS) );
   
   /* Send Final Command to turn it on */
-  TWI0WriteByte(U8_LCD_ADDRESS, LCD_DISPLAY_CMD | LCD_DISPLAY_ON, TWI_STOP);
+  u8Byte = (LCD_DISPLAY_CMD | LCD_DISPLAY_ON);
+  TwiWriteData(U8_LCD_ADDRESS, 1, &u8Byte, TWI_STOP);
 
   /* Blacklight - White */
   LedOn(LCD_RED);
   LedOn(LCD_GREEN);
   LedOn(LCD_BLUE);
   
-  TWI0WriteByte(U8_LCD_ADDRESS, LCD_CONTROL_DATA, TWI_NO_STOP);
-  TWI0WriteData(U8_LCD_ADDRESS, 20, &au8Welcome[0], TWI_STOP);
+  u8Byte = LCD_CONTROL_DATA;
+  TwiWriteData(U8_LCD_ADDRESS, 1, &u8Byte, TWI_NO_STOP);
+  TwiWriteData(U8_LCD_ADDRESS, 20, &au8Welcome[0], TWI_STOP);
    
   Lcd_u32Timer = G_u32SystemTime1ms;
   G_u32ApplicationFlags |= _APPLICATION_FLAGS_LCD;

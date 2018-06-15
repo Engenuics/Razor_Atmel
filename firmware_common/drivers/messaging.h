@@ -40,7 +40,7 @@ Type Definitions
 @enum MessageStateType
 @brief Possible statuses of a message in the queue. 
 */
-typedef enum {EMPTY = 0, WAITING, SENDING, COMPLETE, TIMEOUT, ABANDONED, NOT_FOUND = 0xff} MessageStateType;
+typedef enum {EMPTY = 0, WAITING, SENDING, COMPLETE, TIMEOUT, ABANDONED, FAILED, NOT_FOUND = 0xff} MessageStateType;
 
 /*! 
 @enum MessageType

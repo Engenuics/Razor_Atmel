@@ -747,8 +747,8 @@ void SspRunActiveState(void)
 /*!----------------------------------------------------------------------------------------------------------------------
 @fn void SspManualMode(void)
 
-@brief Runs a transmit cycle of the SSP application to clock out a message.  This function is used only during
-initialization.
+@brief Runs a transmit cycle of the SSP application to clock out a message.  
+This function is used only during initialization.
 
 Requires:
 - G_u32SystemFlags _SYSTEM_INITIALIZING is set
@@ -1177,8 +1177,8 @@ static void SspSM_Idle(void)
       memset(SSP_psCurrentSsp->pu8RxBuffer, SSP_DUMMY_BYTE, SSP_psCurrentSsp->u16RxBufferSize);
 
       /* Load the PDC counter and pointer registers */
-      SSP_psCurrentSsp->pBaseAddress->US_RPR = (unsigned int)SSP_psCurrentSsp->pu8RxBuffer; 
-      SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->pu8RxBuffer; 
+      SSP_psCurrentSsp->pBaseAddress->US_RPR = (u32)SSP_psCurrentSsp->pu8RxBuffer; 
+      SSP_psCurrentSsp->pBaseAddress->US_TPR = (u32)SSP_psCurrentSsp->pu8RxBuffer; 
       SSP_psCurrentSsp->pBaseAddress->US_RCR = SSP_psCurrentSsp->u16RxBytes;
       SSP_psCurrentSsp->pBaseAddress->US_TCR = SSP_psCurrentSsp->u16RxBytes;
 
@@ -1232,7 +1232,7 @@ static void SspSM_Idle(void)
       {
         /* Load the PDC counter and pointer registers.  The "Next" pointers are never changed and will
         always point to SSP_u8Dummies with length 1.  */
-        SSP_psCurrentSsp->pBaseAddress->US_TPR = (unsigned int)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
+        SSP_psCurrentSsp->pBaseAddress->US_TPR = (u32)SSP_psCurrentSsp->psTransmitBuffer->pu8Message; 
         SSP_psCurrentSsp->pBaseAddress->US_TCR = SSP_psCurrentSsp->psTransmitBuffer->u32Size;
    
         /* When TCR is loaded, the ENDTX flag is cleared so it is safe to enable the interrupt */

@@ -324,8 +324,8 @@ UartPeripheralType* UartRequest(UartConfigurationType* psUartConfig_)
   psRequestedUart->pBaseAddress->US_BRGR = u32TargetBRGR;
 
   /* Preset the receive PDC pointers and counters; the receive buffer must be starting from [0] and be at least 2 bytes long)*/
-  psRequestedUart->pBaseAddress->US_RPR  = (unsigned int)psUartConfig_->pu8RxBufferAddress;
-  psRequestedUart->pBaseAddress->US_RNPR = (unsigned int)((psUartConfig_->pu8RxBufferAddress) + 1);
+  psRequestedUart->pBaseAddress->US_RPR  = (u32)psUartConfig_->pu8RxBufferAddress;
+  psRequestedUart->pBaseAddress->US_RNPR = (u32)((psUartConfig_->pu8RxBufferAddress) + 1);
   psRequestedUart->pBaseAddress->US_RCR  = 1;
   psRequestedUart->pBaseAddress->US_RNCR = 1;
   
@@ -617,8 +617,8 @@ void UartRunActiveState(void)
 /*!----------------------------------------------------------------------------------------------------------------------
 @fn static void UartManualMode(void)
 
-@brief Runs a transmit cycle of the UART application to clock out a message.  This function is used only during
-initialization.
+@brief Runs a transmit cycle of the UART application to clock out a message.  
+This function is used only during initialization.
 
 Requires:
 - G_u32SystemFlags _SYSTEM_INITIALIZING is set
@@ -945,7 +945,7 @@ static void UartSM_Idle(void)
     Uart_psCurrentUart->u32PrivateFlags |= _UART_PERIPHERAL_TX;    
       
     /* Load the PDC counter and pointer registers */
-    Uart_psCurrentUart->pBaseAddress->US_TPR = (unsigned int)Uart_psCurrentUart->psTransmitBuffer->pu8Message;
+    Uart_psCurrentUart->pBaseAddress->US_TPR = (u32)Uart_psCurrentUart->psTransmitBuffer->pu8Message;
     Uart_psCurrentUart->pBaseAddress->US_TCR = Uart_psCurrentUart->psTransmitBuffer->u32Size;
 
     /* When TCR is loaded, the ENDTX flag is cleared so it is safe to enable the interrupt */

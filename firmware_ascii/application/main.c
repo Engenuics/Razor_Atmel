@@ -60,7 +60,7 @@ void main(void)
   TimerInitialize();  
   SpiInitialize();
   SspInitialize();
-  TWIInitialize();
+  TwiInitialize();
   
   Adc12Initialize();
   LcdInitialize();
@@ -92,7 +92,7 @@ void main(void)
     TimerRunActiveState(); 
     SpiRunActiveState();
     SspRunActiveState();
-    TWIRunActiveState();
+    TwiRunActiveState();
     Adc12RunActiveState();
     MessagingRunActiveState();
     DebugRunActiveState();
