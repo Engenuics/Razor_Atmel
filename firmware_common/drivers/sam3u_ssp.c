@@ -760,6 +760,8 @@ Promises:
 */
 void SspManualMode(void)
 {
+  u32 u32Timer;
+  
   /* Set up for manual mode */
   SSP_u32Flags |= _SSP_MANUAL_MODE;
   SSP_psCurrentSsp = &SSP_Peripheral0;
@@ -770,8 +772,8 @@ void SspManualMode(void)
     SSP_pfnStateMachine();
     MessagingRunActiveState();
     
-    SSP_u32Timer = G_u32SystemTime1ms;
-    while( !IsTimeUp(&SSP_u32Timer, 1) );
+    u32Timer = G_u32SystemTime1ms;
+    while( !IsTimeUp(&u32Timer, 1) );
   }
       
 } /* end SspManualMode() */

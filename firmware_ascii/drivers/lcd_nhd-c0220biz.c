@@ -233,7 +233,8 @@ void LcdInitialize(void)
   while( !IsTimeUp(&Lcd_u32Timer, U8_LCD_STARTUP_DELAY_MS) );
   
   /* Send Control Command */
-  TwiWriteData(U8_LCD_ADDRESS, 1, LCD_CONTROL_COMMAND, TWI_NO_STOP);
+  u8Byte = LCD_CONTROL_COMMAND;
+  TwiWriteData(U8_LCD_ADDRESS, 1, &u8Byte, TWI_NO_STOP);
   
   /* Send Control Commands */
   TwiWriteData(U8_LCD_ADDRESS, sizeof(au8Commands), &au8Commands[0], TWI_NO_STOP);
@@ -252,7 +253,7 @@ void LcdInitialize(void)
   LedOn(LCD_BLUE);
   
   u8Byte = LCD_CONTROL_DATA;
-  TwiWriteData(U8_LCD_ADDRESS, 1, &u8Byte, TWI_NO_STOP);
+  TwiWriteData(U8_LCD_ADDRESS, 1,  &u8Byte, TWI_NO_STOP);
   TwiWriteData(U8_LCD_ADDRESS, 20, &au8Welcome[0], TWI_STOP);
    
   Lcd_u32Timer = G_u32SystemTime1ms;

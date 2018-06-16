@@ -132,14 +132,15 @@ void TWI0_IrqHandler(void);
 /*-------------------------------------------------------------------------------------------------------------------*/
 /*! @privatesection */                                                                                            
 /*-------------------------------------------------------------------------------------------------------------------*/
-static void TWI0FillTxBuffer(void);
 
 
 /***********************************************************************************************************************
 State Machine Declarations
 ***********************************************************************************************************************/
 static void TwiSM_Idle(void);
-static void TwiSM_Transmitting(void);
+
+static void TwiSM_Transmit(void);
+static void TwiSM_TxWaitComplete(void);
 
 static void TwiSM_PdcReceive(void);
 static void TwiSM_ReceiveLastByte(void);

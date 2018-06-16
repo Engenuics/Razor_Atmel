@@ -501,6 +501,8 @@ Promises:
 */
 void SpiManualMode(void)
 {
+  u32 u32Timer;
+  
   /* Set up for manual mode */
   SPI_u32Flags |= _SPI_MANUAL_MODE;
 
@@ -510,8 +512,8 @@ void SpiManualMode(void)
     Spi_pfnStateMachine();
     MessagingRunActiveState();
     
-    SPI_u32Timer = G_u32SystemTime1ms;
-    while( !IsTimeUp(&SPI_u32Timer, 1) );
+    u32Timer = G_u32SystemTime1ms;
+    while( !IsTimeUp(&u32Timer, 1) );
   }
       
 } /* end SpiManualMode() */

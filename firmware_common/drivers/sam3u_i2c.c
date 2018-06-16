@@ -339,6 +339,8 @@ Promises:
 */
 void TwiManualMode(void)
 {
+  u32 u32Timer;
+  
   TWI_u32Flags |=_TWI_INIT_MODE;
   
   while(TWI_u32Flags &_TWI_INIT_MODE)
@@ -347,8 +349,8 @@ void TwiManualMode(void)
     MessagingRunActiveState();
     DebugRunActiveState();
     
-    TWI_u32Timer = G_u32SystemTime1ms;
-    while( !IsTimeUp(&TWI_u32Timer, 1) );
+    u32Timer = G_u32SystemTime1ms;
+    while( !IsTimeUp(&u32Timer, 1) );
   }
       
 } /* end TwiManualMode() */
@@ -363,8 +365,9 @@ Requires:
 - NONE
 
 Promises:
-- More data has been queued or error flag raised
-- Or recieved byte is placed in desired buffer
+- NACK: flags error, disables ENDTX and sets Error state
+- ENDTX: disables interrupt & PDC, writes STOP (if applicable), and clears _TWI_TRANSMITTING
+- ENDRX: disables interrupt & PDC and writes STOP
 
 */
 void TWI0_IrqHandler(void)
@@ -375,13 +378,13 @@ void TWI0_IrqHandler(void)
   u32InterruptStatus = AT91C_BASE_TWI0->TWI_IMR;
   u32InterruptStatus &= AT91C_BASE_TWI0->TWI_SR;
   
-  /*** NACK Received ***/
+  /*** NACK Received (Master only) ***/
   if(u32InterruptStatus & AT91C_TWI_NACK_MASTER )
   {
     /* Error has occurred, abort the message */
     TWI_u32Flags |= _TWI_ERROR_NACK;
-    TWI_Peripheral0.pBaseAddress->TWI_IDR = (AT91C_TWI_ENDTX | AT91C_TWI_ENDRX);
-    TWI_Peripheral0.pBaseAddress->TWI_PTCR = (AT91C_PDC_TXTDIS | AT91C_PDC_RXTDIS);
+    TWI_Peripheral0.pBaseAddress->TWI_IDR = AT91C_TWI_ENDTX;
+    TWI_Peripheral0.pBaseAddress->TWI_PTCR = AT91C_PDC_TXTDIS;
     TWI_pfnStateMachine = TwiSM_Error;
   }
 
@@ -392,13 +395,17 @@ void TWI0_IrqHandler(void)
     TWI_Peripheral0.pBaseAddress->TWI_IDR = AT91C_TWI_ENDTX;
     TWI_Peripheral0.pBaseAddress->TWI_PTCR = AT91C_PDC_TXTDIS;
 
-    /* Set stop condition */
+    /* Set stop condition if multi-byte transfer */
     if( (TWI_Peripheral0.pTransmitBuffer->u32Size != 1) &&
         (TWI_psMsgBufferCurrent->eStopType == TWI_STOP) )
     {
       TWI_Peripheral0.pBaseAddress->TWI_CR = AT91C_TWI_STOP;
     }
+    
+    TWI_Peripheral0.u32PrivateFlags &= ~_TWI_TRANSMITTING;
+
   } /* end ENDTX handler */
+  
   
   /*** ENDRX (receive has finished ALL BUT ONE bytes) ***/
   if(u32InterruptStatus & AT91C_TWI_ENDRX )
@@ -447,29 +454,33 @@ static void TwiSM_Idle(void)
       }
       else
       {
+        /* Update the message's status */
+        UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, SENDING);
+
         /* Set up to transmit the message */
         TWI_Peripheral0.u32PrivateFlags |= (_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
+        u32Byte = (TWI_psMsgBufferCurrent->u8Address) << TWI_MMR_ADDRESS_SHIFT;
+        TWI_Peripheral0.pBaseAddress->TWI_MMR |= u32Byte; 
+
+        /* Setup PDC and interrupts */
         TWI_Peripheral0.pBaseAddress->TWI_TPR = (u32)TWI_Peripheral0.pTransmitBuffer->pu8Message; 
         TWI_Peripheral0.pBaseAddress->TWI_TCR = TWI_Peripheral0.pTransmitBuffer->u32Size;
 
-        /* Set up for a WRITE transmission (TWI currently disabled) */
-        u32Byte = (TWI_psMsgBufferCurrent->u8Address) << TWI_MMR_ADDRESS_SHIFT;
-        TWI_Peripheral0.pBaseAddress->TWI_MMR |= u32Byte; 
-        
-        /* Set up the stop condition with special case for single byte transfer */
-        if( (TWI_Peripheral0.pTransmitBuffer->u32Size == 1) &&
-            (TWI_psMsgBufferCurrent->eStopType == TWI_STOP) )
-        {
-          TWI_Peripheral0.pBaseAddress->TWI_CR = AT91C_TWI_STOP;
-        }
-                
-        /* Update the message's status */
-        UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, SENDING);
-    
-        /* Enable Tx interrupt and the transmitter, then proceed to Tx wait state */
+        /* Enable Tx interrupt and the transmitter (triggers THR load) */
         TWI_Peripheral0.pBaseAddress->TWI_IER = AT91C_TWI_ENDTX;
         TWI_Peripheral0.pBaseAddress->TWI_PTCR = AT91C_PDC_TXTEN;
-        TWI_pfnStateMachine = TwiSM_Transmitting;
+             
+        /* Single byte transfers need STOP immediately (if applicable) */
+        if(TWI_Peripheral0.pTransmitBuffer->u32Size == 1)
+        {
+          /* Set up the stop condition immediately if applicable */
+          if(TWI_psMsgBufferCurrent->eStopType == TWI_STOP)
+          {
+            TWI_Peripheral0.pBaseAddress->TWI_CR = AT91C_TWI_STOP;
+          }
+        }
+
+        TWI_pfnStateMachine = TwiSM_Transmit;
 
       } /* end WRITE setup */
     } /* end TWI_WRITE */
@@ -505,29 +516,58 @@ static void TwiSM_Idle(void)
       }
     } /* end TWI_READ */ 
   } /* if(TWI_u8MsgQueueCount != 0) */  
+  
 } /* end TwiSM_Idle() */
      
 
 /*!-------------------------------------------------------------------------------------------------------------------
-@fn static void TwiSM_Transmitting(void)
-@brief Transmit in progress until current bytes have reached 0.  On exit, the transmit message must be dequeued.
+@fn static void TwiSM_Transmit(void)
+@brief Transmit in progress until until ISR clears _TWI_TRANSMITTING.
 */
-static void TwiSM_Transmitting(void)
+static void TwiSM_Transmit(void)
 {
-  /* Check if all of the message bytes have completely finished sending and transmission complete */
-  if(TWI_Peripheral0.pBaseAddress->TWI_SR & AT91C_TWI_TXCOMP_MASTER)
+  /* Watch _TWI_TRANSMITTING to indicate transmit is complete */
+  if( !(TWI_Peripheral0.u32PrivateFlags & _TWI_TRANSMITTING) )
   {
-    /*  Clear flags and clean up the Message task message */
-    TWI_Peripheral0.u32PrivateFlags &= ~(_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
+    /*  Clean up the Message task message */
     UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, COMPLETE);
     DeQueueMessage(&TWI_Peripheral0.pTransmitBuffer);
+
     
-    /* Advance states */
+    /* Advance states depending on whether TXCOMP is expected */
+    if(TWI_psMsgBufferCurrent->eStopType == TWI_STOP)
+    {
+      /* If a STOP condition is requested, need to wait for TXCOMP */
+      TWI_pfnStateMachine = TwiSM_TxWaitComplete;
+    }
+    else
+    {
+      /* Otherwise leave the bus active */
+      TWI_u32Timer = U8_NEXT_TRANSFER_DELAY_MS;
+      TWI_pfnStateMachine = TwiSM_NextTransferDelay;
+    }
+  }
+    
+} /* end TwiSM_Transmit() */
+
+
+/*!-------------------------------------------------------------------------------------------------------------------
+@fn static void TwiSM_TxWaitComplete(void)
+@brief Optional state to wait for the TXCOMP bit to be set (indicates STOP condition
+has been placed on the bus). Some Master transmit states will bypass this. */
+static void TwiSM_TxWaitComplete(void)
+{
+  /* Wait for TX to complete */
+  if(TWI_Peripheral0.pBaseAddress->TWI_SR & AT91C_TWI_TXCOMP_MASTER)
+  {
+    /*  Clear flags and advance states */
+    TWI_Peripheral0.u32PrivateFlags &= ~_TWI_TRANS_NOT_COMP;
+    
     TWI_u32Timer = U8_NEXT_TRANSFER_DELAY_MS;
     TWI_pfnStateMachine = TwiSM_NextTransferDelay;
   }
     
-} /* end TwiSM_Transmitting() */
+} /* end TwiSM_TxWaitComplete() */
 
 
 /*!-------------------------------------------------------------------------------------------------------------------
@@ -573,6 +613,7 @@ static void TwiSM_ReceiveComplete(void)
   {   
     /* Clear RX flag and advance states */
     TWI_Peripheral0.u32PrivateFlags &= ~_TWI_RECEIVING;
+    
     TWI_u32Timer = U8_NEXT_TRANSFER_DELAY_MS;
     TWI_pfnStateMachine = TwiSM_NextTransferDelay;
   }
@@ -624,7 +665,7 @@ static void TwiSM_Error(void)
     DebugPrintNumber(TWI_Peripheral0.pTransmitBuffer->u32Token);
     DebugPrintf(" TWI NACK. Message deleted.\n\r");
     
-    /*  Clear flags and clean up the Message task message */
+    /* Clear flags and clean up the Message task message */
     UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, FAILED);
     DeQueueMessage(&TWI_Peripheral0.pTransmitBuffer);
     TWI_Peripheral0.u32PrivateFlags &= ~(_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);

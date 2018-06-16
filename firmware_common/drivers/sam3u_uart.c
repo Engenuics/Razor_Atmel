@@ -630,6 +630,8 @@ Promises:
 */
 static void UartManualMode(void)
 {
+  u32 u32Timer;
+
   Uart_u32Flags |=_UART_MANUAL_MODE;
   Uart_psCurrentUart = &Uart_sPeripheral;
   
@@ -638,8 +640,8 @@ static void UartManualMode(void)
     UartRunActiveState();
     MessagingRunActiveState();
 
-    Uart_u32Timer = G_u32SystemTime1ms;
-    while( !IsTimeUp(&Uart_u32Timer, 1) );
+    u32Timer = G_u32SystemTime1ms;
+    while( !IsTimeUp(&u32Timer, 1) );
   }
       
 } /* end UartManualMode() */

@@ -556,7 +556,7 @@ Configures the pin as an output or input.
 0: No effect
 1: Enables the output on the I/O line
 */
-#define PIOA_OER_INIT (u32)0xBF55D7F9
+#define PIOA_OER_INIT (u32)0xBF55D0F9
 /* 
     31 [1] PA_31_HEARTBEAT output enabled
     30 [0] PA_30_AN_DEMO input
@@ -583,10 +583,10 @@ Configures the pin as an output or input.
     13 [0] PA_13_BLADE_MISO input
     12 [1] PA_12_BLADE_UPOMI output enabled
 
-    11 [0] PA_11_BLADE_UPIMO  input
-    10 [1] PA_10_I2C_SCL output enabled
-    09 [1] PA_09_I2C_SDA output enabled
-    08 [1] PA_08_SD_CS_MCDA3 output enabled
+    11 [0] PA_11_BLADE_UPIMO input
+    10 [0] PA_10_I2C_SCL output peripheral
+    09 [0] PA_09_I2C_SDA output peripheral
+    08 [0] PA_08_SD_CS_MCDA3 output peripheral
 
     07 [1] PA_07_HSMCI_MCDA2 output enabled
     06 [1] PA_06_HSMCI_MCDA1 output enabled

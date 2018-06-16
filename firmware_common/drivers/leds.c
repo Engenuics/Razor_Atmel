@@ -236,7 +236,13 @@ Promises:
 */
 void LedOff(LedNumberType eLED_)
 {
-  u32 *pu32ClearAddress;
+  u32* pu32ClearAddress = 0;
+  
+  // HAVE NOT SOLVED THE BYTE ALIGNMENT(?) problem that sometimes
+  // blows the code up here depending on how code is placed
+  // above.  Adding or removing the following line (which does
+  // nothing) typically solves it.
+  //pu32ClearAddress = (u32*)AT91C_BASE_PIOA->PIO_CODR;
 
   /* Configure set and clear addresses */
   if(Leds_asLedArray[eLED_].eActiveState == LED_ACTIVE_HIGH)
