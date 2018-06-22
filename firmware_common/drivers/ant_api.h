@@ -1,12 +1,61 @@
-/**********************************************************************************************************************
-* File: ant_api.h      
-*
-* Description:
-* ANT implementation for Cortex-M3 / AP2 SPI
+/*!**********************************************************************************************************************
+@file ant_api.h                                                                
+@brief Header file for ant_api.c
 **********************************************************************************************************************/
 
 #ifndef __ANT_API_H
 #define __ANT_API_H
+
+/**********************************************************************************************************************
+Type definitions
+**********************************************************************************************************************/
+
+
+/**********************************************************************************************************************
+Function Declarations
+**********************************************************************************************************************/
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*! @publicsection */                                                                                            
+/*-------------------------------------------------------------------------------------------------------------------*/
+AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_);
+
+bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_);
+bool AntUnassignChannelNumber(AntChannelNumberType eChannel_);
+
+bool AntOpenChannelNumber(AntChannelNumberType eChannel_);
+bool AntOpenScanningChannel(void);
+bool AntCloseChannelNumber(AntChannelNumberType eChannel_);
+
+bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
+bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
+
+bool AntReadAppMessageBuffer(void);
+
+void AntGetdBmAscii(s8 s8RssiValue_, u8* pu8Result_);
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*! @protectedsection */                                                                                            
+/*-------------------------------------------------------------------------------------------------------------------*/
+void AntApiInitialize(void);
+void AntApiRunActiveState(void);
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/*! @privatesection */                                                                                            
+/*-------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/***********************************************************************************************************************
+State Machine Declarations
+***********************************************************************************************************************/
+static void AntApiSM_Idle(void);    
+static void AntApiSM_AssignChannel(void);       
+
+static void AntApiSM_Error(void);         
+static void AntApiSM_FailedInit(void);    
 
 
 /**********************************************************************************************************************
@@ -17,11 +66,6 @@ Constants
 #define ANT_OUTGOING_MESSAGE_BUFFER_SIZE    (u32)32
 #define ANT_APPLICATION_MESSAGE_BUFFER_SIZE (u32)32
 #define ANT_DATA_BYTES                      (u8)8
-
-
-/**********************************************************************************************************************
-Type definitions
-**********************************************************************************************************************/
 
 
 /**********************************************************************************************************************
@@ -60,49 +104,11 @@ ANT_TICK   0xFF    CHANNEL  RESPONSE  EVENT   0xFF   MISSED  MISSED  MISSED
 #define   ANT_TICK_MSG_MISSED_LOW_BYTE_INDEX      (u8)7
 
 
-/**********************************************************************************************************************
-Function prototypes
-**********************************************************************************************************************/
 
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Public functions                                                                                                   */
-/*--------------------------------------------------------------------------------------------------------------------*/
-AntChannelStatusType AntRadioStatusChannel(AntChannelNumberType eChannel_);
-
-bool AntAssignChannel(AntAssignChannelInfoType* psAntSetupInfo_);
-bool AntUnassignChannelNumber(AntChannelNumberType eChannel_);
-
-bool AntOpenChannelNumber(AntChannelNumberType eChannel_);
-bool AntOpenScanningChannel(void);
-bool AntCloseChannelNumber(AntChannelNumberType eChannel_);
-
-bool AntQueueBroadcastMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
-bool AntQueueAcknowledgedMessage(AntChannelNumberType eChannel_, u8 *pu8Data_);
-
-bool AntReadAppMessageBuffer(void);
-
-void AntGetdBmAscii(s8 s8RssiValue_, u8* pu8Result_);
-
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Protected functions                                                                                                */
-/*--------------------------------------------------------------------------------------------------------------------*/
-void AntApiInitialize(void);
-void AntApiRunActiveState(void);
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-/* Private functions                                                                                                  */
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-
-
-/***********************************************************************************************************************
-State Machine Declarations
-***********************************************************************************************************************/
-static void AntApiSM_Idle(void);    
-static void  AntApiSM_AssignChannel(void);       
-
-static void AntApiSM_Error(void);         
-static void AntApiSM_FailedInit(void);        
 
 #endif /* __ANT_API_H */
+
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* End of File                                                                                                        */
+/*--------------------------------------------------------------------------------------------------------------------*/

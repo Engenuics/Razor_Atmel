@@ -296,8 +296,6 @@ The order of the definitions below must match the order of the definitions provi
 #define GPIOB_BUTTONS         (u32)( PB_00_BUTTON1 )
 #endif /* MPGL2 */
 
-#endif /* __CONFIG_H */
-
 
 /*----------------------------------------------------------------------------------------------------------------------
 %BUZZER% Buzzer Configuration                                                                                                  
@@ -1462,6 +1460,9 @@ Dot Matrix: Blade and R01 MPGL2 accelerometer
 
 
 /*! @endcond */
+
+#endif /* __CONFIG_H */
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* End of File */
 /*--------------------------------------------------------------------------------------------------------------------*/

@@ -157,7 +157,7 @@ Variable names shall start with "SSP_<type>" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type SSP_pfnStateMachine;          /*!< @brief The SSP application state machine */
 
-static u32 SSP_u32Timer;                         /*!< @brief Timeout counter used across states */
+//static u32 SSP_u32Timer;                         /*!< @brief Timeout counter used across states */
 static u32 SSP_u32Flags;                         /*!< @brief Application flags for SSP */
 
 static SspPeripheralType SSP_Peripheral0;        /*!< @brief SSP0 peripheral object */

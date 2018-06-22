@@ -72,7 +72,7 @@ Variable names shall start with "Uart_<type>" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type Uart_pfnStateMachine;         /*!< @brief The UART application state machine function pointer */
 
-static u32 Uart_u32Timer;                        /*!< @brief Counter used across states */
+//static u32 Uart_u32Timer;                        /*!< @brief Counter used across states */
 static u32 Uart_u32Flags;                        /*!< @brief Application flags for UART */
 static u8 Uart_u8ActiveUarts;                    /*!< @brief Counting semaphore for # of active UARTs */
 

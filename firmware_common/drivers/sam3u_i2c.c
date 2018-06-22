@@ -21,14 +21,12 @@ CONSTANTS
 
 TYPES
 - TwiStopType
-- TwiMessageType
+- TwiDirectionType
 - TwiPeripheralType
 - TwiMessageQueueType
 
 PUBLIC FUNCTIONS
-- bool TwiReadByte(u8 u8SlaveAddress_, u8* pu8RxBuffer_)
 - bool TwiReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_)
-- u32 TwiWriteByte(u8 u8SlaveAddress_, u8 u8Byte_, TwiStopType eSend_)
 - u32 TwiWriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TwiStopType Send_)
 
 PROTECTED FUNCTIONS
@@ -87,6 +85,7 @@ Function Definitions
 @brief Queues a TWI Read Message into TWI_asMessageBuffer
 
 Read operations do not have an associated message in the Message task queue.
+The local message buffer allows any combination of Read and Write messages.
 
 Requires:
 - Master mode
@@ -96,7 +95,7 @@ Requires:
 @param u32Size_ is the number of bytes to receive
 
 Promises:
-- Queues a multi byte command into the command array
+- Queues a READ message to the local message buffer
 - Returns TRUE if the queue was successful
 
 */
@@ -130,14 +129,6 @@ bool TwiReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_)
     TWI_psMsgBufferNext = &TWI_asMessageBuffer[0];
   }
   
-  /* Clear the new location to avoid confusion */
-  TWI_psMsgBufferNext->eDirection = TWI_EMPTY;
-  TWI_psMsgBufferNext->u32Size = 0;
-  TWI_psMsgBufferNext->u8Address = 0;
-  TWI_psMsgBufferNext->pu8RxBuffer = NULL;
-  TWI_psMsgBufferNext->eStopType = TWI_NA; 
-  TWI_psMsgBufferNext->u32MessageTaskToken = 0;
-
   /* End of critical section */
   __enable_irq();
     
@@ -155,20 +146,23 @@ bool TwiReadData(u8 u8SlaveAddress_, u8* pu8RxBuffer_, u32 u32Size_)
 /*!--------------------------------------------------------------------------------------------------------------------
 @fn u32 TwiWriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TwiStopType eSend_)
 
-@brief Queues a data array for transfer on the TWI0 peripheral.  
+@brief Queues a WRITE message for transfer on the TWI0 peripheral.  
 
 Requires:
-- if a transmission is in progress, the node in the buffer that is currently being sent will not 
-  be destroyed during this function.
+- TWI peripheral initialized
 
 @param u8SlaveAddress_ holds the target's I²C address
-@param u8Byte_ is the byte to send
-@param eSend_ is the type of operation
+@param u32Size_ is the number of bytes of data to send
+@param u8Data_ points to u32Size bytes of data
+@param eSend_ is the type of STOP condition to be placed on the bus after transmission
 
 Promises:
-- adds the data message at TWI_Peripheral0.pTransmitBuffer buffer that will be sent by the TWI application
-  when it is available.
-- Returns the message token assigned to the message; 0 is returned if the message cannot be queued in which case
+- if the queue is not full:
+  - adds a WRITE message to TWI_asMessageBuffer and increments TWI_u8MsgQueueCount
+  - a Message task node is added to TWI_Peripheral0.pTransmitBuffer buffer 
+  - TWI_psMsgBufferNext is advanced and wrapped if necessary
+  - returns the message token assigned to the message; 
+- otherwise 0 is returned if the message cannot be queued in which case
   G_u32MessagingFlags can be checked for the reason
 
 */
@@ -211,14 +205,6 @@ u32 TwiWriteData(u8 u8SlaveAddress_, u32 u32Size_, u8* u8Data_, TwiStopType eSto
   {
     TWI_psMsgBufferNext = &TWI_asMessageBuffer[0];
   }
-
-  /* Clear the new location to avoid confusion */
-  TWI_psMsgBufferNext->eDirection  = TWI_EMPTY;
-  TWI_psMsgBufferNext->u32Size     = 0;
-  TWI_psMsgBufferNext->u8Address   = 0;
-  TWI_psMsgBufferNext->pu8RxBuffer = NULL;
-  TWI_psMsgBufferNext->eStopType   = TWI_NA; 
-  TWI_psMsgBufferNext->u32MessageTaskToken = 0;
 
   /* End of critical section */
   __enable_irq();
@@ -296,7 +282,8 @@ void TwiInitialize(void)
 
   /* Set application pointer */
   TWI_pfnStateMachine = TwiSM_Idle;
-  
+  DebugPrintf("TWI Peripheral Ready\n\r");
+ 
 } /* end TwiInitialize() */
 
 
@@ -449,8 +436,10 @@ static void TwiSM_Idle(void)
       and the transmit buffer */
       if(TWI_psMsgBufferCurrent->u32MessageTaskToken != TWI_Peripheral0.pTransmitBuffer->u32Token)
       {
-        DebugPrintf("TWI transmit message out of sync!\n\r");
-        TWI_Peripheral0.u32PrivateFlags |= _TWI_ERROR_TX_MSG_SYNC;
+        TWI_Peripheral0.u32PrivateFlags |= _TWI_FLAG_TX_MSG_SYNC;
+        TWI_u32Flags |= _TWI_ERROR_TX_MSG_SYNC;
+        
+        TWI_pfnStateMachine = TwiSM_Error;
       }
       else
       {
@@ -459,15 +448,16 @@ static void TwiSM_Idle(void)
 
         /* Set up to transmit the message */
         TWI_Peripheral0.u32PrivateFlags |= (_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
-        u32Byte = (TWI_psMsgBufferCurrent->u8Address) << TWI_MMR_ADDRESS_SHIFT;
-        TWI_Peripheral0.pBaseAddress->TWI_MMR |= u32Byte; 
+
+        TWI_Peripheral0.pBaseAddress->TWI_MMR &= ~(0x7F << TWI_MMR_ADDRESS_SHIFT);
+        TWI_Peripheral0.pBaseAddress->TWI_MMR |= (TWI_psMsgBufferCurrent->u8Address) << TWI_MMR_ADDRESS_SHIFT;
 
         /* Setup PDC and interrupts */
         TWI_Peripheral0.pBaseAddress->TWI_TPR = (u32)TWI_Peripheral0.pTransmitBuffer->pu8Message; 
         TWI_Peripheral0.pBaseAddress->TWI_TCR = TWI_Peripheral0.pTransmitBuffer->u32Size;
 
         /* Enable Tx interrupt and the transmitter (triggers THR load) */
-        TWI_Peripheral0.pBaseAddress->TWI_IER = AT91C_TWI_ENDTX;
+        TWI_Peripheral0.pBaseAddress->TWI_IER  = AT91C_TWI_ENDTX;
         TWI_Peripheral0.pBaseAddress->TWI_PTCR = AT91C_PDC_TXTEN;
              
         /* Single byte transfers need STOP immediately (if applicable) */
@@ -657,13 +647,24 @@ static void TwiSM_NextTransferDelay(void)
 */
 static void TwiSM_Error(void)          
 {
-  /* NACK recieved (write only) */
-  if(TWI_u32Flags & _TWI_ERROR_NACK)
+  /* Transmit errors */
+  if( (TWI_u32Flags & _TWI_ERROR_NACK) ||
+      (TWI_u32Flags & _TWI_ERROR_TX_MSG_SYNC) )
   {
-    /* Announce the error and clear flag */
-    TWI_u32Flags &= ~_TWI_ERROR_NACK;
+    /* Announce the error */
     DebugPrintNumber(TWI_Peripheral0.pTransmitBuffer->u32Token);
-    DebugPrintf(" TWI NACK. Message deleted.\n\r");
+
+    if(TWI_u32Flags & _TWI_ERROR_NACK)
+    {
+      DebugPrintf(" TWI NACK.");
+    }
+    
+    if(TWI_u32Flags & _TWI_ERROR_TX_MSG_SYNC)
+    {
+      DebugPrintf("TWI transmit message out of sync!");
+    }
+
+    DebugPrintf(" Message deleted.\n\r");
     
     /* Clear flags and clean up the Message task message */
     UpdateMessageStatus(TWI_Peripheral0.pTransmitBuffer->u32Token, FAILED);
@@ -671,13 +672,15 @@ static void TwiSM_Error(void)
     TWI_Peripheral0.u32PrivateFlags &= ~(_TWI_TRANSMITTING | _TWI_TRANS_NOT_COMP);
   }
   
-  /* RX TIMEOUT (receive only) */
+  /* Receive errors */
   if(TWI_u32Flags & _TWI_ERROR_RX_TIMEOUT)
   {
-    DebugPrintf("TWI Rx Timeout. Message deleted.\n\r");
+    DebugPrintf("TWI Rx Timeout.\n\r");
   }  
 
-  /* Advance states */
+  /* Clear error flags and advance states */
+  TWI_u32Flags &= TWI_ERROR_FLAG_MASK;
+  
   TWI_u32Timer = U8_NEXT_TRANSFER_DELAY_MS;
   TWI_pfnStateMachine = TwiSM_NextTransferDelay;
 

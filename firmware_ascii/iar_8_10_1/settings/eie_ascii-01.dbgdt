@@ -134,7 +134,7 @@
                     <item>TWI_psMsgBufferCurrent</item>
                     <item>TWI_psMsgBufferNext</item>
                     <item>TWI_asMessageBuffer</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
@@ -151,7 +151,7 @@
             </IarPane-34096>
             <IarPane-34097>
                 <expressions>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
@@ -170,7 +170,7 @@
                 <expressions>
                     <item>G_u32SystemTime1ms</item>
                     <item>TWI_u32Timer</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>

@@ -23,7 +23,7 @@ Constants / Definitions
 
 #define U8_LCD_ADDRESS                    (u8)0x3C             /*!< @brief Address of the On board chip of the LCD */
                                                                /* The documentation for the LCD says 0x78 however,
-                                                                  that includes the Read/Write Bit */
+                                                                  that includes the Write Bit */
 
 #define LCD_CONTROL_COMMAND               (u8)0x00             /*!< @brief Control byte to LCD command is coming */
 #define LCD_CONTROL_DATA                  (u8)0x40             /*!< @brief Control byte to LCD command is coming */

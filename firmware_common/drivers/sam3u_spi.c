@@ -61,7 +61,7 @@ Variable names shall start with "SPI_<type>" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type Spi_pfnStateMachine;          /*!< @brief The SPI application state machine */
 
-static u32 SPI_u32Timer;                         /*!< @brief Timeout counter used across states */
+//static u32 SPI_u32Timer;                         /*!< @brief Timeout counter used across states */
 static u32 SPI_u32Flags;                         /*!< @brief Application flags for SPI */
 
 static SpiPeripheralType SPI_Peripheral0;        /*!< @brief SPI peripheral object */
