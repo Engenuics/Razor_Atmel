@@ -109,6 +109,9 @@ typedef struct
 
 #define LCD_DOT_XSIZE                 (u8)1
 #define LCD_DOT_YSIZE                 (u8)1
+#define LCD_IMAGE_COL_SIZE_128PX       (u8)128
+#define LCD_IMAGE_COL_BYTES_128PX      (u8)((LCD_IMAGE_COL_SIZE_128PX * LCD_PIXEL_BITS / 8) + 0)
+#define LCD_IMAGE_ROW_SIZE_64PX       (u8)64
 #define LCD_IMAGE_COL_SIZE_50PX       (u8)50
 #define LCD_IMAGE_COL_BYTES_50PX      (u8)((LCD_IMAGE_COL_SIZE_50PX * LCD_PIXEL_BITS / 8) + 1)
 #define LCD_IMAGE_ROW_SIZE_50PX       (u8)50

@@ -758,7 +758,7 @@ void LcdInitialize(void)
   
   LcdCommand(LCD_PIXEL_TEST_OFF);
   
-#if LCD_STARTUP_ANIMATION
+#ifdef LCD_STARTUP_ANIMATION
   /* Divide the Engenuics logo up into 4 equal pieces and put them at the corner of the LCD to 
   ensure that the full range of pixels is being addressed correctly */
   u8 u8RowPosition = 0;
@@ -825,9 +825,13 @@ void LcdInitialize(void)
   LcdManualMode();
 #endif /* LCD_STARTUP_ANIMATION */
 
+  
   /* Announce on the debug port that LCD setup is ready */
   G_u32ApplicationFlags |= _APPLICATION_FLAGS_LCD;
   DebugPrintf(Lcd_au8MessageInit);
+  
+  Lcd_u32Timer = G_u32SystemTime1ms;
+  while(!IsTimeUp(&Lcd_u32Timer, 1000));
   
 } /* end LcdInitialize() */
 

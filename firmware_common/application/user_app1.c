@@ -52,13 +52,18 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
+extern const u8 aau8FullScreen1[LCD_IMAGE_ROW_SIZE_64PX][LCD_IMAGE_COL_BYTES_128PX];
+extern const u8 aau8FullScreen2[LCD_IMAGE_ROW_SIZE_64PX][LCD_IMAGE_COL_BYTES_128PX];
+extern const u8 aau8FullScreen3[LCD_IMAGE_ROW_SIZE_64PX][LCD_IMAGE_COL_BYTES_128PX];
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
-//static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
+static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
+
+static PixelBlockType UserApp1_sEngenuicsImage;
 
 
 /**********************************************************************************************************************
@@ -88,10 +93,21 @@ Promises:
 void UserApp1Initialize(void)
 {
  
+  /* Show static image */
+  //LcdClearPixels(&G_sLcdClearWholeScreen);
+  
+  UserApp1_sEngenuicsImage.u16RowStart = 0;
+  UserApp1_sEngenuicsImage.u16ColumnStart = 0;
+  UserApp1_sEngenuicsImage.u16RowSize = LCD_IMAGE_ROW_SIZE_64PX;
+  UserApp1_sEngenuicsImage.u16ColumnSize = LCD_IMAGE_COL_SIZE_128PX;
+  LcdLoadBitmap(&aau8FullScreen1[0][0], &UserApp1_sEngenuicsImage);
+ 
+  UserApp1_u32Timeout = G_u32SystemTime1ms;
+  
   /* If good initialization, set state to Idle */
   if( 1 )
   {
-    UserApp1_StateMachine = UserApp1SM_Idle;
+    UserApp1_StateMachine = UserApp1SM_Idle1;
   }
   else
   {
@@ -133,12 +149,43 @@ State Machine Function Definitions
 **********************************************************************************************************************/
 
 /*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for ??? */
-static void UserApp1SM_Idle(void)
+/* Wait for first image display */
+static void UserApp1SM_Idle1(void)
 {
-
-} /* end UserApp1SM_Idle() */
+  if(IsTimeUp(&UserApp1_u32Timeout, U32_IMAGE_DELAY_TIME_MS))
+  {
+    LcdLoadBitmap(&aau8FullScreen2[0][0], &UserApp1_sEngenuicsImage);
+    UserApp1_u32Timeout = G_u32SystemTime1ms;
+    UserApp1_StateMachine = UserApp1SM_Idle2;
+  }
+  
+} /* end UserApp1SM_Idle1() */
     
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for image display */
+static void UserApp1SM_Idle2(void)
+{
+  if(IsTimeUp(&UserApp1_u32Timeout, U32_IMAGE_DELAY_TIME_MS))
+  {
+    LcdLoadBitmap(&aau8FullScreen3[0][0], &UserApp1_sEngenuicsImage);
+    UserApp1_u32Timeout = G_u32SystemTime1ms;
+    UserApp1_StateMachine = UserApp1SM_Idle3;
+  }
+  
+} /* end UserApp1SM_Idle2() */
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Wait for image display */
+static void UserApp1SM_Idle3(void)
+{
+  if(IsTimeUp(&UserApp1_u32Timeout, U32_IMAGE_DELAY_TIME_MS))
+  {
+    LcdLoadBitmap(&aau8FullScreen1[0][0], &UserApp1_sEngenuicsImage);
+    UserApp1_u32Timeout = G_u32SystemTime1ms;
+    UserApp1_StateMachine = UserApp1SM_Idle1;
+  }
+  
+} /* end UserApp1SM_Idle3() */
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
