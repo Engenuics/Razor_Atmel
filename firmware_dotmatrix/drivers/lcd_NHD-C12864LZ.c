@@ -719,8 +719,8 @@ void LcdInitialize(void)
   Lcd_sSspConfig.pu8RxBufferAddress = Lcd_au8RxDummyBuffer;
   Lcd_sSspConfig.ppu8RxNextByte     = &Lcd_pu8RxDummyBuffer;
   Lcd_sSspConfig.u16RxBufferSize    = LCD_RX_BUFFER_SIZE;
-  Lcd_sSspConfig.BitOrder           = MSB_FIRST;
-  Lcd_sSspConfig.SpiMode            = SPI_MASTER;
+  Lcd_sSspConfig.eBitOrder           = MSB_FIRST;
+  Lcd_sSspConfig.eSspMode            = SPI_MASTER_AUTO_CS;
 
   Lcd_Ssp = SspRequest(&Lcd_sSspConfig);
         
