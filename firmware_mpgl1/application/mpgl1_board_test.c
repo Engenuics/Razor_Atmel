@@ -295,6 +295,7 @@ void BoardTestSM_Idle(void)
     u16CurrentCounter = 0;
   }
   
+
   if(u8CurrentSpeed != 0)
   {
     u16CurrentCounter++;
@@ -302,17 +303,20 @@ void BoardTestSM_Idle(void)
     {
       u8Digits = NumberToAscii(u32Counter, au8CounterAscii);
       au8CounterAscii[u8Digits] = '\0';
-      LCDMessage(LINE2_START_ADDR, au8CounterAscii);
 
       u16CurrentCounter = 0;
       u32Counter++;
+
+      /* Update LCD. Clear the line every 5s in case of the LCD bug */
+      if( (G_u32SystemTime1ms % 5000) == 0)
+      {
+        LCDClearChars(LINE2_START_ADDR, 20);
+      }
+      LCDMessage(LINE2_START_ADDR, au8CounterAscii);
+
     }
   }
   
-  if( (u32Counter % 5000) == 0)
-  {
-    LCDClearChars(LINE2_START_ADDR, 20);
-  }
   
 
   /* BUTTON2 toggles LCD backlights */
@@ -438,39 +442,6 @@ void BoardTestSM_Idle(void)
     PWMAudioOff(BUZZER2);
   }
     
-#if 0
-    /* If test is active, deactivate it, put all LEDs back on */
-    switch(u8Button3Test)
-    {
-      case 0:
-        u8Button3Test = 1;
-
-        PWMAudioSetFrequency(BUZZER2, 1000);
-        PWMAudioOff(BUZZER1);
-        PWMAudioOn(BUZZER2);
-        break;
-
-      case 1:
-        u8Button3Test = 2;
-
-        PWMAudioSetFrequency(BUZZER1, 500);
-        PWMAudioOn(BUZZER1);
-        PWMAudioOff(BUZZER2);
-        break;
-
-      case 2:
-        u8Button3Test = 0;
-
-        PWMAudioOff(BUZZER1);
-        PWMAudioOff(BUZZER2);
-        break;
-       
-      default:
-        break;
-    }
-  } /* End of BUTTON 3 test */
-#endif
-
 #if 0  
   /* LCD scrolling message */
   if(IsTimeUp(&u32LcdTimer, 200))
