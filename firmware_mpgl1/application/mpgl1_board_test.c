@@ -156,6 +156,20 @@ void BoardTestSM_SetupAnt(void)
     DebugPrintf(", Device Type 96, Trans Type 1, Frequency 50\n\r");
 
     BoardTest_StateMachine = BoardTestSM_Idle;
+    
+                              /* "01234567890123456789" */
+    LCDCommand(LCD_CLEAR_CMD);
+    LCDMessage(LINE1_START_ADDR, "MONSTER SHIELD      ");
+    LCDMessage(LINE2_START_ADDR, "0                   ");
+    LedOff(WHITE);
+    LedOff(PURPLE);
+    LedOff(BLUE);
+    LedOff(CYAN);
+    LedOff(GREEN);
+    LedOff(YELLOW);
+    LedOff(ORANGE);
+    LedOff(RED);
+
   }
 
   /* Watch for timeout */
@@ -171,134 +185,135 @@ void BoardTestSM_SetupAnt(void)
 /*--------------------------------------------------------------------------------------------------------------------*/
 void BoardTestSM_Idle(void)
 {
-  static bool bButton0Test = FALSE;
   static u8 u8Button2Test = 0;
-  static u8 u8Button3Test = 0;
-  static u8 au8TestMessage[] = {0, 0, 0, 0, 0, 0, 0, 0};
-  static u8 au8DataMessage[] = "ANT data: ";
-  u8 au8DataContent[26];
-  AntChannelStatusType eAntCurrentState;
-
-                          /* "01234567890123456789" */
-  static const u8 au8Eng[] = "ENGENUICS RAZOR     ";
-  static const u8 au8MPG[] = "ASCII DEV BOARD     ";
-  u8 au8Temp1[21];
-  u8 au8Temp2[21];
+  static u8 u8LightNumber = 0;
+ 
+  static u16 au16Frequencies[] = {NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4, NOTE_A4,
+                                  NOTE_A4, NOTE_G4, NOTE_F4, NOTE_F4, NOTE_E4,
+                                  NOTE_E4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4,
+                                  NOTE_C4, NOTE_G4, NOTE_G4, NOTE_F4, NOTE_E4,
+                                  NOTE_E4, NOTE_D4, NOTE_G4, NOTE_F4, NOTE_E4,
+                                  NOTE_E4, NOTE_D4,
+                                  NOTE_C4, NOTE_C4, NOTE_G4, NOTE_G4, NOTE_A4,
+                                  NOTE_A4, NOTE_G4, NOTE_F4, NOTE_F4, NOTE_E4,
+                                  NOTE_E4, NOTE_D4, NOTE_D4, NOTE_C4
+                                 };
+  static u8 u8CurrentFrequency = 0;
+  static bool bBuzzerStart = FALSE;
+#define U8_NUMBER_FREQUENCIES  (u8)(sizeof(au16Frequencies) / sizeof(u16))
   
-  static u8 u8ResetIndex = 0;
-  static u8 u8Index = 0;
-  static u32 u32LcdTimer;
+  static u32 u32Counter = 1;
+  static u16 au16CounterSpeed[] = {0, 1000, 100, 10};
+  static u8 u8CurrentSpeed = 0;
+  static u16 u16CurrentCounter = 0;
+  u8 au8CounterAscii[11] = "0000000000";
+  u8 u8Digits = 0;
 
   /* BUTTON0 toggles LEDs */
   if( WasButtonPressed(BUTTON0) )
   {
     ButtonAcknowledge(BUTTON0);
+    u8LightNumber++;
+    if(u8LightNumber > 8)
+    {
+      u8LightNumber = 0;
+    }
     
-    /* If test is active, deactivate it, put all LEDs back on */
-    if(bButton0Test)
+    switch (u8LightNumber)
     {
-      bButton0Test = FALSE;
-
-      LedOn(WHITE);
-      LedOn(PURPLE);
-      LedOn(BLUE);
-      LedOn(CYAN);
-      LedOn(GREEN);
-      LedOn(YELLOW);
-      LedOn(ORANGE);
-      LedOn(RED);
-    }
-    /* Else activate it: turn all LEDs off */
-    else
-    {
-      bButton0Test = TRUE;
-
-      LedOff(WHITE);
-      LedOff(PURPLE);
-      LedOff(BLUE);
-      LedOff(CYAN);
-      LedOff(GREEN);
-      LedOff(YELLOW);
-      LedOff(ORANGE);
-      LedOff(RED);
-    }
+    case 8:
+      {
+        LedOn(WHITE);
+        /* Fall through */
+      }
+    case 7:
+      {
+        LedOn(PURPLE);
+        /* Fall through */
+      }
+    case 6:
+      {
+        LedOn(BLUE);
+        /* Fall through */
+      }
+    case 5:
+      {
+        LedOn(CYAN);
+        /* Fall through */
+      }
+    case 4:
+      {
+        LedOn(GREEN);
+        /* Fall through */
+      }
+    case 3:
+      {
+        LedOn(YELLOW);
+        /* Fall through */
+      }
+    case 2:
+      {
+        LedOn(ORANGE);
+        /* Fall through */
+      }
+    case 1:
+      {
+        LedOn(RED);
+        break;
+      }
+    case 0:
+      {
+        LedOff(WHITE);
+        LedOff(PURPLE);
+        LedOff(BLUE);
+        LedOff(CYAN);
+        LedOff(GREEN);
+        LedOff(YELLOW);
+        LedOff(ORANGE);
+        LedOff(RED);
+        break;
+      }
+    default:
+      {
+        break;
+      }
+      
+    } /* end switch */
+            
   } /* End of BUTTON 0 test */
 
-/* BUTTON1 toggles the radio and buzzer test.  When the button is pressed,
-  an open channel request is made.  The system monitors _ANT_FLAGS_CHANNEL_OPEN
-  to control wether or not the buzzer is on. */
-  
-  /* Toggle the beeper and ANT radio on BUTTON1 */
+  /* BUTTON1 changes the counter speed */
   if( WasButtonPressed(BUTTON1) )
   {
     ButtonAcknowledge(BUTTON1);
-    eAntCurrentState = AntRadioStatusChannel(ANT_CHANNEL_BOARDTEST);
-
-    if(eAntCurrentState == ANT_CLOSED )
+    u8CurrentSpeed++;
+    if(u8CurrentSpeed == sizeof(au16CounterSpeed) / sizeof(u16))
     {
-       AntOpenChannelNumber(ANT_CHANNEL_BOARDTEST);
+      u8CurrentSpeed = 0;
     }
 
-    if(eAntCurrentState == ANT_OPEN)
-    {
-       AntCloseChannelNumber(ANT_CHANNEL_BOARDTEST);
-    }
-  }
- 
- 
-#if 0
-  /* Monitor the CHANNEL_OPEN flag to decide whether or not audio should be on */
-  if( (AntRadioStatusChannel(ANT_CHANNEL_BOARDTEST) == ANT_OPEN ) && 
-     !(BoardTest_u32Flags & _AUDIO_ANT_ON) )
-  {
-    PWMAudioOn(BUZZER1);
-    BoardTest_u32Flags |= _AUDIO_ANT_ON;
+    u16CurrentCounter = 0;
   }
   
-  if( AntRadioStatusChannel(ANT_CHANNEL_BOARDTEST) == ANT_CLOSED )
+  if(u8CurrentSpeed != 0)
   {
-    PWMAudioOff(BUZZER1);
-    BoardTest_u32Flags &= ~_AUDIO_ANT_ON;
-  }
-#endif
-  
-  /* Process ANT Application messages */  
-        
-  if( AntReadAppMessageBuffer() )
-  {
-     /* New data message: check what it is */
-    if(G_eAntApiCurrentMessageClass == ANT_DATA)
+    u16CurrentCounter++;
+    if(u16CurrentCounter == au16CounterSpeed[u8CurrentSpeed])
     {
-      /* We got some data: print it */
-      for(u8 i = 0; i < ANT_DATA_BYTES; i++)
-      {
-        au8DataContent[3 * i]     = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] / 16);
-        au8DataContent[3 * i + 1] = HexToASCIICharUpper(G_au8AntApiCurrentMessageBytes[i] % 16);
-        au8DataContent[3 * i + 2] = '-';
-      }
-      au8DataContent[23] = '\n';
-      au8DataContent[24] = '\r';
-      au8DataContent[25] = '\0';
-      
-      DebugPrintf(au8DataMessage);
-      DebugPrintf(au8DataContent);
-    }
-    else if(G_eAntApiCurrentMessageClass == ANT_TICK)
-    {
+      u8Digits = NumberToAscii(u32Counter, au8CounterAscii);
+      au8CounterAscii[u8Digits] = '\0';
+      LCDMessage(LINE2_START_ADDR, au8CounterAscii);
 
-     /* Update and queue the new message data */
-      au8TestMessage[7]++;
-      if(au8TestMessage[7] == 0)
-      {
-        au8TestMessage[6]++;
-        if(au8TestMessage[6] == 0)
-        {
-          au8TestMessage[5]++;
-        }
-      }
-      AntQueueBroadcastMessage(ANT_CHANNEL_BOARDTEST, au8TestMessage);
+      u16CurrentCounter = 0;
+      u32Counter++;
     }
   }
+  
+  if( (u32Counter % 5000) == 0)
+  {
+    LCDClearChars(LINE2_START_ADDR, 20);
+  }
+  
 
   /* BUTTON2 toggles LCD backlights */
   if( WasButtonPressed(BUTTON2) )
@@ -327,28 +342,68 @@ void BoardTestSM_Idle(void)
       case 2:
         u8Button2Test = 3;
 
-        LedOff(LCD_RED);
-        LedOn(LCD_GREEN);
+        LedOn(LCD_RED);
+        LedPWM(LCD_GREEN, LED_PWM_20);
         LedOff(LCD_BLUE);
         break;
 
       case 3:
         u8Button2Test = 4;
 
+        LedOn(LCD_RED);
+        LedOn(LCD_GREEN);
+        LedOff(LCD_BLUE);
+        break;
+
+      case 4:
+        u8Button2Test = 5;
+
+        LedOff(LCD_RED);
+        LedOn(LCD_GREEN);
+        LedOff(LCD_BLUE);
+        break;
+        
+      case 5:
+        u8Button2Test = 6;
+
+        LedOff(LCD_RED);
+        LedOn(LCD_GREEN);
+        LedOn(LCD_BLUE);
+        break;
+
+      case 6:
+        u8Button2Test = 7;
+
         LedOff(LCD_RED);
         LedOff(LCD_GREEN);
         LedOn(LCD_BLUE);
         break;
 
-      case 4:
+      case 7:
+        u8Button2Test = 8;
+
+        LedPWM(LCD_RED, LED_PWM_30);
+        LedOff(LCD_GREEN);
+        LedOn(LCD_BLUE);
+        break;
+
+      case 8:
+        u8Button2Test = 9;
+
+        LedOn(LCD_RED);
+        LedOff(LCD_GREEN);
+        LedOn(LCD_BLUE);
+        break;
+  
+      case 9:
         u8Button2Test = 0;
 
         LedOn(LCD_RED);
         LedOn(LCD_GREEN);
         LedOn(LCD_BLUE);
         break;
-        
-      default:
+
+    default:
         break;
     }
   } /* End of BUTTON 2 test */
@@ -357,7 +412,33 @@ void BoardTestSM_Idle(void)
   if( WasButtonPressed(BUTTON3) )
   {
     ButtonAcknowledge(BUTTON3);
+    bBuzzerStart = TRUE;
+  }
     
+  if(IsButtonPressed(BUTTON3))
+  {
+    if(bBuzzerStart)
+    {
+      PWMAudioSetFrequency(BUZZER1, au16Frequencies[u8CurrentFrequency]);
+      PWMAudioSetFrequency(BUZZER2, au16Frequencies[u8CurrentFrequency]);
+      PWMAudioOn(BUZZER1);
+      PWMAudioOn(BUZZER2);
+
+      bBuzzerStart = FALSE;
+      u8CurrentFrequency++;
+      if(u8CurrentFrequency == U8_NUMBER_FREQUENCIES)
+      {
+        u8CurrentFrequency = 0;
+      }
+    }
+  }
+  else
+  {
+    PWMAudioOff(BUZZER1);
+    PWMAudioOff(BUZZER2);
+  }
+    
+#if 0
     /* If test is active, deactivate it, put all LEDs back on */
     switch(u8Button3Test)
     {
@@ -388,8 +469,9 @@ void BoardTestSM_Idle(void)
         break;
     }
   } /* End of BUTTON 3 test */
+#endif
 
-  
+#if 0  
   /* LCD scrolling message */
   if(IsTimeUp(&u32LcdTimer, 200))
   {
@@ -419,6 +501,7 @@ void BoardTestSM_Idle(void)
     u8ResetIndex--;
 
   }
+#endif
   
 } /* end BoardTestSM_Idle() */
 
